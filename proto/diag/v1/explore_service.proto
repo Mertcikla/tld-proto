@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package diag.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "buf.build/gen/go/tldiagramcom/diagram/protocolbuffers/go/diag/v1;diagv1";
+
+// ExploreService provides the infinite-zoom workspace view surface and sharing.
+// All RPCs require authentication.
+service ExploreService {
+  // ShareView creates a shareable token for a view.
+  rpc ShareView(ShareViewRequest) returns (ShareViewResponse);
+}
+
+// ── Share View ───────────────────────────────────────────────────────────
+
+message ShareViewRequest {
+  int32 view_id = 1;
+  optional string password = 2;
+  optional google.protobuf.Timestamp expires_at = 3;
+}
+message ShareViewResponse {
+  string token = 1;
+  string url = 2;
+}

@@ -1,0 +1,104 @@
+syntax = "proto3";
+
+package diag.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "buf.build/gen/go/tldiagramcom/diagram/protocolbuffers/go/diag/v1;diagv1";
+
+// BillingService manages subscriptions, trials, and checkout.
+// All RPCs require authentication.
+service BillingService {
+  rpc GetStatus(GetBillingStatusRequest) returns (GetBillingStatusResponse);
+  rpc StartTrial(StartTrialRequest) returns (StartTrialResponse);
+  rpc RecordSubscription(RecordSubscriptionRequest) returns (RecordSubscriptionResponse);
+  rpc CancelSubscription(CancelSubscriptionRequest) returns (CancelSubscriptionResponse);
+  rpc CreateCreemCheckout(CreateCreemCheckoutRequest) returns (CreateCreemCheckoutResponse);
+  rpc GetCreemPortal(GetCreemPortalRequest) returns (GetCreemPortalResponse);
+  rpc UpdateCreemSeats(UpdateCreemSeatsRequest) returns (UpdateCreemSeatsResponse);
+}
+
+// ── Subscription ─────────────────────────────────────────────────────────
+
+message SubscriptionInfo {
+  string id = 1;
+  string org_id = 2;
+  string platform = 3;
+  optional string platform_subscription_id = 4;
+  optional string platform_product_id = 5;
+  string status = 6;
+  optional google.protobuf.Timestamp current_period_start = 7;
+  optional google.protobuf.Timestamp current_period_end = 8;
+  bool cancel_at_period_end = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+  int32 seats = 12;
+}
+
+// ── Get Status ───────────────────────────────────────────────────────────
+
+message GetBillingStatusRequest {}
+message GetBillingStatusResponse {
+  string plan = 1;
+  string effective_plan = 2;
+  optional google.protobuf.Timestamp trial_ends_at = 3;
+  optional int32 trial_days_remaining = 4;
+  bool trial_used = 5;
+  optional SubscriptionInfo active_subscription = 6;
+}
+
+// ── Start Trial ──────────────────────────────────────────────────────────
+
+message StartTrialRequest {}
+message StartTrialResponse {
+  string id = 1;
+  string name = 2;
+  string slug = 3;
+  string plan = 4;
+  optional google.protobuf.Timestamp trial_started_at = 5;
+  optional google.protobuf.Timestamp trial_ends_at = 6;
+  bool trial_used = 7;
+}
+
+// ── Record Subscription ──────────────────────────────────────────────────
+
+message RecordSubscriptionRequest {
+  string platform = 1;
+  string platform_subscription_id = 2;
+  string platform_product_id = 3;
+  string platform_receipt = 4;
+  optional string current_period_start = 5;
+  optional string current_period_end = 6;
+}
+message RecordSubscriptionResponse {
+  SubscriptionInfo subscription = 1;
+}
+
+// ── Cancel Subscription ──────────────────────────────────────────────────
+
+message CancelSubscriptionRequest {}
+message CancelSubscriptionResponse {}
+
+// ── Creem Checkout ───────────────────────────────────────────────────────
+
+message CreateCreemCheckoutRequest {
+  string plan = 1;
+  int32 seats = 2;
+}
+message CreateCreemCheckoutResponse {
+  string checkout_url = 1;
+}
+
+// ── Creem Portal ─────────────────────────────────────────────────────────
+
+message GetCreemPortalRequest {}
+message GetCreemPortalResponse {
+  string portal_url = 1;
+}
+
+// ── Creem Update Seats ────────────────────────────────────────────────────
+
+message UpdateCreemSeatsRequest {
+  int32 seats = 1;
+}
+message UpdateCreemSeatsResponse {}

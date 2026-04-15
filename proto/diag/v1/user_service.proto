@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+package diag.v1;
+
+import "diag/v1/auth_service.proto";
+
+option go_package = "buf.build/gen/go/tldiagramcom/diagram/protocolbuffers/go/diag/v1;diagv1";
+
+// UserService manages per-user settings and cross-org operations.
+// All RPCs require authentication.
+service UserService {
+  rpc ListOrganizations(ListOrganizationsRequest) returns (ListOrganizationsResponse);
+  rpc SwitchOrganization(SwitchOrganizationRequest) returns (SwitchOrganizationResponse);
+  rpc GetPreferences(GetPreferencesRequest) returns (GetPreferencesResponse);
+  rpc UpdatePreferences(UpdatePreferencesRequest) returns (UpdatePreferencesResponse);
+  rpc DeletePreview(DeletePreviewRequest) returns (DeletePreviewResponse);
+  rpc TransferOrgOwnership(TransferOrgOwnershipRequest) returns (TransferOrgOwnershipResponse);
+  rpc DeleteAccount(DeleteAccountRequest) returns (DeleteAccountResponse);
+  rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse);
+}
+
+// ── Change Password ──────────────────────────────────────────────────────
+
+message ChangePasswordRequest {
+  string old_password = 1;
+  string new_password = 2;
+}
+message ChangePasswordResponse {}
+
+// ── List Organizations ───────────────────────────────────────────────────
+
+message ListOrganizationsRequest {}
+message ListOrganizationsResponse {
+  repeated OrgInfo organizations = 1;
+}
+
+// ── Switch Organization ──────────────────────────────────────────────────
+
+message SwitchOrganizationRequest {
+  string org_id = 1;
+}
+message SwitchOrganizationResponse {
+  OrgInfo org = 1;
+}
+
+// ── Preferences ──────────────────────────────────────────────────────────
+
+message GetPreferencesRequest {}
+message GetPreferencesResponse {
+  optional string accent_color = 1;
+  optional string background_color = 2;
+  optional string object_color = 3;
+}
+
+message UpdatePreferencesRequest {
+  optional string accent_color = 1;
+  optional string background_color = 2;
+  optional string object_color = 3;
+}
+message UpdatePreferencesResponse {}
+
+// ── Delete Preview ───────────────────────────────────────────────────────
+
+message BlockingOrg {
+  string id = 1;
+  string name = 2;
+  repeated BlockingOrgMember members = 3;
+}
+
+message BlockingOrgMember {
+  string user_id = 1;
+  string username = 2;
+}
+
+message DeletePreviewRequest {}
+message DeletePreviewResponse {
+  repeated BlockingOrg blocking_orgs = 1;
+  repeated string pro_subscription_org_names = 2;
+}
+
+// ── Transfer Org Ownership ───────────────────────────────────────────────
+
+message TransferOrgOwnershipRequest {
+  string org_id = 1;
+  string new_owner_user_id = 2;
+}
+message TransferOrgOwnershipResponse {}
+
+// ── Delete Account ───────────────────────────────────────────────────────
+
+message DeleteAccountRequest {
+  string email = 1;
+}
+message DeleteAccountResponse {}

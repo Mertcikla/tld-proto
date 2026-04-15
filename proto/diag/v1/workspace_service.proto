@@ -1,0 +1,876 @@
+syntax = "proto3";
+
+package diag.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "buf.build/gen/go/tldiagramcom/diagram/protocolbuffers/go/diag/v1;diagv1";
+
+// WorkspaceService provides unified workspace operations over views,
+// elements, placements, connectors, and element navigation.
+//
+// Authentication: callers must authenticate via an API key:
+//   "Authorization: Bearer tld_<hex>" header,
+//   OR as the api_key field in any request message.
+//   API keys are created and revoked through the REST /api/api-keys
+//   endpoints.  The API key is tied to an organisation;
+//   the server resolves org_id from the key automatically.
+//
+// Every mutating operation requires the caller to be an editor or owner of the
+// target organisation.
+//
+// Validation policy:
+//   - Required fields that map to NOT NULL / non-defaulted DB columns are
+//     strictly validated; an INVALID_ARGUMENT error is returned when they
+//     are missing or malformed.
+//   - Optional fields that map to nullable or defaulted DB columns accept
+//     empty / zero values and fall back to the column default.
+//   - api_key, when supplied in the message body, is validated before the
+//     handler logic runs and is never reflected back in responses.
+service WorkspaceService {
+  // CreateView creates a new view in the given organisation.
+  // Required: org_id, name.
+  rpc CreateView(CreateViewRequest) returns (CreateViewResponse);
+
+  // ApplyPlan atomically upserts elements, canonical views, placements, and
+  // connectors in a single PostgreSQL transaction. If any step fails the
+  // entire transaction is rolled back. Refs are local names used to wire up
+  // cross-references within the plan; they are resolved to IDs by the server
+  // and never stored.
+  // Required: org_id, at least one resource in elements/connectors.
+  rpc ApplyWorkspacePlan(ApplyPlanRequest) returns (ApplyPlanResponse);
+
+  // ExportWorkspace fetches all view, element, connector, and navigation data
+  // for an organization to allow CLI-based backups and migrations.
+  // Required: org_id.
+  rpc ExportWorkspace(ExportOrganizationRequest) returns (ExportOrganizationResponse);
+
+  // DeleteView permanently removes a view.
+  // All connectors and element placements on the view are cascade-deleted by the DB.
+  // Required: org_id, view_id. Caller must be an editor.
+  rpc DeleteView(DeleteViewRequest) returns (DeleteViewResponse);
+
+  // DeleteElement permanently removes an element from the org registry.
+  // All placements and connectors referencing it are cascade-deleted by the DB.
+  // Required: org_id, element_id. Caller must be an editor.
+  rpc DeleteElement(DeleteElementRequest) returns (DeleteElementResponse);
+
+  // DeleteConnector removes a single connector from a view.
+  // Required: org_id, connector_id. Caller must be an editor.
+  rpc DeleteConnector(DeleteConnectorRequest) returns (DeleteConnectorResponse);
+
+  // DeleteElementNavigation removes an element-to-view navigation by ID.
+  // Required: org_id, navigation_id. Caller must be an editor.
+  rpc DeleteElementNavigation(DeleteElementNavigationRequest) returns (DeleteElementNavigationResponse);
+
+  // Views
+  rpc ListViews(ListViewsRequest) returns (ListViewsResponse);
+  rpc GetView(GetViewRequest) returns (GetViewResponse);
+  rpc UpdateView(UpdateViewRequest) returns (UpdateViewResponse);
+  rpc SetViewLevel(SetViewLevelRequest) returns (SetViewLevelResponse);
+  rpc GetWorkspace(GetWorkspaceRequest) returns (GetWorkspaceResponse);
+  rpc ListIncomingElementNavigations(ListIncomingElementNavigationsRequest) returns (ListIncomingElementNavigationsResponse);
+
+  // Elements
+  rpc ListElements(ListElementsRequest) returns (ListElementsResponse);
+  rpc GetElement(GetElementRequest) returns (GetElementResponse);
+  rpc CreateElement(CreateElementRequest) returns (CreateElementResponse);
+  rpc UpdateElement(UpdateElementRequest) returns (UpdateElementResponse);
+  rpc ListElementPlacements(ListElementPlacementsRequest) returns (ListElementPlacementsResponse);
+
+  // Placements
+  rpc ListPlacements(ListPlacementsRequest) returns (ListPlacementsResponse);
+  rpc CreatePlacement(CreatePlacementRequest) returns (CreatePlacementResponse);
+  rpc UpdatePlacementPosition(UpdatePlacementPositionRequest) returns (UpdatePlacementPositionResponse);
+  rpc DeletePlacement(DeletePlacementRequest) returns (DeletePlacementResponse);
+
+  // Connectors
+  rpc ListConnectors(ListConnectorsRequest) returns (ListConnectorsResponse);
+  rpc CreateConnector(CreateConnectorRequest) returns (CreateConnectorResponse);
+  rpc UpdateConnector(UpdateConnectorRequest) returns (UpdateConnectorResponse);
+
+  // Element navigation
+  rpc ListElementNavigations(ListElementNavigationsRequest) returns (ListElementNavigationsResponse);
+  rpc CreateElementNavigation(CreateElementNavigationRequest) returns (CreateElementNavigationResponse);
+  rpc DeleteElementNavigationById(DeleteElementNavigationByIdRequest) returns (DeleteElementNavigationByIdResponse);
+
+  // View Layers
+  rpc ListViewLayers(ListViewLayersRequest) returns (ListViewLayersResponse);
+  rpc CreateViewLayer(CreateViewLayerRequest) returns (CreateViewLayerResponse);
+  rpc UpdateViewLayer(UpdateViewLayerRequest) returns (UpdateViewLayerResponse);
+  rpc DeleteViewLayer(DeleteViewLayerRequest) returns (DeleteViewLayerResponse);
+
+  // Comment Threads
+  rpc ListThreads(ListThreadsRequest) returns (ListThreadsResponse);
+  rpc CreateThread(CreateThreadRequest) returns (CreateThreadResponse);
+  rpc AddComment(AddCommentRequest) returns (AddCommentResponse);
+  rpc ResolveThread(ResolveThreadRequest) returns (ResolveThreadResponse);
+
+  // Reactions
+  rpc ListReactions(ListReactionsRequest) returns (ListReactionsResponse);
+  rpc ToggleReaction(ToggleReactionRequest) returns (ToggleReactionResponse);
+}
+
+// ─── Export messages ─────────────────────────────────────────────────────────
+
+message ExportOrganizationRequest {
+  string org_id = 1;
+  // Optional. API key for request-level authentication.
+  optional string api_key = 2;
+}
+
+message ExportOrganizationResponse {
+  repeated View views = 1;
+  repeated Element elements = 2;
+  repeated Connector connectors = 3;
+  repeated ElementNavigation navigations = 4;
+  repeated ElementPlacement placements = 5;
+  repeated ViewLayer layers = 6;
+}
+
+// ─── ApplyPlan messages ───────────────────────────────────────────────────────
+
+message PlanViewPlacement {
+  // Parent element ref that owns the target canonical diagram.
+  // Use "root" for the synthetic workspace root view.
+  string parent_ref = 1;
+  optional double position_x = 2;
+  optional double position_y = 3;
+}
+
+message PlanElement {
+  string ref = 1;
+  string name = 2;
+  optional string kind = 3;
+  optional string description = 4;
+  optional string technology = 5;
+  optional string url = 6;
+  optional string logo_url = 7;
+  repeated TechnologyLink technology_links = 8;
+  repeated string tags = 9;
+  repeated PlanViewPlacement placements = 10;
+  optional int32 id = 11;
+  optional google.protobuf.Timestamp updated_at = 12;
+  optional string repo = 13;
+  optional string branch = 14;
+  optional string language = 15;
+  optional string file_path = 16;
+  bool has_view = 17;
+  optional string view_label = 18;
+  optional int32 view_id = 19;
+  optional google.protobuf.Timestamp view_updated_at = 20;
+}
+
+message PlanConnector {
+  string ref = 1;
+  // Owning view ref. Use "root" for the synthetic workspace root view.
+  string view_ref = 2;
+  string source_element_ref = 3;
+  string target_element_ref = 4;
+  optional string label = 5;
+  optional string description = 6;
+  optional string relationship = 7;
+  optional string direction = 8;
+  optional string style = 9;
+  optional string url = 10;
+  optional string source_handle = 11;
+  optional string target_handle = 12;
+  optional int32 id = 13;
+  optional google.protobuf.Timestamp updated_at = 14;
+}
+
+message ApplyPlanRequest {
+  string org_id = 1;
+  repeated PlanElement elements = 2;
+  repeated PlanConnector connectors = 3;
+  // Optional. API key for request-level authentication.
+  optional string api_key = 6;
+  // Optional. If true, only return plan and conflicts without applying.
+  optional bool dry_run = 7;
+}
+
+message PlanSummary {
+  int32 elements_planned = 1;
+  int32 elements_created = 2;
+  int32 views_planned = 3;
+  int32 views_created = 4;
+  int32 connectors_planned = 5;
+  int32 connectors_created = 6;
+}
+
+message PlanDriftItem {
+  // "element" | "view" | "connector"
+  string resource_type = 1;
+  string ref = 2;
+  string reason = 3;
+}
+
+message WorkspaceVersion {
+  int32 id = 1;
+  string version_id = 2;
+  google.protobuf.Timestamp created_at = 3;
+  string created_by = 4; // "cli" or "frontend"
+  optional int32 parent_version_id = 5;
+  int32 view_count = 6;
+  int32 element_count = 7;
+  int32 connector_count = 8;
+  int32 navigation_count = 9;
+  optional string description = 10;
+  optional string workspace_hash = 11;
+}
+
+message ResourceMetadata {
+  int32 id = 1;
+  google.protobuf.Timestamp updated_at = 2;
+}
+
+message PlanConflictItem {
+  string resource_type = 1; // "element" | "view" | "connector"
+  string ref = 2;
+  google.protobuf.Timestamp local_updated_at = 3;
+  google.protobuf.Timestamp remote_updated_at = 4;
+  string resolution_hint = 5; // "local_newer" | "remote_newer" | "unknown"
+}
+
+message ApplyPlanElementResult {
+  string ref = 1;
+  string canonical_ref = 2;
+  int32 id = 3;
+  google.protobuf.Timestamp updated_at = 4;
+}
+
+message ApplyPlanConnectorResult {
+  string ref = 1;
+  string canonical_ref = 2;
+  int32 id = 3;
+  google.protobuf.Timestamp updated_at = 4;
+}
+
+message ApplyPlanResponse {
+  repeated Element created_elements = 1;
+  repeated ViewSummary created_views = 2;
+  repeated ElementPlacement created_placements = 3;
+  repeated Connector created_connectors = 4;
+  PlanSummary summary = 5;
+  repeated PlanDriftItem drift = 6;
+  optional WorkspaceVersion version = 7;
+  map<string, ResourceMetadata> element_metadata = 8;
+  map<string, ResourceMetadata> view_metadata = 9;
+  map<string, ResourceMetadata> connector_metadata = 10;
+  repeated PlanConflictItem conflicts = 11;
+  repeated ApplyPlanElementResult element_results = 12;
+  repeated ApplyPlanConnectorResult connector_results = 13;
+}
+
+// ─── Request messages ────────────────────────────────────────────────────────
+
+message CreateViewRequest {
+  // Required. UUID of the organisation that owns this view.
+  string org_id = 1;
+
+  // Required. Human-readable name of the view.
+  string name = 2;
+
+  // Optional. Longer description of the view.
+  optional string description = 3;
+
+  // Optional. Label that describes the abstraction level (e.g. "System",
+  // "Container", "Component").
+  optional string level_label = 4;
+
+  // Optional. Integer ID of an existing element that owns this view.
+  optional int32 owner_element_id = 5;
+
+  // Optional. API key for request-level authentication.
+  optional string api_key = 6;
+}
+
+// ─── Response messages ───────────────────────────────────────────────────────
+
+message CreateViewResponse {
+  View view = 1;
+}
+
+// ─── Domain types ────────────────────────────────────────────────────────────
+
+// Element represents an element in the global registry (elements table).
+message Element {
+  int32 id = 1;
+  string org_id = 2;
+  string name = 3;
+  optional string kind = 4;
+  optional string description = 5;
+  optional string technology = 6;
+  optional string url = 7;
+  optional string logo_url = 8;
+  repeated TechnologyLink technology_links = 9;
+  repeated string tags = 10;
+  google.protobuf.Timestamp created_at = 11;
+  google.protobuf.Timestamp updated_at = 12;
+  optional string repo = 13;
+  optional string branch = 14;
+  optional string language = 15;
+  optional string file_path = 16;
+  bool has_view = 17;
+  optional string view_label = 18;
+}
+
+// ViewSummary represents a view in the workspace tree.
+message ViewSummary {
+  int32 id = 1;
+  string org_id = 2;
+  optional int32 owner_element_id = 3;
+  string name = 4;
+  optional string label = 5;
+  bool is_root = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+// ElementPlacement represents an element's position on a specific diagram.
+message ElementPlacement {
+  int32 id = 1;
+  int32 view_id = 2;
+  int32 element_id = 3;
+  double position_x = 4;
+  double position_y = 5;
+}
+
+// PlacedElement is an element placement with denormalised element data for
+// canvas rendering.
+message PlacedElement {
+  int32 id = 1;
+  int32 view_id = 2;
+  int32 element_id = 3;
+  double position_x = 4;
+  double position_y = 5;
+  string name = 6;
+  optional string description = 7;
+  optional string kind = 8;
+  optional string technology = 9;
+  optional string url = 10;
+  optional string logo_url = 11;
+  repeated TechnologyLink technology_links = 12;
+  repeated string tags = 13;
+  optional string repo = 14;
+  optional string branch = 15;
+  optional string file_path = 16;
+  optional string language = 17;
+}
+
+// Connector represents a directed connection between two elements on a view.
+message Connector {
+  int32 id = 1;
+  int32 view_id = 2;
+  int32 source_element_id = 3;
+  int32 target_element_id = 4;
+  optional string label = 5;
+  optional string description = 6;
+  optional string relationship = 7;
+  string direction = 8;
+  string style = 9;
+  optional string url = 10;
+  optional string source_handle = 11;
+  optional string target_handle = 12;
+  google.protobuf.Timestamp created_at = 13;
+  google.protobuf.Timestamp updated_at = 14;
+}
+
+// ElementNavigation represents an element-to-view navigation link.
+message ElementNavigation {
+  int32 id = 1;
+  int32 element_id = 2;
+  int32 from_view_id = 3;
+  int32 to_view_id = 4;
+}
+
+// ViewContent holds all placed elements and connectors for a single view.
+message ViewContent {
+  repeated PlacedElement placements = 1;
+  repeated Connector connectors = 2;
+}
+
+// ─── Domain types ────────────────────────────────────────────────────────────
+
+// View represents a view record.
+message View {
+  int32 id = 1;
+  string org_id = 2;
+  string name = 3;
+  optional string description = 4;
+  optional string level_label = 5;
+  optional int32 parent_view_id = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+  int32 level = 9;
+  repeated View children = 10;
+  int32 depth = 11;
+  optional int32 owner_element_id = 12;
+}
+
+// ─── Delete request/response messages ────────────────────────────────────────
+
+message DeleteViewRequest {
+  // Required. UUID of the organisation that owns the view.
+  string org_id = 1;
+  // Required. Integer ID of the view to delete.
+  int32 view_id = 2;
+  // Optional. API key for request-level authentication.
+  optional string api_key = 3;
+}
+message DeleteViewResponse {}
+
+message DeleteElementRequest {
+  // Required. UUID of the organisation that owns the element.
+  string org_id = 1;
+  // Required. Integer ID of the element to delete.
+  int32 element_id = 2;
+  // Optional. API key for request-level authentication.
+  optional string api_key = 3;
+}
+message DeleteElementResponse {}
+
+message DeleteConnectorRequest {
+  // Required. UUID of the organisation (used for ownership verification).
+  string org_id = 1;
+  // Required. Integer ID of the connector to delete.
+  int32 connector_id = 2;
+  // Optional. API key for request-level authentication.
+  optional string api_key = 3;
+}
+message DeleteConnectorResponse {}
+
+message DeleteElementNavigationRequest {
+  // Required. UUID of the organisation (used for ownership verification).
+  string org_id = 1;
+  // Required. Integer ID of the element navigation to delete.
+  int32 navigation_id = 2;
+  // Optional. API key for request-level authentication.
+  optional string api_key = 3;
+}
+message DeleteElementNavigationResponse {}
+
+// TechnologyLink is one entry in elements.technology_links (JSONB array,
+// max 3 per element).
+message TechnologyLink {
+  // "catalog" (uses a well-known slug) or "custom" (user-provided label only).
+  string type = 1;
+
+  // Required for type="catalog".  Identifies the technology in the icon catalog.
+  optional string slug = 2;
+
+  // Required.  Human-readable display label.
+  string label = 3;
+
+  // When true this technology's icon is used as the primary element icon.
+  bool is_primary_icon = 4;
+}
+
+// ─── Browser-facing request/response messages ────────────────────────────────
+
+// ── Views ────────────────────────────────────────────────────────────────
+
+message ListViewsRequest {}
+message ListViewsResponse {
+  repeated View views = 1;
+}
+
+message GetViewRequest {
+  int32 view_id = 1;
+}
+message GetViewResponse {
+  View view = 1;
+}
+
+message UpdateViewRequest {
+  int32 view_id = 1;
+  string name = 2;
+  optional string description = 3;
+  optional string level_label = 4;
+}
+message UpdateViewResponse {
+  View view = 1;
+}
+
+message SetViewLevelRequest {
+  int32 view_id = 1;
+  int32 level = 2;
+}
+message SetViewLevelResponse {}
+
+message ExploreTreeNode {
+  int32 id = 1;
+  string name = 2;
+  optional string level_label = 3;
+  int32 level = 4;
+  google.protobuf.Timestamp created_at = 5;
+  optional int32 parent_view_id = 6;
+}
+
+// ── GetWorkspace ─────────────────────────────────────────────────────────
+
+message GetWorkspaceRequest {
+  // Required. UUID of the organisation.
+  string org_id = 1;
+
+  // Optional. Filter by owner element ID.
+  optional int32 parent_id = 2;
+
+  // Optional. Filter by abstraction level.
+  optional int32 level = 3;
+
+  // Optional. Search string for view name.
+  optional string search = 4;
+
+  // Optional. Pagination limit.
+  int32 limit = 5;
+
+  // Optional. Pagination offset.
+  int32 offset = 6;
+
+  // Optional. If true, include placements, connectors and navigations for the returned views.
+  bool include_content = 7;
+
+  // Optional. API key for request-level authentication.
+  optional string api_key = 8;
+}
+
+message GetWorkspaceResponse {
+  repeated View views = 1;
+  int32 total_count = 2;
+
+  // Populated if include_content is true in request.
+  // Map of view_id -> view content (placements, connectors).
+  map<int32, ViewContent> content = 3;
+  repeated ElementNavigationInfo navigations = 4;
+}
+
+message IncomingElementNavigationInfo {
+  int32 id = 1;
+  int32 element_id = 2;
+  string element_name = 3;
+  int32 from_view_id = 4;
+  string from_view_name = 5;
+  int32 to_view_id = 6;
+}
+
+message ListIncomingElementNavigationsRequest {
+  int32 view_id = 1;
+}
+message ListIncomingElementNavigationsResponse {
+  repeated IncomingElementNavigationInfo navigations = 1;
+}
+
+// ── Elements ──────────────────────────────────────────────────────────────
+
+message ListElementsRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+  string search = 3;
+}
+message ListElementsResponse {
+  repeated Element elements = 1;
+}
+
+message GetElementRequest {
+  int32 element_id = 1;
+}
+message GetElementResponse {
+  Element element = 1;
+}
+
+message CreateElementRequest {
+  string name = 1;
+  optional string kind = 2;
+  optional string description = 3;
+  optional string technology = 4;
+  optional string url = 5;
+  optional string logo_url = 6;
+  repeated TechnologyLink technology_links = 7;
+  repeated string tags = 8;
+  optional string repo = 9;
+  optional string branch = 10;
+  optional string language = 11;
+  optional string file_path = 12;
+}
+message CreateElementResponse {
+  Element element = 1;
+}
+
+message UpdateElementRequest {
+  int32 element_id = 1;
+  string name = 2;
+  optional string kind = 3;
+  optional string description = 4;
+  optional string technology = 5;
+  optional string url = 6;
+  optional string logo_url = 7;
+  repeated TechnologyLink technology_links = 8;
+  repeated string tags = 9;
+  optional string repo = 10;
+  optional string branch = 11;
+  optional string language = 12;
+  optional string file_path = 13;
+}
+message UpdateElementResponse {
+  Element element = 1;
+}
+
+message ViewPlacementInfo {
+  int32 view_id = 1;
+  string view_name = 2;
+}
+
+message ListElementPlacementsRequest {
+  int32 element_id = 1;
+}
+message ListElementPlacementsResponse {
+  repeated ViewPlacementInfo placements = 1;
+}
+
+// ── Placements ───────────────────────────────────────────────────────────
+
+message ListPlacementsRequest {
+  int32 view_id = 1;
+}
+message ListPlacementsResponse {
+  repeated PlacedElement placements = 1;
+}
+
+message CreatePlacementRequest {
+  int32 view_id = 1;
+  int32 element_id = 2;
+  double position_x = 3;
+  double position_y = 4;
+}
+message CreatePlacementResponse {
+  PlacedElement placement = 1;
+}
+
+message UpdatePlacementPositionRequest {
+  int32 view_id = 1;
+  int32 element_id = 2;
+  double position_x = 3;
+  double position_y = 4;
+}
+message UpdatePlacementPositionResponse {}
+
+message DeletePlacementRequest {
+  int32 view_id = 1;
+  int32 element_id = 2;
+}
+message DeletePlacementResponse {}
+
+// ── Connectors ───────────────────────────────────────────────────────────
+
+message ListConnectorsRequest {
+  int32 view_id = 1;
+}
+message ListConnectorsResponse {
+  repeated Connector connectors = 1;
+}
+
+message CreateConnectorRequest {
+  int32 view_id = 1;
+  int32 source_element_id = 2;
+  int32 target_element_id = 3;
+  optional string label = 4;
+  optional string description = 5;
+  optional string relationship = 6;
+  string direction = 7;
+  string style = 8;
+  optional string url = 9;
+  optional string source_handle = 10;
+  optional string target_handle = 11;
+}
+message CreateConnectorResponse {
+  Connector connector = 1;
+}
+
+message UpdateConnectorRequest {
+  int32 view_id = 1;
+  int32 connector_id = 2;
+  optional int32 source_element_id = 3;
+  optional int32 target_element_id = 4;
+  optional string label = 5;
+  optional string description = 6;
+  optional string relationship = 7;
+  string direction = 8;
+  string style = 9;
+  optional string url = 10;
+  optional string source_handle = 11;
+  optional string target_handle = 12;
+}
+message UpdateConnectorResponse {
+  Connector connector = 1;
+}
+
+// ── Element Navigations ──────────────────────────────────────────────────
+
+message ElementNavigationInfo {
+  int32 id = 1;
+  optional int32 element_id = 2;
+  int32 from_view_id = 3;
+  int32 to_view_id = 4;
+  string to_view_name = 5;
+  string relation_type = 6;
+}
+
+message ListElementNavigationsRequest {
+  int32 element_id = 1;
+  optional int32 from_view_id = 2;
+  optional int32 to_view_id = 3;
+}
+message ListElementNavigationsResponse {
+  repeated ElementNavigationInfo navigations = 1;
+}
+
+message CreateElementNavigationRequest {
+  int32 element_id = 1;
+  int32 from_view_id = 2;
+  int32 to_view_id = 3;
+}
+message CreateElementNavigationResponse {
+  ElementNavigationInfo navigation = 1;
+}
+
+message DeleteElementNavigationByIdRequest {
+  int32 navigation_id = 1;
+}
+message DeleteElementNavigationByIdResponse {}
+
+// ── View Layers ──────────────────────────────────────────────────────────
+
+message ViewLayer {
+  int32 id = 1;
+  int32 view_id = 2;
+  string name = 3;
+  repeated string tags = 4;
+  string color = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}
+
+message ListViewLayersRequest {
+  int32 view_id = 1;
+}
+
+message ListViewLayersResponse {
+  repeated ViewLayer layers = 1;
+}
+
+message CreateViewLayerRequest {
+  int32 view_id = 1;
+  string name = 2;
+  repeated string tags = 3;
+  string color = 4;
+}
+
+message CreateViewLayerResponse {
+  ViewLayer layer = 1;
+}
+
+message UpdateViewLayerRequest {
+  int32 layer_id = 1;
+  optional string name = 2;
+  repeated string tags = 3;
+  optional string color = 4;
+}
+
+message UpdateViewLayerResponse {
+  ViewLayer layer = 1;
+}
+
+message DeleteViewLayerRequest {
+  int32 layer_id = 1;
+}
+
+message DeleteViewLayerResponse {}
+
+// ── Comment Threads ──────────────────────────────────────────────────────
+
+message CommentInfo {
+  int32 id = 1;
+  string org_id = 2;
+  int32 view_id = 3;
+  int32 thread_id = 4;
+  string author_id = 5;
+  string author_username = 6;
+  string body = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+}
+
+message ThreadInfo {
+  int32 id = 1;
+  string org_id = 2;
+  int32 view_id = 3;
+  optional int32 element_id = 4;
+  optional int32 connector_id = 5;
+  string created_by = 6;
+  string created_by_username = 7;
+  string status = 8;
+  google.protobuf.Timestamp created_at = 9;
+  optional google.protobuf.Timestamp resolved_at = 10;
+  repeated CommentInfo comments = 11;
+}
+
+message ListThreadsRequest {
+  int32 view_id = 1;
+  optional int32 element_id = 2;
+  optional int32 connector_id = 3;
+}
+message ListThreadsResponse {
+  repeated ThreadInfo threads = 1;
+}
+
+message CreateThreadRequest {
+  int32 view_id = 1;
+  optional int32 element_id = 2;
+  optional int32 connector_id = 3;
+  string body = 4;
+}
+message CreateThreadResponse {
+  ThreadInfo thread = 1;
+}
+
+message AddCommentRequest {
+  int32 view_id = 1;
+  int32 thread_id = 2;
+  string body = 3;
+}
+message AddCommentResponse {
+  CommentInfo comment = 1;
+}
+
+message ResolveThreadRequest {
+  int32 view_id = 1;
+  int32 thread_id = 2;
+  bool resolved = 3;
+}
+message ResolveThreadResponse {}
+
+// ── Reactions ────────────────────────────────────────────────────────────
+
+message NodeReactionSummary {
+  int32 element_id = 1;
+  string emoji = 2;
+  int32 count = 3;
+  bool reacted_by_me = 4;
+}
+
+message ListReactionsRequest {
+  int32 view_id = 1;
+}
+message ListReactionsResponse {
+  repeated NodeReactionSummary reactions = 1;
+}
+
+message ToggleReactionRequest {
+  int32 view_id = 1;
+  int32 element_id = 2;
+  string emoji = 3;
+}
+message ToggleReactionResponse {
+  bool active = 1;
+}

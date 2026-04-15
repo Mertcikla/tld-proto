@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package diag.v1;
+
+import "diag/v1/workspace_service.proto";
+
+option go_package = "buf.build/gen/go/tldiagramcom/diagram/protocolbuffers/go/diag/v1;diagv1";
+
+// ImportService handles importing external architecture descriptions into the unified workspace model.
+service ImportService {
+  // ImportResources creates a view and its content from the provided plan.
+  rpc ImportResources(ImportResourcesRequest) returns (ImportResourcesResponse);
+  // ParseStructurizr parses a Structurizr DSL workspace and returns a plan.
+  rpc ParseStructurizr(ParseStructurizrRequest) returns (ParseStructurizrResponse);
+}
+
+message ImportResourcesRequest {
+  string org_id = 1;
+  repeated PlanElement elements = 2;
+  repeated PlanConnector connectors = 3;
+}
+
+message ImportResourcesResponse {
+  int32 view_id = 1;
+  string view_url = 2;
+  string message = 3;
+}
+
+message ParseStructurizrRequest {
+  string code = 1;
+}
+
+message ParseStructurizrResponse {
+  repeated PlanElement elements = 1;
+  repeated PlanConnector connectors = 2;
+  repeated string warnings = 3;
+}

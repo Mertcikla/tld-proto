@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package diag.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "buf.build/gen/go/tldiagramcom/diagram/protocolbuffers/go/diag/v1;diagv1";
+
+// DeviceService implements the OAuth 2.0 Device Authorization Grant (RFC 8628)
+// for CLI authentication. Authorize and PollToken are public; GetCodeInfo and
+// Confirm require authentication.
+service DeviceService {
+  rpc Authorize(DeviceAuthorizeRequest) returns (DeviceAuthorizeResponse);
+  rpc PollToken(DevicePollTokenRequest) returns (DevicePollTokenResponse);
+  // Requires auth.
+  rpc GetCodeInfo(GetCodeInfoRequest) returns (GetCodeInfoResponse);
+  // Requires auth.
+  rpc Confirm(DeviceConfirmRequest) returns (DeviceConfirmResponse);
+}
+
+// ── Authorize ────────────────────────────────────────────────────────────
+
+message DeviceAuthorizeRequest {
+  string client_name = 1;
+}
+message DeviceAuthorizeResponse {
+  string device_code = 1;
+  string user_code = 2;
+  string verification_uri = 3;
+  string verification_uri_complete = 4;
+  int32 expires_in = 5;
+  int32 interval = 6;
+}
+
+// ── Poll Token ───────────────────────────────────────────────────────────
+
+message DevicePollTokenRequest {
+  string device_code = 1;
+}
+message DevicePollTokenResponse {
+  // Set when approved and key consumed.
+  string api_key = 1;
+  string org_id = 2;
+  // Set when still pending or error.
+  string error = 3;
+}
+
+// ── Get Code Info ────────────────────────────────────────────────────────
+
+message GetCodeInfoRequest {
+  string user_code = 1;
+}
+message GetCodeInfoResponse {
+  string user_code = 1;
+  string client_name = 2;
+  google.protobuf.Timestamp expires_at = 3;
+}
+
+// ── Confirm ──────────────────────────────────────────────────────────────
+
+message DeviceConfirmRequest {
+  string user_code = 1;
+  string action = 2; // "approve" or "deny"
+  string org_id = 3;
+}
+message DeviceConfirmResponse {}

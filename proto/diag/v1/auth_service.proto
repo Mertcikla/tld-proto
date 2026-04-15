@@ -1,0 +1,154 @@
+syntax = "proto3";
+
+package diag.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "buf.build/gen/go/tldiagramcom/diagram/protocolbuffers/go/diag/v1;diagv1";
+
+// AuthService handles user authentication and account management.
+// Most RPCs are public (no auth required). RPCs that require authentication
+// are noted in their comments.
+service AuthService {
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc Logout(LogoutRequest) returns (LogoutResponse);
+  rpc GetMe(GetMeRequest) returns (GetMeResponse);
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+  rpc GetCSRFToken(GetCSRFTokenRequest) returns (GetCSRFTokenResponse);
+  rpc ForgotPassword(ForgotPasswordRequest) returns (ForgotPasswordResponse);
+  rpc ResetPassword(ResetPasswordRequest) returns (ResetPasswordResponse);
+  rpc VerifyEmail(VerifyEmailRequest) returns (VerifyEmailResponse);
+  rpc ResendVerification(ResendVerificationRequest) returns (ResendVerificationResponse);
+  // Requires auth.
+  rpc ListProviders(ListProvidersRequest) returns (ListProvidersResponse);
+  // Requires auth.
+  rpc UnlinkProvider(UnlinkProviderRequest) returns (UnlinkProviderResponse);
+}
+
+// ── Shared messages ──────────────────────────────────────────────────────
+
+message OrgInfo {
+  string id = 1;
+  string name = 2;
+  string slug = 3;
+  string plan = 4;
+  optional google.protobuf.Timestamp trial_started_at = 5;
+  optional google.protobuf.Timestamp trial_ends_at = 6;
+  bool trial_used = 7;
+}
+
+message UserInfo {
+  string id = 1;
+  string username = 2;
+  optional string email = 3;
+  string role = 4;
+  OrgInfo org = 5;
+  google.protobuf.Timestamp created_at = 6;
+  optional string accent_color = 7;
+  bool email_verified = 8;
+}
+
+// ── Login ─────────────────────────────────────────────────────────────────
+
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+  string turnstile_token = 3;
+}
+
+message LoginResponse {
+  UserInfo user = 1;
+  // session_id is returned so non-browser clients can use Bearer auth.
+  string session_id = 2;
+}
+
+// ── Logout ────────────────────────────────────────────────────────────────
+
+message LogoutRequest {}
+message LogoutResponse {
+}
+
+// ── GetMe ─────────────────────────────────────────────────────────────────
+
+message GetMeRequest {}
+message GetMeResponse {
+  UserInfo user = 1;
+}
+
+// ── Register ──────────────────────────────────────────────────────────────
+
+message RegisterRequest {
+  string username = 1;
+  string email = 2;
+  string password = 3;
+  string org_name = 4;
+  string turnstile_token = 5;
+}
+
+message RegisterResponse {
+  UserInfo user = 1;
+  string session_id = 2;
+  bool pending_verification = 3;
+}
+
+// ── CSRF Token ────────────────────────────────────────────────────────────
+
+message GetCSRFTokenRequest {}
+message GetCSRFTokenResponse {
+  string token = 1;
+}
+
+// ── Forgot Password ──────────────────────────────────────────────────────
+
+message ForgotPasswordRequest {
+  string email = 1;
+}
+message ForgotPasswordResponse {}
+
+// ── Reset Password ───────────────────────────────────────────────────────
+
+message ResetPasswordRequest {
+  string token = 1;
+  string password = 2;
+}
+message ResetPasswordResponse {}
+
+// ── Verify Email ─────────────────────────────────────────────────────────
+
+message VerifyEmailRequest {
+  string token = 1;
+}
+
+message VerifyEmailResponse {
+  UserInfo user = 1;
+  string session_id = 2;
+}
+
+// ── Resend Verification ──────────────────────────────────────────────────
+
+message ResendVerificationRequest {
+  string email = 1;
+  string username = 2;
+}
+message ResendVerificationResponse {}
+
+// ── OAuth Providers ──────────────────────────────────────────────────────
+
+message OAuthAccountInfo {
+  string id = 1;
+  string user_id = 2;
+  string provider = 3;
+  string provider_user_id = 4;
+  string email = 5;
+  google.protobuf.Timestamp created_at = 6;
+}
+
+message ListProvidersRequest {}
+message ListProvidersResponse {
+  repeated OAuthAccountInfo providers = 1;
+}
+
+message UnlinkProviderRequest {
+  string provider = 1;
+}
+message UnlinkProviderResponse {}

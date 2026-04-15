@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package diag.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+option go_package = "buf.build/gen/go/tldiagramcom/diagram/protocolbuffers/go/diag/v1;diagv1";
+
+// NotificationService manages user notifications.
+// All RPCs require authentication.
+service NotificationService {
+  rpc ListNotifications(ListNotificationsRequest) returns (ListNotificationsResponse);
+  rpc MarkRead(MarkNotificationReadRequest) returns (MarkNotificationReadResponse);
+  rpc MarkAllRead(MarkAllNotificationsReadRequest) returns (MarkAllNotificationsReadResponse);
+}
+
+message NotificationItem {
+  string id = 1;
+  string org_id = 2;
+  string user_id = 3;
+  string type = 4;
+  string title = 5;
+  string body = 6;
+  google.protobuf.Struct metadata = 7;
+  optional google.protobuf.Timestamp read_at = 8;
+  google.protobuf.Timestamp created_at = 9;
+}
+
+message ListNotificationsRequest {}
+message ListNotificationsResponse {
+  repeated NotificationItem notifications = 1;
+}
+
+message MarkNotificationReadRequest {
+  string id = 1;
+}
+message MarkNotificationReadResponse {}
+
+message MarkAllNotificationsReadRequest {}
+message MarkAllNotificationsReadResponse {}

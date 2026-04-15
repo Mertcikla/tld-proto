@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package diag.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "buf.build/gen/go/tldiagramcom/diagram/protocolbuffers/go/diag/v1;diagv1";
+
+// DependencyService provides a cross-view index of all elements and connectors.
+// All RPCs require authentication.
+service DependencyService {
+  rpc ListDependencies(ListDependenciesRequest) returns (ListDependenciesResponse);
+}
+
+message DependencyElement {
+  string id = 1;
+  string name = 2;
+  optional string description = 3;
+  optional string type = 4;
+  optional string technology = 5;
+  optional string url = 6;
+  optional string logo_url = 7;
+  repeated DependencyTechnologyLink technology_links = 8;
+  repeated string tags = 9;
+  optional string repo = 10;
+  optional string branch = 11;
+  optional string language = 12;
+  optional string file_path = 13;
+  google.protobuf.Timestamp created_at = 14;
+  google.protobuf.Timestamp updated_at = 15;
+}
+
+message DependencyTechnologyLink {
+  string type = 1;
+  string slug = 2;
+  string label = 3;
+  bool is_primary_icon = 4;
+}
+
+message DependencyConnector {
+  string id = 1;
+  string view_id = 2;
+  string source_element_id = 3;
+  string target_element_id = 4;
+  optional string label = 5;
+  optional string description = 6;
+  optional string relationship = 7;
+  string direction = 8;
+  string style = 9;
+  optional string url = 10;
+  optional string source_handle = 11;
+  optional string target_handle = 12;
+  google.protobuf.Timestamp created_at = 13;
+  google.protobuf.Timestamp updated_at = 14;
+}
+
+message ListDependenciesRequest {}
+message ListDependenciesResponse {
+  repeated DependencyElement elements = 1;
+  repeated DependencyConnector connectors = 2;
+}

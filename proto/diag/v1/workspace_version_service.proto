@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package diag.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "buf.build/gen/go/tldiagramcom/diagram/protocolbuffers/go/diag/v1;diagv1";
+
+// WorkspaceVersionService manages workspace version snapshots.
+// All RPCs require authentication.
+service WorkspaceVersionService {
+  rpc ListVersions(ListVersionsRequest) returns (ListVersionsResponse);
+  rpc GetLatest(GetLatestVersionRequest) returns (GetLatestVersionResponse);
+  rpc CreateVersion(CreateVersionRequest) returns (CreateVersionResponse);
+  rpc GetSettings(GetVersionSettingsRequest) returns (GetVersionSettingsResponse);
+  rpc UpdateSettings(UpdateVersionSettingsRequest) returns (UpdateVersionSettingsResponse);
+}
+
+// ── Workspace Version ────────────────────────────────────────────────────
+
+message WorkspaceVersionInfo {
+  string id = 1;
+  string org_id = 2;
+  string version_id = 3;
+  string source = 4;
+  optional string parent_version_id = 5;
+  int32 view_count = 6;
+  int32 element_count = 7;
+  int32 connector_count = 8;
+  reserved 9;
+  reserved "link_count";
+  optional string description = 10;
+  optional string workspace_hash = 11;
+  google.protobuf.Timestamp created_at = 12;
+}
+
+// ── List Versions ────────────────────────────────────────────────────────
+
+message ListVersionsRequest {
+  int32 limit = 1;
+}
+message ListVersionsResponse {
+  repeated WorkspaceVersionInfo versions = 1;
+}
+
+// ── Get Latest ───────────────────────────────────────────────────────────
+
+message GetLatestVersionRequest {}
+message GetLatestVersionResponse {
+  WorkspaceVersionInfo version = 1;
+}
+
+// ── Create Version ───────────────────────────────────────────────────────
+
+message CreateVersionRequest {
+  string version_id = 1;
+  string description = 2;
+  string workspace_hash = 3;
+}
+message CreateVersionResponse {
+  WorkspaceVersionInfo version = 1;
+}
+
+// ── Settings ─────────────────────────────────────────────────────────────
+
+message GetVersionSettingsRequest {}
+message GetVersionSettingsResponse {
+  bool cli_versioning_enabled = 1;
+}
+
+message UpdateVersionSettingsRequest {
+  bool cli_versioning_enabled = 1;
+}
+message UpdateVersionSettingsResponse {
+  bool cli_versioning_enabled = 1;
+}
