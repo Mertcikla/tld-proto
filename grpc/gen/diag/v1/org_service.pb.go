@@ -1777,6 +1777,58 @@ func (*RevokeAPIKeyResponse) Descriptor() ([]byte, []int) {
 	return file_diag_v1_org_service_proto_rawDescGZIP(), []int{33}
 }
 
+type Tag struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Color         string                 `protobuf:"bytes,1,opt,name=color,proto3" json:"color,omitempty"`
+	Description   *string                `protobuf:"bytes,2,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Tag) Reset() {
+	*x = Tag{}
+	mi := &file_diag_v1_org_service_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Tag) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Tag) ProtoMessage() {}
+
+func (x *Tag) ProtoReflect() protoreflect.Message {
+	mi := &file_diag_v1_org_service_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Tag.ProtoReflect.Descriptor instead.
+func (*Tag) Descriptor() ([]byte, []int) {
+	return file_diag_v1_org_service_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *Tag) GetColor() string {
+	if x != nil {
+		return x.Color
+	}
+	return ""
+}
+
+func (x *Tag) GetDescription() string {
+	if x != nil && x.Description != nil {
+		return *x.Description
+	}
+	return ""
+}
+
 type ListTagColorsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -1785,7 +1837,7 @@ type ListTagColorsRequest struct {
 
 func (x *ListTagColorsRequest) Reset() {
 	*x = ListTagColorsRequest{}
-	mi := &file_diag_v1_org_service_proto_msgTypes[34]
+	mi := &file_diag_v1_org_service_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1797,7 +1849,7 @@ func (x *ListTagColorsRequest) String() string {
 func (*ListTagColorsRequest) ProtoMessage() {}
 
 func (x *ListTagColorsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_org_service_proto_msgTypes[34]
+	mi := &file_diag_v1_org_service_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1810,20 +1862,20 @@ func (x *ListTagColorsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTagColorsRequest.ProtoReflect.Descriptor instead.
 func (*ListTagColorsRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_org_service_proto_rawDescGZIP(), []int{34}
+	return file_diag_v1_org_service_proto_rawDescGZIP(), []int{35}
 }
 
 type ListTagColorsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Map of tag name to hex color (e.g., {"tag1": "#FF0000"})
-	TagColors     map[string]string `protobuf:"bytes,1,rep,name=tag_colors,json=tagColors,proto3" json:"tag_colors,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	// Map of tag name to tag info
+	Tags          map[string]*Tag `protobuf:"bytes,1,rep,name=tags,proto3" json:"tags,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListTagColorsResponse) Reset() {
 	*x = ListTagColorsResponse{}
-	mi := &file_diag_v1_org_service_proto_msgTypes[35]
+	mi := &file_diag_v1_org_service_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1835,7 +1887,7 @@ func (x *ListTagColorsResponse) String() string {
 func (*ListTagColorsResponse) ProtoMessage() {}
 
 func (x *ListTagColorsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_org_service_proto_msgTypes[35]
+	mi := &file_diag_v1_org_service_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1848,39 +1900,40 @@ func (x *ListTagColorsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTagColorsResponse.ProtoReflect.Descriptor instead.
 func (*ListTagColorsResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_org_service_proto_rawDescGZIP(), []int{35}
+	return file_diag_v1_org_service_proto_rawDescGZIP(), []int{36}
 }
 
-func (x *ListTagColorsResponse) GetTagColors() map[string]string {
+func (x *ListTagColorsResponse) GetTags() map[string]*Tag {
 	if x != nil {
-		return x.TagColors
+		return x.Tags
 	}
 	return nil
 }
 
-type SetTagColorRequest struct {
+type UpdateTagRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Tag           string                 `protobuf:"bytes,1,opt,name=tag,proto3" json:"tag,omitempty"`
 	Color         string                 `protobuf:"bytes,2,opt,name=color,proto3" json:"color,omitempty"`
+	Description   *string                `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SetTagColorRequest) Reset() {
-	*x = SetTagColorRequest{}
-	mi := &file_diag_v1_org_service_proto_msgTypes[36]
+func (x *UpdateTagRequest) Reset() {
+	*x = UpdateTagRequest{}
+	mi := &file_diag_v1_org_service_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SetTagColorRequest) String() string {
+func (x *UpdateTagRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SetTagColorRequest) ProtoMessage() {}
+func (*UpdateTagRequest) ProtoMessage() {}
 
-func (x *SetTagColorRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_org_service_proto_msgTypes[36]
+func (x *UpdateTagRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_diag_v1_org_service_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1891,46 +1944,53 @@ func (x *SetTagColorRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetTagColorRequest.ProtoReflect.Descriptor instead.
-func (*SetTagColorRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_org_service_proto_rawDescGZIP(), []int{36}
+// Deprecated: Use UpdateTagRequest.ProtoReflect.Descriptor instead.
+func (*UpdateTagRequest) Descriptor() ([]byte, []int) {
+	return file_diag_v1_org_service_proto_rawDescGZIP(), []int{37}
 }
 
-func (x *SetTagColorRequest) GetTag() string {
+func (x *UpdateTagRequest) GetTag() string {
 	if x != nil {
 		return x.Tag
 	}
 	return ""
 }
 
-func (x *SetTagColorRequest) GetColor() string {
+func (x *UpdateTagRequest) GetColor() string {
 	if x != nil {
 		return x.Color
 	}
 	return ""
 }
 
-type SetTagColorResponse struct {
+func (x *UpdateTagRequest) GetDescription() string {
+	if x != nil && x.Description != nil {
+		return *x.Description
+	}
+	return ""
+}
+
+type UpdateTagResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SetTagColorResponse) Reset() {
-	*x = SetTagColorResponse{}
-	mi := &file_diag_v1_org_service_proto_msgTypes[37]
+func (x *UpdateTagResponse) Reset() {
+	*x = UpdateTagResponse{}
+	mi := &file_diag_v1_org_service_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SetTagColorResponse) String() string {
+func (x *UpdateTagResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SetTagColorResponse) ProtoMessage() {}
+func (*UpdateTagResponse) ProtoMessage() {}
 
-func (x *SetTagColorResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_org_service_proto_msgTypes[37]
+func (x *UpdateTagResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_diag_v1_org_service_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1941,9 +2001,9 @@ func (x *SetTagColorResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetTagColorResponse.ProtoReflect.Descriptor instead.
-func (*SetTagColorResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_org_service_proto_rawDescGZIP(), []int{37}
+// Deprecated: Use UpdateTagResponse.ProtoReflect.Descriptor instead.
+func (*UpdateTagResponse) Descriptor() ([]byte, []int) {
+	return file_diag_v1_org_service_proto_rawDescGZIP(), []int{38}
 }
 
 var File_diag_v1_org_service_proto protoreflect.FileDescriptor
@@ -2073,18 +2133,23 @@ const file_diag_v1_org_service_proto_rawDesc = "" +
 	"\aapi_key\x18\x01 \x01(\v2\x16.diag.v1.CreatedAPIKeyR\x06apiKey\"%\n" +
 	"\x13RevokeAPIKeyRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"\x16\n" +
-	"\x14RevokeAPIKeyResponse\"\x16\n" +
-	"\x14ListTagColorsRequest\"\xa3\x01\n" +
-	"\x15ListTagColorsResponse\x12L\n" +
-	"\n" +
-	"tag_colors\x18\x01 \x03(\v2-.diag.v1.ListTagColorsResponse.TagColorsEntryR\ttagColors\x1a<\n" +
-	"\x0eTagColorsEntry\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"<\n" +
-	"\x12SetTagColorRequest\x12\x10\n" +
+	"\x14RevokeAPIKeyResponse\"R\n" +
+	"\x03Tag\x12\x14\n" +
+	"\x05color\x18\x01 \x01(\tR\x05color\x12%\n" +
+	"\vdescription\x18\x02 \x01(\tH\x00R\vdescription\x88\x01\x01B\x0e\n" +
+	"\f_description\"\x16\n" +
+	"\x14ListTagColorsRequest\"\x9c\x01\n" +
+	"\x15ListTagColorsResponse\x12<\n" +
+	"\x04tags\x18\x01 \x03(\v2(.diag.v1.ListTagColorsResponse.TagsEntryR\x04tags\x1aE\n" +
+	"\tTagsEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\"\n" +
+	"\x05value\x18\x02 \x01(\v2\f.diag.v1.TagR\x05value:\x028\x01\"q\n" +
+	"\x10UpdateTagRequest\x12\x10\n" +
 	"\x03tag\x18\x01 \x01(\tR\x03tag\x12\x14\n" +
-	"\x05color\x18\x02 \x01(\tR\x05color\"\x15\n" +
-	"\x13SetTagColorResponse2\xaa\n" +
+	"\x05color\x18\x02 \x01(\tR\x05color\x12%\n" +
+	"\vdescription\x18\x03 \x01(\tH\x00R\vdescription\x88\x01\x01B\x0e\n" +
+	"\f_description\"\x13\n" +
+	"\x11UpdateTagResponse2\xa4\n" +
 	"\n" +
 	"\n" +
 	"OrgService\x12T\n" +
@@ -2101,8 +2166,8 @@ const file_diag_v1_org_service_proto_rawDesc = "" +
 	"\vListAPIKeys\x12\x1b.diag.v1.ListAPIKeysRequest\x1a\x1c.diag.v1.ListAPIKeysResponse\x12K\n" +
 	"\fCreateAPIKey\x12\x1c.diag.v1.CreateAPIKeyRequest\x1a\x1d.diag.v1.CreateAPIKeyResponse\x12K\n" +
 	"\fRevokeAPIKey\x12\x1c.diag.v1.RevokeAPIKeyRequest\x1a\x1d.diag.v1.RevokeAPIKeyResponse\x12N\n" +
-	"\rListTagColors\x12\x1d.diag.v1.ListTagColorsRequest\x1a\x1e.diag.v1.ListTagColorsResponse\x12H\n" +
-	"\vSetTagColor\x12\x1b.diag.v1.SetTagColorRequest\x1a\x1c.diag.v1.SetTagColorResponse\x12W\n" +
+	"\rListTagColors\x12\x1d.diag.v1.ListTagColorsRequest\x1a\x1e.diag.v1.ListTagColorsResponse\x12B\n" +
+	"\tUpdateTag\x12\x19.diag.v1.UpdateTagRequest\x1a\x1a.diag.v1.UpdateTagResponse\x12W\n" +
 	"\x10SeedOrganization\x12 .diag.v1.SeedOrganizationRequest\x1a!.diag.v1.SeedOrganizationResponseBIZGbuf.build/gen/go/tldiagramcom/diagram/protocolbuffers/go/diag/v1;diagv1b\x06proto3"
 
 var (
@@ -2117,7 +2182,7 @@ func file_diag_v1_org_service_proto_rawDescGZIP() []byte {
 	return file_diag_v1_org_service_proto_rawDescData
 }
 
-var file_diag_v1_org_service_proto_msgTypes = make([]protoimpl.MessageInfo, 39)
+var file_diag_v1_org_service_proto_msgTypes = make([]protoimpl.MessageInfo, 40)
 var file_diag_v1_org_service_proto_goTypes = []any{
 	(*SeedOrganizationRequest)(nil),    // 0: diag.v1.SeedOrganizationRequest
 	(*SeedOrganizationResponse)(nil),   // 1: diag.v1.SeedOrganizationResponse
@@ -2153,73 +2218,75 @@ var file_diag_v1_org_service_proto_goTypes = []any{
 	(*CreateAPIKeyResponse)(nil),       // 31: diag.v1.CreateAPIKeyResponse
 	(*RevokeAPIKeyRequest)(nil),        // 32: diag.v1.RevokeAPIKeyRequest
 	(*RevokeAPIKeyResponse)(nil),       // 33: diag.v1.RevokeAPIKeyResponse
-	(*ListTagColorsRequest)(nil),       // 34: diag.v1.ListTagColorsRequest
-	(*ListTagColorsResponse)(nil),      // 35: diag.v1.ListTagColorsResponse
-	(*SetTagColorRequest)(nil),         // 36: diag.v1.SetTagColorRequest
-	(*SetTagColorResponse)(nil),        // 37: diag.v1.SetTagColorResponse
-	nil,                                // 38: diag.v1.ListTagColorsResponse.TagColorsEntry
-	(*timestamppb.Timestamp)(nil),      // 39: google.protobuf.Timestamp
+	(*Tag)(nil),                        // 34: diag.v1.Tag
+	(*ListTagColorsRequest)(nil),       // 35: diag.v1.ListTagColorsRequest
+	(*ListTagColorsResponse)(nil),      // 36: diag.v1.ListTagColorsResponse
+	(*UpdateTagRequest)(nil),           // 37: diag.v1.UpdateTagRequest
+	(*UpdateTagResponse)(nil),          // 38: diag.v1.UpdateTagResponse
+	nil,                                // 39: diag.v1.ListTagColorsResponse.TagsEntry
+	(*timestamppb.Timestamp)(nil),      // 40: google.protobuf.Timestamp
 }
 var file_diag_v1_org_service_proto_depIdxs = []int32{
-	39, // 0: diag.v1.Organization.trial_started_at:type_name -> google.protobuf.Timestamp
-	39, // 1: diag.v1.Organization.trial_ends_at:type_name -> google.protobuf.Timestamp
+	40, // 0: diag.v1.Organization.trial_started_at:type_name -> google.protobuf.Timestamp
+	40, // 1: diag.v1.Organization.trial_ends_at:type_name -> google.protobuf.Timestamp
 	2,  // 2: diag.v1.GetOrganizationResponse.organization:type_name -> diag.v1.Organization
 	2,  // 3: diag.v1.UpdateOrganizationResponse.organization:type_name -> diag.v1.Organization
 	7,  // 4: diag.v1.GetUsageResponse.diagrams:type_name -> diag.v1.UsageCounter
 	7,  // 5: diag.v1.GetUsageResponse.objects:type_name -> diag.v1.UsageCounter
 	7,  // 6: diag.v1.GetUsageResponse.members:type_name -> diag.v1.UsageCounter
 	7,  // 7: diag.v1.GetUsageResponse.editors:type_name -> diag.v1.UsageCounter
-	39, // 8: diag.v1.OrgMember.joined_at:type_name -> google.protobuf.Timestamp
+	40, // 8: diag.v1.OrgMember.joined_at:type_name -> google.protobuf.Timestamp
 	10, // 9: diag.v1.ListMembersResponse.members:type_name -> diag.v1.OrgMember
-	39, // 10: diag.v1.Invitation.created_at:type_name -> google.protobuf.Timestamp
-	39, // 11: diag.v1.Invitation.expires_at:type_name -> google.protobuf.Timestamp
+	40, // 10: diag.v1.Invitation.created_at:type_name -> google.protobuf.Timestamp
+	40, // 11: diag.v1.Invitation.expires_at:type_name -> google.protobuf.Timestamp
 	10, // 12: diag.v1.CreateInvitationResponse.member:type_name -> diag.v1.OrgMember
 	17, // 13: diag.v1.CreateInvitationResponse.invitation:type_name -> diag.v1.Invitation
 	17, // 14: diag.v1.ListInvitationsResponse.invitations:type_name -> diag.v1.Invitation
-	39, // 15: diag.v1.APIKey.created_at:type_name -> google.protobuf.Timestamp
-	39, // 16: diag.v1.APIKey.last_used_at:type_name -> google.protobuf.Timestamp
-	39, // 17: diag.v1.CreatedAPIKey.created_at:type_name -> google.protobuf.Timestamp
-	39, // 18: diag.v1.CreatedAPIKey.last_used_at:type_name -> google.protobuf.Timestamp
+	40, // 15: diag.v1.APIKey.created_at:type_name -> google.protobuf.Timestamp
+	40, // 16: diag.v1.APIKey.last_used_at:type_name -> google.protobuf.Timestamp
+	40, // 17: diag.v1.CreatedAPIKey.created_at:type_name -> google.protobuf.Timestamp
+	40, // 18: diag.v1.CreatedAPIKey.last_used_at:type_name -> google.protobuf.Timestamp
 	26, // 19: diag.v1.ListAPIKeysResponse.api_keys:type_name -> diag.v1.APIKey
 	27, // 20: diag.v1.CreateAPIKeyResponse.api_key:type_name -> diag.v1.CreatedAPIKey
-	38, // 21: diag.v1.ListTagColorsResponse.tag_colors:type_name -> diag.v1.ListTagColorsResponse.TagColorsEntry
-	3,  // 22: diag.v1.OrgService.GetOrganization:input_type -> diag.v1.GetOrganizationRequest
-	5,  // 23: diag.v1.OrgService.UpdateOrganization:input_type -> diag.v1.UpdateOrganizationRequest
-	8,  // 24: diag.v1.OrgService.GetUsage:input_type -> diag.v1.GetUsageRequest
-	11, // 25: diag.v1.OrgService.ListMembers:input_type -> diag.v1.ListMembersRequest
-	13, // 26: diag.v1.OrgService.UpdateMemberRole:input_type -> diag.v1.UpdateMemberRoleRequest
-	15, // 27: diag.v1.OrgService.RemoveMember:input_type -> diag.v1.RemoveMemberRequest
-	18, // 28: diag.v1.OrgService.CreateInvitation:input_type -> diag.v1.CreateInvitationRequest
-	20, // 29: diag.v1.OrgService.ListInvitations:input_type -> diag.v1.ListInvitationsRequest
-	22, // 30: diag.v1.OrgService.DeleteInvitation:input_type -> diag.v1.DeleteInvitationRequest
-	24, // 31: diag.v1.OrgService.ResendInvitation:input_type -> diag.v1.ResendInvitationRequest
-	28, // 32: diag.v1.OrgService.ListAPIKeys:input_type -> diag.v1.ListAPIKeysRequest
-	30, // 33: diag.v1.OrgService.CreateAPIKey:input_type -> diag.v1.CreateAPIKeyRequest
-	32, // 34: diag.v1.OrgService.RevokeAPIKey:input_type -> diag.v1.RevokeAPIKeyRequest
-	34, // 35: diag.v1.OrgService.ListTagColors:input_type -> diag.v1.ListTagColorsRequest
-	36, // 36: diag.v1.OrgService.SetTagColor:input_type -> diag.v1.SetTagColorRequest
-	0,  // 37: diag.v1.OrgService.SeedOrganization:input_type -> diag.v1.SeedOrganizationRequest
-	4,  // 38: diag.v1.OrgService.GetOrganization:output_type -> diag.v1.GetOrganizationResponse
-	6,  // 39: diag.v1.OrgService.UpdateOrganization:output_type -> diag.v1.UpdateOrganizationResponse
-	9,  // 40: diag.v1.OrgService.GetUsage:output_type -> diag.v1.GetUsageResponse
-	12, // 41: diag.v1.OrgService.ListMembers:output_type -> diag.v1.ListMembersResponse
-	14, // 42: diag.v1.OrgService.UpdateMemberRole:output_type -> diag.v1.UpdateMemberRoleResponse
-	16, // 43: diag.v1.OrgService.RemoveMember:output_type -> diag.v1.RemoveMemberResponse
-	19, // 44: diag.v1.OrgService.CreateInvitation:output_type -> diag.v1.CreateInvitationResponse
-	21, // 45: diag.v1.OrgService.ListInvitations:output_type -> diag.v1.ListInvitationsResponse
-	23, // 46: diag.v1.OrgService.DeleteInvitation:output_type -> diag.v1.DeleteInvitationResponse
-	25, // 47: diag.v1.OrgService.ResendInvitation:output_type -> diag.v1.ResendInvitationResponse
-	29, // 48: diag.v1.OrgService.ListAPIKeys:output_type -> diag.v1.ListAPIKeysResponse
-	31, // 49: diag.v1.OrgService.CreateAPIKey:output_type -> diag.v1.CreateAPIKeyResponse
-	33, // 50: diag.v1.OrgService.RevokeAPIKey:output_type -> diag.v1.RevokeAPIKeyResponse
-	35, // 51: diag.v1.OrgService.ListTagColors:output_type -> diag.v1.ListTagColorsResponse
-	37, // 52: diag.v1.OrgService.SetTagColor:output_type -> diag.v1.SetTagColorResponse
-	1,  // 53: diag.v1.OrgService.SeedOrganization:output_type -> diag.v1.SeedOrganizationResponse
-	38, // [38:54] is the sub-list for method output_type
-	22, // [22:38] is the sub-list for method input_type
-	22, // [22:22] is the sub-list for extension type_name
-	22, // [22:22] is the sub-list for extension extendee
-	0,  // [0:22] is the sub-list for field type_name
+	39, // 21: diag.v1.ListTagColorsResponse.tags:type_name -> diag.v1.ListTagColorsResponse.TagsEntry
+	34, // 22: diag.v1.ListTagColorsResponse.TagsEntry.value:type_name -> diag.v1.Tag
+	3,  // 23: diag.v1.OrgService.GetOrganization:input_type -> diag.v1.GetOrganizationRequest
+	5,  // 24: diag.v1.OrgService.UpdateOrganization:input_type -> diag.v1.UpdateOrganizationRequest
+	8,  // 25: diag.v1.OrgService.GetUsage:input_type -> diag.v1.GetUsageRequest
+	11, // 26: diag.v1.OrgService.ListMembers:input_type -> diag.v1.ListMembersRequest
+	13, // 27: diag.v1.OrgService.UpdateMemberRole:input_type -> diag.v1.UpdateMemberRoleRequest
+	15, // 28: diag.v1.OrgService.RemoveMember:input_type -> diag.v1.RemoveMemberRequest
+	18, // 29: diag.v1.OrgService.CreateInvitation:input_type -> diag.v1.CreateInvitationRequest
+	20, // 30: diag.v1.OrgService.ListInvitations:input_type -> diag.v1.ListInvitationsRequest
+	22, // 31: diag.v1.OrgService.DeleteInvitation:input_type -> diag.v1.DeleteInvitationRequest
+	24, // 32: diag.v1.OrgService.ResendInvitation:input_type -> diag.v1.ResendInvitationRequest
+	28, // 33: diag.v1.OrgService.ListAPIKeys:input_type -> diag.v1.ListAPIKeysRequest
+	30, // 34: diag.v1.OrgService.CreateAPIKey:input_type -> diag.v1.CreateAPIKeyRequest
+	32, // 35: diag.v1.OrgService.RevokeAPIKey:input_type -> diag.v1.RevokeAPIKeyRequest
+	35, // 36: diag.v1.OrgService.ListTagColors:input_type -> diag.v1.ListTagColorsRequest
+	37, // 37: diag.v1.OrgService.UpdateTag:input_type -> diag.v1.UpdateTagRequest
+	0,  // 38: diag.v1.OrgService.SeedOrganization:input_type -> diag.v1.SeedOrganizationRequest
+	4,  // 39: diag.v1.OrgService.GetOrganization:output_type -> diag.v1.GetOrganizationResponse
+	6,  // 40: diag.v1.OrgService.UpdateOrganization:output_type -> diag.v1.UpdateOrganizationResponse
+	9,  // 41: diag.v1.OrgService.GetUsage:output_type -> diag.v1.GetUsageResponse
+	12, // 42: diag.v1.OrgService.ListMembers:output_type -> diag.v1.ListMembersResponse
+	14, // 43: diag.v1.OrgService.UpdateMemberRole:output_type -> diag.v1.UpdateMemberRoleResponse
+	16, // 44: diag.v1.OrgService.RemoveMember:output_type -> diag.v1.RemoveMemberResponse
+	19, // 45: diag.v1.OrgService.CreateInvitation:output_type -> diag.v1.CreateInvitationResponse
+	21, // 46: diag.v1.OrgService.ListInvitations:output_type -> diag.v1.ListInvitationsResponse
+	23, // 47: diag.v1.OrgService.DeleteInvitation:output_type -> diag.v1.DeleteInvitationResponse
+	25, // 48: diag.v1.OrgService.ResendInvitation:output_type -> diag.v1.ResendInvitationResponse
+	29, // 49: diag.v1.OrgService.ListAPIKeys:output_type -> diag.v1.ListAPIKeysResponse
+	31, // 50: diag.v1.OrgService.CreateAPIKey:output_type -> diag.v1.CreateAPIKeyResponse
+	33, // 51: diag.v1.OrgService.RevokeAPIKey:output_type -> diag.v1.RevokeAPIKeyResponse
+	36, // 52: diag.v1.OrgService.ListTagColors:output_type -> diag.v1.ListTagColorsResponse
+	38, // 53: diag.v1.OrgService.UpdateTag:output_type -> diag.v1.UpdateTagResponse
+	1,  // 54: diag.v1.OrgService.SeedOrganization:output_type -> diag.v1.SeedOrganizationResponse
+	39, // [39:55] is the sub-list for method output_type
+	23, // [23:39] is the sub-list for method input_type
+	23, // [23:23] is the sub-list for extension type_name
+	23, // [23:23] is the sub-list for extension extendee
+	0,  // [0:23] is the sub-list for field type_name
 }
 
 func init() { file_diag_v1_org_service_proto_init() }
@@ -2233,13 +2300,15 @@ func file_diag_v1_org_service_proto_init() {
 	file_diag_v1_org_service_proto_msgTypes[19].OneofWrappers = []any{}
 	file_diag_v1_org_service_proto_msgTypes[26].OneofWrappers = []any{}
 	file_diag_v1_org_service_proto_msgTypes[27].OneofWrappers = []any{}
+	file_diag_v1_org_service_proto_msgTypes[34].OneofWrappers = []any{}
+	file_diag_v1_org_service_proto_msgTypes[37].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_diag_v1_org_service_proto_rawDesc), len(file_diag_v1_org_service_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   39,
+			NumMessages:   40,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

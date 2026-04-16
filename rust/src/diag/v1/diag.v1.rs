@@ -2008,26 +2008,33 @@ pub struct RevokeApiKeyRequest {
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct RevokeApiKeyResponse {
 }
-// ── Tag Colors ───────────────────────────────────────────────────────────
-
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct Tag {
+    #[prost(string, tag="1")]
+    pub color: ::prost::alloc::string::String,
+    #[prost(string, optional, tag="2")]
+    pub description: ::core::option::Option<::prost::alloc::string::String>,
+}
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct ListTagColorsRequest {
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ListTagColorsResponse {
-    /// Map of tag name to hex color (e.g., {"tag1": "#FF0000"})
-    #[prost(map="string, string", tag="1")]
-    pub tag_colors: ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    /// Map of tag name to tag info
+    #[prost(map="string, message", tag="1")]
+    pub tags: ::std::collections::HashMap<::prost::alloc::string::String, Tag>,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct SetTagColorRequest {
+pub struct UpdateTagRequest {
     #[prost(string, tag="1")]
     pub tag: ::prost::alloc::string::String,
     #[prost(string, tag="2")]
     pub color: ::prost::alloc::string::String,
+    #[prost(string, optional, tag="3")]
+    pub description: ::core::option::Option<::prost::alloc::string::String>,
 }
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct SetTagColorResponse {
+pub struct UpdateTagResponse {
 }
 // ── Change Password ──────────────────────────────────────────────────────
 

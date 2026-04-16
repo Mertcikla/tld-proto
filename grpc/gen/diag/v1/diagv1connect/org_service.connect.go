@@ -69,8 +69,8 @@ const (
 	// OrgServiceListTagColorsProcedure is the fully-qualified name of the OrgService's ListTagColors
 	// RPC.
 	OrgServiceListTagColorsProcedure = "/diag.v1.OrgService/ListTagColors"
-	// OrgServiceSetTagColorProcedure is the fully-qualified name of the OrgService's SetTagColor RPC.
-	OrgServiceSetTagColorProcedure = "/diag.v1.OrgService/SetTagColor"
+	// OrgServiceUpdateTagProcedure is the fully-qualified name of the OrgService's UpdateTag RPC.
+	OrgServiceUpdateTagProcedure = "/diag.v1.OrgService/UpdateTag"
 	// OrgServiceSeedOrganizationProcedure is the fully-qualified name of the OrgService's
 	// SeedOrganization RPC.
 	OrgServiceSeedOrganizationProcedure = "/diag.v1.OrgService/SeedOrganization"
@@ -91,9 +91,9 @@ type OrgServiceClient interface {
 	ListAPIKeys(context.Context, *connect.Request[v1.ListAPIKeysRequest]) (*connect.Response[v1.ListAPIKeysResponse], error)
 	CreateAPIKey(context.Context, *connect.Request[v1.CreateAPIKeyRequest]) (*connect.Response[v1.CreateAPIKeyResponse], error)
 	RevokeAPIKey(context.Context, *connect.Request[v1.RevokeAPIKeyRequest]) (*connect.Response[v1.RevokeAPIKeyResponse], error)
-	// Tag Colors
+	// Tags
 	ListTagColors(context.Context, *connect.Request[v1.ListTagColorsRequest]) (*connect.Response[v1.ListTagColorsResponse], error)
-	SetTagColor(context.Context, *connect.Request[v1.SetTagColorRequest]) (*connect.Response[v1.SetTagColorResponse], error)
+	UpdateTag(context.Context, *connect.Request[v1.UpdateTagRequest]) (*connect.Response[v1.UpdateTagResponse], error)
 	SeedOrganization(context.Context, *connect.Request[v1.SeedOrganizationRequest]) (*connect.Response[v1.SeedOrganizationResponse], error)
 }
 
@@ -192,10 +192,10 @@ func NewOrgServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...
 			connect.WithSchema(orgServiceMethods.ByName("ListTagColors")),
 			connect.WithClientOptions(opts...),
 		),
-		setTagColor: connect.NewClient[v1.SetTagColorRequest, v1.SetTagColorResponse](
+		updateTag: connect.NewClient[v1.UpdateTagRequest, v1.UpdateTagResponse](
 			httpClient,
-			baseURL+OrgServiceSetTagColorProcedure,
-			connect.WithSchema(orgServiceMethods.ByName("SetTagColor")),
+			baseURL+OrgServiceUpdateTagProcedure,
+			connect.WithSchema(orgServiceMethods.ByName("UpdateTag")),
 			connect.WithClientOptions(opts...),
 		),
 		seedOrganization: connect.NewClient[v1.SeedOrganizationRequest, v1.SeedOrganizationResponse](
@@ -223,7 +223,7 @@ type orgServiceClient struct {
 	createAPIKey       *connect.Client[v1.CreateAPIKeyRequest, v1.CreateAPIKeyResponse]
 	revokeAPIKey       *connect.Client[v1.RevokeAPIKeyRequest, v1.RevokeAPIKeyResponse]
 	listTagColors      *connect.Client[v1.ListTagColorsRequest, v1.ListTagColorsResponse]
-	setTagColor        *connect.Client[v1.SetTagColorRequest, v1.SetTagColorResponse]
+	updateTag          *connect.Client[v1.UpdateTagRequest, v1.UpdateTagResponse]
 	seedOrganization   *connect.Client[v1.SeedOrganizationRequest, v1.SeedOrganizationResponse]
 }
 
@@ -297,9 +297,9 @@ func (c *orgServiceClient) ListTagColors(ctx context.Context, req *connect.Reque
 	return c.listTagColors.CallUnary(ctx, req)
 }
 
-// SetTagColor calls diag.v1.OrgService.SetTagColor.
-func (c *orgServiceClient) SetTagColor(ctx context.Context, req *connect.Request[v1.SetTagColorRequest]) (*connect.Response[v1.SetTagColorResponse], error) {
-	return c.setTagColor.CallUnary(ctx, req)
+// UpdateTag calls diag.v1.OrgService.UpdateTag.
+func (c *orgServiceClient) UpdateTag(ctx context.Context, req *connect.Request[v1.UpdateTagRequest]) (*connect.Response[v1.UpdateTagResponse], error) {
+	return c.updateTag.CallUnary(ctx, req)
 }
 
 // SeedOrganization calls diag.v1.OrgService.SeedOrganization.
@@ -322,9 +322,9 @@ type OrgServiceHandler interface {
 	ListAPIKeys(context.Context, *connect.Request[v1.ListAPIKeysRequest]) (*connect.Response[v1.ListAPIKeysResponse], error)
 	CreateAPIKey(context.Context, *connect.Request[v1.CreateAPIKeyRequest]) (*connect.Response[v1.CreateAPIKeyResponse], error)
 	RevokeAPIKey(context.Context, *connect.Request[v1.RevokeAPIKeyRequest]) (*connect.Response[v1.RevokeAPIKeyResponse], error)
-	// Tag Colors
+	// Tags
 	ListTagColors(context.Context, *connect.Request[v1.ListTagColorsRequest]) (*connect.Response[v1.ListTagColorsResponse], error)
-	SetTagColor(context.Context, *connect.Request[v1.SetTagColorRequest]) (*connect.Response[v1.SetTagColorResponse], error)
+	UpdateTag(context.Context, *connect.Request[v1.UpdateTagRequest]) (*connect.Response[v1.UpdateTagResponse], error)
 	SeedOrganization(context.Context, *connect.Request[v1.SeedOrganizationRequest]) (*connect.Response[v1.SeedOrganizationResponse], error)
 }
 
@@ -419,10 +419,10 @@ func NewOrgServiceHandler(svc OrgServiceHandler, opts ...connect.HandlerOption) 
 		connect.WithSchema(orgServiceMethods.ByName("ListTagColors")),
 		connect.WithHandlerOptions(opts...),
 	)
-	orgServiceSetTagColorHandler := connect.NewUnaryHandler(
-		OrgServiceSetTagColorProcedure,
-		svc.SetTagColor,
-		connect.WithSchema(orgServiceMethods.ByName("SetTagColor")),
+	orgServiceUpdateTagHandler := connect.NewUnaryHandler(
+		OrgServiceUpdateTagProcedure,
+		svc.UpdateTag,
+		connect.WithSchema(orgServiceMethods.ByName("UpdateTag")),
 		connect.WithHandlerOptions(opts...),
 	)
 	orgServiceSeedOrganizationHandler := connect.NewUnaryHandler(
@@ -461,8 +461,8 @@ func NewOrgServiceHandler(svc OrgServiceHandler, opts ...connect.HandlerOption) 
 			orgServiceRevokeAPIKeyHandler.ServeHTTP(w, r)
 		case OrgServiceListTagColorsProcedure:
 			orgServiceListTagColorsHandler.ServeHTTP(w, r)
-		case OrgServiceSetTagColorProcedure:
-			orgServiceSetTagColorHandler.ServeHTTP(w, r)
+		case OrgServiceUpdateTagProcedure:
+			orgServiceUpdateTagHandler.ServeHTTP(w, r)
 		case OrgServiceSeedOrganizationProcedure:
 			orgServiceSeedOrganizationHandler.ServeHTTP(w, r)
 		default:
@@ -530,8 +530,8 @@ func (UnimplementedOrgServiceHandler) ListTagColors(context.Context, *connect.Re
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.OrgService.ListTagColors is not implemented"))
 }
 
-func (UnimplementedOrgServiceHandler) SetTagColor(context.Context, *connect.Request[v1.SetTagColorRequest]) (*connect.Response[v1.SetTagColorResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.OrgService.SetTagColor is not implemented"))
+func (UnimplementedOrgServiceHandler) UpdateTag(context.Context, *connect.Request[v1.UpdateTagRequest]) (*connect.Response[v1.UpdateTagResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.OrgService.UpdateTag is not implemented"))
 }
 
 func (UnimplementedOrgServiceHandler) SeedOrganization(context.Context, *connect.Request[v1.SeedOrganizationRequest]) (*connect.Response[v1.SeedOrganizationResponse], error) {

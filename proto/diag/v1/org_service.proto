@@ -23,9 +23,9 @@ service OrgService {
   rpc CreateAPIKey(CreateAPIKeyRequest) returns (CreateAPIKeyResponse);
   rpc RevokeAPIKey(RevokeAPIKeyRequest) returns (RevokeAPIKeyResponse);
 
-  // Tag Colors
+  // Tags
   rpc ListTagColors(ListTagColorsRequest) returns (ListTagColorsResponse);
-  rpc SetTagColor(SetTagColorRequest) returns (SetTagColorResponse);
+  rpc UpdateTag(UpdateTagRequest) returns (UpdateTagResponse);
 
   rpc SeedOrganization(SeedOrganizationRequest) returns (SeedOrganizationResponse);
 }
@@ -185,16 +185,20 @@ message RevokeAPIKeyRequest {
 }
 message RevokeAPIKeyResponse {}
 
-// ── Tag Colors ───────────────────────────────────────────────────────────
+message Tag {
+  string color = 1;
+  optional string description = 2;
+}
 
 message ListTagColorsRequest {}
 message ListTagColorsResponse {
-  // Map of tag name to hex color (e.g., {"tag1": "#FF0000"})
-  map<string, string> tag_colors = 1;
+  // Map of tag name to tag info
+  map<string, Tag> tags = 1;
 }
 
-message SetTagColorRequest {
+message UpdateTagRequest {
   string tag = 1;
   string color = 2;
+  optional string description = 3;
 }
-message SetTagColorResponse {}
+message UpdateTagResponse {}

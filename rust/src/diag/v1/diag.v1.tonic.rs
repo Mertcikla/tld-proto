@@ -7403,11 +7403,11 @@ pub mod org_service_client {
                 .insert(GrpcMethod::new("diag.v1.OrgService", "ListTagColors"));
             self.inner.unary(req, path, codec).await
         }
-        pub async fn set_tag_color(
+        pub async fn update_tag(
             &mut self,
-            request: impl tonic::IntoRequest<super::SetTagColorRequest>,
+            request: impl tonic::IntoRequest<super::UpdateTagRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::SetTagColorResponse>,
+            tonic::Response<super::UpdateTagResponse>,
             tonic::Status,
         > {
             self.inner
@@ -7420,11 +7420,11 @@ pub mod org_service_client {
                 })?;
             let codec = tonic_prost::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/diag.v1.OrgService/SetTagColor",
+                "/diag.v1.OrgService/UpdateTag",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("diag.v1.OrgService", "SetTagColor"));
+                .insert(GrpcMethod::new("diag.v1.OrgService", "UpdateTag"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn seed_organization(
@@ -7564,11 +7564,11 @@ pub mod org_service_server {
             tonic::Response<super::ListTagColorsResponse>,
             tonic::Status,
         >;
-        async fn set_tag_color(
+        async fn update_tag(
             &self,
-            request: tonic::Request<super::SetTagColorRequest>,
+            request: tonic::Request<super::UpdateTagRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::SetTagColorResponse>,
+            tonic::Response<super::UpdateTagResponse>,
             tonic::Status,
         >;
         async fn seed_organization(
@@ -8286,25 +8286,25 @@ pub mod org_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/diag.v1.OrgService/SetTagColor" => {
+                "/diag.v1.OrgService/UpdateTag" => {
                     #[allow(non_camel_case_types)]
-                    struct SetTagColorSvc<T: OrgService>(pub Arc<T>);
+                    struct UpdateTagSvc<T: OrgService>(pub Arc<T>);
                     impl<
                         T: OrgService,
-                    > tonic::server::UnaryService<super::SetTagColorRequest>
-                    for SetTagColorSvc<T> {
-                        type Response = super::SetTagColorResponse;
+                    > tonic::server::UnaryService<super::UpdateTagRequest>
+                    for UpdateTagSvc<T> {
+                        type Response = super::UpdateTagResponse;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
                         fn call(
                             &mut self,
-                            request: tonic::Request<super::SetTagColorRequest>,
+                            request: tonic::Request<super::UpdateTagRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as OrgService>::set_tag_color(&inner, request).await
+                                <T as OrgService>::update_tag(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -8315,7 +8315,7 @@ pub mod org_service_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let method = SetTagColorSvc(inner);
+                        let method = UpdateTagSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
