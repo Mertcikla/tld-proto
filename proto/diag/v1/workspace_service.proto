@@ -313,6 +313,7 @@ message Element {
   optional string file_path = 16;
   bool has_view = 17;
   optional string view_label = 18;
+  string ref = 19;
 }
 
 // ViewSummary represents a view in the workspace tree.

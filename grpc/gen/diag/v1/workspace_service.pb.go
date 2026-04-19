@@ -1473,6 +1473,7 @@ type Element struct {
 	FilePath        *string                `protobuf:"bytes,16,opt,name=file_path,json=filePath,proto3,oneof" json:"file_path,omitempty"`
 	HasView         bool                   `protobuf:"varint,17,opt,name=has_view,json=hasView,proto3" json:"has_view,omitempty"`
 	ViewLabel       *string                `protobuf:"bytes,18,opt,name=view_label,json=viewLabel,proto3,oneof" json:"view_label,omitempty"`
+	Ref             string                 `protobuf:"bytes,19,opt,name=ref,proto3" json:"ref,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -1629,6 +1630,13 @@ func (x *Element) GetHasView() bool {
 func (x *Element) GetViewLabel() string {
 	if x != nil && x.ViewLabel != nil {
 		return *x.ViewLabel
+	}
+	return ""
+}
+
+func (x *Element) GetRef() string {
+	if x != nil {
+		return x.Ref
 	}
 	return ""
 }
@@ -7149,7 +7157,7 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\n" +
 	"\b_api_key\"7\n" +
 	"\x12CreateViewResponse\x12!\n" +
-	"\x04view\x18\x01 \x01(\v2\r.diag.v1.ViewR\x04view\"\xe1\x05\n" +
+	"\x04view\x18\x01 \x01(\v2\r.diag.v1.ViewR\x04view\"\xf3\x05\n" +
 	"\aElement\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x15\n" +
 	"\x06org_id\x18\x02 \x01(\tR\x05orgId\x12\x12\n" +
@@ -7174,7 +7182,8 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\tfile_path\x18\x10 \x01(\tH\bR\bfilePath\x88\x01\x01\x12\x19\n" +
 	"\bhas_view\x18\x11 \x01(\bR\ahasView\x12\"\n" +
 	"\n" +
-	"view_label\x18\x12 \x01(\tH\tR\tviewLabel\x88\x01\x01B\a\n" +
+	"view_label\x18\x12 \x01(\tH\tR\tviewLabel\x88\x01\x01\x12\x10\n" +
+	"\x03ref\x18\x13 \x01(\tR\x03refB\a\n" +
 	"\x05_kindB\x0e\n" +
 	"\f_descriptionB\r\n" +
 	"\v_technologyB\x06\n" +

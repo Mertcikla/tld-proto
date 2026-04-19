@@ -823,6 +823,8 @@ pub struct Element {
     pub has_view: bool,
     #[prost(string, optional, tag="18")]
     pub view_label: ::core::option::Option<::prost::alloc::string::String>,
+    #[prost(string, tag="19")]
+    pub r#ref: ::prost::alloc::string::String,
 }
 /// ViewSummary represents a view in the workspace tree.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
