@@ -12,7 +12,10 @@ pub mod diag {
     pub mod v1 {
         // prost message structs + tonic service clients (tonic file is included
         // at the end of the prost file via protoc insertion point)
-        include!(concat!(env!("CARGO_MANIFEST_DIR"), "/src/diag/v1/diag.v1.rs"));
+        include!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/src/diag/v1/diag.v1.rs"
+        ));
     }
 }
 
