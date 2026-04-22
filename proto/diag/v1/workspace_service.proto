@@ -99,16 +99,6 @@ service WorkspaceService {
   rpc CreateViewLayer(CreateViewLayerRequest) returns (CreateViewLayerResponse);
   rpc UpdateViewLayer(UpdateViewLayerRequest) returns (UpdateViewLayerResponse);
   rpc DeleteViewLayer(DeleteViewLayerRequest) returns (DeleteViewLayerResponse);
-
-  // Comment Threads
-  rpc ListThreads(ListThreadsRequest) returns (ListThreadsResponse);
-  rpc CreateThread(CreateThreadRequest) returns (CreateThreadResponse);
-  rpc AddComment(AddCommentRequest) returns (AddCommentResponse);
-  rpc ResolveThread(ResolveThreadRequest) returns (ResolveThreadResponse);
-
-  // Reactions
-  rpc ListReactions(ListReactionsRequest) returns (ListReactionsResponse);
-  rpc ToggleReaction(ToggleReactionRequest) returns (ToggleReactionResponse);
 }
 
 // ─── Export messages ─────────────────────────────────────────────────────────
@@ -787,91 +777,3 @@ message DeleteViewLayerRequest {
 }
 
 message DeleteViewLayerResponse {}
-
-// ── Comment Threads ──────────────────────────────────────────────────────
-
-message CommentInfo {
-  int32 id = 1;
-  string org_id = 2;
-  int32 view_id = 3;
-  int32 thread_id = 4;
-  string author_id = 5;
-  string author_username = 6;
-  string body = 7;
-  google.protobuf.Timestamp created_at = 8;
-  google.protobuf.Timestamp updated_at = 9;
-}
-
-message ThreadInfo {
-  int32 id = 1;
-  string org_id = 2;
-  int32 view_id = 3;
-  optional int32 element_id = 4;
-  optional int32 connector_id = 5;
-  string created_by = 6;
-  string created_by_username = 7;
-  string status = 8;
-  google.protobuf.Timestamp created_at = 9;
-  optional google.protobuf.Timestamp resolved_at = 10;
-  repeated CommentInfo comments = 11;
-}
-
-message ListThreadsRequest {
-  int32 view_id = 1;
-  optional int32 element_id = 2;
-  optional int32 connector_id = 3;
-}
-message ListThreadsResponse {
-  repeated ThreadInfo threads = 1;
-}
-
-message CreateThreadRequest {
-  int32 view_id = 1;
-  optional int32 element_id = 2;
-  optional int32 connector_id = 3;
-  string body = 4;
-}
-message CreateThreadResponse {
-  ThreadInfo thread = 1;
-}
-
-message AddCommentRequest {
-  int32 view_id = 1;
-  int32 thread_id = 2;
-  string body = 3;
-}
-message AddCommentResponse {
-  CommentInfo comment = 1;
-}
-
-message ResolveThreadRequest {
-  int32 view_id = 1;
-  int32 thread_id = 2;
-  bool resolved = 3;
-}
-message ResolveThreadResponse {}
-
-// ── Reactions ────────────────────────────────────────────────────────────
-
-message NodeReactionSummary {
-  int32 element_id = 1;
-  string emoji = 2;
-  int32 count = 3;
-  bool reacted_by_me = 4;
-}
-
-message ListReactionsRequest {
-  int32 view_id = 1;
-}
-message ListReactionsResponse {
-  repeated NodeReactionSummary reactions = 1;
-}
-
-message ToggleReactionRequest {
-  int32 view_id = 1;
-  int32 element_id = 2;
-  string emoji = 3;
-}
-message ToggleReactionResponse {
-  bool active = 1;
-}

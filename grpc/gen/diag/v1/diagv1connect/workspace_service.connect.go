@@ -129,24 +129,6 @@ const (
 	// WorkspaceServiceDeleteViewLayerProcedure is the fully-qualified name of the WorkspaceService's
 	// DeleteViewLayer RPC.
 	WorkspaceServiceDeleteViewLayerProcedure = "/diag.v1.WorkspaceService/DeleteViewLayer"
-	// WorkspaceServiceListThreadsProcedure is the fully-qualified name of the WorkspaceService's
-	// ListThreads RPC.
-	WorkspaceServiceListThreadsProcedure = "/diag.v1.WorkspaceService/ListThreads"
-	// WorkspaceServiceCreateThreadProcedure is the fully-qualified name of the WorkspaceService's
-	// CreateThread RPC.
-	WorkspaceServiceCreateThreadProcedure = "/diag.v1.WorkspaceService/CreateThread"
-	// WorkspaceServiceAddCommentProcedure is the fully-qualified name of the WorkspaceService's
-	// AddComment RPC.
-	WorkspaceServiceAddCommentProcedure = "/diag.v1.WorkspaceService/AddComment"
-	// WorkspaceServiceResolveThreadProcedure is the fully-qualified name of the WorkspaceService's
-	// ResolveThread RPC.
-	WorkspaceServiceResolveThreadProcedure = "/diag.v1.WorkspaceService/ResolveThread"
-	// WorkspaceServiceListReactionsProcedure is the fully-qualified name of the WorkspaceService's
-	// ListReactions RPC.
-	WorkspaceServiceListReactionsProcedure = "/diag.v1.WorkspaceService/ListReactions"
-	// WorkspaceServiceToggleReactionProcedure is the fully-qualified name of the WorkspaceService's
-	// ToggleReaction RPC.
-	WorkspaceServiceToggleReactionProcedure = "/diag.v1.WorkspaceService/ToggleReaction"
 )
 
 // WorkspaceServiceClient is a client for the diag.v1.WorkspaceService service.
@@ -210,14 +192,6 @@ type WorkspaceServiceClient interface {
 	CreateViewLayer(context.Context, *connect.Request[v1.CreateViewLayerRequest]) (*connect.Response[v1.CreateViewLayerResponse], error)
 	UpdateViewLayer(context.Context, *connect.Request[v1.UpdateViewLayerRequest]) (*connect.Response[v1.UpdateViewLayerResponse], error)
 	DeleteViewLayer(context.Context, *connect.Request[v1.DeleteViewLayerRequest]) (*connect.Response[v1.DeleteViewLayerResponse], error)
-	// Comment Threads
-	ListThreads(context.Context, *connect.Request[v1.ListThreadsRequest]) (*connect.Response[v1.ListThreadsResponse], error)
-	CreateThread(context.Context, *connect.Request[v1.CreateThreadRequest]) (*connect.Response[v1.CreateThreadResponse], error)
-	AddComment(context.Context, *connect.Request[v1.AddCommentRequest]) (*connect.Response[v1.AddCommentResponse], error)
-	ResolveThread(context.Context, *connect.Request[v1.ResolveThreadRequest]) (*connect.Response[v1.ResolveThreadResponse], error)
-	// Reactions
-	ListReactions(context.Context, *connect.Request[v1.ListReactionsRequest]) (*connect.Response[v1.ListReactionsResponse], error)
-	ToggleReaction(context.Context, *connect.Request[v1.ToggleReactionRequest]) (*connect.Response[v1.ToggleReactionResponse], error)
 }
 
 // NewWorkspaceServiceClient constructs a client for the diag.v1.WorkspaceService service. By
@@ -423,42 +397,6 @@ func NewWorkspaceServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			connect.WithSchema(workspaceServiceMethods.ByName("DeleteViewLayer")),
 			connect.WithClientOptions(opts...),
 		),
-		listThreads: connect.NewClient[v1.ListThreadsRequest, v1.ListThreadsResponse](
-			httpClient,
-			baseURL+WorkspaceServiceListThreadsProcedure,
-			connect.WithSchema(workspaceServiceMethods.ByName("ListThreads")),
-			connect.WithClientOptions(opts...),
-		),
-		createThread: connect.NewClient[v1.CreateThreadRequest, v1.CreateThreadResponse](
-			httpClient,
-			baseURL+WorkspaceServiceCreateThreadProcedure,
-			connect.WithSchema(workspaceServiceMethods.ByName("CreateThread")),
-			connect.WithClientOptions(opts...),
-		),
-		addComment: connect.NewClient[v1.AddCommentRequest, v1.AddCommentResponse](
-			httpClient,
-			baseURL+WorkspaceServiceAddCommentProcedure,
-			connect.WithSchema(workspaceServiceMethods.ByName("AddComment")),
-			connect.WithClientOptions(opts...),
-		),
-		resolveThread: connect.NewClient[v1.ResolveThreadRequest, v1.ResolveThreadResponse](
-			httpClient,
-			baseURL+WorkspaceServiceResolveThreadProcedure,
-			connect.WithSchema(workspaceServiceMethods.ByName("ResolveThread")),
-			connect.WithClientOptions(opts...),
-		),
-		listReactions: connect.NewClient[v1.ListReactionsRequest, v1.ListReactionsResponse](
-			httpClient,
-			baseURL+WorkspaceServiceListReactionsProcedure,
-			connect.WithSchema(workspaceServiceMethods.ByName("ListReactions")),
-			connect.WithClientOptions(opts...),
-		),
-		toggleReaction: connect.NewClient[v1.ToggleReactionRequest, v1.ToggleReactionResponse](
-			httpClient,
-			baseURL+WorkspaceServiceToggleReactionProcedure,
-			connect.WithSchema(workspaceServiceMethods.ByName("ToggleReaction")),
-			connect.WithClientOptions(opts...),
-		),
 	}
 }
 
@@ -496,12 +434,6 @@ type workspaceServiceClient struct {
 	createViewLayer                *connect.Client[v1.CreateViewLayerRequest, v1.CreateViewLayerResponse]
 	updateViewLayer                *connect.Client[v1.UpdateViewLayerRequest, v1.UpdateViewLayerResponse]
 	deleteViewLayer                *connect.Client[v1.DeleteViewLayerRequest, v1.DeleteViewLayerResponse]
-	listThreads                    *connect.Client[v1.ListThreadsRequest, v1.ListThreadsResponse]
-	createThread                   *connect.Client[v1.CreateThreadRequest, v1.CreateThreadResponse]
-	addComment                     *connect.Client[v1.AddCommentRequest, v1.AddCommentResponse]
-	resolveThread                  *connect.Client[v1.ResolveThreadRequest, v1.ResolveThreadResponse]
-	listReactions                  *connect.Client[v1.ListReactionsRequest, v1.ListReactionsResponse]
-	toggleReaction                 *connect.Client[v1.ToggleReactionRequest, v1.ToggleReactionResponse]
 }
 
 // CreateView calls diag.v1.WorkspaceService.CreateView.
@@ -664,36 +596,6 @@ func (c *workspaceServiceClient) DeleteViewLayer(ctx context.Context, req *conne
 	return c.deleteViewLayer.CallUnary(ctx, req)
 }
 
-// ListThreads calls diag.v1.WorkspaceService.ListThreads.
-func (c *workspaceServiceClient) ListThreads(ctx context.Context, req *connect.Request[v1.ListThreadsRequest]) (*connect.Response[v1.ListThreadsResponse], error) {
-	return c.listThreads.CallUnary(ctx, req)
-}
-
-// CreateThread calls diag.v1.WorkspaceService.CreateThread.
-func (c *workspaceServiceClient) CreateThread(ctx context.Context, req *connect.Request[v1.CreateThreadRequest]) (*connect.Response[v1.CreateThreadResponse], error) {
-	return c.createThread.CallUnary(ctx, req)
-}
-
-// AddComment calls diag.v1.WorkspaceService.AddComment.
-func (c *workspaceServiceClient) AddComment(ctx context.Context, req *connect.Request[v1.AddCommentRequest]) (*connect.Response[v1.AddCommentResponse], error) {
-	return c.addComment.CallUnary(ctx, req)
-}
-
-// ResolveThread calls diag.v1.WorkspaceService.ResolveThread.
-func (c *workspaceServiceClient) ResolveThread(ctx context.Context, req *connect.Request[v1.ResolveThreadRequest]) (*connect.Response[v1.ResolveThreadResponse], error) {
-	return c.resolveThread.CallUnary(ctx, req)
-}
-
-// ListReactions calls diag.v1.WorkspaceService.ListReactions.
-func (c *workspaceServiceClient) ListReactions(ctx context.Context, req *connect.Request[v1.ListReactionsRequest]) (*connect.Response[v1.ListReactionsResponse], error) {
-	return c.listReactions.CallUnary(ctx, req)
-}
-
-// ToggleReaction calls diag.v1.WorkspaceService.ToggleReaction.
-func (c *workspaceServiceClient) ToggleReaction(ctx context.Context, req *connect.Request[v1.ToggleReactionRequest]) (*connect.Response[v1.ToggleReactionResponse], error) {
-	return c.toggleReaction.CallUnary(ctx, req)
-}
-
 // WorkspaceServiceHandler is an implementation of the diag.v1.WorkspaceService service.
 type WorkspaceServiceHandler interface {
 	// CreateView creates a new view in the given organisation.
@@ -755,14 +657,6 @@ type WorkspaceServiceHandler interface {
 	CreateViewLayer(context.Context, *connect.Request[v1.CreateViewLayerRequest]) (*connect.Response[v1.CreateViewLayerResponse], error)
 	UpdateViewLayer(context.Context, *connect.Request[v1.UpdateViewLayerRequest]) (*connect.Response[v1.UpdateViewLayerResponse], error)
 	DeleteViewLayer(context.Context, *connect.Request[v1.DeleteViewLayerRequest]) (*connect.Response[v1.DeleteViewLayerResponse], error)
-	// Comment Threads
-	ListThreads(context.Context, *connect.Request[v1.ListThreadsRequest]) (*connect.Response[v1.ListThreadsResponse], error)
-	CreateThread(context.Context, *connect.Request[v1.CreateThreadRequest]) (*connect.Response[v1.CreateThreadResponse], error)
-	AddComment(context.Context, *connect.Request[v1.AddCommentRequest]) (*connect.Response[v1.AddCommentResponse], error)
-	ResolveThread(context.Context, *connect.Request[v1.ResolveThreadRequest]) (*connect.Response[v1.ResolveThreadResponse], error)
-	// Reactions
-	ListReactions(context.Context, *connect.Request[v1.ListReactionsRequest]) (*connect.Response[v1.ListReactionsResponse], error)
-	ToggleReaction(context.Context, *connect.Request[v1.ToggleReactionRequest]) (*connect.Response[v1.ToggleReactionResponse], error)
 }
 
 // NewWorkspaceServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -964,42 +858,6 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 		connect.WithSchema(workspaceServiceMethods.ByName("DeleteViewLayer")),
 		connect.WithHandlerOptions(opts...),
 	)
-	workspaceServiceListThreadsHandler := connect.NewUnaryHandler(
-		WorkspaceServiceListThreadsProcedure,
-		svc.ListThreads,
-		connect.WithSchema(workspaceServiceMethods.ByName("ListThreads")),
-		connect.WithHandlerOptions(opts...),
-	)
-	workspaceServiceCreateThreadHandler := connect.NewUnaryHandler(
-		WorkspaceServiceCreateThreadProcedure,
-		svc.CreateThread,
-		connect.WithSchema(workspaceServiceMethods.ByName("CreateThread")),
-		connect.WithHandlerOptions(opts...),
-	)
-	workspaceServiceAddCommentHandler := connect.NewUnaryHandler(
-		WorkspaceServiceAddCommentProcedure,
-		svc.AddComment,
-		connect.WithSchema(workspaceServiceMethods.ByName("AddComment")),
-		connect.WithHandlerOptions(opts...),
-	)
-	workspaceServiceResolveThreadHandler := connect.NewUnaryHandler(
-		WorkspaceServiceResolveThreadProcedure,
-		svc.ResolveThread,
-		connect.WithSchema(workspaceServiceMethods.ByName("ResolveThread")),
-		connect.WithHandlerOptions(opts...),
-	)
-	workspaceServiceListReactionsHandler := connect.NewUnaryHandler(
-		WorkspaceServiceListReactionsProcedure,
-		svc.ListReactions,
-		connect.WithSchema(workspaceServiceMethods.ByName("ListReactions")),
-		connect.WithHandlerOptions(opts...),
-	)
-	workspaceServiceToggleReactionHandler := connect.NewUnaryHandler(
-		WorkspaceServiceToggleReactionProcedure,
-		svc.ToggleReaction,
-		connect.WithSchema(workspaceServiceMethods.ByName("ToggleReaction")),
-		connect.WithHandlerOptions(opts...),
-	)
 	return "/diag.v1.WorkspaceService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case WorkspaceServiceCreateViewProcedure:
@@ -1066,18 +924,6 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 			workspaceServiceUpdateViewLayerHandler.ServeHTTP(w, r)
 		case WorkspaceServiceDeleteViewLayerProcedure:
 			workspaceServiceDeleteViewLayerHandler.ServeHTTP(w, r)
-		case WorkspaceServiceListThreadsProcedure:
-			workspaceServiceListThreadsHandler.ServeHTTP(w, r)
-		case WorkspaceServiceCreateThreadProcedure:
-			workspaceServiceCreateThreadHandler.ServeHTTP(w, r)
-		case WorkspaceServiceAddCommentProcedure:
-			workspaceServiceAddCommentHandler.ServeHTTP(w, r)
-		case WorkspaceServiceResolveThreadProcedure:
-			workspaceServiceResolveThreadHandler.ServeHTTP(w, r)
-		case WorkspaceServiceListReactionsProcedure:
-			workspaceServiceListReactionsHandler.ServeHTTP(w, r)
-		case WorkspaceServiceToggleReactionProcedure:
-			workspaceServiceToggleReactionHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -1213,28 +1059,4 @@ func (UnimplementedWorkspaceServiceHandler) UpdateViewLayer(context.Context, *co
 
 func (UnimplementedWorkspaceServiceHandler) DeleteViewLayer(context.Context, *connect.Request[v1.DeleteViewLayerRequest]) (*connect.Response[v1.DeleteViewLayerResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.WorkspaceService.DeleteViewLayer is not implemented"))
-}
-
-func (UnimplementedWorkspaceServiceHandler) ListThreads(context.Context, *connect.Request[v1.ListThreadsRequest]) (*connect.Response[v1.ListThreadsResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.WorkspaceService.ListThreads is not implemented"))
-}
-
-func (UnimplementedWorkspaceServiceHandler) CreateThread(context.Context, *connect.Request[v1.CreateThreadRequest]) (*connect.Response[v1.CreateThreadResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.WorkspaceService.CreateThread is not implemented"))
-}
-
-func (UnimplementedWorkspaceServiceHandler) AddComment(context.Context, *connect.Request[v1.AddCommentRequest]) (*connect.Response[v1.AddCommentResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.WorkspaceService.AddComment is not implemented"))
-}
-
-func (UnimplementedWorkspaceServiceHandler) ResolveThread(context.Context, *connect.Request[v1.ResolveThreadRequest]) (*connect.Response[v1.ResolveThreadResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.WorkspaceService.ResolveThread is not implemented"))
-}
-
-func (UnimplementedWorkspaceServiceHandler) ListReactions(context.Context, *connect.Request[v1.ListReactionsRequest]) (*connect.Response[v1.ListReactionsResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.WorkspaceService.ListReactions is not implemented"))
-}
-
-func (UnimplementedWorkspaceServiceHandler) ToggleReaction(context.Context, *connect.Request[v1.ToggleReactionRequest]) (*connect.Response[v1.ToggleReactionResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.WorkspaceService.ToggleReaction is not implemented"))
 }

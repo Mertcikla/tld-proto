@@ -14,15 +14,3 @@ plugins:
     out: ../frontend/src/gen
     opt:
       - target=ts
-  # Rust — prost message structs  →  rust/src/diag.v1.rs
-  - remote: buf.build/community/neoeinstein-prost:v0.5.0
-    out: rust/src
-    opt:
-      - compile_well_known_types=true
-      - extern_path=.google.protobuf=::prost_types
-  # Rust — tonic service clients  →  rust/src/diag.v1.tonic.rs
-  - remote: buf.build/community/neoeinstein-tonic:v0.5.0
-    out: rust/src
-    opt:
-      - compile_well_known_types=true
-      - extern_path=.google.protobuf=::prost_types

@@ -6041,914 +6041,6 @@ func (*DeleteViewLayerResponse) Descriptor() ([]byte, []int) {
 	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{87}
 }
 
-type CommentInfo struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	OrgId          string                 `protobuf:"bytes,2,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
-	ViewId         int32                  `protobuf:"varint,3,opt,name=view_id,json=viewId,proto3" json:"view_id,omitempty"`
-	ThreadId       int32                  `protobuf:"varint,4,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
-	AuthorId       string                 `protobuf:"bytes,5,opt,name=author_id,json=authorId,proto3" json:"author_id,omitempty"`
-	AuthorUsername string                 `protobuf:"bytes,6,opt,name=author_username,json=authorUsername,proto3" json:"author_username,omitempty"`
-	Body           string                 `protobuf:"bytes,7,opt,name=body,proto3" json:"body,omitempty"`
-	CreatedAt      *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt      *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *CommentInfo) Reset() {
-	*x = CommentInfo{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[88]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CommentInfo) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CommentInfo) ProtoMessage() {}
-
-func (x *CommentInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[88]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CommentInfo.ProtoReflect.Descriptor instead.
-func (*CommentInfo) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{88}
-}
-
-func (x *CommentInfo) GetId() int32 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *CommentInfo) GetOrgId() string {
-	if x != nil {
-		return x.OrgId
-	}
-	return ""
-}
-
-func (x *CommentInfo) GetViewId() int32 {
-	if x != nil {
-		return x.ViewId
-	}
-	return 0
-}
-
-func (x *CommentInfo) GetThreadId() int32 {
-	if x != nil {
-		return x.ThreadId
-	}
-	return 0
-}
-
-func (x *CommentInfo) GetAuthorId() string {
-	if x != nil {
-		return x.AuthorId
-	}
-	return ""
-}
-
-func (x *CommentInfo) GetAuthorUsername() string {
-	if x != nil {
-		return x.AuthorUsername
-	}
-	return ""
-}
-
-func (x *CommentInfo) GetBody() string {
-	if x != nil {
-		return x.Body
-	}
-	return ""
-}
-
-func (x *CommentInfo) GetCreatedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.CreatedAt
-	}
-	return nil
-}
-
-func (x *CommentInfo) GetUpdatedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.UpdatedAt
-	}
-	return nil
-}
-
-type ThreadInfo struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	Id                int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	OrgId             string                 `protobuf:"bytes,2,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
-	ViewId            int32                  `protobuf:"varint,3,opt,name=view_id,json=viewId,proto3" json:"view_id,omitempty"`
-	ElementId         *int32                 `protobuf:"varint,4,opt,name=element_id,json=elementId,proto3,oneof" json:"element_id,omitempty"`
-	ConnectorId       *int32                 `protobuf:"varint,5,opt,name=connector_id,json=connectorId,proto3,oneof" json:"connector_id,omitempty"`
-	CreatedBy         string                 `protobuf:"bytes,6,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
-	CreatedByUsername string                 `protobuf:"bytes,7,opt,name=created_by_username,json=createdByUsername,proto3" json:"created_by_username,omitempty"`
-	Status            string                 `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
-	CreatedAt         *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	ResolvedAt        *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=resolved_at,json=resolvedAt,proto3,oneof" json:"resolved_at,omitempty"`
-	Comments          []*CommentInfo         `protobuf:"bytes,11,rep,name=comments,proto3" json:"comments,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
-}
-
-func (x *ThreadInfo) Reset() {
-	*x = ThreadInfo{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[89]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ThreadInfo) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ThreadInfo) ProtoMessage() {}
-
-func (x *ThreadInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[89]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ThreadInfo.ProtoReflect.Descriptor instead.
-func (*ThreadInfo) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{89}
-}
-
-func (x *ThreadInfo) GetId() int32 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *ThreadInfo) GetOrgId() string {
-	if x != nil {
-		return x.OrgId
-	}
-	return ""
-}
-
-func (x *ThreadInfo) GetViewId() int32 {
-	if x != nil {
-		return x.ViewId
-	}
-	return 0
-}
-
-func (x *ThreadInfo) GetElementId() int32 {
-	if x != nil && x.ElementId != nil {
-		return *x.ElementId
-	}
-	return 0
-}
-
-func (x *ThreadInfo) GetConnectorId() int32 {
-	if x != nil && x.ConnectorId != nil {
-		return *x.ConnectorId
-	}
-	return 0
-}
-
-func (x *ThreadInfo) GetCreatedBy() string {
-	if x != nil {
-		return x.CreatedBy
-	}
-	return ""
-}
-
-func (x *ThreadInfo) GetCreatedByUsername() string {
-	if x != nil {
-		return x.CreatedByUsername
-	}
-	return ""
-}
-
-func (x *ThreadInfo) GetStatus() string {
-	if x != nil {
-		return x.Status
-	}
-	return ""
-}
-
-func (x *ThreadInfo) GetCreatedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.CreatedAt
-	}
-	return nil
-}
-
-func (x *ThreadInfo) GetResolvedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.ResolvedAt
-	}
-	return nil
-}
-
-func (x *ThreadInfo) GetComments() []*CommentInfo {
-	if x != nil {
-		return x.Comments
-	}
-	return nil
-}
-
-type ListThreadsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ViewId        int32                  `protobuf:"varint,1,opt,name=view_id,json=viewId,proto3" json:"view_id,omitempty"`
-	ElementId     *int32                 `protobuf:"varint,2,opt,name=element_id,json=elementId,proto3,oneof" json:"element_id,omitempty"`
-	ConnectorId   *int32                 `protobuf:"varint,3,opt,name=connector_id,json=connectorId,proto3,oneof" json:"connector_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ListThreadsRequest) Reset() {
-	*x = ListThreadsRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[90]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListThreadsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListThreadsRequest) ProtoMessage() {}
-
-func (x *ListThreadsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[90]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListThreadsRequest.ProtoReflect.Descriptor instead.
-func (*ListThreadsRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{90}
-}
-
-func (x *ListThreadsRequest) GetViewId() int32 {
-	if x != nil {
-		return x.ViewId
-	}
-	return 0
-}
-
-func (x *ListThreadsRequest) GetElementId() int32 {
-	if x != nil && x.ElementId != nil {
-		return *x.ElementId
-	}
-	return 0
-}
-
-func (x *ListThreadsRequest) GetConnectorId() int32 {
-	if x != nil && x.ConnectorId != nil {
-		return *x.ConnectorId
-	}
-	return 0
-}
-
-type ListThreadsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Threads       []*ThreadInfo          `protobuf:"bytes,1,rep,name=threads,proto3" json:"threads,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ListThreadsResponse) Reset() {
-	*x = ListThreadsResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[91]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListThreadsResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListThreadsResponse) ProtoMessage() {}
-
-func (x *ListThreadsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[91]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListThreadsResponse.ProtoReflect.Descriptor instead.
-func (*ListThreadsResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{91}
-}
-
-func (x *ListThreadsResponse) GetThreads() []*ThreadInfo {
-	if x != nil {
-		return x.Threads
-	}
-	return nil
-}
-
-type CreateThreadRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ViewId        int32                  `protobuf:"varint,1,opt,name=view_id,json=viewId,proto3" json:"view_id,omitempty"`
-	ElementId     *int32                 `protobuf:"varint,2,opt,name=element_id,json=elementId,proto3,oneof" json:"element_id,omitempty"`
-	ConnectorId   *int32                 `protobuf:"varint,3,opt,name=connector_id,json=connectorId,proto3,oneof" json:"connector_id,omitempty"`
-	Body          string                 `protobuf:"bytes,4,opt,name=body,proto3" json:"body,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CreateThreadRequest) Reset() {
-	*x = CreateThreadRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[92]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateThreadRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateThreadRequest) ProtoMessage() {}
-
-func (x *CreateThreadRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[92]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateThreadRequest.ProtoReflect.Descriptor instead.
-func (*CreateThreadRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{92}
-}
-
-func (x *CreateThreadRequest) GetViewId() int32 {
-	if x != nil {
-		return x.ViewId
-	}
-	return 0
-}
-
-func (x *CreateThreadRequest) GetElementId() int32 {
-	if x != nil && x.ElementId != nil {
-		return *x.ElementId
-	}
-	return 0
-}
-
-func (x *CreateThreadRequest) GetConnectorId() int32 {
-	if x != nil && x.ConnectorId != nil {
-		return *x.ConnectorId
-	}
-	return 0
-}
-
-func (x *CreateThreadRequest) GetBody() string {
-	if x != nil {
-		return x.Body
-	}
-	return ""
-}
-
-type CreateThreadResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Thread        *ThreadInfo            `protobuf:"bytes,1,opt,name=thread,proto3" json:"thread,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CreateThreadResponse) Reset() {
-	*x = CreateThreadResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[93]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateThreadResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateThreadResponse) ProtoMessage() {}
-
-func (x *CreateThreadResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[93]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateThreadResponse.ProtoReflect.Descriptor instead.
-func (*CreateThreadResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{93}
-}
-
-func (x *CreateThreadResponse) GetThread() *ThreadInfo {
-	if x != nil {
-		return x.Thread
-	}
-	return nil
-}
-
-type AddCommentRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ViewId        int32                  `protobuf:"varint,1,opt,name=view_id,json=viewId,proto3" json:"view_id,omitempty"`
-	ThreadId      int32                  `protobuf:"varint,2,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
-	Body          string                 `protobuf:"bytes,3,opt,name=body,proto3" json:"body,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *AddCommentRequest) Reset() {
-	*x = AddCommentRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[94]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *AddCommentRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AddCommentRequest) ProtoMessage() {}
-
-func (x *AddCommentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[94]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use AddCommentRequest.ProtoReflect.Descriptor instead.
-func (*AddCommentRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{94}
-}
-
-func (x *AddCommentRequest) GetViewId() int32 {
-	if x != nil {
-		return x.ViewId
-	}
-	return 0
-}
-
-func (x *AddCommentRequest) GetThreadId() int32 {
-	if x != nil {
-		return x.ThreadId
-	}
-	return 0
-}
-
-func (x *AddCommentRequest) GetBody() string {
-	if x != nil {
-		return x.Body
-	}
-	return ""
-}
-
-type AddCommentResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Comment       *CommentInfo           `protobuf:"bytes,1,opt,name=comment,proto3" json:"comment,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *AddCommentResponse) Reset() {
-	*x = AddCommentResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[95]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *AddCommentResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AddCommentResponse) ProtoMessage() {}
-
-func (x *AddCommentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[95]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use AddCommentResponse.ProtoReflect.Descriptor instead.
-func (*AddCommentResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{95}
-}
-
-func (x *AddCommentResponse) GetComment() *CommentInfo {
-	if x != nil {
-		return x.Comment
-	}
-	return nil
-}
-
-type ResolveThreadRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ViewId        int32                  `protobuf:"varint,1,opt,name=view_id,json=viewId,proto3" json:"view_id,omitempty"`
-	ThreadId      int32                  `protobuf:"varint,2,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
-	Resolved      bool                   `protobuf:"varint,3,opt,name=resolved,proto3" json:"resolved,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ResolveThreadRequest) Reset() {
-	*x = ResolveThreadRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[96]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ResolveThreadRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ResolveThreadRequest) ProtoMessage() {}
-
-func (x *ResolveThreadRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[96]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ResolveThreadRequest.ProtoReflect.Descriptor instead.
-func (*ResolveThreadRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{96}
-}
-
-func (x *ResolveThreadRequest) GetViewId() int32 {
-	if x != nil {
-		return x.ViewId
-	}
-	return 0
-}
-
-func (x *ResolveThreadRequest) GetThreadId() int32 {
-	if x != nil {
-		return x.ThreadId
-	}
-	return 0
-}
-
-func (x *ResolveThreadRequest) GetResolved() bool {
-	if x != nil {
-		return x.Resolved
-	}
-	return false
-}
-
-type ResolveThreadResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ResolveThreadResponse) Reset() {
-	*x = ResolveThreadResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[97]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ResolveThreadResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ResolveThreadResponse) ProtoMessage() {}
-
-func (x *ResolveThreadResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[97]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ResolveThreadResponse.ProtoReflect.Descriptor instead.
-func (*ResolveThreadResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{97}
-}
-
-type NodeReactionSummary struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ElementId     int32                  `protobuf:"varint,1,opt,name=element_id,json=elementId,proto3" json:"element_id,omitempty"`
-	Emoji         string                 `protobuf:"bytes,2,opt,name=emoji,proto3" json:"emoji,omitempty"`
-	Count         int32                  `protobuf:"varint,3,opt,name=count,proto3" json:"count,omitempty"`
-	ReactedByMe   bool                   `protobuf:"varint,4,opt,name=reacted_by_me,json=reactedByMe,proto3" json:"reacted_by_me,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *NodeReactionSummary) Reset() {
-	*x = NodeReactionSummary{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[98]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *NodeReactionSummary) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*NodeReactionSummary) ProtoMessage() {}
-
-func (x *NodeReactionSummary) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[98]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use NodeReactionSummary.ProtoReflect.Descriptor instead.
-func (*NodeReactionSummary) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{98}
-}
-
-func (x *NodeReactionSummary) GetElementId() int32 {
-	if x != nil {
-		return x.ElementId
-	}
-	return 0
-}
-
-func (x *NodeReactionSummary) GetEmoji() string {
-	if x != nil {
-		return x.Emoji
-	}
-	return ""
-}
-
-func (x *NodeReactionSummary) GetCount() int32 {
-	if x != nil {
-		return x.Count
-	}
-	return 0
-}
-
-func (x *NodeReactionSummary) GetReactedByMe() bool {
-	if x != nil {
-		return x.ReactedByMe
-	}
-	return false
-}
-
-type ListReactionsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ViewId        int32                  `protobuf:"varint,1,opt,name=view_id,json=viewId,proto3" json:"view_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ListReactionsRequest) Reset() {
-	*x = ListReactionsRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[99]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListReactionsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListReactionsRequest) ProtoMessage() {}
-
-func (x *ListReactionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[99]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListReactionsRequest.ProtoReflect.Descriptor instead.
-func (*ListReactionsRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{99}
-}
-
-func (x *ListReactionsRequest) GetViewId() int32 {
-	if x != nil {
-		return x.ViewId
-	}
-	return 0
-}
-
-type ListReactionsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Reactions     []*NodeReactionSummary `protobuf:"bytes,1,rep,name=reactions,proto3" json:"reactions,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ListReactionsResponse) Reset() {
-	*x = ListReactionsResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[100]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListReactionsResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListReactionsResponse) ProtoMessage() {}
-
-func (x *ListReactionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[100]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListReactionsResponse.ProtoReflect.Descriptor instead.
-func (*ListReactionsResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{100}
-}
-
-func (x *ListReactionsResponse) GetReactions() []*NodeReactionSummary {
-	if x != nil {
-		return x.Reactions
-	}
-	return nil
-}
-
-type ToggleReactionRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ViewId        int32                  `protobuf:"varint,1,opt,name=view_id,json=viewId,proto3" json:"view_id,omitempty"`
-	ElementId     int32                  `protobuf:"varint,2,opt,name=element_id,json=elementId,proto3" json:"element_id,omitempty"`
-	Emoji         string                 `protobuf:"bytes,3,opt,name=emoji,proto3" json:"emoji,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ToggleReactionRequest) Reset() {
-	*x = ToggleReactionRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[101]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ToggleReactionRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ToggleReactionRequest) ProtoMessage() {}
-
-func (x *ToggleReactionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[101]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ToggleReactionRequest.ProtoReflect.Descriptor instead.
-func (*ToggleReactionRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{101}
-}
-
-func (x *ToggleReactionRequest) GetViewId() int32 {
-	if x != nil {
-		return x.ViewId
-	}
-	return 0
-}
-
-func (x *ToggleReactionRequest) GetElementId() int32 {
-	if x != nil {
-		return x.ElementId
-	}
-	return 0
-}
-
-func (x *ToggleReactionRequest) GetEmoji() string {
-	if x != nil {
-		return x.Emoji
-	}
-	return ""
-}
-
-type ToggleReactionResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Active        bool                   `protobuf:"varint,1,opt,name=active,proto3" json:"active,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ToggleReactionResponse) Reset() {
-	*x = ToggleReactionResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[102]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ToggleReactionResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ToggleReactionResponse) ProtoMessage() {}
-
-func (x *ToggleReactionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[102]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ToggleReactionResponse.ProtoReflect.Descriptor instead.
-func (*ToggleReactionResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{102}
-}
-
-func (x *ToggleReactionResponse) GetActive() bool {
-	if x != nil {
-		return x.Active
-	}
-	return false
-}
-
 var File_diag_v1_workspace_service_proto protoreflect.FileDescriptor
 
 const file_diag_v1_workspace_service_proto_rawDesc = "" +
@@ -7645,87 +6737,7 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\x05layer\x18\x01 \x01(\v2\x12.diag.v1.ViewLayerR\x05layer\"3\n" +
 	"\x16DeleteViewLayerRequest\x12\x19\n" +
 	"\blayer_id\x18\x01 \x01(\x05R\alayerId\"\x19\n" +
-	"\x17DeleteViewLayerResponse\"\xba\x02\n" +
-	"\vCommentInfo\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x15\n" +
-	"\x06org_id\x18\x02 \x01(\tR\x05orgId\x12\x17\n" +
-	"\aview_id\x18\x03 \x01(\x05R\x06viewId\x12\x1b\n" +
-	"\tthread_id\x18\x04 \x01(\x05R\bthreadId\x12\x1b\n" +
-	"\tauthor_id\x18\x05 \x01(\tR\bauthorId\x12'\n" +
-	"\x0fauthor_username\x18\x06 \x01(\tR\x0eauthorUsername\x12\x12\n" +
-	"\x04body\x18\a \x01(\tR\x04body\x129\n" +
-	"\n" +
-	"created_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
-	"\n" +
-	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xde\x03\n" +
-	"\n" +
-	"ThreadInfo\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x15\n" +
-	"\x06org_id\x18\x02 \x01(\tR\x05orgId\x12\x17\n" +
-	"\aview_id\x18\x03 \x01(\x05R\x06viewId\x12\"\n" +
-	"\n" +
-	"element_id\x18\x04 \x01(\x05H\x00R\telementId\x88\x01\x01\x12&\n" +
-	"\fconnector_id\x18\x05 \x01(\x05H\x01R\vconnectorId\x88\x01\x01\x12\x1d\n" +
-	"\n" +
-	"created_by\x18\x06 \x01(\tR\tcreatedBy\x12.\n" +
-	"\x13created_by_username\x18\a \x01(\tR\x11createdByUsername\x12\x16\n" +
-	"\x06status\x18\b \x01(\tR\x06status\x129\n" +
-	"\n" +
-	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12@\n" +
-	"\vresolved_at\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampH\x02R\n" +
-	"resolvedAt\x88\x01\x01\x120\n" +
-	"\bcomments\x18\v \x03(\v2\x14.diag.v1.CommentInfoR\bcommentsB\r\n" +
-	"\v_element_idB\x0f\n" +
-	"\r_connector_idB\x0e\n" +
-	"\f_resolved_at\"\x99\x01\n" +
-	"\x12ListThreadsRequest\x12\x17\n" +
-	"\aview_id\x18\x01 \x01(\x05R\x06viewId\x12\"\n" +
-	"\n" +
-	"element_id\x18\x02 \x01(\x05H\x00R\telementId\x88\x01\x01\x12&\n" +
-	"\fconnector_id\x18\x03 \x01(\x05H\x01R\vconnectorId\x88\x01\x01B\r\n" +
-	"\v_element_idB\x0f\n" +
-	"\r_connector_id\"D\n" +
-	"\x13ListThreadsResponse\x12-\n" +
-	"\athreads\x18\x01 \x03(\v2\x13.diag.v1.ThreadInfoR\athreads\"\xae\x01\n" +
-	"\x13CreateThreadRequest\x12\x17\n" +
-	"\aview_id\x18\x01 \x01(\x05R\x06viewId\x12\"\n" +
-	"\n" +
-	"element_id\x18\x02 \x01(\x05H\x00R\telementId\x88\x01\x01\x12&\n" +
-	"\fconnector_id\x18\x03 \x01(\x05H\x01R\vconnectorId\x88\x01\x01\x12\x12\n" +
-	"\x04body\x18\x04 \x01(\tR\x04bodyB\r\n" +
-	"\v_element_idB\x0f\n" +
-	"\r_connector_id\"C\n" +
-	"\x14CreateThreadResponse\x12+\n" +
-	"\x06thread\x18\x01 \x01(\v2\x13.diag.v1.ThreadInfoR\x06thread\"]\n" +
-	"\x11AddCommentRequest\x12\x17\n" +
-	"\aview_id\x18\x01 \x01(\x05R\x06viewId\x12\x1b\n" +
-	"\tthread_id\x18\x02 \x01(\x05R\bthreadId\x12\x12\n" +
-	"\x04body\x18\x03 \x01(\tR\x04body\"D\n" +
-	"\x12AddCommentResponse\x12.\n" +
-	"\acomment\x18\x01 \x01(\v2\x14.diag.v1.CommentInfoR\acomment\"h\n" +
-	"\x14ResolveThreadRequest\x12\x17\n" +
-	"\aview_id\x18\x01 \x01(\x05R\x06viewId\x12\x1b\n" +
-	"\tthread_id\x18\x02 \x01(\x05R\bthreadId\x12\x1a\n" +
-	"\bresolved\x18\x03 \x01(\bR\bresolved\"\x17\n" +
-	"\x15ResolveThreadResponse\"\x84\x01\n" +
-	"\x13NodeReactionSummary\x12\x1d\n" +
-	"\n" +
-	"element_id\x18\x01 \x01(\x05R\telementId\x12\x14\n" +
-	"\x05emoji\x18\x02 \x01(\tR\x05emoji\x12\x14\n" +
-	"\x05count\x18\x03 \x01(\x05R\x05count\x12\"\n" +
-	"\rreacted_by_me\x18\x04 \x01(\bR\vreactedByMe\"/\n" +
-	"\x14ListReactionsRequest\x12\x17\n" +
-	"\aview_id\x18\x01 \x01(\x05R\x06viewId\"S\n" +
-	"\x15ListReactionsResponse\x12:\n" +
-	"\treactions\x18\x01 \x03(\v2\x1c.diag.v1.NodeReactionSummaryR\treactions\"e\n" +
-	"\x15ToggleReactionRequest\x12\x17\n" +
-	"\aview_id\x18\x01 \x01(\x05R\x06viewId\x12\x1d\n" +
-	"\n" +
-	"element_id\x18\x02 \x01(\x05R\telementId\x12\x14\n" +
-	"\x05emoji\x18\x03 \x01(\tR\x05emoji\"0\n" +
-	"\x16ToggleReactionResponse\x12\x16\n" +
-	"\x06active\x18\x01 \x01(\bR\x06active2\xc5\x19\n" +
+	"\x17DeleteViewLayerResponse2\xf4\x15\n" +
 	"\x10WorkspaceService\x12E\n" +
 	"\n" +
 	"CreateView\x12\x1a.diag.v1.CreateViewRequest\x1a\x1b.diag.v1.CreateViewResponse\x12K\n" +
@@ -7762,14 +6774,7 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\x0eListViewLayers\x12\x1e.diag.v1.ListViewLayersRequest\x1a\x1f.diag.v1.ListViewLayersResponse\x12T\n" +
 	"\x0fCreateViewLayer\x12\x1f.diag.v1.CreateViewLayerRequest\x1a .diag.v1.CreateViewLayerResponse\x12T\n" +
 	"\x0fUpdateViewLayer\x12\x1f.diag.v1.UpdateViewLayerRequest\x1a .diag.v1.UpdateViewLayerResponse\x12T\n" +
-	"\x0fDeleteViewLayer\x12\x1f.diag.v1.DeleteViewLayerRequest\x1a .diag.v1.DeleteViewLayerResponse\x12H\n" +
-	"\vListThreads\x12\x1b.diag.v1.ListThreadsRequest\x1a\x1c.diag.v1.ListThreadsResponse\x12K\n" +
-	"\fCreateThread\x12\x1c.diag.v1.CreateThreadRequest\x1a\x1d.diag.v1.CreateThreadResponse\x12E\n" +
-	"\n" +
-	"AddComment\x12\x1a.diag.v1.AddCommentRequest\x1a\x1b.diag.v1.AddCommentResponse\x12N\n" +
-	"\rResolveThread\x12\x1d.diag.v1.ResolveThreadRequest\x1a\x1e.diag.v1.ResolveThreadResponse\x12N\n" +
-	"\rListReactions\x12\x1d.diag.v1.ListReactionsRequest\x1a\x1e.diag.v1.ListReactionsResponse\x12Q\n" +
-	"\x0eToggleReaction\x12\x1e.diag.v1.ToggleReactionRequest\x1a\x1f.diag.v1.ToggleReactionResponseBIZGbuf.build/gen/go/tldiagramcom/diagram/protocolbuffers/go/diag/v1;diagv1b\x06proto3"
+	"\x0fDeleteViewLayer\x12\x1f.diag.v1.DeleteViewLayerRequest\x1a .diag.v1.DeleteViewLayerResponseBIZGbuf.build/gen/go/tldiagramcom/diagram/protocolbuffers/go/diag/v1;diagv1b\x06proto3"
 
 var (
 	file_diag_v1_workspace_service_proto_rawDescOnce sync.Once
@@ -7783,7 +6788,7 @@ func file_diag_v1_workspace_service_proto_rawDescGZIP() []byte {
 	return file_diag_v1_workspace_service_proto_rawDescData
 }
 
-var file_diag_v1_workspace_service_proto_msgTypes = make([]protoimpl.MessageInfo, 107)
+var file_diag_v1_workspace_service_proto_msgTypes = make([]protoimpl.MessageInfo, 92)
 var file_diag_v1_workspace_service_proto_goTypes = []any{
 	(*ExportOrganizationRequest)(nil),              // 0: diag.v1.ExportOrganizationRequest
 	(*ExportOrganizationResponse)(nil),             // 1: diag.v1.ExportOrganizationResponse
@@ -7873,26 +6878,11 @@ var file_diag_v1_workspace_service_proto_goTypes = []any{
 	(*UpdateViewLayerResponse)(nil),                // 85: diag.v1.UpdateViewLayerResponse
 	(*DeleteViewLayerRequest)(nil),                 // 86: diag.v1.DeleteViewLayerRequest
 	(*DeleteViewLayerResponse)(nil),                // 87: diag.v1.DeleteViewLayerResponse
-	(*CommentInfo)(nil),                            // 88: diag.v1.CommentInfo
-	(*ThreadInfo)(nil),                             // 89: diag.v1.ThreadInfo
-	(*ListThreadsRequest)(nil),                     // 90: diag.v1.ListThreadsRequest
-	(*ListThreadsResponse)(nil),                    // 91: diag.v1.ListThreadsResponse
-	(*CreateThreadRequest)(nil),                    // 92: diag.v1.CreateThreadRequest
-	(*CreateThreadResponse)(nil),                   // 93: diag.v1.CreateThreadResponse
-	(*AddCommentRequest)(nil),                      // 94: diag.v1.AddCommentRequest
-	(*AddCommentResponse)(nil),                     // 95: diag.v1.AddCommentResponse
-	(*ResolveThreadRequest)(nil),                   // 96: diag.v1.ResolveThreadRequest
-	(*ResolveThreadResponse)(nil),                  // 97: diag.v1.ResolveThreadResponse
-	(*NodeReactionSummary)(nil),                    // 98: diag.v1.NodeReactionSummary
-	(*ListReactionsRequest)(nil),                   // 99: diag.v1.ListReactionsRequest
-	(*ListReactionsResponse)(nil),                  // 100: diag.v1.ListReactionsResponse
-	(*ToggleReactionRequest)(nil),                  // 101: diag.v1.ToggleReactionRequest
-	(*ToggleReactionResponse)(nil),                 // 102: diag.v1.ToggleReactionResponse
-	nil,                                            // 103: diag.v1.ApplyPlanResponse.ElementMetadataEntry
-	nil,                                            // 104: diag.v1.ApplyPlanResponse.ViewMetadataEntry
-	nil,                                            // 105: diag.v1.ApplyPlanResponse.ConnectorMetadataEntry
-	nil,                                            // 106: diag.v1.GetWorkspaceResponse.ContentEntry
-	(*timestamppb.Timestamp)(nil),                  // 107: google.protobuf.Timestamp
+	nil,                                            // 88: diag.v1.ApplyPlanResponse.ElementMetadataEntry
+	nil,                                            // 89: diag.v1.ApplyPlanResponse.ViewMetadataEntry
+	nil,                                            // 90: diag.v1.ApplyPlanResponse.ConnectorMetadataEntry
+	nil,                                            // 91: diag.v1.GetWorkspaceResponse.ContentEntry
+	(*timestamppb.Timestamp)(nil),                  // 92: google.protobuf.Timestamp
 }
 var file_diag_v1_workspace_service_proto_depIdxs = []int32{
 	23,  // 0: diag.v1.ExportOrganizationResponse.views:type_name -> diag.v1.View
@@ -7903,17 +6893,17 @@ var file_diag_v1_workspace_service_proto_depIdxs = []int32{
 	79,  // 5: diag.v1.ExportOrganizationResponse.layers:type_name -> diag.v1.ViewLayer
 	32,  // 6: diag.v1.PlanElement.technology_links:type_name -> diag.v1.TechnologyLink
 	2,   // 7: diag.v1.PlanElement.placements:type_name -> diag.v1.PlanViewPlacement
-	107, // 8: diag.v1.PlanElement.updated_at:type_name -> google.protobuf.Timestamp
-	107, // 9: diag.v1.PlanElement.view_updated_at:type_name -> google.protobuf.Timestamp
-	107, // 10: diag.v1.PlanConnector.updated_at:type_name -> google.protobuf.Timestamp
+	92,  // 8: diag.v1.PlanElement.updated_at:type_name -> google.protobuf.Timestamp
+	92,  // 9: diag.v1.PlanElement.view_updated_at:type_name -> google.protobuf.Timestamp
+	92,  // 10: diag.v1.PlanConnector.updated_at:type_name -> google.protobuf.Timestamp
 	3,   // 11: diag.v1.ApplyPlanRequest.elements:type_name -> diag.v1.PlanElement
 	4,   // 12: diag.v1.ApplyPlanRequest.connectors:type_name -> diag.v1.PlanConnector
-	107, // 13: diag.v1.WorkspaceVersion.created_at:type_name -> google.protobuf.Timestamp
-	107, // 14: diag.v1.ResourceMetadata.updated_at:type_name -> google.protobuf.Timestamp
-	107, // 15: diag.v1.PlanConflictItem.local_updated_at:type_name -> google.protobuf.Timestamp
-	107, // 16: diag.v1.PlanConflictItem.remote_updated_at:type_name -> google.protobuf.Timestamp
-	107, // 17: diag.v1.ApplyPlanElementResult.updated_at:type_name -> google.protobuf.Timestamp
-	107, // 18: diag.v1.ApplyPlanConnectorResult.updated_at:type_name -> google.protobuf.Timestamp
+	92,  // 13: diag.v1.WorkspaceVersion.created_at:type_name -> google.protobuf.Timestamp
+	92,  // 14: diag.v1.ResourceMetadata.updated_at:type_name -> google.protobuf.Timestamp
+	92,  // 15: diag.v1.PlanConflictItem.local_updated_at:type_name -> google.protobuf.Timestamp
+	92,  // 16: diag.v1.PlanConflictItem.remote_updated_at:type_name -> google.protobuf.Timestamp
+	92,  // 17: diag.v1.ApplyPlanElementResult.updated_at:type_name -> google.protobuf.Timestamp
+	92,  // 18: diag.v1.ApplyPlanConnectorResult.updated_at:type_name -> google.protobuf.Timestamp
 	16,  // 19: diag.v1.ApplyPlanResponse.created_elements:type_name -> diag.v1.Element
 	17,  // 20: diag.v1.ApplyPlanResponse.created_views:type_name -> diag.v1.ViewSummary
 	18,  // 21: diag.v1.ApplyPlanResponse.created_placements:type_name -> diag.v1.ElementPlacement
@@ -7921,32 +6911,32 @@ var file_diag_v1_workspace_service_proto_depIdxs = []int32{
 	6,   // 23: diag.v1.ApplyPlanResponse.summary:type_name -> diag.v1.PlanSummary
 	7,   // 24: diag.v1.ApplyPlanResponse.drift:type_name -> diag.v1.PlanDriftItem
 	8,   // 25: diag.v1.ApplyPlanResponse.version:type_name -> diag.v1.WorkspaceVersion
-	103, // 26: diag.v1.ApplyPlanResponse.element_metadata:type_name -> diag.v1.ApplyPlanResponse.ElementMetadataEntry
-	104, // 27: diag.v1.ApplyPlanResponse.view_metadata:type_name -> diag.v1.ApplyPlanResponse.ViewMetadataEntry
-	105, // 28: diag.v1.ApplyPlanResponse.connector_metadata:type_name -> diag.v1.ApplyPlanResponse.ConnectorMetadataEntry
+	88,  // 26: diag.v1.ApplyPlanResponse.element_metadata:type_name -> diag.v1.ApplyPlanResponse.ElementMetadataEntry
+	89,  // 27: diag.v1.ApplyPlanResponse.view_metadata:type_name -> diag.v1.ApplyPlanResponse.ViewMetadataEntry
+	90,  // 28: diag.v1.ApplyPlanResponse.connector_metadata:type_name -> diag.v1.ApplyPlanResponse.ConnectorMetadataEntry
 	10,  // 29: diag.v1.ApplyPlanResponse.conflicts:type_name -> diag.v1.PlanConflictItem
 	11,  // 30: diag.v1.ApplyPlanResponse.element_results:type_name -> diag.v1.ApplyPlanElementResult
 	12,  // 31: diag.v1.ApplyPlanResponse.connector_results:type_name -> diag.v1.ApplyPlanConnectorResult
 	23,  // 32: diag.v1.CreateViewResponse.view:type_name -> diag.v1.View
 	32,  // 33: diag.v1.Element.technology_links:type_name -> diag.v1.TechnologyLink
-	107, // 34: diag.v1.Element.created_at:type_name -> google.protobuf.Timestamp
-	107, // 35: diag.v1.Element.updated_at:type_name -> google.protobuf.Timestamp
-	107, // 36: diag.v1.ViewSummary.created_at:type_name -> google.protobuf.Timestamp
-	107, // 37: diag.v1.ViewSummary.updated_at:type_name -> google.protobuf.Timestamp
+	92,  // 34: diag.v1.Element.created_at:type_name -> google.protobuf.Timestamp
+	92,  // 35: diag.v1.Element.updated_at:type_name -> google.protobuf.Timestamp
+	92,  // 36: diag.v1.ViewSummary.created_at:type_name -> google.protobuf.Timestamp
+	92,  // 37: diag.v1.ViewSummary.updated_at:type_name -> google.protobuf.Timestamp
 	32,  // 38: diag.v1.PlacedElement.technology_links:type_name -> diag.v1.TechnologyLink
-	107, // 39: diag.v1.Connector.created_at:type_name -> google.protobuf.Timestamp
-	107, // 40: diag.v1.Connector.updated_at:type_name -> google.protobuf.Timestamp
+	92,  // 39: diag.v1.Connector.created_at:type_name -> google.protobuf.Timestamp
+	92,  // 40: diag.v1.Connector.updated_at:type_name -> google.protobuf.Timestamp
 	19,  // 41: diag.v1.ViewContent.placements:type_name -> diag.v1.PlacedElement
 	20,  // 42: diag.v1.ViewContent.connectors:type_name -> diag.v1.Connector
-	107, // 43: diag.v1.View.created_at:type_name -> google.protobuf.Timestamp
-	107, // 44: diag.v1.View.updated_at:type_name -> google.protobuf.Timestamp
+	92,  // 43: diag.v1.View.created_at:type_name -> google.protobuf.Timestamp
+	92,  // 44: diag.v1.View.updated_at:type_name -> google.protobuf.Timestamp
 	23,  // 45: diag.v1.View.children:type_name -> diag.v1.View
 	23,  // 46: diag.v1.ListViewsResponse.views:type_name -> diag.v1.View
 	23,  // 47: diag.v1.GetViewResponse.view:type_name -> diag.v1.View
 	23,  // 48: diag.v1.UpdateViewResponse.view:type_name -> diag.v1.View
-	107, // 49: diag.v1.ExploreTreeNode.created_at:type_name -> google.protobuf.Timestamp
+	92,  // 49: diag.v1.ExploreTreeNode.created_at:type_name -> google.protobuf.Timestamp
 	23,  // 50: diag.v1.GetWorkspaceResponse.views:type_name -> diag.v1.View
-	106, // 51: diag.v1.GetWorkspaceResponse.content:type_name -> diag.v1.GetWorkspaceResponse.ContentEntry
+	91,  // 51: diag.v1.GetWorkspaceResponse.content:type_name -> diag.v1.GetWorkspaceResponse.ContentEntry
 	72,  // 52: diag.v1.GetWorkspaceResponse.navigations:type_name -> diag.v1.ElementNavigationInfo
 	44,  // 53: diag.v1.ListIncomingElementNavigationsResponse.navigations:type_name -> diag.v1.IncomingElementNavigationInfo
 	16,  // 54: diag.v1.ListElementsResponse.elements:type_name -> diag.v1.Element
@@ -7963,105 +6953,84 @@ var file_diag_v1_workspace_service_proto_depIdxs = []int32{
 	20,  // 65: diag.v1.UpdateConnectorResponse.connector:type_name -> diag.v1.Connector
 	72,  // 66: diag.v1.ListElementNavigationsResponse.navigations:type_name -> diag.v1.ElementNavigationInfo
 	72,  // 67: diag.v1.CreateElementNavigationResponse.navigation:type_name -> diag.v1.ElementNavigationInfo
-	107, // 68: diag.v1.ViewLayer.created_at:type_name -> google.protobuf.Timestamp
-	107, // 69: diag.v1.ViewLayer.updated_at:type_name -> google.protobuf.Timestamp
+	92,  // 68: diag.v1.ViewLayer.created_at:type_name -> google.protobuf.Timestamp
+	92,  // 69: diag.v1.ViewLayer.updated_at:type_name -> google.protobuf.Timestamp
 	79,  // 70: diag.v1.ListViewLayersResponse.layers:type_name -> diag.v1.ViewLayer
 	79,  // 71: diag.v1.CreateViewLayerResponse.layer:type_name -> diag.v1.ViewLayer
 	79,  // 72: diag.v1.UpdateViewLayerResponse.layer:type_name -> diag.v1.ViewLayer
-	107, // 73: diag.v1.CommentInfo.created_at:type_name -> google.protobuf.Timestamp
-	107, // 74: diag.v1.CommentInfo.updated_at:type_name -> google.protobuf.Timestamp
-	107, // 75: diag.v1.ThreadInfo.created_at:type_name -> google.protobuf.Timestamp
-	107, // 76: diag.v1.ThreadInfo.resolved_at:type_name -> google.protobuf.Timestamp
-	88,  // 77: diag.v1.ThreadInfo.comments:type_name -> diag.v1.CommentInfo
-	89,  // 78: diag.v1.ListThreadsResponse.threads:type_name -> diag.v1.ThreadInfo
-	89,  // 79: diag.v1.CreateThreadResponse.thread:type_name -> diag.v1.ThreadInfo
-	88,  // 80: diag.v1.AddCommentResponse.comment:type_name -> diag.v1.CommentInfo
-	98,  // 81: diag.v1.ListReactionsResponse.reactions:type_name -> diag.v1.NodeReactionSummary
-	9,   // 82: diag.v1.ApplyPlanResponse.ElementMetadataEntry.value:type_name -> diag.v1.ResourceMetadata
-	9,   // 83: diag.v1.ApplyPlanResponse.ViewMetadataEntry.value:type_name -> diag.v1.ResourceMetadata
-	9,   // 84: diag.v1.ApplyPlanResponse.ConnectorMetadataEntry.value:type_name -> diag.v1.ResourceMetadata
-	22,  // 85: diag.v1.GetWorkspaceResponse.ContentEntry.value:type_name -> diag.v1.ViewContent
-	14,  // 86: diag.v1.WorkspaceService.CreateView:input_type -> diag.v1.CreateViewRequest
-	5,   // 87: diag.v1.WorkspaceService.ApplyWorkspacePlan:input_type -> diag.v1.ApplyPlanRequest
-	0,   // 88: diag.v1.WorkspaceService.ExportWorkspace:input_type -> diag.v1.ExportOrganizationRequest
-	24,  // 89: diag.v1.WorkspaceService.DeleteView:input_type -> diag.v1.DeleteViewRequest
-	26,  // 90: diag.v1.WorkspaceService.DeleteElement:input_type -> diag.v1.DeleteElementRequest
-	28,  // 91: diag.v1.WorkspaceService.DeleteConnector:input_type -> diag.v1.DeleteConnectorRequest
-	30,  // 92: diag.v1.WorkspaceService.DeleteElementNavigation:input_type -> diag.v1.DeleteElementNavigationRequest
-	33,  // 93: diag.v1.WorkspaceService.ListViews:input_type -> diag.v1.ListViewsRequest
-	35,  // 94: diag.v1.WorkspaceService.GetView:input_type -> diag.v1.GetViewRequest
-	37,  // 95: diag.v1.WorkspaceService.UpdateView:input_type -> diag.v1.UpdateViewRequest
-	39,  // 96: diag.v1.WorkspaceService.SetViewLevel:input_type -> diag.v1.SetViewLevelRequest
-	42,  // 97: diag.v1.WorkspaceService.GetWorkspace:input_type -> diag.v1.GetWorkspaceRequest
-	45,  // 98: diag.v1.WorkspaceService.ListIncomingElementNavigations:input_type -> diag.v1.ListIncomingElementNavigationsRequest
-	47,  // 99: diag.v1.WorkspaceService.ListElements:input_type -> diag.v1.ListElementsRequest
-	49,  // 100: diag.v1.WorkspaceService.GetElement:input_type -> diag.v1.GetElementRequest
-	51,  // 101: diag.v1.WorkspaceService.CreateElement:input_type -> diag.v1.CreateElementRequest
-	53,  // 102: diag.v1.WorkspaceService.UpdateElement:input_type -> diag.v1.UpdateElementRequest
-	56,  // 103: diag.v1.WorkspaceService.ListElementPlacements:input_type -> diag.v1.ListElementPlacementsRequest
-	58,  // 104: diag.v1.WorkspaceService.ListPlacements:input_type -> diag.v1.ListPlacementsRequest
-	60,  // 105: diag.v1.WorkspaceService.CreatePlacement:input_type -> diag.v1.CreatePlacementRequest
-	62,  // 106: diag.v1.WorkspaceService.UpdatePlacementPosition:input_type -> diag.v1.UpdatePlacementPositionRequest
-	64,  // 107: diag.v1.WorkspaceService.DeletePlacement:input_type -> diag.v1.DeletePlacementRequest
-	66,  // 108: diag.v1.WorkspaceService.ListConnectors:input_type -> diag.v1.ListConnectorsRequest
-	68,  // 109: diag.v1.WorkspaceService.CreateConnector:input_type -> diag.v1.CreateConnectorRequest
-	70,  // 110: diag.v1.WorkspaceService.UpdateConnector:input_type -> diag.v1.UpdateConnectorRequest
-	73,  // 111: diag.v1.WorkspaceService.ListElementNavigations:input_type -> diag.v1.ListElementNavigationsRequest
-	75,  // 112: diag.v1.WorkspaceService.CreateElementNavigation:input_type -> diag.v1.CreateElementNavigationRequest
-	77,  // 113: diag.v1.WorkspaceService.DeleteElementNavigationById:input_type -> diag.v1.DeleteElementNavigationByIdRequest
-	80,  // 114: diag.v1.WorkspaceService.ListViewLayers:input_type -> diag.v1.ListViewLayersRequest
-	82,  // 115: diag.v1.WorkspaceService.CreateViewLayer:input_type -> diag.v1.CreateViewLayerRequest
-	84,  // 116: diag.v1.WorkspaceService.UpdateViewLayer:input_type -> diag.v1.UpdateViewLayerRequest
-	86,  // 117: diag.v1.WorkspaceService.DeleteViewLayer:input_type -> diag.v1.DeleteViewLayerRequest
-	90,  // 118: diag.v1.WorkspaceService.ListThreads:input_type -> diag.v1.ListThreadsRequest
-	92,  // 119: diag.v1.WorkspaceService.CreateThread:input_type -> diag.v1.CreateThreadRequest
-	94,  // 120: diag.v1.WorkspaceService.AddComment:input_type -> diag.v1.AddCommentRequest
-	96,  // 121: diag.v1.WorkspaceService.ResolveThread:input_type -> diag.v1.ResolveThreadRequest
-	99,  // 122: diag.v1.WorkspaceService.ListReactions:input_type -> diag.v1.ListReactionsRequest
-	101, // 123: diag.v1.WorkspaceService.ToggleReaction:input_type -> diag.v1.ToggleReactionRequest
-	15,  // 124: diag.v1.WorkspaceService.CreateView:output_type -> diag.v1.CreateViewResponse
-	13,  // 125: diag.v1.WorkspaceService.ApplyWorkspacePlan:output_type -> diag.v1.ApplyPlanResponse
-	1,   // 126: diag.v1.WorkspaceService.ExportWorkspace:output_type -> diag.v1.ExportOrganizationResponse
-	25,  // 127: diag.v1.WorkspaceService.DeleteView:output_type -> diag.v1.DeleteViewResponse
-	27,  // 128: diag.v1.WorkspaceService.DeleteElement:output_type -> diag.v1.DeleteElementResponse
-	29,  // 129: diag.v1.WorkspaceService.DeleteConnector:output_type -> diag.v1.DeleteConnectorResponse
-	31,  // 130: diag.v1.WorkspaceService.DeleteElementNavigation:output_type -> diag.v1.DeleteElementNavigationResponse
-	34,  // 131: diag.v1.WorkspaceService.ListViews:output_type -> diag.v1.ListViewsResponse
-	36,  // 132: diag.v1.WorkspaceService.GetView:output_type -> diag.v1.GetViewResponse
-	38,  // 133: diag.v1.WorkspaceService.UpdateView:output_type -> diag.v1.UpdateViewResponse
-	40,  // 134: diag.v1.WorkspaceService.SetViewLevel:output_type -> diag.v1.SetViewLevelResponse
-	43,  // 135: diag.v1.WorkspaceService.GetWorkspace:output_type -> diag.v1.GetWorkspaceResponse
-	46,  // 136: diag.v1.WorkspaceService.ListIncomingElementNavigations:output_type -> diag.v1.ListIncomingElementNavigationsResponse
-	48,  // 137: diag.v1.WorkspaceService.ListElements:output_type -> diag.v1.ListElementsResponse
-	50,  // 138: diag.v1.WorkspaceService.GetElement:output_type -> diag.v1.GetElementResponse
-	52,  // 139: diag.v1.WorkspaceService.CreateElement:output_type -> diag.v1.CreateElementResponse
-	54,  // 140: diag.v1.WorkspaceService.UpdateElement:output_type -> diag.v1.UpdateElementResponse
-	57,  // 141: diag.v1.WorkspaceService.ListElementPlacements:output_type -> diag.v1.ListElementPlacementsResponse
-	59,  // 142: diag.v1.WorkspaceService.ListPlacements:output_type -> diag.v1.ListPlacementsResponse
-	61,  // 143: diag.v1.WorkspaceService.CreatePlacement:output_type -> diag.v1.CreatePlacementResponse
-	63,  // 144: diag.v1.WorkspaceService.UpdatePlacementPosition:output_type -> diag.v1.UpdatePlacementPositionResponse
-	65,  // 145: diag.v1.WorkspaceService.DeletePlacement:output_type -> diag.v1.DeletePlacementResponse
-	67,  // 146: diag.v1.WorkspaceService.ListConnectors:output_type -> diag.v1.ListConnectorsResponse
-	69,  // 147: diag.v1.WorkspaceService.CreateConnector:output_type -> diag.v1.CreateConnectorResponse
-	71,  // 148: diag.v1.WorkspaceService.UpdateConnector:output_type -> diag.v1.UpdateConnectorResponse
-	74,  // 149: diag.v1.WorkspaceService.ListElementNavigations:output_type -> diag.v1.ListElementNavigationsResponse
-	76,  // 150: diag.v1.WorkspaceService.CreateElementNavigation:output_type -> diag.v1.CreateElementNavigationResponse
-	78,  // 151: diag.v1.WorkspaceService.DeleteElementNavigationById:output_type -> diag.v1.DeleteElementNavigationByIdResponse
-	81,  // 152: diag.v1.WorkspaceService.ListViewLayers:output_type -> diag.v1.ListViewLayersResponse
-	83,  // 153: diag.v1.WorkspaceService.CreateViewLayer:output_type -> diag.v1.CreateViewLayerResponse
-	85,  // 154: diag.v1.WorkspaceService.UpdateViewLayer:output_type -> diag.v1.UpdateViewLayerResponse
-	87,  // 155: diag.v1.WorkspaceService.DeleteViewLayer:output_type -> diag.v1.DeleteViewLayerResponse
-	91,  // 156: diag.v1.WorkspaceService.ListThreads:output_type -> diag.v1.ListThreadsResponse
-	93,  // 157: diag.v1.WorkspaceService.CreateThread:output_type -> diag.v1.CreateThreadResponse
-	95,  // 158: diag.v1.WorkspaceService.AddComment:output_type -> diag.v1.AddCommentResponse
-	97,  // 159: diag.v1.WorkspaceService.ResolveThread:output_type -> diag.v1.ResolveThreadResponse
-	100, // 160: diag.v1.WorkspaceService.ListReactions:output_type -> diag.v1.ListReactionsResponse
-	102, // 161: diag.v1.WorkspaceService.ToggleReaction:output_type -> diag.v1.ToggleReactionResponse
-	124, // [124:162] is the sub-list for method output_type
-	86,  // [86:124] is the sub-list for method input_type
-	86,  // [86:86] is the sub-list for extension type_name
-	86,  // [86:86] is the sub-list for extension extendee
-	0,   // [0:86] is the sub-list for field type_name
+	9,   // 73: diag.v1.ApplyPlanResponse.ElementMetadataEntry.value:type_name -> diag.v1.ResourceMetadata
+	9,   // 74: diag.v1.ApplyPlanResponse.ViewMetadataEntry.value:type_name -> diag.v1.ResourceMetadata
+	9,   // 75: diag.v1.ApplyPlanResponse.ConnectorMetadataEntry.value:type_name -> diag.v1.ResourceMetadata
+	22,  // 76: diag.v1.GetWorkspaceResponse.ContentEntry.value:type_name -> diag.v1.ViewContent
+	14,  // 77: diag.v1.WorkspaceService.CreateView:input_type -> diag.v1.CreateViewRequest
+	5,   // 78: diag.v1.WorkspaceService.ApplyWorkspacePlan:input_type -> diag.v1.ApplyPlanRequest
+	0,   // 79: diag.v1.WorkspaceService.ExportWorkspace:input_type -> diag.v1.ExportOrganizationRequest
+	24,  // 80: diag.v1.WorkspaceService.DeleteView:input_type -> diag.v1.DeleteViewRequest
+	26,  // 81: diag.v1.WorkspaceService.DeleteElement:input_type -> diag.v1.DeleteElementRequest
+	28,  // 82: diag.v1.WorkspaceService.DeleteConnector:input_type -> diag.v1.DeleteConnectorRequest
+	30,  // 83: diag.v1.WorkspaceService.DeleteElementNavigation:input_type -> diag.v1.DeleteElementNavigationRequest
+	33,  // 84: diag.v1.WorkspaceService.ListViews:input_type -> diag.v1.ListViewsRequest
+	35,  // 85: diag.v1.WorkspaceService.GetView:input_type -> diag.v1.GetViewRequest
+	37,  // 86: diag.v1.WorkspaceService.UpdateView:input_type -> diag.v1.UpdateViewRequest
+	39,  // 87: diag.v1.WorkspaceService.SetViewLevel:input_type -> diag.v1.SetViewLevelRequest
+	42,  // 88: diag.v1.WorkspaceService.GetWorkspace:input_type -> diag.v1.GetWorkspaceRequest
+	45,  // 89: diag.v1.WorkspaceService.ListIncomingElementNavigations:input_type -> diag.v1.ListIncomingElementNavigationsRequest
+	47,  // 90: diag.v1.WorkspaceService.ListElements:input_type -> diag.v1.ListElementsRequest
+	49,  // 91: diag.v1.WorkspaceService.GetElement:input_type -> diag.v1.GetElementRequest
+	51,  // 92: diag.v1.WorkspaceService.CreateElement:input_type -> diag.v1.CreateElementRequest
+	53,  // 93: diag.v1.WorkspaceService.UpdateElement:input_type -> diag.v1.UpdateElementRequest
+	56,  // 94: diag.v1.WorkspaceService.ListElementPlacements:input_type -> diag.v1.ListElementPlacementsRequest
+	58,  // 95: diag.v1.WorkspaceService.ListPlacements:input_type -> diag.v1.ListPlacementsRequest
+	60,  // 96: diag.v1.WorkspaceService.CreatePlacement:input_type -> diag.v1.CreatePlacementRequest
+	62,  // 97: diag.v1.WorkspaceService.UpdatePlacementPosition:input_type -> diag.v1.UpdatePlacementPositionRequest
+	64,  // 98: diag.v1.WorkspaceService.DeletePlacement:input_type -> diag.v1.DeletePlacementRequest
+	66,  // 99: diag.v1.WorkspaceService.ListConnectors:input_type -> diag.v1.ListConnectorsRequest
+	68,  // 100: diag.v1.WorkspaceService.CreateConnector:input_type -> diag.v1.CreateConnectorRequest
+	70,  // 101: diag.v1.WorkspaceService.UpdateConnector:input_type -> diag.v1.UpdateConnectorRequest
+	73,  // 102: diag.v1.WorkspaceService.ListElementNavigations:input_type -> diag.v1.ListElementNavigationsRequest
+	75,  // 103: diag.v1.WorkspaceService.CreateElementNavigation:input_type -> diag.v1.CreateElementNavigationRequest
+	77,  // 104: diag.v1.WorkspaceService.DeleteElementNavigationById:input_type -> diag.v1.DeleteElementNavigationByIdRequest
+	80,  // 105: diag.v1.WorkspaceService.ListViewLayers:input_type -> diag.v1.ListViewLayersRequest
+	82,  // 106: diag.v1.WorkspaceService.CreateViewLayer:input_type -> diag.v1.CreateViewLayerRequest
+	84,  // 107: diag.v1.WorkspaceService.UpdateViewLayer:input_type -> diag.v1.UpdateViewLayerRequest
+	86,  // 108: diag.v1.WorkspaceService.DeleteViewLayer:input_type -> diag.v1.DeleteViewLayerRequest
+	15,  // 109: diag.v1.WorkspaceService.CreateView:output_type -> diag.v1.CreateViewResponse
+	13,  // 110: diag.v1.WorkspaceService.ApplyWorkspacePlan:output_type -> diag.v1.ApplyPlanResponse
+	1,   // 111: diag.v1.WorkspaceService.ExportWorkspace:output_type -> diag.v1.ExportOrganizationResponse
+	25,  // 112: diag.v1.WorkspaceService.DeleteView:output_type -> diag.v1.DeleteViewResponse
+	27,  // 113: diag.v1.WorkspaceService.DeleteElement:output_type -> diag.v1.DeleteElementResponse
+	29,  // 114: diag.v1.WorkspaceService.DeleteConnector:output_type -> diag.v1.DeleteConnectorResponse
+	31,  // 115: diag.v1.WorkspaceService.DeleteElementNavigation:output_type -> diag.v1.DeleteElementNavigationResponse
+	34,  // 116: diag.v1.WorkspaceService.ListViews:output_type -> diag.v1.ListViewsResponse
+	36,  // 117: diag.v1.WorkspaceService.GetView:output_type -> diag.v1.GetViewResponse
+	38,  // 118: diag.v1.WorkspaceService.UpdateView:output_type -> diag.v1.UpdateViewResponse
+	40,  // 119: diag.v1.WorkspaceService.SetViewLevel:output_type -> diag.v1.SetViewLevelResponse
+	43,  // 120: diag.v1.WorkspaceService.GetWorkspace:output_type -> diag.v1.GetWorkspaceResponse
+	46,  // 121: diag.v1.WorkspaceService.ListIncomingElementNavigations:output_type -> diag.v1.ListIncomingElementNavigationsResponse
+	48,  // 122: diag.v1.WorkspaceService.ListElements:output_type -> diag.v1.ListElementsResponse
+	50,  // 123: diag.v1.WorkspaceService.GetElement:output_type -> diag.v1.GetElementResponse
+	52,  // 124: diag.v1.WorkspaceService.CreateElement:output_type -> diag.v1.CreateElementResponse
+	54,  // 125: diag.v1.WorkspaceService.UpdateElement:output_type -> diag.v1.UpdateElementResponse
+	57,  // 126: diag.v1.WorkspaceService.ListElementPlacements:output_type -> diag.v1.ListElementPlacementsResponse
+	59,  // 127: diag.v1.WorkspaceService.ListPlacements:output_type -> diag.v1.ListPlacementsResponse
+	61,  // 128: diag.v1.WorkspaceService.CreatePlacement:output_type -> diag.v1.CreatePlacementResponse
+	63,  // 129: diag.v1.WorkspaceService.UpdatePlacementPosition:output_type -> diag.v1.UpdatePlacementPositionResponse
+	65,  // 130: diag.v1.WorkspaceService.DeletePlacement:output_type -> diag.v1.DeletePlacementResponse
+	67,  // 131: diag.v1.WorkspaceService.ListConnectors:output_type -> diag.v1.ListConnectorsResponse
+	69,  // 132: diag.v1.WorkspaceService.CreateConnector:output_type -> diag.v1.CreateConnectorResponse
+	71,  // 133: diag.v1.WorkspaceService.UpdateConnector:output_type -> diag.v1.UpdateConnectorResponse
+	74,  // 134: diag.v1.WorkspaceService.ListElementNavigations:output_type -> diag.v1.ListElementNavigationsResponse
+	76,  // 135: diag.v1.WorkspaceService.CreateElementNavigation:output_type -> diag.v1.CreateElementNavigationResponse
+	78,  // 136: diag.v1.WorkspaceService.DeleteElementNavigationById:output_type -> diag.v1.DeleteElementNavigationByIdResponse
+	81,  // 137: diag.v1.WorkspaceService.ListViewLayers:output_type -> diag.v1.ListViewLayersResponse
+	83,  // 138: diag.v1.WorkspaceService.CreateViewLayer:output_type -> diag.v1.CreateViewLayerResponse
+	85,  // 139: diag.v1.WorkspaceService.UpdateViewLayer:output_type -> diag.v1.UpdateViewLayerResponse
+	87,  // 140: diag.v1.WorkspaceService.DeleteViewLayer:output_type -> diag.v1.DeleteViewLayerResponse
+	109, // [109:141] is the sub-list for method output_type
+	77,  // [77:109] is the sub-list for method input_type
+	77,  // [77:77] is the sub-list for extension type_name
+	77,  // [77:77] is the sub-list for extension extendee
+	0,   // [0:77] is the sub-list for field type_name
 }
 
 func init() { file_diag_v1_workspace_service_proto_init() }
@@ -8097,16 +7066,13 @@ func file_diag_v1_workspace_service_proto_init() {
 	file_diag_v1_workspace_service_proto_msgTypes[72].OneofWrappers = []any{}
 	file_diag_v1_workspace_service_proto_msgTypes[73].OneofWrappers = []any{}
 	file_diag_v1_workspace_service_proto_msgTypes[84].OneofWrappers = []any{}
-	file_diag_v1_workspace_service_proto_msgTypes[89].OneofWrappers = []any{}
-	file_diag_v1_workspace_service_proto_msgTypes[90].OneofWrappers = []any{}
-	file_diag_v1_workspace_service_proto_msgTypes[92].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_diag_v1_workspace_service_proto_rawDesc), len(file_diag_v1_workspace_service_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   107,
+			NumMessages:   92,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
