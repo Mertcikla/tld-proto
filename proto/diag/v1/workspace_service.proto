@@ -45,6 +45,12 @@ service WorkspaceService {
   // Required: org_id.
   rpc ExportWorkspace(ExportOrganizationRequest) returns (ExportOrganizationResponse);
 
+  // StreamExportWorkspace is the scale-safe counterpart to ExportWorkspace.
+  // Server streams chunks of resources so huge workspaces (100k+ items) are
+  // not buffered into a single gRPC message (default 4MB limit).
+  // Required: org_id.
+  rpc StreamExportWorkspace(ExportOrganizationRequest) returns (stream ExportChunk);
+
   // DeleteView permanently removes a view.
   // All connectors and element placements on the view are cascade-deleted by the DB.
   // Required: org_id, view_id. Caller must be an editor.
@@ -116,6 +122,19 @@ message ExportOrganizationResponse {
   repeated ElementNavigation navigations = 4;
   repeated ElementPlacement placements = 5;
   repeated ViewLayer layers = 6;
+}
+
+// ExportChunk is one frame of a streaming workspace export. Each frame
+// carries a small batch of resources so the server never buffers the whole
+// workspace in memory. Consumers accumulate frames until the stream ends.
+message ExportChunk {
+  repeated View views = 1;
+  repeated Element elements = 2;
+  repeated Connector connectors = 3;
+  repeated ElementPlacement placements = 4;
+  repeated ViewLayer layers = 5;
+  // Progress hint: 0.0 .. 1.0 based on rows scanned so far, if known.
+  double progress = 6;
 }
 
 // ─── ApplyPlan messages ───────────────────────────────────────────────────────
@@ -461,9 +480,17 @@ message TechnologyLink {
 
 // ── Views ────────────────────────────────────────────────────────────────
 
-message ListViewsRequest {}
+message ListViewsRequest {
+  // Optional. Pagination limit. 0 means "server default".
+  int32 limit = 1;
+  // Optional. Pagination offset.
+  int32 offset = 2;
+  // Optional. Substring match on view name.
+  string search = 3;
+}
 message ListViewsResponse {
   repeated View views = 1;
+  int32 total_count = 2;
 }
 
 message GetViewRequest {
@@ -623,6 +650,10 @@ message ListElementPlacementsResponse {
 
 message ListPlacementsRequest {
   int32 view_id = 1;
+  // Optional. Pagination limit. 0 means "server default".
+  int32 limit = 2;
+  // Optional. Pagination offset.
+  int32 offset = 3;
 }
 message ListPlacementsResponse {
   repeated PlacedElement placements = 1;
@@ -656,6 +687,10 @@ message DeletePlacementResponse {}
 
 message ListConnectorsRequest {
   int32 view_id = 1;
+  // Optional. Pagination limit. 0 means "server default".
+  int32 limit = 2;
+  // Optional. Pagination offset.
+  int32 offset = 3;
 }
 message ListConnectorsResponse {
   repeated Connector connectors = 1;
@@ -744,6 +779,10 @@ message ViewLayer {
 
 message ListViewLayersRequest {
   int32 view_id = 1;
+  // Optional. Pagination limit. 0 means "server default".
+  int32 limit = 2;
+  // Optional. Pagination offset.
+  int32 offset = 3;
 }
 
 message ListViewLayersResponse {

@@ -42,6 +42,9 @@ const (
 	// WorkspaceServiceExportWorkspaceProcedure is the fully-qualified name of the WorkspaceService's
 	// ExportWorkspace RPC.
 	WorkspaceServiceExportWorkspaceProcedure = "/diag.v1.WorkspaceService/ExportWorkspace"
+	// WorkspaceServiceStreamExportWorkspaceProcedure is the fully-qualified name of the
+	// WorkspaceService's StreamExportWorkspace RPC.
+	WorkspaceServiceStreamExportWorkspaceProcedure = "/diag.v1.WorkspaceService/StreamExportWorkspace"
 	// WorkspaceServiceDeleteViewProcedure is the fully-qualified name of the WorkspaceService's
 	// DeleteView RPC.
 	WorkspaceServiceDeleteViewProcedure = "/diag.v1.WorkspaceService/DeleteView"
@@ -147,6 +150,11 @@ type WorkspaceServiceClient interface {
 	// for an organization to allow CLI-based backups and migrations.
 	// Required: org_id.
 	ExportWorkspace(context.Context, *connect.Request[v1.ExportOrganizationRequest]) (*connect.Response[v1.ExportOrganizationResponse], error)
+	// StreamExportWorkspace is the scale-safe counterpart to ExportWorkspace.
+	// Server streams chunks of resources so huge workspaces (100k+ items) are
+	// not buffered into a single gRPC message (default 4MB limit).
+	// Required: org_id.
+	StreamExportWorkspace(context.Context, *connect.Request[v1.ExportOrganizationRequest]) (*connect.ServerStreamForClient[v1.ExportChunk], error)
 	// DeleteView permanently removes a view.
 	// All connectors and element placements on the view are cascade-deleted by the DB.
 	// Required: org_id, view_id. Caller must be an editor.
@@ -221,6 +229,12 @@ func NewWorkspaceServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			httpClient,
 			baseURL+WorkspaceServiceExportWorkspaceProcedure,
 			connect.WithSchema(workspaceServiceMethods.ByName("ExportWorkspace")),
+			connect.WithClientOptions(opts...),
+		),
+		streamExportWorkspace: connect.NewClient[v1.ExportOrganizationRequest, v1.ExportChunk](
+			httpClient,
+			baseURL+WorkspaceServiceStreamExportWorkspaceProcedure,
+			connect.WithSchema(workspaceServiceMethods.ByName("StreamExportWorkspace")),
 			connect.WithClientOptions(opts...),
 		),
 		deleteView: connect.NewClient[v1.DeleteViewRequest, v1.DeleteViewResponse](
@@ -405,6 +419,7 @@ type workspaceServiceClient struct {
 	createView                     *connect.Client[v1.CreateViewRequest, v1.CreateViewResponse]
 	applyWorkspacePlan             *connect.Client[v1.ApplyPlanRequest, v1.ApplyPlanResponse]
 	exportWorkspace                *connect.Client[v1.ExportOrganizationRequest, v1.ExportOrganizationResponse]
+	streamExportWorkspace          *connect.Client[v1.ExportOrganizationRequest, v1.ExportChunk]
 	deleteView                     *connect.Client[v1.DeleteViewRequest, v1.DeleteViewResponse]
 	deleteElement                  *connect.Client[v1.DeleteElementRequest, v1.DeleteElementResponse]
 	deleteConnector                *connect.Client[v1.DeleteConnectorRequest, v1.DeleteConnectorResponse]
@@ -449,6 +464,11 @@ func (c *workspaceServiceClient) ApplyWorkspacePlan(ctx context.Context, req *co
 // ExportWorkspace calls diag.v1.WorkspaceService.ExportWorkspace.
 func (c *workspaceServiceClient) ExportWorkspace(ctx context.Context, req *connect.Request[v1.ExportOrganizationRequest]) (*connect.Response[v1.ExportOrganizationResponse], error) {
 	return c.exportWorkspace.CallUnary(ctx, req)
+}
+
+// StreamExportWorkspace calls diag.v1.WorkspaceService.StreamExportWorkspace.
+func (c *workspaceServiceClient) StreamExportWorkspace(ctx context.Context, req *connect.Request[v1.ExportOrganizationRequest]) (*connect.ServerStreamForClient[v1.ExportChunk], error) {
+	return c.streamExportWorkspace.CallServerStream(ctx, req)
 }
 
 // DeleteView calls diag.v1.WorkspaceService.DeleteView.
@@ -612,6 +632,11 @@ type WorkspaceServiceHandler interface {
 	// for an organization to allow CLI-based backups and migrations.
 	// Required: org_id.
 	ExportWorkspace(context.Context, *connect.Request[v1.ExportOrganizationRequest]) (*connect.Response[v1.ExportOrganizationResponse], error)
+	// StreamExportWorkspace is the scale-safe counterpart to ExportWorkspace.
+	// Server streams chunks of resources so huge workspaces (100k+ items) are
+	// not buffered into a single gRPC message (default 4MB limit).
+	// Required: org_id.
+	StreamExportWorkspace(context.Context, *connect.Request[v1.ExportOrganizationRequest], *connect.ServerStream[v1.ExportChunk]) error
 	// DeleteView permanently removes a view.
 	// All connectors and element placements on the view are cascade-deleted by the DB.
 	// Required: org_id, view_id. Caller must be an editor.
@@ -682,6 +707,12 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 		WorkspaceServiceExportWorkspaceProcedure,
 		svc.ExportWorkspace,
 		connect.WithSchema(workspaceServiceMethods.ByName("ExportWorkspace")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workspaceServiceStreamExportWorkspaceHandler := connect.NewServerStreamHandler(
+		WorkspaceServiceStreamExportWorkspaceProcedure,
+		svc.StreamExportWorkspace,
+		connect.WithSchema(workspaceServiceMethods.ByName("StreamExportWorkspace")),
 		connect.WithHandlerOptions(opts...),
 	)
 	workspaceServiceDeleteViewHandler := connect.NewUnaryHandler(
@@ -866,6 +897,8 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 			workspaceServiceApplyWorkspacePlanHandler.ServeHTTP(w, r)
 		case WorkspaceServiceExportWorkspaceProcedure:
 			workspaceServiceExportWorkspaceHandler.ServeHTTP(w, r)
+		case WorkspaceServiceStreamExportWorkspaceProcedure:
+			workspaceServiceStreamExportWorkspaceHandler.ServeHTTP(w, r)
 		case WorkspaceServiceDeleteViewProcedure:
 			workspaceServiceDeleteViewHandler.ServeHTTP(w, r)
 		case WorkspaceServiceDeleteElementProcedure:
@@ -943,6 +976,10 @@ func (UnimplementedWorkspaceServiceHandler) ApplyWorkspacePlan(context.Context, 
 
 func (UnimplementedWorkspaceServiceHandler) ExportWorkspace(context.Context, *connect.Request[v1.ExportOrganizationRequest]) (*connect.Response[v1.ExportOrganizationResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.WorkspaceService.ExportWorkspace is not implemented"))
+}
+
+func (UnimplementedWorkspaceServiceHandler) StreamExportWorkspace(context.Context, *connect.Request[v1.ExportOrganizationRequest], *connect.ServerStream[v1.ExportChunk]) error {
+	return connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.WorkspaceService.StreamExportWorkspace is not implemented"))
 }
 
 func (UnimplementedWorkspaceServiceHandler) DeleteView(context.Context, *connect.Request[v1.DeleteViewRequest]) (*connect.Response[v1.DeleteViewResponse], error) {

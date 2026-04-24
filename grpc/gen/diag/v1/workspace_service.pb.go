@@ -159,6 +159,94 @@ func (x *ExportOrganizationResponse) GetLayers() []*ViewLayer {
 	return nil
 }
 
+// ExportChunk is one frame of a streaming workspace export. Each frame
+// carries a small batch of resources so the server never buffers the whole
+// workspace in memory. Consumers accumulate frames until the stream ends.
+type ExportChunk struct {
+	state      protoimpl.MessageState `protogen:"open.v1"`
+	Views      []*View                `protobuf:"bytes,1,rep,name=views,proto3" json:"views,omitempty"`
+	Elements   []*Element             `protobuf:"bytes,2,rep,name=elements,proto3" json:"elements,omitempty"`
+	Connectors []*Connector           `protobuf:"bytes,3,rep,name=connectors,proto3" json:"connectors,omitempty"`
+	Placements []*ElementPlacement    `protobuf:"bytes,4,rep,name=placements,proto3" json:"placements,omitempty"`
+	Layers     []*ViewLayer           `protobuf:"bytes,5,rep,name=layers,proto3" json:"layers,omitempty"`
+	// Progress hint: 0.0 .. 1.0 based on rows scanned so far, if known.
+	Progress      float64 `protobuf:"fixed64,6,opt,name=progress,proto3" json:"progress,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ExportChunk) Reset() {
+	*x = ExportChunk{}
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExportChunk) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExportChunk) ProtoMessage() {}
+
+func (x *ExportChunk) ProtoReflect() protoreflect.Message {
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExportChunk.ProtoReflect.Descriptor instead.
+func (*ExportChunk) Descriptor() ([]byte, []int) {
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *ExportChunk) GetViews() []*View {
+	if x != nil {
+		return x.Views
+	}
+	return nil
+}
+
+func (x *ExportChunk) GetElements() []*Element {
+	if x != nil {
+		return x.Elements
+	}
+	return nil
+}
+
+func (x *ExportChunk) GetConnectors() []*Connector {
+	if x != nil {
+		return x.Connectors
+	}
+	return nil
+}
+
+func (x *ExportChunk) GetPlacements() []*ElementPlacement {
+	if x != nil {
+		return x.Placements
+	}
+	return nil
+}
+
+func (x *ExportChunk) GetLayers() []*ViewLayer {
+	if x != nil {
+		return x.Layers
+	}
+	return nil
+}
+
+func (x *ExportChunk) GetProgress() float64 {
+	if x != nil {
+		return x.Progress
+	}
+	return 0
+}
+
 type PlanViewPlacement struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Parent element ref that owns the target canonical diagram.
@@ -172,7 +260,7 @@ type PlanViewPlacement struct {
 
 func (x *PlanViewPlacement) Reset() {
 	*x = PlanViewPlacement{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[2]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -184,7 +272,7 @@ func (x *PlanViewPlacement) String() string {
 func (*PlanViewPlacement) ProtoMessage() {}
 
 func (x *PlanViewPlacement) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[2]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -197,7 +285,7 @@ func (x *PlanViewPlacement) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PlanViewPlacement.ProtoReflect.Descriptor instead.
 func (*PlanViewPlacement) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{2}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *PlanViewPlacement) GetParentRef() string {
@@ -249,7 +337,7 @@ type PlanElement struct {
 
 func (x *PlanElement) Reset() {
 	*x = PlanElement{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[3]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -261,7 +349,7 @@ func (x *PlanElement) String() string {
 func (*PlanElement) ProtoMessage() {}
 
 func (x *PlanElement) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[3]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -274,7 +362,7 @@ func (x *PlanElement) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PlanElement.ProtoReflect.Descriptor instead.
 func (*PlanElement) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{3}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *PlanElement) GetRef() string {
@@ -440,7 +528,7 @@ type PlanConnector struct {
 
 func (x *PlanConnector) Reset() {
 	*x = PlanConnector{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[4]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -452,7 +540,7 @@ func (x *PlanConnector) String() string {
 func (*PlanConnector) ProtoMessage() {}
 
 func (x *PlanConnector) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[4]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -465,7 +553,7 @@ func (x *PlanConnector) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PlanConnector.ProtoReflect.Descriptor instead.
 func (*PlanConnector) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{4}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *PlanConnector) GetRef() string {
@@ -581,7 +669,7 @@ type ApplyPlanRequest struct {
 
 func (x *ApplyPlanRequest) Reset() {
 	*x = ApplyPlanRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[5]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -593,7 +681,7 @@ func (x *ApplyPlanRequest) String() string {
 func (*ApplyPlanRequest) ProtoMessage() {}
 
 func (x *ApplyPlanRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[5]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -606,7 +694,7 @@ func (x *ApplyPlanRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApplyPlanRequest.ProtoReflect.Descriptor instead.
 func (*ApplyPlanRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{5}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ApplyPlanRequest) GetOrgId() string {
@@ -658,7 +746,7 @@ type PlanSummary struct {
 
 func (x *PlanSummary) Reset() {
 	*x = PlanSummary{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[6]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -670,7 +758,7 @@ func (x *PlanSummary) String() string {
 func (*PlanSummary) ProtoMessage() {}
 
 func (x *PlanSummary) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[6]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -683,7 +771,7 @@ func (x *PlanSummary) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PlanSummary.ProtoReflect.Descriptor instead.
 func (*PlanSummary) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{6}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *PlanSummary) GetElementsPlanned() int32 {
@@ -740,7 +828,7 @@ type PlanDriftItem struct {
 
 func (x *PlanDriftItem) Reset() {
 	*x = PlanDriftItem{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[7]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -752,7 +840,7 @@ func (x *PlanDriftItem) String() string {
 func (*PlanDriftItem) ProtoMessage() {}
 
 func (x *PlanDriftItem) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[7]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -765,7 +853,7 @@ func (x *PlanDriftItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PlanDriftItem.ProtoReflect.Descriptor instead.
 func (*PlanDriftItem) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{7}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *PlanDriftItem) GetResourceType() string {
@@ -808,7 +896,7 @@ type WorkspaceVersion struct {
 
 func (x *WorkspaceVersion) Reset() {
 	*x = WorkspaceVersion{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[8]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -820,7 +908,7 @@ func (x *WorkspaceVersion) String() string {
 func (*WorkspaceVersion) ProtoMessage() {}
 
 func (x *WorkspaceVersion) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[8]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -833,7 +921,7 @@ func (x *WorkspaceVersion) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WorkspaceVersion.ProtoReflect.Descriptor instead.
 func (*WorkspaceVersion) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{8}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *WorkspaceVersion) GetId() int32 {
@@ -923,7 +1011,7 @@ type ResourceMetadata struct {
 
 func (x *ResourceMetadata) Reset() {
 	*x = ResourceMetadata{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[9]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -935,7 +1023,7 @@ func (x *ResourceMetadata) String() string {
 func (*ResourceMetadata) ProtoMessage() {}
 
 func (x *ResourceMetadata) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[9]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -948,7 +1036,7 @@ func (x *ResourceMetadata) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceMetadata.ProtoReflect.Descriptor instead.
 func (*ResourceMetadata) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{9}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ResourceMetadata) GetId() int32 {
@@ -978,7 +1066,7 @@ type PlanConflictItem struct {
 
 func (x *PlanConflictItem) Reset() {
 	*x = PlanConflictItem{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[10]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -990,7 +1078,7 @@ func (x *PlanConflictItem) String() string {
 func (*PlanConflictItem) ProtoMessage() {}
 
 func (x *PlanConflictItem) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[10]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1003,7 +1091,7 @@ func (x *PlanConflictItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PlanConflictItem.ProtoReflect.Descriptor instead.
 func (*PlanConflictItem) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{10}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *PlanConflictItem) GetResourceType() string {
@@ -1053,7 +1141,7 @@ type ApplyPlanElementResult struct {
 
 func (x *ApplyPlanElementResult) Reset() {
 	*x = ApplyPlanElementResult{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[11]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1065,7 +1153,7 @@ func (x *ApplyPlanElementResult) String() string {
 func (*ApplyPlanElementResult) ProtoMessage() {}
 
 func (x *ApplyPlanElementResult) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[11]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1078,7 +1166,7 @@ func (x *ApplyPlanElementResult) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApplyPlanElementResult.ProtoReflect.Descriptor instead.
 func (*ApplyPlanElementResult) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{11}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *ApplyPlanElementResult) GetRef() string {
@@ -1121,7 +1209,7 @@ type ApplyPlanConnectorResult struct {
 
 func (x *ApplyPlanConnectorResult) Reset() {
 	*x = ApplyPlanConnectorResult{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[12]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1133,7 +1221,7 @@ func (x *ApplyPlanConnectorResult) String() string {
 func (*ApplyPlanConnectorResult) ProtoMessage() {}
 
 func (x *ApplyPlanConnectorResult) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[12]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1146,7 +1234,7 @@ func (x *ApplyPlanConnectorResult) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApplyPlanConnectorResult.ProtoReflect.Descriptor instead.
 func (*ApplyPlanConnectorResult) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{12}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ApplyPlanConnectorResult) GetRef() string {
@@ -1198,7 +1286,7 @@ type ApplyPlanResponse struct {
 
 func (x *ApplyPlanResponse) Reset() {
 	*x = ApplyPlanResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[13]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1210,7 +1298,7 @@ func (x *ApplyPlanResponse) String() string {
 func (*ApplyPlanResponse) ProtoMessage() {}
 
 func (x *ApplyPlanResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[13]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1223,7 +1311,7 @@ func (x *ApplyPlanResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApplyPlanResponse.ProtoReflect.Descriptor instead.
 func (*ApplyPlanResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{13}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *ApplyPlanResponse) GetCreatedElements() []*Element {
@@ -1338,7 +1426,7 @@ type CreateViewRequest struct {
 
 func (x *CreateViewRequest) Reset() {
 	*x = CreateViewRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[14]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1350,7 +1438,7 @@ func (x *CreateViewRequest) String() string {
 func (*CreateViewRequest) ProtoMessage() {}
 
 func (x *CreateViewRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[14]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1363,7 +1451,7 @@ func (x *CreateViewRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateViewRequest.ProtoReflect.Descriptor instead.
 func (*CreateViewRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{14}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *CreateViewRequest) GetOrgId() string {
@@ -1417,7 +1505,7 @@ type CreateViewResponse struct {
 
 func (x *CreateViewResponse) Reset() {
 	*x = CreateViewResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[15]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1429,7 +1517,7 @@ func (x *CreateViewResponse) String() string {
 func (*CreateViewResponse) ProtoMessage() {}
 
 func (x *CreateViewResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[15]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1442,7 +1530,7 @@ func (x *CreateViewResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateViewResponse.ProtoReflect.Descriptor instead.
 func (*CreateViewResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{15}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *CreateViewResponse) GetView() *View {
@@ -1480,7 +1568,7 @@ type Element struct {
 
 func (x *Element) Reset() {
 	*x = Element{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[16]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1492,7 +1580,7 @@ func (x *Element) String() string {
 func (*Element) ProtoMessage() {}
 
 func (x *Element) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[16]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1505,7 +1593,7 @@ func (x *Element) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Element.ProtoReflect.Descriptor instead.
 func (*Element) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{16}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *Element) GetId() int32 {
@@ -1658,7 +1746,7 @@ type ViewSummary struct {
 
 func (x *ViewSummary) Reset() {
 	*x = ViewSummary{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[17]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1670,7 +1758,7 @@ func (x *ViewSummary) String() string {
 func (*ViewSummary) ProtoMessage() {}
 
 func (x *ViewSummary) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[17]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1683,7 +1771,7 @@ func (x *ViewSummary) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ViewSummary.ProtoReflect.Descriptor instead.
 func (*ViewSummary) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{17}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *ViewSummary) GetId() int32 {
@@ -1756,7 +1844,7 @@ type ElementPlacement struct {
 
 func (x *ElementPlacement) Reset() {
 	*x = ElementPlacement{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[18]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1768,7 +1856,7 @@ func (x *ElementPlacement) String() string {
 func (*ElementPlacement) ProtoMessage() {}
 
 func (x *ElementPlacement) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[18]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1781,7 +1869,7 @@ func (x *ElementPlacement) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ElementPlacement.ProtoReflect.Descriptor instead.
 func (*ElementPlacement) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{18}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *ElementPlacement) GetId() int32 {
@@ -1846,7 +1934,7 @@ type PlacedElement struct {
 
 func (x *PlacedElement) Reset() {
 	*x = PlacedElement{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[19]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1858,7 +1946,7 @@ func (x *PlacedElement) String() string {
 func (*PlacedElement) ProtoMessage() {}
 
 func (x *PlacedElement) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[19]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1871,7 +1959,7 @@ func (x *PlacedElement) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PlacedElement.ProtoReflect.Descriptor instead.
 func (*PlacedElement) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{19}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *PlacedElement) GetId() int32 {
@@ -2016,7 +2104,7 @@ type Connector struct {
 
 func (x *Connector) Reset() {
 	*x = Connector{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[20]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2028,7 +2116,7 @@ func (x *Connector) String() string {
 func (*Connector) ProtoMessage() {}
 
 func (x *Connector) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[20]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2041,7 +2129,7 @@ func (x *Connector) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Connector.ProtoReflect.Descriptor instead.
 func (*Connector) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{20}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *Connector) GetId() int32 {
@@ -2155,7 +2243,7 @@ type ElementNavigation struct {
 
 func (x *ElementNavigation) Reset() {
 	*x = ElementNavigation{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[21]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2167,7 +2255,7 @@ func (x *ElementNavigation) String() string {
 func (*ElementNavigation) ProtoMessage() {}
 
 func (x *ElementNavigation) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[21]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2180,7 +2268,7 @@ func (x *ElementNavigation) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ElementNavigation.ProtoReflect.Descriptor instead.
 func (*ElementNavigation) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{21}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *ElementNavigation) GetId() int32 {
@@ -2222,7 +2310,7 @@ type ViewContent struct {
 
 func (x *ViewContent) Reset() {
 	*x = ViewContent{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[22]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2234,7 +2322,7 @@ func (x *ViewContent) String() string {
 func (*ViewContent) ProtoMessage() {}
 
 func (x *ViewContent) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[22]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2247,7 +2335,7 @@ func (x *ViewContent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ViewContent.ProtoReflect.Descriptor instead.
 func (*ViewContent) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{22}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *ViewContent) GetPlacements() []*PlacedElement {
@@ -2285,7 +2373,7 @@ type View struct {
 
 func (x *View) Reset() {
 	*x = View{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[23]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2297,7 +2385,7 @@ func (x *View) String() string {
 func (*View) ProtoMessage() {}
 
 func (x *View) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[23]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2310,7 +2398,7 @@ func (x *View) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use View.ProtoReflect.Descriptor instead.
 func (*View) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{23}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *View) GetId() int32 {
@@ -2411,7 +2499,7 @@ type DeleteViewRequest struct {
 
 func (x *DeleteViewRequest) Reset() {
 	*x = DeleteViewRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[24]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2423,7 +2511,7 @@ func (x *DeleteViewRequest) String() string {
 func (*DeleteViewRequest) ProtoMessage() {}
 
 func (x *DeleteViewRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[24]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2436,7 +2524,7 @@ func (x *DeleteViewRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteViewRequest.ProtoReflect.Descriptor instead.
 func (*DeleteViewRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{24}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *DeleteViewRequest) GetOrgId() string {
@@ -2468,7 +2556,7 @@ type DeleteViewResponse struct {
 
 func (x *DeleteViewResponse) Reset() {
 	*x = DeleteViewResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[25]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2480,7 +2568,7 @@ func (x *DeleteViewResponse) String() string {
 func (*DeleteViewResponse) ProtoMessage() {}
 
 func (x *DeleteViewResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[25]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2493,7 +2581,7 @@ func (x *DeleteViewResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteViewResponse.ProtoReflect.Descriptor instead.
 func (*DeleteViewResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{25}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{26}
 }
 
 type DeleteElementRequest struct {
@@ -2510,7 +2598,7 @@ type DeleteElementRequest struct {
 
 func (x *DeleteElementRequest) Reset() {
 	*x = DeleteElementRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[26]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2522,7 +2610,7 @@ func (x *DeleteElementRequest) String() string {
 func (*DeleteElementRequest) ProtoMessage() {}
 
 func (x *DeleteElementRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[26]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2535,7 +2623,7 @@ func (x *DeleteElementRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteElementRequest.ProtoReflect.Descriptor instead.
 func (*DeleteElementRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{26}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *DeleteElementRequest) GetOrgId() string {
@@ -2567,7 +2655,7 @@ type DeleteElementResponse struct {
 
 func (x *DeleteElementResponse) Reset() {
 	*x = DeleteElementResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[27]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2579,7 +2667,7 @@ func (x *DeleteElementResponse) String() string {
 func (*DeleteElementResponse) ProtoMessage() {}
 
 func (x *DeleteElementResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[27]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2592,7 +2680,7 @@ func (x *DeleteElementResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteElementResponse.ProtoReflect.Descriptor instead.
 func (*DeleteElementResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{27}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{28}
 }
 
 type DeleteConnectorRequest struct {
@@ -2609,7 +2697,7 @@ type DeleteConnectorRequest struct {
 
 func (x *DeleteConnectorRequest) Reset() {
 	*x = DeleteConnectorRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[28]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2621,7 +2709,7 @@ func (x *DeleteConnectorRequest) String() string {
 func (*DeleteConnectorRequest) ProtoMessage() {}
 
 func (x *DeleteConnectorRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[28]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2634,7 +2722,7 @@ func (x *DeleteConnectorRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteConnectorRequest.ProtoReflect.Descriptor instead.
 func (*DeleteConnectorRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{28}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *DeleteConnectorRequest) GetOrgId() string {
@@ -2666,7 +2754,7 @@ type DeleteConnectorResponse struct {
 
 func (x *DeleteConnectorResponse) Reset() {
 	*x = DeleteConnectorResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[29]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2678,7 +2766,7 @@ func (x *DeleteConnectorResponse) String() string {
 func (*DeleteConnectorResponse) ProtoMessage() {}
 
 func (x *DeleteConnectorResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[29]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2691,7 +2779,7 @@ func (x *DeleteConnectorResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteConnectorResponse.ProtoReflect.Descriptor instead.
 func (*DeleteConnectorResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{29}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{30}
 }
 
 type DeleteElementNavigationRequest struct {
@@ -2708,7 +2796,7 @@ type DeleteElementNavigationRequest struct {
 
 func (x *DeleteElementNavigationRequest) Reset() {
 	*x = DeleteElementNavigationRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[30]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2720,7 +2808,7 @@ func (x *DeleteElementNavigationRequest) String() string {
 func (*DeleteElementNavigationRequest) ProtoMessage() {}
 
 func (x *DeleteElementNavigationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[30]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2733,7 +2821,7 @@ func (x *DeleteElementNavigationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteElementNavigationRequest.ProtoReflect.Descriptor instead.
 func (*DeleteElementNavigationRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{30}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *DeleteElementNavigationRequest) GetOrgId() string {
@@ -2765,7 +2853,7 @@ type DeleteElementNavigationResponse struct {
 
 func (x *DeleteElementNavigationResponse) Reset() {
 	*x = DeleteElementNavigationResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[31]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2777,7 +2865,7 @@ func (x *DeleteElementNavigationResponse) String() string {
 func (*DeleteElementNavigationResponse) ProtoMessage() {}
 
 func (x *DeleteElementNavigationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[31]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2790,7 +2878,7 @@ func (x *DeleteElementNavigationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteElementNavigationResponse.ProtoReflect.Descriptor instead.
 func (*DeleteElementNavigationResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{31}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{32}
 }
 
 // TechnologyLink is one entry in elements.technology_links (JSONB array,
@@ -2811,7 +2899,7 @@ type TechnologyLink struct {
 
 func (x *TechnologyLink) Reset() {
 	*x = TechnologyLink{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[32]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2823,7 +2911,7 @@ func (x *TechnologyLink) String() string {
 func (*TechnologyLink) ProtoMessage() {}
 
 func (x *TechnologyLink) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[32]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2836,7 +2924,7 @@ func (x *TechnologyLink) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TechnologyLink.ProtoReflect.Descriptor instead.
 func (*TechnologyLink) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{32}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *TechnologyLink) GetType() string {
@@ -2868,14 +2956,20 @@ func (x *TechnologyLink) GetIsPrimaryIcon() bool {
 }
 
 type ListViewsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Optional. Pagination limit. 0 means "server default".
+	Limit int32 `protobuf:"varint,1,opt,name=limit,proto3" json:"limit,omitempty"`
+	// Optional. Pagination offset.
+	Offset int32 `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
+	// Optional. Substring match on view name.
+	Search        string `protobuf:"bytes,3,opt,name=search,proto3" json:"search,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListViewsRequest) Reset() {
 	*x = ListViewsRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[33]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2887,7 +2981,7 @@ func (x *ListViewsRequest) String() string {
 func (*ListViewsRequest) ProtoMessage() {}
 
 func (x *ListViewsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[33]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2900,19 +2994,41 @@ func (x *ListViewsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListViewsRequest.ProtoReflect.Descriptor instead.
 func (*ListViewsRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{33}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *ListViewsRequest) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *ListViewsRequest) GetOffset() int32 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+func (x *ListViewsRequest) GetSearch() string {
+	if x != nil {
+		return x.Search
+	}
+	return ""
 }
 
 type ListViewsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Views         []*View                `protobuf:"bytes,1,rep,name=views,proto3" json:"views,omitempty"`
+	TotalCount    int32                  `protobuf:"varint,2,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListViewsResponse) Reset() {
 	*x = ListViewsResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[34]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2924,7 +3040,7 @@ func (x *ListViewsResponse) String() string {
 func (*ListViewsResponse) ProtoMessage() {}
 
 func (x *ListViewsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[34]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2937,7 +3053,7 @@ func (x *ListViewsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListViewsResponse.ProtoReflect.Descriptor instead.
 func (*ListViewsResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{34}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *ListViewsResponse) GetViews() []*View {
@@ -2945,6 +3061,13 @@ func (x *ListViewsResponse) GetViews() []*View {
 		return x.Views
 	}
 	return nil
+}
+
+func (x *ListViewsResponse) GetTotalCount() int32 {
+	if x != nil {
+		return x.TotalCount
+	}
+	return 0
 }
 
 type GetViewRequest struct {
@@ -2956,7 +3079,7 @@ type GetViewRequest struct {
 
 func (x *GetViewRequest) Reset() {
 	*x = GetViewRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[35]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2968,7 +3091,7 @@ func (x *GetViewRequest) String() string {
 func (*GetViewRequest) ProtoMessage() {}
 
 func (x *GetViewRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[35]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2981,7 +3104,7 @@ func (x *GetViewRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetViewRequest.ProtoReflect.Descriptor instead.
 func (*GetViewRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{35}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *GetViewRequest) GetViewId() int32 {
@@ -3000,7 +3123,7 @@ type GetViewResponse struct {
 
 func (x *GetViewResponse) Reset() {
 	*x = GetViewResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[36]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3012,7 +3135,7 @@ func (x *GetViewResponse) String() string {
 func (*GetViewResponse) ProtoMessage() {}
 
 func (x *GetViewResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[36]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3025,7 +3148,7 @@ func (x *GetViewResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetViewResponse.ProtoReflect.Descriptor instead.
 func (*GetViewResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{36}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *GetViewResponse) GetView() *View {
@@ -3047,7 +3170,7 @@ type UpdateViewRequest struct {
 
 func (x *UpdateViewRequest) Reset() {
 	*x = UpdateViewRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[37]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3059,7 +3182,7 @@ func (x *UpdateViewRequest) String() string {
 func (*UpdateViewRequest) ProtoMessage() {}
 
 func (x *UpdateViewRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[37]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3072,7 +3195,7 @@ func (x *UpdateViewRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateViewRequest.ProtoReflect.Descriptor instead.
 func (*UpdateViewRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{37}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *UpdateViewRequest) GetViewId() int32 {
@@ -3112,7 +3235,7 @@ type UpdateViewResponse struct {
 
 func (x *UpdateViewResponse) Reset() {
 	*x = UpdateViewResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[38]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3124,7 +3247,7 @@ func (x *UpdateViewResponse) String() string {
 func (*UpdateViewResponse) ProtoMessage() {}
 
 func (x *UpdateViewResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[38]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3137,7 +3260,7 @@ func (x *UpdateViewResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateViewResponse.ProtoReflect.Descriptor instead.
 func (*UpdateViewResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{38}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *UpdateViewResponse) GetView() *View {
@@ -3157,7 +3280,7 @@ type SetViewLevelRequest struct {
 
 func (x *SetViewLevelRequest) Reset() {
 	*x = SetViewLevelRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[39]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3169,7 +3292,7 @@ func (x *SetViewLevelRequest) String() string {
 func (*SetViewLevelRequest) ProtoMessage() {}
 
 func (x *SetViewLevelRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[39]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3182,7 +3305,7 @@ func (x *SetViewLevelRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetViewLevelRequest.ProtoReflect.Descriptor instead.
 func (*SetViewLevelRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{39}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *SetViewLevelRequest) GetViewId() int32 {
@@ -3207,7 +3330,7 @@ type SetViewLevelResponse struct {
 
 func (x *SetViewLevelResponse) Reset() {
 	*x = SetViewLevelResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[40]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3219,7 +3342,7 @@ func (x *SetViewLevelResponse) String() string {
 func (*SetViewLevelResponse) ProtoMessage() {}
 
 func (x *SetViewLevelResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[40]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3232,7 +3355,7 @@ func (x *SetViewLevelResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetViewLevelResponse.ProtoReflect.Descriptor instead.
 func (*SetViewLevelResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{40}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{41}
 }
 
 type ExploreTreeNode struct {
@@ -3249,7 +3372,7 @@ type ExploreTreeNode struct {
 
 func (x *ExploreTreeNode) Reset() {
 	*x = ExploreTreeNode{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[41]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3261,7 +3384,7 @@ func (x *ExploreTreeNode) String() string {
 func (*ExploreTreeNode) ProtoMessage() {}
 
 func (x *ExploreTreeNode) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[41]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3274,7 +3397,7 @@ func (x *ExploreTreeNode) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExploreTreeNode.ProtoReflect.Descriptor instead.
 func (*ExploreTreeNode) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{41}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *ExploreTreeNode) GetId() int32 {
@@ -3343,7 +3466,7 @@ type GetWorkspaceRequest struct {
 
 func (x *GetWorkspaceRequest) Reset() {
 	*x = GetWorkspaceRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[42]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3355,7 +3478,7 @@ func (x *GetWorkspaceRequest) String() string {
 func (*GetWorkspaceRequest) ProtoMessage() {}
 
 func (x *GetWorkspaceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[42]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3368,7 +3491,7 @@ func (x *GetWorkspaceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetWorkspaceRequest.ProtoReflect.Descriptor instead.
 func (*GetWorkspaceRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{42}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *GetWorkspaceRequest) GetOrgId() string {
@@ -3441,7 +3564,7 @@ type GetWorkspaceResponse struct {
 
 func (x *GetWorkspaceResponse) Reset() {
 	*x = GetWorkspaceResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[43]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3453,7 +3576,7 @@ func (x *GetWorkspaceResponse) String() string {
 func (*GetWorkspaceResponse) ProtoMessage() {}
 
 func (x *GetWorkspaceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[43]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3466,7 +3589,7 @@ func (x *GetWorkspaceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetWorkspaceResponse.ProtoReflect.Descriptor instead.
 func (*GetWorkspaceResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{43}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *GetWorkspaceResponse) GetViews() []*View {
@@ -3511,7 +3634,7 @@ type IncomingElementNavigationInfo struct {
 
 func (x *IncomingElementNavigationInfo) Reset() {
 	*x = IncomingElementNavigationInfo{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[44]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3523,7 +3646,7 @@ func (x *IncomingElementNavigationInfo) String() string {
 func (*IncomingElementNavigationInfo) ProtoMessage() {}
 
 func (x *IncomingElementNavigationInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[44]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3536,7 +3659,7 @@ func (x *IncomingElementNavigationInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IncomingElementNavigationInfo.ProtoReflect.Descriptor instead.
 func (*IncomingElementNavigationInfo) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{44}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *IncomingElementNavigationInfo) GetId() int32 {
@@ -3590,7 +3713,7 @@ type ListIncomingElementNavigationsRequest struct {
 
 func (x *ListIncomingElementNavigationsRequest) Reset() {
 	*x = ListIncomingElementNavigationsRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[45]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3602,7 +3725,7 @@ func (x *ListIncomingElementNavigationsRequest) String() string {
 func (*ListIncomingElementNavigationsRequest) ProtoMessage() {}
 
 func (x *ListIncomingElementNavigationsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[45]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3615,7 +3738,7 @@ func (x *ListIncomingElementNavigationsRequest) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use ListIncomingElementNavigationsRequest.ProtoReflect.Descriptor instead.
 func (*ListIncomingElementNavigationsRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{45}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *ListIncomingElementNavigationsRequest) GetViewId() int32 {
@@ -3634,7 +3757,7 @@ type ListIncomingElementNavigationsResponse struct {
 
 func (x *ListIncomingElementNavigationsResponse) Reset() {
 	*x = ListIncomingElementNavigationsResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[46]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3646,7 +3769,7 @@ func (x *ListIncomingElementNavigationsResponse) String() string {
 func (*ListIncomingElementNavigationsResponse) ProtoMessage() {}
 
 func (x *ListIncomingElementNavigationsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[46]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3659,7 +3782,7 @@ func (x *ListIncomingElementNavigationsResponse) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use ListIncomingElementNavigationsResponse.ProtoReflect.Descriptor instead.
 func (*ListIncomingElementNavigationsResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{46}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *ListIncomingElementNavigationsResponse) GetNavigations() []*IncomingElementNavigationInfo {
@@ -3680,7 +3803,7 @@ type ListElementsRequest struct {
 
 func (x *ListElementsRequest) Reset() {
 	*x = ListElementsRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[47]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3692,7 +3815,7 @@ func (x *ListElementsRequest) String() string {
 func (*ListElementsRequest) ProtoMessage() {}
 
 func (x *ListElementsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[47]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3705,7 +3828,7 @@ func (x *ListElementsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListElementsRequest.ProtoReflect.Descriptor instead.
 func (*ListElementsRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{47}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *ListElementsRequest) GetLimit() int32 {
@@ -3738,7 +3861,7 @@ type ListElementsResponse struct {
 
 func (x *ListElementsResponse) Reset() {
 	*x = ListElementsResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[48]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3750,7 +3873,7 @@ func (x *ListElementsResponse) String() string {
 func (*ListElementsResponse) ProtoMessage() {}
 
 func (x *ListElementsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[48]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3763,7 +3886,7 @@ func (x *ListElementsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListElementsResponse.ProtoReflect.Descriptor instead.
 func (*ListElementsResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{48}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *ListElementsResponse) GetElements() []*Element {
@@ -3782,7 +3905,7 @@ type GetElementRequest struct {
 
 func (x *GetElementRequest) Reset() {
 	*x = GetElementRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[49]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3794,7 +3917,7 @@ func (x *GetElementRequest) String() string {
 func (*GetElementRequest) ProtoMessage() {}
 
 func (x *GetElementRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[49]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3807,7 +3930,7 @@ func (x *GetElementRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetElementRequest.ProtoReflect.Descriptor instead.
 func (*GetElementRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{49}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *GetElementRequest) GetElementId() int32 {
@@ -3826,7 +3949,7 @@ type GetElementResponse struct {
 
 func (x *GetElementResponse) Reset() {
 	*x = GetElementResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[50]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3838,7 +3961,7 @@ func (x *GetElementResponse) String() string {
 func (*GetElementResponse) ProtoMessage() {}
 
 func (x *GetElementResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[50]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3851,7 +3974,7 @@ func (x *GetElementResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetElementResponse.ProtoReflect.Descriptor instead.
 func (*GetElementResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{50}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *GetElementResponse) GetElement() *Element {
@@ -3881,7 +4004,7 @@ type CreateElementRequest struct {
 
 func (x *CreateElementRequest) Reset() {
 	*x = CreateElementRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[51]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3893,7 +4016,7 @@ func (x *CreateElementRequest) String() string {
 func (*CreateElementRequest) ProtoMessage() {}
 
 func (x *CreateElementRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[51]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3906,7 +4029,7 @@ func (x *CreateElementRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateElementRequest.ProtoReflect.Descriptor instead.
 func (*CreateElementRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{51}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *CreateElementRequest) GetName() string {
@@ -4002,7 +4125,7 @@ type CreateElementResponse struct {
 
 func (x *CreateElementResponse) Reset() {
 	*x = CreateElementResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[52]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4014,7 +4137,7 @@ func (x *CreateElementResponse) String() string {
 func (*CreateElementResponse) ProtoMessage() {}
 
 func (x *CreateElementResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[52]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4027,7 +4150,7 @@ func (x *CreateElementResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateElementResponse.ProtoReflect.Descriptor instead.
 func (*CreateElementResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{52}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *CreateElementResponse) GetElement() *Element {
@@ -4058,7 +4181,7 @@ type UpdateElementRequest struct {
 
 func (x *UpdateElementRequest) Reset() {
 	*x = UpdateElementRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[53]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4070,7 +4193,7 @@ func (x *UpdateElementRequest) String() string {
 func (*UpdateElementRequest) ProtoMessage() {}
 
 func (x *UpdateElementRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[53]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4083,7 +4206,7 @@ func (x *UpdateElementRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateElementRequest.ProtoReflect.Descriptor instead.
 func (*UpdateElementRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{53}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *UpdateElementRequest) GetElementId() int32 {
@@ -4186,7 +4309,7 @@ type UpdateElementResponse struct {
 
 func (x *UpdateElementResponse) Reset() {
 	*x = UpdateElementResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[54]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4198,7 +4321,7 @@ func (x *UpdateElementResponse) String() string {
 func (*UpdateElementResponse) ProtoMessage() {}
 
 func (x *UpdateElementResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[54]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4211,7 +4334,7 @@ func (x *UpdateElementResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateElementResponse.ProtoReflect.Descriptor instead.
 func (*UpdateElementResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{54}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *UpdateElementResponse) GetElement() *Element {
@@ -4231,7 +4354,7 @@ type ViewPlacementInfo struct {
 
 func (x *ViewPlacementInfo) Reset() {
 	*x = ViewPlacementInfo{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[55]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4243,7 +4366,7 @@ func (x *ViewPlacementInfo) String() string {
 func (*ViewPlacementInfo) ProtoMessage() {}
 
 func (x *ViewPlacementInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[55]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4256,7 +4379,7 @@ func (x *ViewPlacementInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ViewPlacementInfo.ProtoReflect.Descriptor instead.
 func (*ViewPlacementInfo) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{55}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *ViewPlacementInfo) GetViewId() int32 {
@@ -4282,7 +4405,7 @@ type ListElementPlacementsRequest struct {
 
 func (x *ListElementPlacementsRequest) Reset() {
 	*x = ListElementPlacementsRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[56]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4294,7 +4417,7 @@ func (x *ListElementPlacementsRequest) String() string {
 func (*ListElementPlacementsRequest) ProtoMessage() {}
 
 func (x *ListElementPlacementsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[56]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4307,7 +4430,7 @@ func (x *ListElementPlacementsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListElementPlacementsRequest.ProtoReflect.Descriptor instead.
 func (*ListElementPlacementsRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{56}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *ListElementPlacementsRequest) GetElementId() int32 {
@@ -4326,7 +4449,7 @@ type ListElementPlacementsResponse struct {
 
 func (x *ListElementPlacementsResponse) Reset() {
 	*x = ListElementPlacementsResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[57]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4338,7 +4461,7 @@ func (x *ListElementPlacementsResponse) String() string {
 func (*ListElementPlacementsResponse) ProtoMessage() {}
 
 func (x *ListElementPlacementsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[57]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4351,7 +4474,7 @@ func (x *ListElementPlacementsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListElementPlacementsResponse.ProtoReflect.Descriptor instead.
 func (*ListElementPlacementsResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{57}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{58}
 }
 
 func (x *ListElementPlacementsResponse) GetPlacements() []*ViewPlacementInfo {
@@ -4362,15 +4485,19 @@ func (x *ListElementPlacementsResponse) GetPlacements() []*ViewPlacementInfo {
 }
 
 type ListPlacementsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ViewId        int32                  `protobuf:"varint,1,opt,name=view_id,json=viewId,proto3" json:"view_id,omitempty"`
+	state  protoimpl.MessageState `protogen:"open.v1"`
+	ViewId int32                  `protobuf:"varint,1,opt,name=view_id,json=viewId,proto3" json:"view_id,omitempty"`
+	// Optional. Pagination limit. 0 means "server default".
+	Limit int32 `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	// Optional. Pagination offset.
+	Offset        int32 `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListPlacementsRequest) Reset() {
 	*x = ListPlacementsRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[58]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4382,7 +4509,7 @@ func (x *ListPlacementsRequest) String() string {
 func (*ListPlacementsRequest) ProtoMessage() {}
 
 func (x *ListPlacementsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[58]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4395,12 +4522,26 @@ func (x *ListPlacementsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPlacementsRequest.ProtoReflect.Descriptor instead.
 func (*ListPlacementsRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{58}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{59}
 }
 
 func (x *ListPlacementsRequest) GetViewId() int32 {
 	if x != nil {
 		return x.ViewId
+	}
+	return 0
+}
+
+func (x *ListPlacementsRequest) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *ListPlacementsRequest) GetOffset() int32 {
+	if x != nil {
+		return x.Offset
 	}
 	return 0
 }
@@ -4414,7 +4555,7 @@ type ListPlacementsResponse struct {
 
 func (x *ListPlacementsResponse) Reset() {
 	*x = ListPlacementsResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[59]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[60]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4426,7 +4567,7 @@ func (x *ListPlacementsResponse) String() string {
 func (*ListPlacementsResponse) ProtoMessage() {}
 
 func (x *ListPlacementsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[59]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[60]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4439,7 +4580,7 @@ func (x *ListPlacementsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPlacementsResponse.ProtoReflect.Descriptor instead.
 func (*ListPlacementsResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{59}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{60}
 }
 
 func (x *ListPlacementsResponse) GetPlacements() []*PlacedElement {
@@ -4461,7 +4602,7 @@ type CreatePlacementRequest struct {
 
 func (x *CreatePlacementRequest) Reset() {
 	*x = CreatePlacementRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[60]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[61]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4473,7 +4614,7 @@ func (x *CreatePlacementRequest) String() string {
 func (*CreatePlacementRequest) ProtoMessage() {}
 
 func (x *CreatePlacementRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[60]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[61]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4486,7 +4627,7 @@ func (x *CreatePlacementRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreatePlacementRequest.ProtoReflect.Descriptor instead.
 func (*CreatePlacementRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{60}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{61}
 }
 
 func (x *CreatePlacementRequest) GetViewId() int32 {
@@ -4526,7 +4667,7 @@ type CreatePlacementResponse struct {
 
 func (x *CreatePlacementResponse) Reset() {
 	*x = CreatePlacementResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[61]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[62]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4538,7 +4679,7 @@ func (x *CreatePlacementResponse) String() string {
 func (*CreatePlacementResponse) ProtoMessage() {}
 
 func (x *CreatePlacementResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[61]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[62]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4551,7 +4692,7 @@ func (x *CreatePlacementResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreatePlacementResponse.ProtoReflect.Descriptor instead.
 func (*CreatePlacementResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{61}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{62}
 }
 
 func (x *CreatePlacementResponse) GetPlacement() *PlacedElement {
@@ -4573,7 +4714,7 @@ type UpdatePlacementPositionRequest struct {
 
 func (x *UpdatePlacementPositionRequest) Reset() {
 	*x = UpdatePlacementPositionRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[62]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[63]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4585,7 +4726,7 @@ func (x *UpdatePlacementPositionRequest) String() string {
 func (*UpdatePlacementPositionRequest) ProtoMessage() {}
 
 func (x *UpdatePlacementPositionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[62]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[63]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4598,7 +4739,7 @@ func (x *UpdatePlacementPositionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdatePlacementPositionRequest.ProtoReflect.Descriptor instead.
 func (*UpdatePlacementPositionRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{62}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{63}
 }
 
 func (x *UpdatePlacementPositionRequest) GetViewId() int32 {
@@ -4637,7 +4778,7 @@ type UpdatePlacementPositionResponse struct {
 
 func (x *UpdatePlacementPositionResponse) Reset() {
 	*x = UpdatePlacementPositionResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[63]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[64]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4649,7 +4790,7 @@ func (x *UpdatePlacementPositionResponse) String() string {
 func (*UpdatePlacementPositionResponse) ProtoMessage() {}
 
 func (x *UpdatePlacementPositionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[63]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[64]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4662,7 +4803,7 @@ func (x *UpdatePlacementPositionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdatePlacementPositionResponse.ProtoReflect.Descriptor instead.
 func (*UpdatePlacementPositionResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{63}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{64}
 }
 
 type DeletePlacementRequest struct {
@@ -4675,7 +4816,7 @@ type DeletePlacementRequest struct {
 
 func (x *DeletePlacementRequest) Reset() {
 	*x = DeletePlacementRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[64]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[65]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4687,7 +4828,7 @@ func (x *DeletePlacementRequest) String() string {
 func (*DeletePlacementRequest) ProtoMessage() {}
 
 func (x *DeletePlacementRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[64]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[65]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4700,7 +4841,7 @@ func (x *DeletePlacementRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeletePlacementRequest.ProtoReflect.Descriptor instead.
 func (*DeletePlacementRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{64}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{65}
 }
 
 func (x *DeletePlacementRequest) GetViewId() int32 {
@@ -4725,7 +4866,7 @@ type DeletePlacementResponse struct {
 
 func (x *DeletePlacementResponse) Reset() {
 	*x = DeletePlacementResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[65]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[66]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4737,7 +4878,7 @@ func (x *DeletePlacementResponse) String() string {
 func (*DeletePlacementResponse) ProtoMessage() {}
 
 func (x *DeletePlacementResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[65]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[66]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4750,19 +4891,23 @@ func (x *DeletePlacementResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeletePlacementResponse.ProtoReflect.Descriptor instead.
 func (*DeletePlacementResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{65}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{66}
 }
 
 type ListConnectorsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ViewId        int32                  `protobuf:"varint,1,opt,name=view_id,json=viewId,proto3" json:"view_id,omitempty"`
+	state  protoimpl.MessageState `protogen:"open.v1"`
+	ViewId int32                  `protobuf:"varint,1,opt,name=view_id,json=viewId,proto3" json:"view_id,omitempty"`
+	// Optional. Pagination limit. 0 means "server default".
+	Limit int32 `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	// Optional. Pagination offset.
+	Offset        int32 `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListConnectorsRequest) Reset() {
 	*x = ListConnectorsRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[66]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[67]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4774,7 +4919,7 @@ func (x *ListConnectorsRequest) String() string {
 func (*ListConnectorsRequest) ProtoMessage() {}
 
 func (x *ListConnectorsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[66]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[67]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4787,12 +4932,26 @@ func (x *ListConnectorsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListConnectorsRequest.ProtoReflect.Descriptor instead.
 func (*ListConnectorsRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{66}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{67}
 }
 
 func (x *ListConnectorsRequest) GetViewId() int32 {
 	if x != nil {
 		return x.ViewId
+	}
+	return 0
+}
+
+func (x *ListConnectorsRequest) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *ListConnectorsRequest) GetOffset() int32 {
+	if x != nil {
+		return x.Offset
 	}
 	return 0
 }
@@ -4806,7 +4965,7 @@ type ListConnectorsResponse struct {
 
 func (x *ListConnectorsResponse) Reset() {
 	*x = ListConnectorsResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[67]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[68]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4818,7 +4977,7 @@ func (x *ListConnectorsResponse) String() string {
 func (*ListConnectorsResponse) ProtoMessage() {}
 
 func (x *ListConnectorsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[67]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[68]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4831,7 +4990,7 @@ func (x *ListConnectorsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListConnectorsResponse.ProtoReflect.Descriptor instead.
 func (*ListConnectorsResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{67}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{68}
 }
 
 func (x *ListConnectorsResponse) GetConnectors() []*Connector {
@@ -4860,7 +5019,7 @@ type CreateConnectorRequest struct {
 
 func (x *CreateConnectorRequest) Reset() {
 	*x = CreateConnectorRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[68]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[69]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4872,7 +5031,7 @@ func (x *CreateConnectorRequest) String() string {
 func (*CreateConnectorRequest) ProtoMessage() {}
 
 func (x *CreateConnectorRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[68]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[69]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4885,7 +5044,7 @@ func (x *CreateConnectorRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateConnectorRequest.ProtoReflect.Descriptor instead.
 func (*CreateConnectorRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{68}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{69}
 }
 
 func (x *CreateConnectorRequest) GetViewId() int32 {
@@ -4974,7 +5133,7 @@ type CreateConnectorResponse struct {
 
 func (x *CreateConnectorResponse) Reset() {
 	*x = CreateConnectorResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[69]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[70]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4986,7 +5145,7 @@ func (x *CreateConnectorResponse) String() string {
 func (*CreateConnectorResponse) ProtoMessage() {}
 
 func (x *CreateConnectorResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[69]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[70]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4999,7 +5158,7 @@ func (x *CreateConnectorResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateConnectorResponse.ProtoReflect.Descriptor instead.
 func (*CreateConnectorResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{69}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{70}
 }
 
 func (x *CreateConnectorResponse) GetConnector() *Connector {
@@ -5029,7 +5188,7 @@ type UpdateConnectorRequest struct {
 
 func (x *UpdateConnectorRequest) Reset() {
 	*x = UpdateConnectorRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[70]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[71]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5041,7 +5200,7 @@ func (x *UpdateConnectorRequest) String() string {
 func (*UpdateConnectorRequest) ProtoMessage() {}
 
 func (x *UpdateConnectorRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[70]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[71]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5054,7 +5213,7 @@ func (x *UpdateConnectorRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateConnectorRequest.ProtoReflect.Descriptor instead.
 func (*UpdateConnectorRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{70}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{71}
 }
 
 func (x *UpdateConnectorRequest) GetViewId() int32 {
@@ -5150,7 +5309,7 @@ type UpdateConnectorResponse struct {
 
 func (x *UpdateConnectorResponse) Reset() {
 	*x = UpdateConnectorResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[71]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[72]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5162,7 +5321,7 @@ func (x *UpdateConnectorResponse) String() string {
 func (*UpdateConnectorResponse) ProtoMessage() {}
 
 func (x *UpdateConnectorResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[71]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[72]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5175,7 +5334,7 @@ func (x *UpdateConnectorResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateConnectorResponse.ProtoReflect.Descriptor instead.
 func (*UpdateConnectorResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{71}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{72}
 }
 
 func (x *UpdateConnectorResponse) GetConnector() *Connector {
@@ -5199,7 +5358,7 @@ type ElementNavigationInfo struct {
 
 func (x *ElementNavigationInfo) Reset() {
 	*x = ElementNavigationInfo{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[72]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[73]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5211,7 +5370,7 @@ func (x *ElementNavigationInfo) String() string {
 func (*ElementNavigationInfo) ProtoMessage() {}
 
 func (x *ElementNavigationInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[72]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[73]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5224,7 +5383,7 @@ func (x *ElementNavigationInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ElementNavigationInfo.ProtoReflect.Descriptor instead.
 func (*ElementNavigationInfo) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{72}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{73}
 }
 
 func (x *ElementNavigationInfo) GetId() int32 {
@@ -5280,7 +5439,7 @@ type ListElementNavigationsRequest struct {
 
 func (x *ListElementNavigationsRequest) Reset() {
 	*x = ListElementNavigationsRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[73]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[74]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5292,7 +5451,7 @@ func (x *ListElementNavigationsRequest) String() string {
 func (*ListElementNavigationsRequest) ProtoMessage() {}
 
 func (x *ListElementNavigationsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[73]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[74]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5305,7 +5464,7 @@ func (x *ListElementNavigationsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListElementNavigationsRequest.ProtoReflect.Descriptor instead.
 func (*ListElementNavigationsRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{73}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{74}
 }
 
 func (x *ListElementNavigationsRequest) GetElementId() int32 {
@@ -5338,7 +5497,7 @@ type ListElementNavigationsResponse struct {
 
 func (x *ListElementNavigationsResponse) Reset() {
 	*x = ListElementNavigationsResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[74]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[75]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5350,7 +5509,7 @@ func (x *ListElementNavigationsResponse) String() string {
 func (*ListElementNavigationsResponse) ProtoMessage() {}
 
 func (x *ListElementNavigationsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[74]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[75]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5363,7 +5522,7 @@ func (x *ListElementNavigationsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListElementNavigationsResponse.ProtoReflect.Descriptor instead.
 func (*ListElementNavigationsResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{74}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{75}
 }
 
 func (x *ListElementNavigationsResponse) GetNavigations() []*ElementNavigationInfo {
@@ -5384,7 +5543,7 @@ type CreateElementNavigationRequest struct {
 
 func (x *CreateElementNavigationRequest) Reset() {
 	*x = CreateElementNavigationRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[75]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[76]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5396,7 +5555,7 @@ func (x *CreateElementNavigationRequest) String() string {
 func (*CreateElementNavigationRequest) ProtoMessage() {}
 
 func (x *CreateElementNavigationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[75]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[76]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5409,7 +5568,7 @@ func (x *CreateElementNavigationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateElementNavigationRequest.ProtoReflect.Descriptor instead.
 func (*CreateElementNavigationRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{75}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{76}
 }
 
 func (x *CreateElementNavigationRequest) GetElementId() int32 {
@@ -5442,7 +5601,7 @@ type CreateElementNavigationResponse struct {
 
 func (x *CreateElementNavigationResponse) Reset() {
 	*x = CreateElementNavigationResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[76]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[77]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5454,7 +5613,7 @@ func (x *CreateElementNavigationResponse) String() string {
 func (*CreateElementNavigationResponse) ProtoMessage() {}
 
 func (x *CreateElementNavigationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[76]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[77]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5467,7 +5626,7 @@ func (x *CreateElementNavigationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateElementNavigationResponse.ProtoReflect.Descriptor instead.
 func (*CreateElementNavigationResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{76}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{77}
 }
 
 func (x *CreateElementNavigationResponse) GetNavigation() *ElementNavigationInfo {
@@ -5486,7 +5645,7 @@ type DeleteElementNavigationByIdRequest struct {
 
 func (x *DeleteElementNavigationByIdRequest) Reset() {
 	*x = DeleteElementNavigationByIdRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[77]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[78]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5498,7 +5657,7 @@ func (x *DeleteElementNavigationByIdRequest) String() string {
 func (*DeleteElementNavigationByIdRequest) ProtoMessage() {}
 
 func (x *DeleteElementNavigationByIdRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[77]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[78]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5511,7 +5670,7 @@ func (x *DeleteElementNavigationByIdRequest) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use DeleteElementNavigationByIdRequest.ProtoReflect.Descriptor instead.
 func (*DeleteElementNavigationByIdRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{77}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{78}
 }
 
 func (x *DeleteElementNavigationByIdRequest) GetNavigationId() int32 {
@@ -5529,7 +5688,7 @@ type DeleteElementNavigationByIdResponse struct {
 
 func (x *DeleteElementNavigationByIdResponse) Reset() {
 	*x = DeleteElementNavigationByIdResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[78]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[79]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5541,7 +5700,7 @@ func (x *DeleteElementNavigationByIdResponse) String() string {
 func (*DeleteElementNavigationByIdResponse) ProtoMessage() {}
 
 func (x *DeleteElementNavigationByIdResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[78]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[79]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5554,7 +5713,7 @@ func (x *DeleteElementNavigationByIdResponse) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use DeleteElementNavigationByIdResponse.ProtoReflect.Descriptor instead.
 func (*DeleteElementNavigationByIdResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{78}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{79}
 }
 
 type ViewLayer struct {
@@ -5572,7 +5731,7 @@ type ViewLayer struct {
 
 func (x *ViewLayer) Reset() {
 	*x = ViewLayer{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[79]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[80]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5584,7 +5743,7 @@ func (x *ViewLayer) String() string {
 func (*ViewLayer) ProtoMessage() {}
 
 func (x *ViewLayer) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[79]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[80]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5597,7 +5756,7 @@ func (x *ViewLayer) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ViewLayer.ProtoReflect.Descriptor instead.
 func (*ViewLayer) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{79}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{80}
 }
 
 func (x *ViewLayer) GetId() int32 {
@@ -5650,15 +5809,19 @@ func (x *ViewLayer) GetUpdatedAt() *timestamppb.Timestamp {
 }
 
 type ListViewLayersRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ViewId        int32                  `protobuf:"varint,1,opt,name=view_id,json=viewId,proto3" json:"view_id,omitempty"`
+	state  protoimpl.MessageState `protogen:"open.v1"`
+	ViewId int32                  `protobuf:"varint,1,opt,name=view_id,json=viewId,proto3" json:"view_id,omitempty"`
+	// Optional. Pagination limit. 0 means "server default".
+	Limit int32 `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	// Optional. Pagination offset.
+	Offset        int32 `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListViewLayersRequest) Reset() {
 	*x = ListViewLayersRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[80]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[81]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5670,7 +5833,7 @@ func (x *ListViewLayersRequest) String() string {
 func (*ListViewLayersRequest) ProtoMessage() {}
 
 func (x *ListViewLayersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[80]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[81]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5683,12 +5846,26 @@ func (x *ListViewLayersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListViewLayersRequest.ProtoReflect.Descriptor instead.
 func (*ListViewLayersRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{80}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{81}
 }
 
 func (x *ListViewLayersRequest) GetViewId() int32 {
 	if x != nil {
 		return x.ViewId
+	}
+	return 0
+}
+
+func (x *ListViewLayersRequest) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *ListViewLayersRequest) GetOffset() int32 {
+	if x != nil {
+		return x.Offset
 	}
 	return 0
 }
@@ -5702,7 +5879,7 @@ type ListViewLayersResponse struct {
 
 func (x *ListViewLayersResponse) Reset() {
 	*x = ListViewLayersResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[81]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[82]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5714,7 +5891,7 @@ func (x *ListViewLayersResponse) String() string {
 func (*ListViewLayersResponse) ProtoMessage() {}
 
 func (x *ListViewLayersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[81]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[82]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5727,7 +5904,7 @@ func (x *ListViewLayersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListViewLayersResponse.ProtoReflect.Descriptor instead.
 func (*ListViewLayersResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{81}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{82}
 }
 
 func (x *ListViewLayersResponse) GetLayers() []*ViewLayer {
@@ -5749,7 +5926,7 @@ type CreateViewLayerRequest struct {
 
 func (x *CreateViewLayerRequest) Reset() {
 	*x = CreateViewLayerRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[82]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[83]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5761,7 +5938,7 @@ func (x *CreateViewLayerRequest) String() string {
 func (*CreateViewLayerRequest) ProtoMessage() {}
 
 func (x *CreateViewLayerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[82]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[83]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5774,7 +5951,7 @@ func (x *CreateViewLayerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateViewLayerRequest.ProtoReflect.Descriptor instead.
 func (*CreateViewLayerRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{82}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{83}
 }
 
 func (x *CreateViewLayerRequest) GetViewId() int32 {
@@ -5814,7 +5991,7 @@ type CreateViewLayerResponse struct {
 
 func (x *CreateViewLayerResponse) Reset() {
 	*x = CreateViewLayerResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[83]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[84]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5826,7 +6003,7 @@ func (x *CreateViewLayerResponse) String() string {
 func (*CreateViewLayerResponse) ProtoMessage() {}
 
 func (x *CreateViewLayerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[83]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[84]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5839,7 +6016,7 @@ func (x *CreateViewLayerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateViewLayerResponse.ProtoReflect.Descriptor instead.
 func (*CreateViewLayerResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{83}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{84}
 }
 
 func (x *CreateViewLayerResponse) GetLayer() *ViewLayer {
@@ -5861,7 +6038,7 @@ type UpdateViewLayerRequest struct {
 
 func (x *UpdateViewLayerRequest) Reset() {
 	*x = UpdateViewLayerRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[84]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[85]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5873,7 +6050,7 @@ func (x *UpdateViewLayerRequest) String() string {
 func (*UpdateViewLayerRequest) ProtoMessage() {}
 
 func (x *UpdateViewLayerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[84]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[85]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5886,7 +6063,7 @@ func (x *UpdateViewLayerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateViewLayerRequest.ProtoReflect.Descriptor instead.
 func (*UpdateViewLayerRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{84}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{85}
 }
 
 func (x *UpdateViewLayerRequest) GetLayerId() int32 {
@@ -5926,7 +6103,7 @@ type UpdateViewLayerResponse struct {
 
 func (x *UpdateViewLayerResponse) Reset() {
 	*x = UpdateViewLayerResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[85]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[86]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5938,7 +6115,7 @@ func (x *UpdateViewLayerResponse) String() string {
 func (*UpdateViewLayerResponse) ProtoMessage() {}
 
 func (x *UpdateViewLayerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[85]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[86]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5951,7 +6128,7 @@ func (x *UpdateViewLayerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateViewLayerResponse.ProtoReflect.Descriptor instead.
 func (*UpdateViewLayerResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{85}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{86}
 }
 
 func (x *UpdateViewLayerResponse) GetLayer() *ViewLayer {
@@ -5970,7 +6147,7 @@ type DeleteViewLayerRequest struct {
 
 func (x *DeleteViewLayerRequest) Reset() {
 	*x = DeleteViewLayerRequest{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[86]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[87]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5982,7 +6159,7 @@ func (x *DeleteViewLayerRequest) String() string {
 func (*DeleteViewLayerRequest) ProtoMessage() {}
 
 func (x *DeleteViewLayerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[86]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[87]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5995,7 +6172,7 @@ func (x *DeleteViewLayerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteViewLayerRequest.ProtoReflect.Descriptor instead.
 func (*DeleteViewLayerRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{86}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{87}
 }
 
 func (x *DeleteViewLayerRequest) GetLayerId() int32 {
@@ -6013,7 +6190,7 @@ type DeleteViewLayerResponse struct {
 
 func (x *DeleteViewLayerResponse) Reset() {
 	*x = DeleteViewLayerResponse{}
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[87]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[88]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6025,7 +6202,7 @@ func (x *DeleteViewLayerResponse) String() string {
 func (*DeleteViewLayerResponse) ProtoMessage() {}
 
 func (x *DeleteViewLayerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_service_proto_msgTypes[87]
+	mi := &file_diag_v1_workspace_service_proto_msgTypes[88]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6038,7 +6215,7 @@ func (x *DeleteViewLayerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteViewLayerResponse.ProtoReflect.Descriptor instead.
 func (*DeleteViewLayerResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{87}
+	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{88}
 }
 
 var File_diag_v1_workspace_service_proto protoreflect.FileDescriptor
@@ -6061,7 +6238,18 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\n" +
 	"placements\x18\x05 \x03(\v2\x19.diag.v1.ElementPlacementR\n" +
 	"placements\x12*\n" +
-	"\x06layers\x18\x06 \x03(\v2\x12.diag.v1.ViewLayerR\x06layers\"\x98\x01\n" +
+	"\x06layers\x18\x06 \x03(\v2\x12.diag.v1.ViewLayerR\x06layers\"\x97\x02\n" +
+	"\vExportChunk\x12#\n" +
+	"\x05views\x18\x01 \x03(\v2\r.diag.v1.ViewR\x05views\x12,\n" +
+	"\belements\x18\x02 \x03(\v2\x10.diag.v1.ElementR\belements\x122\n" +
+	"\n" +
+	"connectors\x18\x03 \x03(\v2\x12.diag.v1.ConnectorR\n" +
+	"connectors\x129\n" +
+	"\n" +
+	"placements\x18\x04 \x03(\v2\x19.diag.v1.ElementPlacementR\n" +
+	"placements\x12*\n" +
+	"\x06layers\x18\x05 \x03(\v2\x12.diag.v1.ViewLayerR\x06layers\x12\x1a\n" +
+	"\bprogress\x18\x06 \x01(\x01R\bprogress\"\x98\x01\n" +
 	"\x11PlanViewPlacement\x12\x1d\n" +
 	"\n" +
 	"parent_ref\x18\x01 \x01(\tR\tparentRef\x12\"\n" +
@@ -6437,10 +6625,15 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\x04slug\x18\x02 \x01(\tH\x00R\x04slug\x88\x01\x01\x12\x14\n" +
 	"\x05label\x18\x03 \x01(\tR\x05label\x12&\n" +
 	"\x0fis_primary_icon\x18\x04 \x01(\bR\risPrimaryIconB\a\n" +
-	"\x05_slug\"\x12\n" +
-	"\x10ListViewsRequest\"8\n" +
+	"\x05_slug\"X\n" +
+	"\x10ListViewsRequest\x12\x14\n" +
+	"\x05limit\x18\x01 \x01(\x05R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x02 \x01(\x05R\x06offset\x12\x16\n" +
+	"\x06search\x18\x03 \x01(\tR\x06search\"Y\n" +
 	"\x11ListViewsResponse\x12#\n" +
-	"\x05views\x18\x01 \x03(\v2\r.diag.v1.ViewR\x05views\")\n" +
+	"\x05views\x18\x01 \x03(\v2\r.diag.v1.ViewR\x05views\x12\x1f\n" +
+	"\vtotal_count\x18\x02 \x01(\x05R\n" +
+	"totalCount\")\n" +
 	"\x0eGetViewRequest\x12\x17\n" +
 	"\aview_id\x18\x01 \x01(\x05R\x06viewId\"4\n" +
 	"\x0fGetViewResponse\x12!\n" +
@@ -6586,9 +6779,11 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\x1dListElementPlacementsResponse\x12:\n" +
 	"\n" +
 	"placements\x18\x01 \x03(\v2\x1a.diag.v1.ViewPlacementInfoR\n" +
-	"placements\"0\n" +
+	"placements\"^\n" +
 	"\x15ListPlacementsRequest\x12\x17\n" +
-	"\aview_id\x18\x01 \x01(\x05R\x06viewId\"P\n" +
+	"\aview_id\x18\x01 \x01(\x05R\x06viewId\x12\x14\n" +
+	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x03 \x01(\x05R\x06offset\"P\n" +
 	"\x16ListPlacementsResponse\x126\n" +
 	"\n" +
 	"placements\x18\x01 \x03(\v2\x16.diag.v1.PlacedElementR\n" +
@@ -6616,9 +6811,11 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\aview_id\x18\x01 \x01(\x05R\x06viewId\x12\x1d\n" +
 	"\n" +
 	"element_id\x18\x02 \x01(\x05R\telementId\"\x19\n" +
-	"\x17DeletePlacementResponse\"0\n" +
+	"\x17DeletePlacementResponse\"^\n" +
 	"\x15ListConnectorsRequest\x12\x17\n" +
-	"\aview_id\x18\x01 \x01(\x05R\x06viewId\"L\n" +
+	"\aview_id\x18\x01 \x01(\x05R\x06viewId\x12\x14\n" +
+	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x03 \x01(\x05R\x06offset\"L\n" +
 	"\x16ListConnectorsResponse\x122\n" +
 	"\n" +
 	"connectors\x18\x01 \x03(\v2\x12.diag.v1.ConnectorR\n" +
@@ -6714,9 +6911,11 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"0\n" +
+	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"^\n" +
 	"\x15ListViewLayersRequest\x12\x17\n" +
-	"\aview_id\x18\x01 \x01(\x05R\x06viewId\"D\n" +
+	"\aview_id\x18\x01 \x01(\x05R\x06viewId\x12\x14\n" +
+	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x03 \x01(\x05R\x06offset\"D\n" +
 	"\x16ListViewLayersResponse\x12*\n" +
 	"\x06layers\x18\x01 \x03(\v2\x12.diag.v1.ViewLayerR\x06layers\"o\n" +
 	"\x16CreateViewLayerRequest\x12\x17\n" +
@@ -6737,12 +6936,13 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\x05layer\x18\x01 \x01(\v2\x12.diag.v1.ViewLayerR\x05layer\"3\n" +
 	"\x16DeleteViewLayerRequest\x12\x19\n" +
 	"\blayer_id\x18\x01 \x01(\x05R\alayerId\"\x19\n" +
-	"\x17DeleteViewLayerResponse2\xf4\x15\n" +
+	"\x17DeleteViewLayerResponse2\xc9\x16\n" +
 	"\x10WorkspaceService\x12E\n" +
 	"\n" +
 	"CreateView\x12\x1a.diag.v1.CreateViewRequest\x1a\x1b.diag.v1.CreateViewResponse\x12K\n" +
 	"\x12ApplyWorkspacePlan\x12\x19.diag.v1.ApplyPlanRequest\x1a\x1a.diag.v1.ApplyPlanResponse\x12Z\n" +
-	"\x0fExportWorkspace\x12\".diag.v1.ExportOrganizationRequest\x1a#.diag.v1.ExportOrganizationResponse\x12E\n" +
+	"\x0fExportWorkspace\x12\".diag.v1.ExportOrganizationRequest\x1a#.diag.v1.ExportOrganizationResponse\x12S\n" +
+	"\x15StreamExportWorkspace\x12\".diag.v1.ExportOrganizationRequest\x1a\x14.diag.v1.ExportChunk0\x01\x12E\n" +
 	"\n" +
 	"DeleteView\x12\x1a.diag.v1.DeleteViewRequest\x1a\x1b.diag.v1.DeleteViewResponse\x12N\n" +
 	"\rDeleteElement\x12\x1d.diag.v1.DeleteElementRequest\x1a\x1e.diag.v1.DeleteElementResponse\x12T\n" +
@@ -6788,249 +6988,257 @@ func file_diag_v1_workspace_service_proto_rawDescGZIP() []byte {
 	return file_diag_v1_workspace_service_proto_rawDescData
 }
 
-var file_diag_v1_workspace_service_proto_msgTypes = make([]protoimpl.MessageInfo, 92)
+var file_diag_v1_workspace_service_proto_msgTypes = make([]protoimpl.MessageInfo, 93)
 var file_diag_v1_workspace_service_proto_goTypes = []any{
 	(*ExportOrganizationRequest)(nil),              // 0: diag.v1.ExportOrganizationRequest
 	(*ExportOrganizationResponse)(nil),             // 1: diag.v1.ExportOrganizationResponse
-	(*PlanViewPlacement)(nil),                      // 2: diag.v1.PlanViewPlacement
-	(*PlanElement)(nil),                            // 3: diag.v1.PlanElement
-	(*PlanConnector)(nil),                          // 4: diag.v1.PlanConnector
-	(*ApplyPlanRequest)(nil),                       // 5: diag.v1.ApplyPlanRequest
-	(*PlanSummary)(nil),                            // 6: diag.v1.PlanSummary
-	(*PlanDriftItem)(nil),                          // 7: diag.v1.PlanDriftItem
-	(*WorkspaceVersion)(nil),                       // 8: diag.v1.WorkspaceVersion
-	(*ResourceMetadata)(nil),                       // 9: diag.v1.ResourceMetadata
-	(*PlanConflictItem)(nil),                       // 10: diag.v1.PlanConflictItem
-	(*ApplyPlanElementResult)(nil),                 // 11: diag.v1.ApplyPlanElementResult
-	(*ApplyPlanConnectorResult)(nil),               // 12: diag.v1.ApplyPlanConnectorResult
-	(*ApplyPlanResponse)(nil),                      // 13: diag.v1.ApplyPlanResponse
-	(*CreateViewRequest)(nil),                      // 14: diag.v1.CreateViewRequest
-	(*CreateViewResponse)(nil),                     // 15: diag.v1.CreateViewResponse
-	(*Element)(nil),                                // 16: diag.v1.Element
-	(*ViewSummary)(nil),                            // 17: diag.v1.ViewSummary
-	(*ElementPlacement)(nil),                       // 18: diag.v1.ElementPlacement
-	(*PlacedElement)(nil),                          // 19: diag.v1.PlacedElement
-	(*Connector)(nil),                              // 20: diag.v1.Connector
-	(*ElementNavigation)(nil),                      // 21: diag.v1.ElementNavigation
-	(*ViewContent)(nil),                            // 22: diag.v1.ViewContent
-	(*View)(nil),                                   // 23: diag.v1.View
-	(*DeleteViewRequest)(nil),                      // 24: diag.v1.DeleteViewRequest
-	(*DeleteViewResponse)(nil),                     // 25: diag.v1.DeleteViewResponse
-	(*DeleteElementRequest)(nil),                   // 26: diag.v1.DeleteElementRequest
-	(*DeleteElementResponse)(nil),                  // 27: diag.v1.DeleteElementResponse
-	(*DeleteConnectorRequest)(nil),                 // 28: diag.v1.DeleteConnectorRequest
-	(*DeleteConnectorResponse)(nil),                // 29: diag.v1.DeleteConnectorResponse
-	(*DeleteElementNavigationRequest)(nil),         // 30: diag.v1.DeleteElementNavigationRequest
-	(*DeleteElementNavigationResponse)(nil),        // 31: diag.v1.DeleteElementNavigationResponse
-	(*TechnologyLink)(nil),                         // 32: diag.v1.TechnologyLink
-	(*ListViewsRequest)(nil),                       // 33: diag.v1.ListViewsRequest
-	(*ListViewsResponse)(nil),                      // 34: diag.v1.ListViewsResponse
-	(*GetViewRequest)(nil),                         // 35: diag.v1.GetViewRequest
-	(*GetViewResponse)(nil),                        // 36: diag.v1.GetViewResponse
-	(*UpdateViewRequest)(nil),                      // 37: diag.v1.UpdateViewRequest
-	(*UpdateViewResponse)(nil),                     // 38: diag.v1.UpdateViewResponse
-	(*SetViewLevelRequest)(nil),                    // 39: diag.v1.SetViewLevelRequest
-	(*SetViewLevelResponse)(nil),                   // 40: diag.v1.SetViewLevelResponse
-	(*ExploreTreeNode)(nil),                        // 41: diag.v1.ExploreTreeNode
-	(*GetWorkspaceRequest)(nil),                    // 42: diag.v1.GetWorkspaceRequest
-	(*GetWorkspaceResponse)(nil),                   // 43: diag.v1.GetWorkspaceResponse
-	(*IncomingElementNavigationInfo)(nil),          // 44: diag.v1.IncomingElementNavigationInfo
-	(*ListIncomingElementNavigationsRequest)(nil),  // 45: diag.v1.ListIncomingElementNavigationsRequest
-	(*ListIncomingElementNavigationsResponse)(nil), // 46: diag.v1.ListIncomingElementNavigationsResponse
-	(*ListElementsRequest)(nil),                    // 47: diag.v1.ListElementsRequest
-	(*ListElementsResponse)(nil),                   // 48: diag.v1.ListElementsResponse
-	(*GetElementRequest)(nil),                      // 49: diag.v1.GetElementRequest
-	(*GetElementResponse)(nil),                     // 50: diag.v1.GetElementResponse
-	(*CreateElementRequest)(nil),                   // 51: diag.v1.CreateElementRequest
-	(*CreateElementResponse)(nil),                  // 52: diag.v1.CreateElementResponse
-	(*UpdateElementRequest)(nil),                   // 53: diag.v1.UpdateElementRequest
-	(*UpdateElementResponse)(nil),                  // 54: diag.v1.UpdateElementResponse
-	(*ViewPlacementInfo)(nil),                      // 55: diag.v1.ViewPlacementInfo
-	(*ListElementPlacementsRequest)(nil),           // 56: diag.v1.ListElementPlacementsRequest
-	(*ListElementPlacementsResponse)(nil),          // 57: diag.v1.ListElementPlacementsResponse
-	(*ListPlacementsRequest)(nil),                  // 58: diag.v1.ListPlacementsRequest
-	(*ListPlacementsResponse)(nil),                 // 59: diag.v1.ListPlacementsResponse
-	(*CreatePlacementRequest)(nil),                 // 60: diag.v1.CreatePlacementRequest
-	(*CreatePlacementResponse)(nil),                // 61: diag.v1.CreatePlacementResponse
-	(*UpdatePlacementPositionRequest)(nil),         // 62: diag.v1.UpdatePlacementPositionRequest
-	(*UpdatePlacementPositionResponse)(nil),        // 63: diag.v1.UpdatePlacementPositionResponse
-	(*DeletePlacementRequest)(nil),                 // 64: diag.v1.DeletePlacementRequest
-	(*DeletePlacementResponse)(nil),                // 65: diag.v1.DeletePlacementResponse
-	(*ListConnectorsRequest)(nil),                  // 66: diag.v1.ListConnectorsRequest
-	(*ListConnectorsResponse)(nil),                 // 67: diag.v1.ListConnectorsResponse
-	(*CreateConnectorRequest)(nil),                 // 68: diag.v1.CreateConnectorRequest
-	(*CreateConnectorResponse)(nil),                // 69: diag.v1.CreateConnectorResponse
-	(*UpdateConnectorRequest)(nil),                 // 70: diag.v1.UpdateConnectorRequest
-	(*UpdateConnectorResponse)(nil),                // 71: diag.v1.UpdateConnectorResponse
-	(*ElementNavigationInfo)(nil),                  // 72: diag.v1.ElementNavigationInfo
-	(*ListElementNavigationsRequest)(nil),          // 73: diag.v1.ListElementNavigationsRequest
-	(*ListElementNavigationsResponse)(nil),         // 74: diag.v1.ListElementNavigationsResponse
-	(*CreateElementNavigationRequest)(nil),         // 75: diag.v1.CreateElementNavigationRequest
-	(*CreateElementNavigationResponse)(nil),        // 76: diag.v1.CreateElementNavigationResponse
-	(*DeleteElementNavigationByIdRequest)(nil),     // 77: diag.v1.DeleteElementNavigationByIdRequest
-	(*DeleteElementNavigationByIdResponse)(nil),    // 78: diag.v1.DeleteElementNavigationByIdResponse
-	(*ViewLayer)(nil),                              // 79: diag.v1.ViewLayer
-	(*ListViewLayersRequest)(nil),                  // 80: diag.v1.ListViewLayersRequest
-	(*ListViewLayersResponse)(nil),                 // 81: diag.v1.ListViewLayersResponse
-	(*CreateViewLayerRequest)(nil),                 // 82: diag.v1.CreateViewLayerRequest
-	(*CreateViewLayerResponse)(nil),                // 83: diag.v1.CreateViewLayerResponse
-	(*UpdateViewLayerRequest)(nil),                 // 84: diag.v1.UpdateViewLayerRequest
-	(*UpdateViewLayerResponse)(nil),                // 85: diag.v1.UpdateViewLayerResponse
-	(*DeleteViewLayerRequest)(nil),                 // 86: diag.v1.DeleteViewLayerRequest
-	(*DeleteViewLayerResponse)(nil),                // 87: diag.v1.DeleteViewLayerResponse
-	nil,                                            // 88: diag.v1.ApplyPlanResponse.ElementMetadataEntry
-	nil,                                            // 89: diag.v1.ApplyPlanResponse.ViewMetadataEntry
-	nil,                                            // 90: diag.v1.ApplyPlanResponse.ConnectorMetadataEntry
-	nil,                                            // 91: diag.v1.GetWorkspaceResponse.ContentEntry
-	(*timestamppb.Timestamp)(nil),                  // 92: google.protobuf.Timestamp
+	(*ExportChunk)(nil),                            // 2: diag.v1.ExportChunk
+	(*PlanViewPlacement)(nil),                      // 3: diag.v1.PlanViewPlacement
+	(*PlanElement)(nil),                            // 4: diag.v1.PlanElement
+	(*PlanConnector)(nil),                          // 5: diag.v1.PlanConnector
+	(*ApplyPlanRequest)(nil),                       // 6: diag.v1.ApplyPlanRequest
+	(*PlanSummary)(nil),                            // 7: diag.v1.PlanSummary
+	(*PlanDriftItem)(nil),                          // 8: diag.v1.PlanDriftItem
+	(*WorkspaceVersion)(nil),                       // 9: diag.v1.WorkspaceVersion
+	(*ResourceMetadata)(nil),                       // 10: diag.v1.ResourceMetadata
+	(*PlanConflictItem)(nil),                       // 11: diag.v1.PlanConflictItem
+	(*ApplyPlanElementResult)(nil),                 // 12: diag.v1.ApplyPlanElementResult
+	(*ApplyPlanConnectorResult)(nil),               // 13: diag.v1.ApplyPlanConnectorResult
+	(*ApplyPlanResponse)(nil),                      // 14: diag.v1.ApplyPlanResponse
+	(*CreateViewRequest)(nil),                      // 15: diag.v1.CreateViewRequest
+	(*CreateViewResponse)(nil),                     // 16: diag.v1.CreateViewResponse
+	(*Element)(nil),                                // 17: diag.v1.Element
+	(*ViewSummary)(nil),                            // 18: diag.v1.ViewSummary
+	(*ElementPlacement)(nil),                       // 19: diag.v1.ElementPlacement
+	(*PlacedElement)(nil),                          // 20: diag.v1.PlacedElement
+	(*Connector)(nil),                              // 21: diag.v1.Connector
+	(*ElementNavigation)(nil),                      // 22: diag.v1.ElementNavigation
+	(*ViewContent)(nil),                            // 23: diag.v1.ViewContent
+	(*View)(nil),                                   // 24: diag.v1.View
+	(*DeleteViewRequest)(nil),                      // 25: diag.v1.DeleteViewRequest
+	(*DeleteViewResponse)(nil),                     // 26: diag.v1.DeleteViewResponse
+	(*DeleteElementRequest)(nil),                   // 27: diag.v1.DeleteElementRequest
+	(*DeleteElementResponse)(nil),                  // 28: diag.v1.DeleteElementResponse
+	(*DeleteConnectorRequest)(nil),                 // 29: diag.v1.DeleteConnectorRequest
+	(*DeleteConnectorResponse)(nil),                // 30: diag.v1.DeleteConnectorResponse
+	(*DeleteElementNavigationRequest)(nil),         // 31: diag.v1.DeleteElementNavigationRequest
+	(*DeleteElementNavigationResponse)(nil),        // 32: diag.v1.DeleteElementNavigationResponse
+	(*TechnologyLink)(nil),                         // 33: diag.v1.TechnologyLink
+	(*ListViewsRequest)(nil),                       // 34: diag.v1.ListViewsRequest
+	(*ListViewsResponse)(nil),                      // 35: diag.v1.ListViewsResponse
+	(*GetViewRequest)(nil),                         // 36: diag.v1.GetViewRequest
+	(*GetViewResponse)(nil),                        // 37: diag.v1.GetViewResponse
+	(*UpdateViewRequest)(nil),                      // 38: diag.v1.UpdateViewRequest
+	(*UpdateViewResponse)(nil),                     // 39: diag.v1.UpdateViewResponse
+	(*SetViewLevelRequest)(nil),                    // 40: diag.v1.SetViewLevelRequest
+	(*SetViewLevelResponse)(nil),                   // 41: diag.v1.SetViewLevelResponse
+	(*ExploreTreeNode)(nil),                        // 42: diag.v1.ExploreTreeNode
+	(*GetWorkspaceRequest)(nil),                    // 43: diag.v1.GetWorkspaceRequest
+	(*GetWorkspaceResponse)(nil),                   // 44: diag.v1.GetWorkspaceResponse
+	(*IncomingElementNavigationInfo)(nil),          // 45: diag.v1.IncomingElementNavigationInfo
+	(*ListIncomingElementNavigationsRequest)(nil),  // 46: diag.v1.ListIncomingElementNavigationsRequest
+	(*ListIncomingElementNavigationsResponse)(nil), // 47: diag.v1.ListIncomingElementNavigationsResponse
+	(*ListElementsRequest)(nil),                    // 48: diag.v1.ListElementsRequest
+	(*ListElementsResponse)(nil),                   // 49: diag.v1.ListElementsResponse
+	(*GetElementRequest)(nil),                      // 50: diag.v1.GetElementRequest
+	(*GetElementResponse)(nil),                     // 51: diag.v1.GetElementResponse
+	(*CreateElementRequest)(nil),                   // 52: diag.v1.CreateElementRequest
+	(*CreateElementResponse)(nil),                  // 53: diag.v1.CreateElementResponse
+	(*UpdateElementRequest)(nil),                   // 54: diag.v1.UpdateElementRequest
+	(*UpdateElementResponse)(nil),                  // 55: diag.v1.UpdateElementResponse
+	(*ViewPlacementInfo)(nil),                      // 56: diag.v1.ViewPlacementInfo
+	(*ListElementPlacementsRequest)(nil),           // 57: diag.v1.ListElementPlacementsRequest
+	(*ListElementPlacementsResponse)(nil),          // 58: diag.v1.ListElementPlacementsResponse
+	(*ListPlacementsRequest)(nil),                  // 59: diag.v1.ListPlacementsRequest
+	(*ListPlacementsResponse)(nil),                 // 60: diag.v1.ListPlacementsResponse
+	(*CreatePlacementRequest)(nil),                 // 61: diag.v1.CreatePlacementRequest
+	(*CreatePlacementResponse)(nil),                // 62: diag.v1.CreatePlacementResponse
+	(*UpdatePlacementPositionRequest)(nil),         // 63: diag.v1.UpdatePlacementPositionRequest
+	(*UpdatePlacementPositionResponse)(nil),        // 64: diag.v1.UpdatePlacementPositionResponse
+	(*DeletePlacementRequest)(nil),                 // 65: diag.v1.DeletePlacementRequest
+	(*DeletePlacementResponse)(nil),                // 66: diag.v1.DeletePlacementResponse
+	(*ListConnectorsRequest)(nil),                  // 67: diag.v1.ListConnectorsRequest
+	(*ListConnectorsResponse)(nil),                 // 68: diag.v1.ListConnectorsResponse
+	(*CreateConnectorRequest)(nil),                 // 69: diag.v1.CreateConnectorRequest
+	(*CreateConnectorResponse)(nil),                // 70: diag.v1.CreateConnectorResponse
+	(*UpdateConnectorRequest)(nil),                 // 71: diag.v1.UpdateConnectorRequest
+	(*UpdateConnectorResponse)(nil),                // 72: diag.v1.UpdateConnectorResponse
+	(*ElementNavigationInfo)(nil),                  // 73: diag.v1.ElementNavigationInfo
+	(*ListElementNavigationsRequest)(nil),          // 74: diag.v1.ListElementNavigationsRequest
+	(*ListElementNavigationsResponse)(nil),         // 75: diag.v1.ListElementNavigationsResponse
+	(*CreateElementNavigationRequest)(nil),         // 76: diag.v1.CreateElementNavigationRequest
+	(*CreateElementNavigationResponse)(nil),        // 77: diag.v1.CreateElementNavigationResponse
+	(*DeleteElementNavigationByIdRequest)(nil),     // 78: diag.v1.DeleteElementNavigationByIdRequest
+	(*DeleteElementNavigationByIdResponse)(nil),    // 79: diag.v1.DeleteElementNavigationByIdResponse
+	(*ViewLayer)(nil),                              // 80: diag.v1.ViewLayer
+	(*ListViewLayersRequest)(nil),                  // 81: diag.v1.ListViewLayersRequest
+	(*ListViewLayersResponse)(nil),                 // 82: diag.v1.ListViewLayersResponse
+	(*CreateViewLayerRequest)(nil),                 // 83: diag.v1.CreateViewLayerRequest
+	(*CreateViewLayerResponse)(nil),                // 84: diag.v1.CreateViewLayerResponse
+	(*UpdateViewLayerRequest)(nil),                 // 85: diag.v1.UpdateViewLayerRequest
+	(*UpdateViewLayerResponse)(nil),                // 86: diag.v1.UpdateViewLayerResponse
+	(*DeleteViewLayerRequest)(nil),                 // 87: diag.v1.DeleteViewLayerRequest
+	(*DeleteViewLayerResponse)(nil),                // 88: diag.v1.DeleteViewLayerResponse
+	nil,                                            // 89: diag.v1.ApplyPlanResponse.ElementMetadataEntry
+	nil,                                            // 90: diag.v1.ApplyPlanResponse.ViewMetadataEntry
+	nil,                                            // 91: diag.v1.ApplyPlanResponse.ConnectorMetadataEntry
+	nil,                                            // 92: diag.v1.GetWorkspaceResponse.ContentEntry
+	(*timestamppb.Timestamp)(nil),                  // 93: google.protobuf.Timestamp
 }
 var file_diag_v1_workspace_service_proto_depIdxs = []int32{
-	23,  // 0: diag.v1.ExportOrganizationResponse.views:type_name -> diag.v1.View
-	16,  // 1: diag.v1.ExportOrganizationResponse.elements:type_name -> diag.v1.Element
-	20,  // 2: diag.v1.ExportOrganizationResponse.connectors:type_name -> diag.v1.Connector
-	21,  // 3: diag.v1.ExportOrganizationResponse.navigations:type_name -> diag.v1.ElementNavigation
-	18,  // 4: diag.v1.ExportOrganizationResponse.placements:type_name -> diag.v1.ElementPlacement
-	79,  // 5: diag.v1.ExportOrganizationResponse.layers:type_name -> diag.v1.ViewLayer
-	32,  // 6: diag.v1.PlanElement.technology_links:type_name -> diag.v1.TechnologyLink
-	2,   // 7: diag.v1.PlanElement.placements:type_name -> diag.v1.PlanViewPlacement
-	92,  // 8: diag.v1.PlanElement.updated_at:type_name -> google.protobuf.Timestamp
-	92,  // 9: diag.v1.PlanElement.view_updated_at:type_name -> google.protobuf.Timestamp
-	92,  // 10: diag.v1.PlanConnector.updated_at:type_name -> google.protobuf.Timestamp
-	3,   // 11: diag.v1.ApplyPlanRequest.elements:type_name -> diag.v1.PlanElement
-	4,   // 12: diag.v1.ApplyPlanRequest.connectors:type_name -> diag.v1.PlanConnector
-	92,  // 13: diag.v1.WorkspaceVersion.created_at:type_name -> google.protobuf.Timestamp
-	92,  // 14: diag.v1.ResourceMetadata.updated_at:type_name -> google.protobuf.Timestamp
-	92,  // 15: diag.v1.PlanConflictItem.local_updated_at:type_name -> google.protobuf.Timestamp
-	92,  // 16: diag.v1.PlanConflictItem.remote_updated_at:type_name -> google.protobuf.Timestamp
-	92,  // 17: diag.v1.ApplyPlanElementResult.updated_at:type_name -> google.protobuf.Timestamp
-	92,  // 18: diag.v1.ApplyPlanConnectorResult.updated_at:type_name -> google.protobuf.Timestamp
-	16,  // 19: diag.v1.ApplyPlanResponse.created_elements:type_name -> diag.v1.Element
-	17,  // 20: diag.v1.ApplyPlanResponse.created_views:type_name -> diag.v1.ViewSummary
-	18,  // 21: diag.v1.ApplyPlanResponse.created_placements:type_name -> diag.v1.ElementPlacement
-	20,  // 22: diag.v1.ApplyPlanResponse.created_connectors:type_name -> diag.v1.Connector
-	6,   // 23: diag.v1.ApplyPlanResponse.summary:type_name -> diag.v1.PlanSummary
-	7,   // 24: diag.v1.ApplyPlanResponse.drift:type_name -> diag.v1.PlanDriftItem
-	8,   // 25: diag.v1.ApplyPlanResponse.version:type_name -> diag.v1.WorkspaceVersion
-	88,  // 26: diag.v1.ApplyPlanResponse.element_metadata:type_name -> diag.v1.ApplyPlanResponse.ElementMetadataEntry
-	89,  // 27: diag.v1.ApplyPlanResponse.view_metadata:type_name -> diag.v1.ApplyPlanResponse.ViewMetadataEntry
-	90,  // 28: diag.v1.ApplyPlanResponse.connector_metadata:type_name -> diag.v1.ApplyPlanResponse.ConnectorMetadataEntry
-	10,  // 29: diag.v1.ApplyPlanResponse.conflicts:type_name -> diag.v1.PlanConflictItem
-	11,  // 30: diag.v1.ApplyPlanResponse.element_results:type_name -> diag.v1.ApplyPlanElementResult
-	12,  // 31: diag.v1.ApplyPlanResponse.connector_results:type_name -> diag.v1.ApplyPlanConnectorResult
-	23,  // 32: diag.v1.CreateViewResponse.view:type_name -> diag.v1.View
-	32,  // 33: diag.v1.Element.technology_links:type_name -> diag.v1.TechnologyLink
-	92,  // 34: diag.v1.Element.created_at:type_name -> google.protobuf.Timestamp
-	92,  // 35: diag.v1.Element.updated_at:type_name -> google.protobuf.Timestamp
-	92,  // 36: diag.v1.ViewSummary.created_at:type_name -> google.protobuf.Timestamp
-	92,  // 37: diag.v1.ViewSummary.updated_at:type_name -> google.protobuf.Timestamp
-	32,  // 38: diag.v1.PlacedElement.technology_links:type_name -> diag.v1.TechnologyLink
-	92,  // 39: diag.v1.Connector.created_at:type_name -> google.protobuf.Timestamp
-	92,  // 40: diag.v1.Connector.updated_at:type_name -> google.protobuf.Timestamp
-	19,  // 41: diag.v1.ViewContent.placements:type_name -> diag.v1.PlacedElement
-	20,  // 42: diag.v1.ViewContent.connectors:type_name -> diag.v1.Connector
-	92,  // 43: diag.v1.View.created_at:type_name -> google.protobuf.Timestamp
-	92,  // 44: diag.v1.View.updated_at:type_name -> google.protobuf.Timestamp
-	23,  // 45: diag.v1.View.children:type_name -> diag.v1.View
-	23,  // 46: diag.v1.ListViewsResponse.views:type_name -> diag.v1.View
-	23,  // 47: diag.v1.GetViewResponse.view:type_name -> diag.v1.View
-	23,  // 48: diag.v1.UpdateViewResponse.view:type_name -> diag.v1.View
-	92,  // 49: diag.v1.ExploreTreeNode.created_at:type_name -> google.protobuf.Timestamp
-	23,  // 50: diag.v1.GetWorkspaceResponse.views:type_name -> diag.v1.View
-	91,  // 51: diag.v1.GetWorkspaceResponse.content:type_name -> diag.v1.GetWorkspaceResponse.ContentEntry
-	72,  // 52: diag.v1.GetWorkspaceResponse.navigations:type_name -> diag.v1.ElementNavigationInfo
-	44,  // 53: diag.v1.ListIncomingElementNavigationsResponse.navigations:type_name -> diag.v1.IncomingElementNavigationInfo
-	16,  // 54: diag.v1.ListElementsResponse.elements:type_name -> diag.v1.Element
-	16,  // 55: diag.v1.GetElementResponse.element:type_name -> diag.v1.Element
-	32,  // 56: diag.v1.CreateElementRequest.technology_links:type_name -> diag.v1.TechnologyLink
-	16,  // 57: diag.v1.CreateElementResponse.element:type_name -> diag.v1.Element
-	32,  // 58: diag.v1.UpdateElementRequest.technology_links:type_name -> diag.v1.TechnologyLink
-	16,  // 59: diag.v1.UpdateElementResponse.element:type_name -> diag.v1.Element
-	55,  // 60: diag.v1.ListElementPlacementsResponse.placements:type_name -> diag.v1.ViewPlacementInfo
-	19,  // 61: diag.v1.ListPlacementsResponse.placements:type_name -> diag.v1.PlacedElement
-	19,  // 62: diag.v1.CreatePlacementResponse.placement:type_name -> diag.v1.PlacedElement
-	20,  // 63: diag.v1.ListConnectorsResponse.connectors:type_name -> diag.v1.Connector
-	20,  // 64: diag.v1.CreateConnectorResponse.connector:type_name -> diag.v1.Connector
-	20,  // 65: diag.v1.UpdateConnectorResponse.connector:type_name -> diag.v1.Connector
-	72,  // 66: diag.v1.ListElementNavigationsResponse.navigations:type_name -> diag.v1.ElementNavigationInfo
-	72,  // 67: diag.v1.CreateElementNavigationResponse.navigation:type_name -> diag.v1.ElementNavigationInfo
-	92,  // 68: diag.v1.ViewLayer.created_at:type_name -> google.protobuf.Timestamp
-	92,  // 69: diag.v1.ViewLayer.updated_at:type_name -> google.protobuf.Timestamp
-	79,  // 70: diag.v1.ListViewLayersResponse.layers:type_name -> diag.v1.ViewLayer
-	79,  // 71: diag.v1.CreateViewLayerResponse.layer:type_name -> diag.v1.ViewLayer
-	79,  // 72: diag.v1.UpdateViewLayerResponse.layer:type_name -> diag.v1.ViewLayer
-	9,   // 73: diag.v1.ApplyPlanResponse.ElementMetadataEntry.value:type_name -> diag.v1.ResourceMetadata
-	9,   // 74: diag.v1.ApplyPlanResponse.ViewMetadataEntry.value:type_name -> diag.v1.ResourceMetadata
-	9,   // 75: diag.v1.ApplyPlanResponse.ConnectorMetadataEntry.value:type_name -> diag.v1.ResourceMetadata
-	22,  // 76: diag.v1.GetWorkspaceResponse.ContentEntry.value:type_name -> diag.v1.ViewContent
-	14,  // 77: diag.v1.WorkspaceService.CreateView:input_type -> diag.v1.CreateViewRequest
-	5,   // 78: diag.v1.WorkspaceService.ApplyWorkspacePlan:input_type -> diag.v1.ApplyPlanRequest
-	0,   // 79: diag.v1.WorkspaceService.ExportWorkspace:input_type -> diag.v1.ExportOrganizationRequest
-	24,  // 80: diag.v1.WorkspaceService.DeleteView:input_type -> diag.v1.DeleteViewRequest
-	26,  // 81: diag.v1.WorkspaceService.DeleteElement:input_type -> diag.v1.DeleteElementRequest
-	28,  // 82: diag.v1.WorkspaceService.DeleteConnector:input_type -> diag.v1.DeleteConnectorRequest
-	30,  // 83: diag.v1.WorkspaceService.DeleteElementNavigation:input_type -> diag.v1.DeleteElementNavigationRequest
-	33,  // 84: diag.v1.WorkspaceService.ListViews:input_type -> diag.v1.ListViewsRequest
-	35,  // 85: diag.v1.WorkspaceService.GetView:input_type -> diag.v1.GetViewRequest
-	37,  // 86: diag.v1.WorkspaceService.UpdateView:input_type -> diag.v1.UpdateViewRequest
-	39,  // 87: diag.v1.WorkspaceService.SetViewLevel:input_type -> diag.v1.SetViewLevelRequest
-	42,  // 88: diag.v1.WorkspaceService.GetWorkspace:input_type -> diag.v1.GetWorkspaceRequest
-	45,  // 89: diag.v1.WorkspaceService.ListIncomingElementNavigations:input_type -> diag.v1.ListIncomingElementNavigationsRequest
-	47,  // 90: diag.v1.WorkspaceService.ListElements:input_type -> diag.v1.ListElementsRequest
-	49,  // 91: diag.v1.WorkspaceService.GetElement:input_type -> diag.v1.GetElementRequest
-	51,  // 92: diag.v1.WorkspaceService.CreateElement:input_type -> diag.v1.CreateElementRequest
-	53,  // 93: diag.v1.WorkspaceService.UpdateElement:input_type -> diag.v1.UpdateElementRequest
-	56,  // 94: diag.v1.WorkspaceService.ListElementPlacements:input_type -> diag.v1.ListElementPlacementsRequest
-	58,  // 95: diag.v1.WorkspaceService.ListPlacements:input_type -> diag.v1.ListPlacementsRequest
-	60,  // 96: diag.v1.WorkspaceService.CreatePlacement:input_type -> diag.v1.CreatePlacementRequest
-	62,  // 97: diag.v1.WorkspaceService.UpdatePlacementPosition:input_type -> diag.v1.UpdatePlacementPositionRequest
-	64,  // 98: diag.v1.WorkspaceService.DeletePlacement:input_type -> diag.v1.DeletePlacementRequest
-	66,  // 99: diag.v1.WorkspaceService.ListConnectors:input_type -> diag.v1.ListConnectorsRequest
-	68,  // 100: diag.v1.WorkspaceService.CreateConnector:input_type -> diag.v1.CreateConnectorRequest
-	70,  // 101: diag.v1.WorkspaceService.UpdateConnector:input_type -> diag.v1.UpdateConnectorRequest
-	73,  // 102: diag.v1.WorkspaceService.ListElementNavigations:input_type -> diag.v1.ListElementNavigationsRequest
-	75,  // 103: diag.v1.WorkspaceService.CreateElementNavigation:input_type -> diag.v1.CreateElementNavigationRequest
-	77,  // 104: diag.v1.WorkspaceService.DeleteElementNavigationById:input_type -> diag.v1.DeleteElementNavigationByIdRequest
-	80,  // 105: diag.v1.WorkspaceService.ListViewLayers:input_type -> diag.v1.ListViewLayersRequest
-	82,  // 106: diag.v1.WorkspaceService.CreateViewLayer:input_type -> diag.v1.CreateViewLayerRequest
-	84,  // 107: diag.v1.WorkspaceService.UpdateViewLayer:input_type -> diag.v1.UpdateViewLayerRequest
-	86,  // 108: diag.v1.WorkspaceService.DeleteViewLayer:input_type -> diag.v1.DeleteViewLayerRequest
-	15,  // 109: diag.v1.WorkspaceService.CreateView:output_type -> diag.v1.CreateViewResponse
-	13,  // 110: diag.v1.WorkspaceService.ApplyWorkspacePlan:output_type -> diag.v1.ApplyPlanResponse
-	1,   // 111: diag.v1.WorkspaceService.ExportWorkspace:output_type -> diag.v1.ExportOrganizationResponse
-	25,  // 112: diag.v1.WorkspaceService.DeleteView:output_type -> diag.v1.DeleteViewResponse
-	27,  // 113: diag.v1.WorkspaceService.DeleteElement:output_type -> diag.v1.DeleteElementResponse
-	29,  // 114: diag.v1.WorkspaceService.DeleteConnector:output_type -> diag.v1.DeleteConnectorResponse
-	31,  // 115: diag.v1.WorkspaceService.DeleteElementNavigation:output_type -> diag.v1.DeleteElementNavigationResponse
-	34,  // 116: diag.v1.WorkspaceService.ListViews:output_type -> diag.v1.ListViewsResponse
-	36,  // 117: diag.v1.WorkspaceService.GetView:output_type -> diag.v1.GetViewResponse
-	38,  // 118: diag.v1.WorkspaceService.UpdateView:output_type -> diag.v1.UpdateViewResponse
-	40,  // 119: diag.v1.WorkspaceService.SetViewLevel:output_type -> diag.v1.SetViewLevelResponse
-	43,  // 120: diag.v1.WorkspaceService.GetWorkspace:output_type -> diag.v1.GetWorkspaceResponse
-	46,  // 121: diag.v1.WorkspaceService.ListIncomingElementNavigations:output_type -> diag.v1.ListIncomingElementNavigationsResponse
-	48,  // 122: diag.v1.WorkspaceService.ListElements:output_type -> diag.v1.ListElementsResponse
-	50,  // 123: diag.v1.WorkspaceService.GetElement:output_type -> diag.v1.GetElementResponse
-	52,  // 124: diag.v1.WorkspaceService.CreateElement:output_type -> diag.v1.CreateElementResponse
-	54,  // 125: diag.v1.WorkspaceService.UpdateElement:output_type -> diag.v1.UpdateElementResponse
-	57,  // 126: diag.v1.WorkspaceService.ListElementPlacements:output_type -> diag.v1.ListElementPlacementsResponse
-	59,  // 127: diag.v1.WorkspaceService.ListPlacements:output_type -> diag.v1.ListPlacementsResponse
-	61,  // 128: diag.v1.WorkspaceService.CreatePlacement:output_type -> diag.v1.CreatePlacementResponse
-	63,  // 129: diag.v1.WorkspaceService.UpdatePlacementPosition:output_type -> diag.v1.UpdatePlacementPositionResponse
-	65,  // 130: diag.v1.WorkspaceService.DeletePlacement:output_type -> diag.v1.DeletePlacementResponse
-	67,  // 131: diag.v1.WorkspaceService.ListConnectors:output_type -> diag.v1.ListConnectorsResponse
-	69,  // 132: diag.v1.WorkspaceService.CreateConnector:output_type -> diag.v1.CreateConnectorResponse
-	71,  // 133: diag.v1.WorkspaceService.UpdateConnector:output_type -> diag.v1.UpdateConnectorResponse
-	74,  // 134: diag.v1.WorkspaceService.ListElementNavigations:output_type -> diag.v1.ListElementNavigationsResponse
-	76,  // 135: diag.v1.WorkspaceService.CreateElementNavigation:output_type -> diag.v1.CreateElementNavigationResponse
-	78,  // 136: diag.v1.WorkspaceService.DeleteElementNavigationById:output_type -> diag.v1.DeleteElementNavigationByIdResponse
-	81,  // 137: diag.v1.WorkspaceService.ListViewLayers:output_type -> diag.v1.ListViewLayersResponse
-	83,  // 138: diag.v1.WorkspaceService.CreateViewLayer:output_type -> diag.v1.CreateViewLayerResponse
-	85,  // 139: diag.v1.WorkspaceService.UpdateViewLayer:output_type -> diag.v1.UpdateViewLayerResponse
-	87,  // 140: diag.v1.WorkspaceService.DeleteViewLayer:output_type -> diag.v1.DeleteViewLayerResponse
-	109, // [109:141] is the sub-list for method output_type
-	77,  // [77:109] is the sub-list for method input_type
-	77,  // [77:77] is the sub-list for extension type_name
-	77,  // [77:77] is the sub-list for extension extendee
-	0,   // [0:77] is the sub-list for field type_name
+	24,  // 0: diag.v1.ExportOrganizationResponse.views:type_name -> diag.v1.View
+	17,  // 1: diag.v1.ExportOrganizationResponse.elements:type_name -> diag.v1.Element
+	21,  // 2: diag.v1.ExportOrganizationResponse.connectors:type_name -> diag.v1.Connector
+	22,  // 3: diag.v1.ExportOrganizationResponse.navigations:type_name -> diag.v1.ElementNavigation
+	19,  // 4: diag.v1.ExportOrganizationResponse.placements:type_name -> diag.v1.ElementPlacement
+	80,  // 5: diag.v1.ExportOrganizationResponse.layers:type_name -> diag.v1.ViewLayer
+	24,  // 6: diag.v1.ExportChunk.views:type_name -> diag.v1.View
+	17,  // 7: diag.v1.ExportChunk.elements:type_name -> diag.v1.Element
+	21,  // 8: diag.v1.ExportChunk.connectors:type_name -> diag.v1.Connector
+	19,  // 9: diag.v1.ExportChunk.placements:type_name -> diag.v1.ElementPlacement
+	80,  // 10: diag.v1.ExportChunk.layers:type_name -> diag.v1.ViewLayer
+	33,  // 11: diag.v1.PlanElement.technology_links:type_name -> diag.v1.TechnologyLink
+	3,   // 12: diag.v1.PlanElement.placements:type_name -> diag.v1.PlanViewPlacement
+	93,  // 13: diag.v1.PlanElement.updated_at:type_name -> google.protobuf.Timestamp
+	93,  // 14: diag.v1.PlanElement.view_updated_at:type_name -> google.protobuf.Timestamp
+	93,  // 15: diag.v1.PlanConnector.updated_at:type_name -> google.protobuf.Timestamp
+	4,   // 16: diag.v1.ApplyPlanRequest.elements:type_name -> diag.v1.PlanElement
+	5,   // 17: diag.v1.ApplyPlanRequest.connectors:type_name -> diag.v1.PlanConnector
+	93,  // 18: diag.v1.WorkspaceVersion.created_at:type_name -> google.protobuf.Timestamp
+	93,  // 19: diag.v1.ResourceMetadata.updated_at:type_name -> google.protobuf.Timestamp
+	93,  // 20: diag.v1.PlanConflictItem.local_updated_at:type_name -> google.protobuf.Timestamp
+	93,  // 21: diag.v1.PlanConflictItem.remote_updated_at:type_name -> google.protobuf.Timestamp
+	93,  // 22: diag.v1.ApplyPlanElementResult.updated_at:type_name -> google.protobuf.Timestamp
+	93,  // 23: diag.v1.ApplyPlanConnectorResult.updated_at:type_name -> google.protobuf.Timestamp
+	17,  // 24: diag.v1.ApplyPlanResponse.created_elements:type_name -> diag.v1.Element
+	18,  // 25: diag.v1.ApplyPlanResponse.created_views:type_name -> diag.v1.ViewSummary
+	19,  // 26: diag.v1.ApplyPlanResponse.created_placements:type_name -> diag.v1.ElementPlacement
+	21,  // 27: diag.v1.ApplyPlanResponse.created_connectors:type_name -> diag.v1.Connector
+	7,   // 28: diag.v1.ApplyPlanResponse.summary:type_name -> diag.v1.PlanSummary
+	8,   // 29: diag.v1.ApplyPlanResponse.drift:type_name -> diag.v1.PlanDriftItem
+	9,   // 30: diag.v1.ApplyPlanResponse.version:type_name -> diag.v1.WorkspaceVersion
+	89,  // 31: diag.v1.ApplyPlanResponse.element_metadata:type_name -> diag.v1.ApplyPlanResponse.ElementMetadataEntry
+	90,  // 32: diag.v1.ApplyPlanResponse.view_metadata:type_name -> diag.v1.ApplyPlanResponse.ViewMetadataEntry
+	91,  // 33: diag.v1.ApplyPlanResponse.connector_metadata:type_name -> diag.v1.ApplyPlanResponse.ConnectorMetadataEntry
+	11,  // 34: diag.v1.ApplyPlanResponse.conflicts:type_name -> diag.v1.PlanConflictItem
+	12,  // 35: diag.v1.ApplyPlanResponse.element_results:type_name -> diag.v1.ApplyPlanElementResult
+	13,  // 36: diag.v1.ApplyPlanResponse.connector_results:type_name -> diag.v1.ApplyPlanConnectorResult
+	24,  // 37: diag.v1.CreateViewResponse.view:type_name -> diag.v1.View
+	33,  // 38: diag.v1.Element.technology_links:type_name -> diag.v1.TechnologyLink
+	93,  // 39: diag.v1.Element.created_at:type_name -> google.protobuf.Timestamp
+	93,  // 40: diag.v1.Element.updated_at:type_name -> google.protobuf.Timestamp
+	93,  // 41: diag.v1.ViewSummary.created_at:type_name -> google.protobuf.Timestamp
+	93,  // 42: diag.v1.ViewSummary.updated_at:type_name -> google.protobuf.Timestamp
+	33,  // 43: diag.v1.PlacedElement.technology_links:type_name -> diag.v1.TechnologyLink
+	93,  // 44: diag.v1.Connector.created_at:type_name -> google.protobuf.Timestamp
+	93,  // 45: diag.v1.Connector.updated_at:type_name -> google.protobuf.Timestamp
+	20,  // 46: diag.v1.ViewContent.placements:type_name -> diag.v1.PlacedElement
+	21,  // 47: diag.v1.ViewContent.connectors:type_name -> diag.v1.Connector
+	93,  // 48: diag.v1.View.created_at:type_name -> google.protobuf.Timestamp
+	93,  // 49: diag.v1.View.updated_at:type_name -> google.protobuf.Timestamp
+	24,  // 50: diag.v1.View.children:type_name -> diag.v1.View
+	24,  // 51: diag.v1.ListViewsResponse.views:type_name -> diag.v1.View
+	24,  // 52: diag.v1.GetViewResponse.view:type_name -> diag.v1.View
+	24,  // 53: diag.v1.UpdateViewResponse.view:type_name -> diag.v1.View
+	93,  // 54: diag.v1.ExploreTreeNode.created_at:type_name -> google.protobuf.Timestamp
+	24,  // 55: diag.v1.GetWorkspaceResponse.views:type_name -> diag.v1.View
+	92,  // 56: diag.v1.GetWorkspaceResponse.content:type_name -> diag.v1.GetWorkspaceResponse.ContentEntry
+	73,  // 57: diag.v1.GetWorkspaceResponse.navigations:type_name -> diag.v1.ElementNavigationInfo
+	45,  // 58: diag.v1.ListIncomingElementNavigationsResponse.navigations:type_name -> diag.v1.IncomingElementNavigationInfo
+	17,  // 59: diag.v1.ListElementsResponse.elements:type_name -> diag.v1.Element
+	17,  // 60: diag.v1.GetElementResponse.element:type_name -> diag.v1.Element
+	33,  // 61: diag.v1.CreateElementRequest.technology_links:type_name -> diag.v1.TechnologyLink
+	17,  // 62: diag.v1.CreateElementResponse.element:type_name -> diag.v1.Element
+	33,  // 63: diag.v1.UpdateElementRequest.technology_links:type_name -> diag.v1.TechnologyLink
+	17,  // 64: diag.v1.UpdateElementResponse.element:type_name -> diag.v1.Element
+	56,  // 65: diag.v1.ListElementPlacementsResponse.placements:type_name -> diag.v1.ViewPlacementInfo
+	20,  // 66: diag.v1.ListPlacementsResponse.placements:type_name -> diag.v1.PlacedElement
+	20,  // 67: diag.v1.CreatePlacementResponse.placement:type_name -> diag.v1.PlacedElement
+	21,  // 68: diag.v1.ListConnectorsResponse.connectors:type_name -> diag.v1.Connector
+	21,  // 69: diag.v1.CreateConnectorResponse.connector:type_name -> diag.v1.Connector
+	21,  // 70: diag.v1.UpdateConnectorResponse.connector:type_name -> diag.v1.Connector
+	73,  // 71: diag.v1.ListElementNavigationsResponse.navigations:type_name -> diag.v1.ElementNavigationInfo
+	73,  // 72: diag.v1.CreateElementNavigationResponse.navigation:type_name -> diag.v1.ElementNavigationInfo
+	93,  // 73: diag.v1.ViewLayer.created_at:type_name -> google.protobuf.Timestamp
+	93,  // 74: diag.v1.ViewLayer.updated_at:type_name -> google.protobuf.Timestamp
+	80,  // 75: diag.v1.ListViewLayersResponse.layers:type_name -> diag.v1.ViewLayer
+	80,  // 76: diag.v1.CreateViewLayerResponse.layer:type_name -> diag.v1.ViewLayer
+	80,  // 77: diag.v1.UpdateViewLayerResponse.layer:type_name -> diag.v1.ViewLayer
+	10,  // 78: diag.v1.ApplyPlanResponse.ElementMetadataEntry.value:type_name -> diag.v1.ResourceMetadata
+	10,  // 79: diag.v1.ApplyPlanResponse.ViewMetadataEntry.value:type_name -> diag.v1.ResourceMetadata
+	10,  // 80: diag.v1.ApplyPlanResponse.ConnectorMetadataEntry.value:type_name -> diag.v1.ResourceMetadata
+	23,  // 81: diag.v1.GetWorkspaceResponse.ContentEntry.value:type_name -> diag.v1.ViewContent
+	15,  // 82: diag.v1.WorkspaceService.CreateView:input_type -> diag.v1.CreateViewRequest
+	6,   // 83: diag.v1.WorkspaceService.ApplyWorkspacePlan:input_type -> diag.v1.ApplyPlanRequest
+	0,   // 84: diag.v1.WorkspaceService.ExportWorkspace:input_type -> diag.v1.ExportOrganizationRequest
+	0,   // 85: diag.v1.WorkspaceService.StreamExportWorkspace:input_type -> diag.v1.ExportOrganizationRequest
+	25,  // 86: diag.v1.WorkspaceService.DeleteView:input_type -> diag.v1.DeleteViewRequest
+	27,  // 87: diag.v1.WorkspaceService.DeleteElement:input_type -> diag.v1.DeleteElementRequest
+	29,  // 88: diag.v1.WorkspaceService.DeleteConnector:input_type -> diag.v1.DeleteConnectorRequest
+	31,  // 89: diag.v1.WorkspaceService.DeleteElementNavigation:input_type -> diag.v1.DeleteElementNavigationRequest
+	34,  // 90: diag.v1.WorkspaceService.ListViews:input_type -> diag.v1.ListViewsRequest
+	36,  // 91: diag.v1.WorkspaceService.GetView:input_type -> diag.v1.GetViewRequest
+	38,  // 92: diag.v1.WorkspaceService.UpdateView:input_type -> diag.v1.UpdateViewRequest
+	40,  // 93: diag.v1.WorkspaceService.SetViewLevel:input_type -> diag.v1.SetViewLevelRequest
+	43,  // 94: diag.v1.WorkspaceService.GetWorkspace:input_type -> diag.v1.GetWorkspaceRequest
+	46,  // 95: diag.v1.WorkspaceService.ListIncomingElementNavigations:input_type -> diag.v1.ListIncomingElementNavigationsRequest
+	48,  // 96: diag.v1.WorkspaceService.ListElements:input_type -> diag.v1.ListElementsRequest
+	50,  // 97: diag.v1.WorkspaceService.GetElement:input_type -> diag.v1.GetElementRequest
+	52,  // 98: diag.v1.WorkspaceService.CreateElement:input_type -> diag.v1.CreateElementRequest
+	54,  // 99: diag.v1.WorkspaceService.UpdateElement:input_type -> diag.v1.UpdateElementRequest
+	57,  // 100: diag.v1.WorkspaceService.ListElementPlacements:input_type -> diag.v1.ListElementPlacementsRequest
+	59,  // 101: diag.v1.WorkspaceService.ListPlacements:input_type -> diag.v1.ListPlacementsRequest
+	61,  // 102: diag.v1.WorkspaceService.CreatePlacement:input_type -> diag.v1.CreatePlacementRequest
+	63,  // 103: diag.v1.WorkspaceService.UpdatePlacementPosition:input_type -> diag.v1.UpdatePlacementPositionRequest
+	65,  // 104: diag.v1.WorkspaceService.DeletePlacement:input_type -> diag.v1.DeletePlacementRequest
+	67,  // 105: diag.v1.WorkspaceService.ListConnectors:input_type -> diag.v1.ListConnectorsRequest
+	69,  // 106: diag.v1.WorkspaceService.CreateConnector:input_type -> diag.v1.CreateConnectorRequest
+	71,  // 107: diag.v1.WorkspaceService.UpdateConnector:input_type -> diag.v1.UpdateConnectorRequest
+	74,  // 108: diag.v1.WorkspaceService.ListElementNavigations:input_type -> diag.v1.ListElementNavigationsRequest
+	76,  // 109: diag.v1.WorkspaceService.CreateElementNavigation:input_type -> diag.v1.CreateElementNavigationRequest
+	78,  // 110: diag.v1.WorkspaceService.DeleteElementNavigationById:input_type -> diag.v1.DeleteElementNavigationByIdRequest
+	81,  // 111: diag.v1.WorkspaceService.ListViewLayers:input_type -> diag.v1.ListViewLayersRequest
+	83,  // 112: diag.v1.WorkspaceService.CreateViewLayer:input_type -> diag.v1.CreateViewLayerRequest
+	85,  // 113: diag.v1.WorkspaceService.UpdateViewLayer:input_type -> diag.v1.UpdateViewLayerRequest
+	87,  // 114: diag.v1.WorkspaceService.DeleteViewLayer:input_type -> diag.v1.DeleteViewLayerRequest
+	16,  // 115: diag.v1.WorkspaceService.CreateView:output_type -> diag.v1.CreateViewResponse
+	14,  // 116: diag.v1.WorkspaceService.ApplyWorkspacePlan:output_type -> diag.v1.ApplyPlanResponse
+	1,   // 117: diag.v1.WorkspaceService.ExportWorkspace:output_type -> diag.v1.ExportOrganizationResponse
+	2,   // 118: diag.v1.WorkspaceService.StreamExportWorkspace:output_type -> diag.v1.ExportChunk
+	26,  // 119: diag.v1.WorkspaceService.DeleteView:output_type -> diag.v1.DeleteViewResponse
+	28,  // 120: diag.v1.WorkspaceService.DeleteElement:output_type -> diag.v1.DeleteElementResponse
+	30,  // 121: diag.v1.WorkspaceService.DeleteConnector:output_type -> diag.v1.DeleteConnectorResponse
+	32,  // 122: diag.v1.WorkspaceService.DeleteElementNavigation:output_type -> diag.v1.DeleteElementNavigationResponse
+	35,  // 123: diag.v1.WorkspaceService.ListViews:output_type -> diag.v1.ListViewsResponse
+	37,  // 124: diag.v1.WorkspaceService.GetView:output_type -> diag.v1.GetViewResponse
+	39,  // 125: diag.v1.WorkspaceService.UpdateView:output_type -> diag.v1.UpdateViewResponse
+	41,  // 126: diag.v1.WorkspaceService.SetViewLevel:output_type -> diag.v1.SetViewLevelResponse
+	44,  // 127: diag.v1.WorkspaceService.GetWorkspace:output_type -> diag.v1.GetWorkspaceResponse
+	47,  // 128: diag.v1.WorkspaceService.ListIncomingElementNavigations:output_type -> diag.v1.ListIncomingElementNavigationsResponse
+	49,  // 129: diag.v1.WorkspaceService.ListElements:output_type -> diag.v1.ListElementsResponse
+	51,  // 130: diag.v1.WorkspaceService.GetElement:output_type -> diag.v1.GetElementResponse
+	53,  // 131: diag.v1.WorkspaceService.CreateElement:output_type -> diag.v1.CreateElementResponse
+	55,  // 132: diag.v1.WorkspaceService.UpdateElement:output_type -> diag.v1.UpdateElementResponse
+	58,  // 133: diag.v1.WorkspaceService.ListElementPlacements:output_type -> diag.v1.ListElementPlacementsResponse
+	60,  // 134: diag.v1.WorkspaceService.ListPlacements:output_type -> diag.v1.ListPlacementsResponse
+	62,  // 135: diag.v1.WorkspaceService.CreatePlacement:output_type -> diag.v1.CreatePlacementResponse
+	64,  // 136: diag.v1.WorkspaceService.UpdatePlacementPosition:output_type -> diag.v1.UpdatePlacementPositionResponse
+	66,  // 137: diag.v1.WorkspaceService.DeletePlacement:output_type -> diag.v1.DeletePlacementResponse
+	68,  // 138: diag.v1.WorkspaceService.ListConnectors:output_type -> diag.v1.ListConnectorsResponse
+	70,  // 139: diag.v1.WorkspaceService.CreateConnector:output_type -> diag.v1.CreateConnectorResponse
+	72,  // 140: diag.v1.WorkspaceService.UpdateConnector:output_type -> diag.v1.UpdateConnectorResponse
+	75,  // 141: diag.v1.WorkspaceService.ListElementNavigations:output_type -> diag.v1.ListElementNavigationsResponse
+	77,  // 142: diag.v1.WorkspaceService.CreateElementNavigation:output_type -> diag.v1.CreateElementNavigationResponse
+	79,  // 143: diag.v1.WorkspaceService.DeleteElementNavigationById:output_type -> diag.v1.DeleteElementNavigationByIdResponse
+	82,  // 144: diag.v1.WorkspaceService.ListViewLayers:output_type -> diag.v1.ListViewLayersResponse
+	84,  // 145: diag.v1.WorkspaceService.CreateViewLayer:output_type -> diag.v1.CreateViewLayerResponse
+	86,  // 146: diag.v1.WorkspaceService.UpdateViewLayer:output_type -> diag.v1.UpdateViewLayerResponse
+	88,  // 147: diag.v1.WorkspaceService.DeleteViewLayer:output_type -> diag.v1.DeleteViewLayerResponse
+	115, // [115:148] is the sub-list for method output_type
+	82,  // [82:115] is the sub-list for method input_type
+	82,  // [82:82] is the sub-list for extension type_name
+	82,  // [82:82] is the sub-list for extension extendee
+	0,   // [0:82] is the sub-list for field type_name
 }
 
 func init() { file_diag_v1_workspace_service_proto_init() }
@@ -7039,40 +7247,40 @@ func file_diag_v1_workspace_service_proto_init() {
 		return
 	}
 	file_diag_v1_workspace_service_proto_msgTypes[0].OneofWrappers = []any{}
-	file_diag_v1_workspace_service_proto_msgTypes[2].OneofWrappers = []any{}
 	file_diag_v1_workspace_service_proto_msgTypes[3].OneofWrappers = []any{}
 	file_diag_v1_workspace_service_proto_msgTypes[4].OneofWrappers = []any{}
 	file_diag_v1_workspace_service_proto_msgTypes[5].OneofWrappers = []any{}
-	file_diag_v1_workspace_service_proto_msgTypes[8].OneofWrappers = []any{}
-	file_diag_v1_workspace_service_proto_msgTypes[13].OneofWrappers = []any{}
+	file_diag_v1_workspace_service_proto_msgTypes[6].OneofWrappers = []any{}
+	file_diag_v1_workspace_service_proto_msgTypes[9].OneofWrappers = []any{}
 	file_diag_v1_workspace_service_proto_msgTypes[14].OneofWrappers = []any{}
-	file_diag_v1_workspace_service_proto_msgTypes[16].OneofWrappers = []any{}
+	file_diag_v1_workspace_service_proto_msgTypes[15].OneofWrappers = []any{}
 	file_diag_v1_workspace_service_proto_msgTypes[17].OneofWrappers = []any{}
-	file_diag_v1_workspace_service_proto_msgTypes[19].OneofWrappers = []any{}
+	file_diag_v1_workspace_service_proto_msgTypes[18].OneofWrappers = []any{}
 	file_diag_v1_workspace_service_proto_msgTypes[20].OneofWrappers = []any{}
-	file_diag_v1_workspace_service_proto_msgTypes[23].OneofWrappers = []any{}
+	file_diag_v1_workspace_service_proto_msgTypes[21].OneofWrappers = []any{}
 	file_diag_v1_workspace_service_proto_msgTypes[24].OneofWrappers = []any{}
-	file_diag_v1_workspace_service_proto_msgTypes[26].OneofWrappers = []any{}
-	file_diag_v1_workspace_service_proto_msgTypes[28].OneofWrappers = []any{}
-	file_diag_v1_workspace_service_proto_msgTypes[30].OneofWrappers = []any{}
-	file_diag_v1_workspace_service_proto_msgTypes[32].OneofWrappers = []any{}
-	file_diag_v1_workspace_service_proto_msgTypes[37].OneofWrappers = []any{}
-	file_diag_v1_workspace_service_proto_msgTypes[41].OneofWrappers = []any{}
+	file_diag_v1_workspace_service_proto_msgTypes[25].OneofWrappers = []any{}
+	file_diag_v1_workspace_service_proto_msgTypes[27].OneofWrappers = []any{}
+	file_diag_v1_workspace_service_proto_msgTypes[29].OneofWrappers = []any{}
+	file_diag_v1_workspace_service_proto_msgTypes[31].OneofWrappers = []any{}
+	file_diag_v1_workspace_service_proto_msgTypes[33].OneofWrappers = []any{}
+	file_diag_v1_workspace_service_proto_msgTypes[38].OneofWrappers = []any{}
 	file_diag_v1_workspace_service_proto_msgTypes[42].OneofWrappers = []any{}
-	file_diag_v1_workspace_service_proto_msgTypes[51].OneofWrappers = []any{}
-	file_diag_v1_workspace_service_proto_msgTypes[53].OneofWrappers = []any{}
-	file_diag_v1_workspace_service_proto_msgTypes[68].OneofWrappers = []any{}
-	file_diag_v1_workspace_service_proto_msgTypes[70].OneofWrappers = []any{}
-	file_diag_v1_workspace_service_proto_msgTypes[72].OneofWrappers = []any{}
+	file_diag_v1_workspace_service_proto_msgTypes[43].OneofWrappers = []any{}
+	file_diag_v1_workspace_service_proto_msgTypes[52].OneofWrappers = []any{}
+	file_diag_v1_workspace_service_proto_msgTypes[54].OneofWrappers = []any{}
+	file_diag_v1_workspace_service_proto_msgTypes[69].OneofWrappers = []any{}
+	file_diag_v1_workspace_service_proto_msgTypes[71].OneofWrappers = []any{}
 	file_diag_v1_workspace_service_proto_msgTypes[73].OneofWrappers = []any{}
-	file_diag_v1_workspace_service_proto_msgTypes[84].OneofWrappers = []any{}
+	file_diag_v1_workspace_service_proto_msgTypes[74].OneofWrappers = []any{}
+	file_diag_v1_workspace_service_proto_msgTypes[85].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_diag_v1_workspace_service_proto_rawDesc), len(file_diag_v1_workspace_service_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   92,
+			NumMessages:   93,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
