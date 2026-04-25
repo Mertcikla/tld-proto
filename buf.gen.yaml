@@ -11,6 +11,6 @@ plugins:
       - paths=source_relative
   # TypeScript — ES module bindings for the frontend
   - remote: buf.build/bufbuild/es:v2.11.0
-    out: ../frontend/src/gen
+    out: ../frontend-wrapper/src/gen
     opt:
       - target=ts
