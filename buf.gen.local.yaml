@@ -1,0 +1,13 @@
+version: v2
+plugins:
+  - local: [go, tool, protoc-gen-go]
+    out: ../.dev/proto/go/protocolbuffers/go
+    opt: paths=source_relative
+  - local: [go, tool, protoc-gen-connect-go]
+    out: ../.dev/proto/go/connectrpc/go
+    opt:
+      - paths=source_relative
+  - remote: buf.build/bufbuild/es:v2.11.0
+    out: ../frontend-wrapper/src/gen
+    opt:
+      - target=ts
