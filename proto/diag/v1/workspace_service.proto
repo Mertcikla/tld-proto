@@ -551,6 +551,9 @@ message GetWorkspaceRequest {
 
   // Optional. API key for request-level authentication.
   optional string api_key = 8;
+
+  // Optional. Filter views by the owning element's has_view flag.
+  optional bool has_view = 9;
 }
 
 message GetWorkspaceResponse {

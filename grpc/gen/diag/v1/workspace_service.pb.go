@@ -3459,7 +3459,9 @@ type GetWorkspaceRequest struct {
 	// Optional. If true, include placements, connectors and navigations for the returned views.
 	IncludeContent bool `protobuf:"varint,7,opt,name=include_content,json=includeContent,proto3" json:"include_content,omitempty"`
 	// Optional. API key for request-level authentication.
-	ApiKey        *string `protobuf:"bytes,8,opt,name=api_key,json=apiKey,proto3,oneof" json:"api_key,omitempty"`
+	ApiKey *string `protobuf:"bytes,8,opt,name=api_key,json=apiKey,proto3,oneof" json:"api_key,omitempty"`
+	// Optional. Filter views by the owning element's has_view flag.
+	HasView       *bool `protobuf:"varint,9,opt,name=has_view,json=hasView,proto3,oneof" json:"has_view,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3548,6 +3550,13 @@ func (x *GetWorkspaceRequest) GetApiKey() string {
 		return *x.ApiKey
 	}
 	return ""
+}
+
+func (x *GetWorkspaceRequest) GetHasView() bool {
+	if x != nil && x.HasView != nil {
+		return *x.HasView
+	}
+	return false
 }
 
 type GetWorkspaceResponse struct {
@@ -6662,7 +6671,7 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12)\n" +
 	"\x0eparent_view_id\x18\x06 \x01(\x05H\x01R\fparentViewId\x88\x01\x01B\x0e\n" +
 	"\f_level_labelB\x11\n" +
-	"\x0f_parent_view_id\"\xaa\x02\n" +
+	"\x0f_parent_view_id\"\xd7\x02\n" +
 	"\x13GetWorkspaceRequest\x12\x15\n" +
 	"\x06org_id\x18\x01 \x01(\tR\x05orgId\x12 \n" +
 	"\tparent_id\x18\x02 \x01(\x05H\x00R\bparentId\x88\x01\x01\x12\x19\n" +
@@ -6671,13 +6680,15 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\x05limit\x18\x05 \x01(\x05R\x05limit\x12\x16\n" +
 	"\x06offset\x18\x06 \x01(\x05R\x06offset\x12'\n" +
 	"\x0finclude_content\x18\a \x01(\bR\x0eincludeContent\x12\x1c\n" +
-	"\aapi_key\x18\b \x01(\tH\x03R\x06apiKey\x88\x01\x01B\f\n" +
+	"\aapi_key\x18\b \x01(\tH\x03R\x06apiKey\x88\x01\x01\x12\x1e\n" +
+	"\bhas_view\x18\t \x01(\bH\x04R\ahasView\x88\x01\x01B\f\n" +
 	"\n" +
 	"_parent_idB\b\n" +
 	"\x06_levelB\t\n" +
 	"\a_searchB\n" +
 	"\n" +
-	"\b_api_key\"\xb6\x02\n" +
+	"\b_api_keyB\v\n" +
+	"\t_has_view\"\xb6\x02\n" +
 	"\x14GetWorkspaceResponse\x12#\n" +
 	"\x05views\x18\x01 \x03(\v2\r.diag.v1.ViewR\x05views\x12\x1f\n" +
 	"\vtotal_count\x18\x02 \x01(\x05R\n" +
