@@ -589,8 +589,12 @@ message ListElementsRequest {
   int32 offset = 2;
   string search = 3;
 }
+message Pagination {
+  int32 total_count = 1;
+}
 message ListElementsResponse {
   repeated Element elements = 1;
+  Pagination pagination = 2;
 }
 
 message GetElementRequest {
