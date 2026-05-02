@@ -694,6 +694,7 @@ type ResolveExploreFocusRequest struct {
 	TargetElementId  *int32                 `protobuf:"varint,3,opt,name=target_element_id,json=targetElementId,proto3,oneof" json:"target_element_id,omitempty"`
 	MaxWaypointDelta int32                  `protobuf:"varint,4,opt,name=max_waypoint_delta,json=maxWaypointDelta,proto3" json:"max_waypoint_delta,omitempty"`
 	RootViewId       *int32                 `protobuf:"varint,5,opt,name=root_view_id,json=rootViewId,proto3,oneof" json:"root_view_id,omitempty"`
+	MaxCorridorViews int32                  `protobuf:"varint,6,opt,name=max_corridor_views,json=maxCorridorViews,proto3" json:"max_corridor_views,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -759,6 +760,13 @@ func (x *ResolveExploreFocusRequest) GetMaxWaypointDelta() int32 {
 func (x *ResolveExploreFocusRequest) GetRootViewId() int32 {
 	if x != nil && x.RootViewId != nil {
 		return *x.RootViewId
+	}
+	return 0
+}
+
+func (x *ResolveExploreFocusRequest) GetMaxCorridorViews() int32 {
+	if x != nil {
+		return x.MaxCorridorViews
 	}
 	return 0
 }
@@ -1119,6 +1127,334 @@ func (x *GetCrossBranchCountsResponse) GetOmittedCount() int32 {
 	return 0
 }
 
+type ExploreTagCount struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Tag           string                 `protobuf:"bytes,1,opt,name=tag,proto3" json:"tag,omitempty"`
+	Count         int32                  `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ExploreTagCount) Reset() {
+	*x = ExploreTagCount{}
+	mi := &file_diag_v1_explore_service_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExploreTagCount) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExploreTagCount) ProtoMessage() {}
+
+func (x *ExploreTagCount) ProtoReflect() protoreflect.Message {
+	mi := &file_diag_v1_explore_service_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExploreTagCount.ProtoReflect.Descriptor instead.
+func (*ExploreTagCount) Descriptor() ([]byte, []int) {
+	return file_diag_v1_explore_service_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *ExploreTagCount) GetTag() string {
+	if x != nil {
+		return x.Tag
+	}
+	return ""
+}
+
+func (x *ExploreTagCount) GetCount() int32 {
+	if x != nil {
+		return x.Count
+	}
+	return 0
+}
+
+type GetExploreTagSummaryRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RootViewId    *int32                 `protobuf:"varint,1,opt,name=root_view_id,json=rootViewId,proto3,oneof" json:"root_view_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetExploreTagSummaryRequest) Reset() {
+	*x = GetExploreTagSummaryRequest{}
+	mi := &file_diag_v1_explore_service_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetExploreTagSummaryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetExploreTagSummaryRequest) ProtoMessage() {}
+
+func (x *GetExploreTagSummaryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_diag_v1_explore_service_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetExploreTagSummaryRequest.ProtoReflect.Descriptor instead.
+func (*GetExploreTagSummaryRequest) Descriptor() ([]byte, []int) {
+	return file_diag_v1_explore_service_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *GetExploreTagSummaryRequest) GetRootViewId() int32 {
+	if x != nil && x.RootViewId != nil {
+		return *x.RootViewId
+	}
+	return 0
+}
+
+type GetExploreTagSummaryResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Tags          []*ExploreTagCount     `protobuf:"bytes,1,rep,name=tags,proto3" json:"tags,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetExploreTagSummaryResponse) Reset() {
+	*x = GetExploreTagSummaryResponse{}
+	mi := &file_diag_v1_explore_service_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetExploreTagSummaryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetExploreTagSummaryResponse) ProtoMessage() {}
+
+func (x *GetExploreTagSummaryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_diag_v1_explore_service_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetExploreTagSummaryResponse.ProtoReflect.Descriptor instead.
+func (*GetExploreTagSummaryResponse) Descriptor() ([]byte, []int) {
+	return file_diag_v1_explore_service_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *GetExploreTagSummaryResponse) GetTags() []*ExploreTagCount {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
+}
+
+type ExploreResourceLocation struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ResourceType  string                 `protobuf:"bytes,1,opt,name=resource_type,json=resourceType,proto3" json:"resource_type,omitempty"` // "element" or "connector"
+	ResourceId    int32                  `protobuf:"varint,2,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
+	ViewId        int32                  `protobuf:"varint,3,opt,name=view_id,json=viewId,proto3" json:"view_id,omitempty"`
+	ViewName      string                 `protobuf:"bytes,4,opt,name=view_name,json=viewName,proto3" json:"view_name,omitempty"`
+	Label         string                 `protobuf:"bytes,5,opt,name=label,proto3" json:"label,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ExploreResourceLocation) Reset() {
+	*x = ExploreResourceLocation{}
+	mi := &file_diag_v1_explore_service_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExploreResourceLocation) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExploreResourceLocation) ProtoMessage() {}
+
+func (x *ExploreResourceLocation) ProtoReflect() protoreflect.Message {
+	mi := &file_diag_v1_explore_service_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExploreResourceLocation.ProtoReflect.Descriptor instead.
+func (*ExploreResourceLocation) Descriptor() ([]byte, []int) {
+	return file_diag_v1_explore_service_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *ExploreResourceLocation) GetResourceType() string {
+	if x != nil {
+		return x.ResourceType
+	}
+	return ""
+}
+
+func (x *ExploreResourceLocation) GetResourceId() int32 {
+	if x != nil {
+		return x.ResourceId
+	}
+	return 0
+}
+
+func (x *ExploreResourceLocation) GetViewId() int32 {
+	if x != nil {
+		return x.ViewId
+	}
+	return 0
+}
+
+func (x *ExploreResourceLocation) GetViewName() string {
+	if x != nil {
+		return x.ViewName
+	}
+	return ""
+}
+
+func (x *ExploreResourceLocation) GetLabel() string {
+	if x != nil {
+		return x.Label
+	}
+	return ""
+}
+
+type ResolveExploreResourceLocationsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ElementIds    []int32                `protobuf:"varint,1,rep,packed,name=element_ids,json=elementIds,proto3" json:"element_ids,omitempty"`
+	ConnectorIds  []int32                `protobuf:"varint,2,rep,packed,name=connector_ids,json=connectorIds,proto3" json:"connector_ids,omitempty"`
+	RootViewId    *int32                 `protobuf:"varint,3,opt,name=root_view_id,json=rootViewId,proto3,oneof" json:"root_view_id,omitempty"`
+	Limit         int32                  `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ResolveExploreResourceLocationsRequest) Reset() {
+	*x = ResolveExploreResourceLocationsRequest{}
+	mi := &file_diag_v1_explore_service_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ResolveExploreResourceLocationsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResolveExploreResourceLocationsRequest) ProtoMessage() {}
+
+func (x *ResolveExploreResourceLocationsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_diag_v1_explore_service_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ResolveExploreResourceLocationsRequest.ProtoReflect.Descriptor instead.
+func (*ResolveExploreResourceLocationsRequest) Descriptor() ([]byte, []int) {
+	return file_diag_v1_explore_service_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *ResolveExploreResourceLocationsRequest) GetElementIds() []int32 {
+	if x != nil {
+		return x.ElementIds
+	}
+	return nil
+}
+
+func (x *ResolveExploreResourceLocationsRequest) GetConnectorIds() []int32 {
+	if x != nil {
+		return x.ConnectorIds
+	}
+	return nil
+}
+
+func (x *ResolveExploreResourceLocationsRequest) GetRootViewId() int32 {
+	if x != nil && x.RootViewId != nil {
+		return *x.RootViewId
+	}
+	return 0
+}
+
+func (x *ResolveExploreResourceLocationsRequest) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+type ResolveExploreResourceLocationsResponse struct {
+	state         protoimpl.MessageState     `protogen:"open.v1"`
+	Locations     []*ExploreResourceLocation `protobuf:"bytes,1,rep,name=locations,proto3" json:"locations,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ResolveExploreResourceLocationsResponse) Reset() {
+	*x = ResolveExploreResourceLocationsResponse{}
+	mi := &file_diag_v1_explore_service_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ResolveExploreResourceLocationsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResolveExploreResourceLocationsResponse) ProtoMessage() {}
+
+func (x *ResolveExploreResourceLocationsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_diag_v1_explore_service_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ResolveExploreResourceLocationsResponse.ProtoReflect.Descriptor instead.
+func (*ResolveExploreResourceLocationsResponse) Descriptor() ([]byte, []int) {
+	return file_diag_v1_explore_service_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *ResolveExploreResourceLocationsResponse) GetLocations() []*ExploreResourceLocation {
+	if x != nil {
+		return x.Locations
+	}
+	return nil
+}
+
 type ShareViewRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ViewId        int32                  `protobuf:"varint,1,opt,name=view_id,json=viewId,proto3" json:"view_id,omitempty"`
@@ -1130,7 +1466,7 @@ type ShareViewRequest struct {
 
 func (x *ShareViewRequest) Reset() {
 	*x = ShareViewRequest{}
-	mi := &file_diag_v1_explore_service_proto_msgTypes[16]
+	mi := &file_diag_v1_explore_service_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1142,7 +1478,7 @@ func (x *ShareViewRequest) String() string {
 func (*ShareViewRequest) ProtoMessage() {}
 
 func (x *ShareViewRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_explore_service_proto_msgTypes[16]
+	mi := &file_diag_v1_explore_service_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1155,7 +1491,7 @@ func (x *ShareViewRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ShareViewRequest.ProtoReflect.Descriptor instead.
 func (*ShareViewRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_explore_service_proto_rawDescGZIP(), []int{16}
+	return file_diag_v1_explore_service_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *ShareViewRequest) GetViewId() int32 {
@@ -1189,7 +1525,7 @@ type ShareViewResponse struct {
 
 func (x *ShareViewResponse) Reset() {
 	*x = ShareViewResponse{}
-	mi := &file_diag_v1_explore_service_proto_msgTypes[17]
+	mi := &file_diag_v1_explore_service_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1201,7 +1537,7 @@ func (x *ShareViewResponse) String() string {
 func (*ShareViewResponse) ProtoMessage() {}
 
 func (x *ShareViewResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_explore_service_proto_msgTypes[17]
+	mi := &file_diag_v1_explore_service_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1214,7 +1550,7 @@ func (x *ShareViewResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ShareViewResponse.ProtoReflect.Descriptor instead.
 func (*ShareViewResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_explore_service_proto_rawDescGZIP(), []int{17}
+	return file_diag_v1_explore_service_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *ShareViewResponse) GetToken() string {
@@ -1305,14 +1641,15 @@ const file_diag_v1_explore_service_proto_rawDesc = "" +
 	"\v_element_idB\a\n" +
 	"\x05_kind\"V\n" +
 	"\x1cSearchExploreTargetsResponse\x126\n" +
-	"\aresults\x18\x01 \x03(\v2\x1c.diag.v1.ExploreSearchResultR\aresults\"\x97\x02\n" +
+	"\aresults\x18\x01 \x03(\v2\x1c.diag.v1.ExploreSearchResultR\aresults\"\xc5\x02\n" +
 	"\x1aResolveExploreFocusRequest\x12&\n" +
 	"\x0fcurrent_view_id\x18\x01 \x01(\x05R\rcurrentViewId\x12$\n" +
 	"\x0etarget_view_id\x18\x02 \x01(\x05R\ftargetViewId\x12/\n" +
 	"\x11target_element_id\x18\x03 \x01(\x05H\x00R\x0ftargetElementId\x88\x01\x01\x12,\n" +
 	"\x12max_waypoint_delta\x18\x04 \x01(\x05R\x10maxWaypointDelta\x12%\n" +
 	"\froot_view_id\x18\x05 \x01(\x05H\x01R\n" +
-	"rootViewId\x88\x01\x01B\x14\n" +
+	"rootViewId\x88\x01\x01\x12,\n" +
+	"\x12max_corridor_views\x18\x06 \x01(\x05R\x10maxCorridorViewsB\x14\n" +
 	"\x12_target_element_idB\x0f\n" +
 	"\r_root_view_id\"\xad\x01\n" +
 	"\x1bResolveExploreFocusResponse\x128\n" +
@@ -1346,7 +1683,33 @@ const file_diag_v1_explore_service_proto_rawDesc = "" +
 	"\x10owner_view_names\x18\b \x03(\tR\x0eownerViewNames\"x\n" +
 	"\x1cGetCrossBranchCountsResponse\x123\n" +
 	"\x05edges\x18\x01 \x03(\v2\x1d.diag.v1.CrossBranchCountEdgeR\x05edges\x12#\n" +
-	"\romitted_count\x18\x02 \x01(\x05R\fomittedCount\"\xa8\x01\n" +
+	"\romitted_count\x18\x02 \x01(\x05R\fomittedCount\"9\n" +
+	"\x0fExploreTagCount\x12\x10\n" +
+	"\x03tag\x18\x01 \x01(\tR\x03tag\x12\x14\n" +
+	"\x05count\x18\x02 \x01(\x05R\x05count\"U\n" +
+	"\x1bGetExploreTagSummaryRequest\x12%\n" +
+	"\froot_view_id\x18\x01 \x01(\x05H\x00R\n" +
+	"rootViewId\x88\x01\x01B\x0f\n" +
+	"\r_root_view_id\"L\n" +
+	"\x1cGetExploreTagSummaryResponse\x12,\n" +
+	"\x04tags\x18\x01 \x03(\v2\x18.diag.v1.ExploreTagCountR\x04tags\"\xab\x01\n" +
+	"\x17ExploreResourceLocation\x12#\n" +
+	"\rresource_type\x18\x01 \x01(\tR\fresourceType\x12\x1f\n" +
+	"\vresource_id\x18\x02 \x01(\x05R\n" +
+	"resourceId\x12\x17\n" +
+	"\aview_id\x18\x03 \x01(\x05R\x06viewId\x12\x1b\n" +
+	"\tview_name\x18\x04 \x01(\tR\bviewName\x12\x14\n" +
+	"\x05label\x18\x05 \x01(\tR\x05label\"\xbc\x01\n" +
+	"&ResolveExploreResourceLocationsRequest\x12\x1f\n" +
+	"\velement_ids\x18\x01 \x03(\x05R\n" +
+	"elementIds\x12#\n" +
+	"\rconnector_ids\x18\x02 \x03(\x05R\fconnectorIds\x12%\n" +
+	"\froot_view_id\x18\x03 \x01(\x05H\x00R\n" +
+	"rootViewId\x88\x01\x01\x12\x14\n" +
+	"\x05limit\x18\x04 \x01(\x05R\x05limitB\x0f\n" +
+	"\r_root_view_id\"i\n" +
+	"'ResolveExploreResourceLocationsResponse\x12>\n" +
+	"\tlocations\x18\x01 \x03(\v2 .diag.v1.ExploreResourceLocationR\tlocations\"\xa8\x01\n" +
 	"\x10ShareViewRequest\x12\x17\n" +
 	"\aview_id\x18\x01 \x01(\x05R\x06viewId\x12\x1f\n" +
 	"\bpassword\x18\x02 \x01(\tH\x00R\bpassword\x88\x01\x01\x12>\n" +
@@ -1356,13 +1719,15 @@ const file_diag_v1_explore_service_proto_rawDesc = "" +
 	"\v_expires_at\";\n" +
 	"\x11ShareViewResponse\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\x12\x10\n" +
-	"\x03url\x18\x02 \x01(\tR\x03url2\xb2\x04\n" +
+	"\x03url\x18\x02 \x01(\tR\x03url2\x9e\x06\n" +
 	"\x0eExploreService\x12T\n" +
 	"\x0fGetExploreIndex\x12\x1f.diag.v1.GetExploreIndexRequest\x1a .diag.v1.GetExploreIndexResponse\x12Z\n" +
 	"\x11GetExploreContent\x12!.diag.v1.GetExploreContentRequest\x1a\".diag.v1.GetExploreContentResponse\x12c\n" +
 	"\x14SearchExploreTargets\x12$.diag.v1.SearchExploreTargetsRequest\x1a%.diag.v1.SearchExploreTargetsResponse\x12`\n" +
 	"\x13ResolveExploreFocus\x12#.diag.v1.ResolveExploreFocusRequest\x1a$.diag.v1.ResolveExploreFocusResponse\x12c\n" +
-	"\x14GetCrossBranchCounts\x12$.diag.v1.GetCrossBranchCountsRequest\x1a%.diag.v1.GetCrossBranchCountsResponse\x12B\n" +
+	"\x14GetCrossBranchCounts\x12$.diag.v1.GetCrossBranchCountsRequest\x1a%.diag.v1.GetCrossBranchCountsResponse\x12c\n" +
+	"\x14GetExploreTagSummary\x12$.diag.v1.GetExploreTagSummaryRequest\x1a%.diag.v1.GetExploreTagSummaryResponse\x12\x84\x01\n" +
+	"\x1fResolveExploreResourceLocations\x12/.diag.v1.ResolveExploreResourceLocationsRequest\x1a0.diag.v1.ResolveExploreResourceLocationsResponse\x12B\n" +
 	"\tShareView\x12\x19.diag.v1.ShareViewRequest\x1a\x1a.diag.v1.ShareViewResponseBIZGbuf.build/gen/go/tldiagramcom/diagram/protocolbuffers/go/diag/v1;diagv1b\x06proto3"
 
 var (
@@ -1377,62 +1742,74 @@ func file_diag_v1_explore_service_proto_rawDescGZIP() []byte {
 	return file_diag_v1_explore_service_proto_rawDescData
 }
 
-var file_diag_v1_explore_service_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
+var file_diag_v1_explore_service_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
 var file_diag_v1_explore_service_proto_goTypes = []any{
-	(*ExploreBounds)(nil),                // 0: diag.v1.ExploreBounds
-	(*ExploreViewIndexEntry)(nil),        // 1: diag.v1.ExploreViewIndexEntry
-	(*GetExploreIndexRequest)(nil),       // 2: diag.v1.GetExploreIndexRequest
-	(*GetExploreIndexResponse)(nil),      // 3: diag.v1.GetExploreIndexResponse
-	(*GetExploreContentRequest)(nil),     // 4: diag.v1.GetExploreContentRequest
-	(*GetExploreContentResponse)(nil),    // 5: diag.v1.GetExploreContentResponse
-	(*SearchExploreTargetsRequest)(nil),  // 6: diag.v1.SearchExploreTargetsRequest
-	(*ExploreFocusStep)(nil),             // 7: diag.v1.ExploreFocusStep
-	(*ExploreSearchResult)(nil),          // 8: diag.v1.ExploreSearchResult
-	(*SearchExploreTargetsResponse)(nil), // 9: diag.v1.SearchExploreTargetsResponse
-	(*ResolveExploreFocusRequest)(nil),   // 10: diag.v1.ResolveExploreFocusRequest
-	(*ResolveExploreFocusResponse)(nil),  // 11: diag.v1.ResolveExploreFocusResponse
-	(*CrossBranchAnchor)(nil),            // 12: diag.v1.CrossBranchAnchor
-	(*GetCrossBranchCountsRequest)(nil),  // 13: diag.v1.GetCrossBranchCountsRequest
-	(*CrossBranchCountEdge)(nil),         // 14: diag.v1.CrossBranchCountEdge
-	(*GetCrossBranchCountsResponse)(nil), // 15: diag.v1.GetCrossBranchCountsResponse
-	(*ShareViewRequest)(nil),             // 16: diag.v1.ShareViewRequest
-	(*ShareViewResponse)(nil),            // 17: diag.v1.ShareViewResponse
-	nil,                                  // 18: diag.v1.GetExploreContentResponse.ContentEntry
-	(*timestamppb.Timestamp)(nil),        // 19: google.protobuf.Timestamp
-	(*ElementNavigationInfo)(nil),        // 20: diag.v1.ElementNavigationInfo
-	(*ViewContent)(nil),                  // 21: diag.v1.ViewContent
+	(*ExploreBounds)(nil),                           // 0: diag.v1.ExploreBounds
+	(*ExploreViewIndexEntry)(nil),                   // 1: diag.v1.ExploreViewIndexEntry
+	(*GetExploreIndexRequest)(nil),                  // 2: diag.v1.GetExploreIndexRequest
+	(*GetExploreIndexResponse)(nil),                 // 3: diag.v1.GetExploreIndexResponse
+	(*GetExploreContentRequest)(nil),                // 4: diag.v1.GetExploreContentRequest
+	(*GetExploreContentResponse)(nil),               // 5: diag.v1.GetExploreContentResponse
+	(*SearchExploreTargetsRequest)(nil),             // 6: diag.v1.SearchExploreTargetsRequest
+	(*ExploreFocusStep)(nil),                        // 7: diag.v1.ExploreFocusStep
+	(*ExploreSearchResult)(nil),                     // 8: diag.v1.ExploreSearchResult
+	(*SearchExploreTargetsResponse)(nil),            // 9: diag.v1.SearchExploreTargetsResponse
+	(*ResolveExploreFocusRequest)(nil),              // 10: diag.v1.ResolveExploreFocusRequest
+	(*ResolveExploreFocusResponse)(nil),             // 11: diag.v1.ResolveExploreFocusResponse
+	(*CrossBranchAnchor)(nil),                       // 12: diag.v1.CrossBranchAnchor
+	(*GetCrossBranchCountsRequest)(nil),             // 13: diag.v1.GetCrossBranchCountsRequest
+	(*CrossBranchCountEdge)(nil),                    // 14: diag.v1.CrossBranchCountEdge
+	(*GetCrossBranchCountsResponse)(nil),            // 15: diag.v1.GetCrossBranchCountsResponse
+	(*ExploreTagCount)(nil),                         // 16: diag.v1.ExploreTagCount
+	(*GetExploreTagSummaryRequest)(nil),             // 17: diag.v1.GetExploreTagSummaryRequest
+	(*GetExploreTagSummaryResponse)(nil),            // 18: diag.v1.GetExploreTagSummaryResponse
+	(*ExploreResourceLocation)(nil),                 // 19: diag.v1.ExploreResourceLocation
+	(*ResolveExploreResourceLocationsRequest)(nil),  // 20: diag.v1.ResolveExploreResourceLocationsRequest
+	(*ResolveExploreResourceLocationsResponse)(nil), // 21: diag.v1.ResolveExploreResourceLocationsResponse
+	(*ShareViewRequest)(nil),                        // 22: diag.v1.ShareViewRequest
+	(*ShareViewResponse)(nil),                       // 23: diag.v1.ShareViewResponse
+	nil,                                             // 24: diag.v1.GetExploreContentResponse.ContentEntry
+	(*timestamppb.Timestamp)(nil),                   // 25: google.protobuf.Timestamp
+	(*ElementNavigationInfo)(nil),                   // 26: diag.v1.ElementNavigationInfo
+	(*ViewContent)(nil),                             // 27: diag.v1.ViewContent
 }
 var file_diag_v1_explore_service_proto_depIdxs = []int32{
 	0,  // 0: diag.v1.ExploreViewIndexEntry.bounds:type_name -> diag.v1.ExploreBounds
-	19, // 1: diag.v1.ExploreViewIndexEntry.created_at:type_name -> google.protobuf.Timestamp
-	19, // 2: diag.v1.ExploreViewIndexEntry.updated_at:type_name -> google.protobuf.Timestamp
+	25, // 1: diag.v1.ExploreViewIndexEntry.created_at:type_name -> google.protobuf.Timestamp
+	25, // 2: diag.v1.ExploreViewIndexEntry.updated_at:type_name -> google.protobuf.Timestamp
 	1,  // 3: diag.v1.GetExploreIndexResponse.views:type_name -> diag.v1.ExploreViewIndexEntry
-	20, // 4: diag.v1.GetExploreIndexResponse.navigations:type_name -> diag.v1.ElementNavigationInfo
-	18, // 5: diag.v1.GetExploreContentResponse.content:type_name -> diag.v1.GetExploreContentResponse.ContentEntry
+	26, // 4: diag.v1.GetExploreIndexResponse.navigations:type_name -> diag.v1.ElementNavigationInfo
+	24, // 5: diag.v1.GetExploreContentResponse.content:type_name -> diag.v1.GetExploreContentResponse.ContentEntry
 	7,  // 6: diag.v1.ExploreSearchResult.focus_path:type_name -> diag.v1.ExploreFocusStep
 	8,  // 7: diag.v1.SearchExploreTargetsResponse.results:type_name -> diag.v1.ExploreSearchResult
 	7,  // 8: diag.v1.ResolveExploreFocusResponse.focus_path:type_name -> diag.v1.ExploreFocusStep
 	12, // 9: diag.v1.GetCrossBranchCountsRequest.anchors:type_name -> diag.v1.CrossBranchAnchor
 	14, // 10: diag.v1.GetCrossBranchCountsResponse.edges:type_name -> diag.v1.CrossBranchCountEdge
-	19, // 11: diag.v1.ShareViewRequest.expires_at:type_name -> google.protobuf.Timestamp
-	21, // 12: diag.v1.GetExploreContentResponse.ContentEntry.value:type_name -> diag.v1.ViewContent
-	2,  // 13: diag.v1.ExploreService.GetExploreIndex:input_type -> diag.v1.GetExploreIndexRequest
-	4,  // 14: diag.v1.ExploreService.GetExploreContent:input_type -> diag.v1.GetExploreContentRequest
-	6,  // 15: diag.v1.ExploreService.SearchExploreTargets:input_type -> diag.v1.SearchExploreTargetsRequest
-	10, // 16: diag.v1.ExploreService.ResolveExploreFocus:input_type -> diag.v1.ResolveExploreFocusRequest
-	13, // 17: diag.v1.ExploreService.GetCrossBranchCounts:input_type -> diag.v1.GetCrossBranchCountsRequest
-	16, // 18: diag.v1.ExploreService.ShareView:input_type -> diag.v1.ShareViewRequest
-	3,  // 19: diag.v1.ExploreService.GetExploreIndex:output_type -> diag.v1.GetExploreIndexResponse
-	5,  // 20: diag.v1.ExploreService.GetExploreContent:output_type -> diag.v1.GetExploreContentResponse
-	9,  // 21: diag.v1.ExploreService.SearchExploreTargets:output_type -> diag.v1.SearchExploreTargetsResponse
-	11, // 22: diag.v1.ExploreService.ResolveExploreFocus:output_type -> diag.v1.ResolveExploreFocusResponse
-	15, // 23: diag.v1.ExploreService.GetCrossBranchCounts:output_type -> diag.v1.GetCrossBranchCountsResponse
-	17, // 24: diag.v1.ExploreService.ShareView:output_type -> diag.v1.ShareViewResponse
-	19, // [19:25] is the sub-list for method output_type
-	13, // [13:19] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	16, // 11: diag.v1.GetExploreTagSummaryResponse.tags:type_name -> diag.v1.ExploreTagCount
+	19, // 12: diag.v1.ResolveExploreResourceLocationsResponse.locations:type_name -> diag.v1.ExploreResourceLocation
+	25, // 13: diag.v1.ShareViewRequest.expires_at:type_name -> google.protobuf.Timestamp
+	27, // 14: diag.v1.GetExploreContentResponse.ContentEntry.value:type_name -> diag.v1.ViewContent
+	2,  // 15: diag.v1.ExploreService.GetExploreIndex:input_type -> diag.v1.GetExploreIndexRequest
+	4,  // 16: diag.v1.ExploreService.GetExploreContent:input_type -> diag.v1.GetExploreContentRequest
+	6,  // 17: diag.v1.ExploreService.SearchExploreTargets:input_type -> diag.v1.SearchExploreTargetsRequest
+	10, // 18: diag.v1.ExploreService.ResolveExploreFocus:input_type -> diag.v1.ResolveExploreFocusRequest
+	13, // 19: diag.v1.ExploreService.GetCrossBranchCounts:input_type -> diag.v1.GetCrossBranchCountsRequest
+	17, // 20: diag.v1.ExploreService.GetExploreTagSummary:input_type -> diag.v1.GetExploreTagSummaryRequest
+	20, // 21: diag.v1.ExploreService.ResolveExploreResourceLocations:input_type -> diag.v1.ResolveExploreResourceLocationsRequest
+	22, // 22: diag.v1.ExploreService.ShareView:input_type -> diag.v1.ShareViewRequest
+	3,  // 23: diag.v1.ExploreService.GetExploreIndex:output_type -> diag.v1.GetExploreIndexResponse
+	5,  // 24: diag.v1.ExploreService.GetExploreContent:output_type -> diag.v1.GetExploreContentResponse
+	9,  // 25: diag.v1.ExploreService.SearchExploreTargets:output_type -> diag.v1.SearchExploreTargetsResponse
+	11, // 26: diag.v1.ExploreService.ResolveExploreFocus:output_type -> diag.v1.ResolveExploreFocusResponse
+	15, // 27: diag.v1.ExploreService.GetCrossBranchCounts:output_type -> diag.v1.GetCrossBranchCountsResponse
+	18, // 28: diag.v1.ExploreService.GetExploreTagSummary:output_type -> diag.v1.GetExploreTagSummaryResponse
+	21, // 29: diag.v1.ExploreService.ResolveExploreResourceLocations:output_type -> diag.v1.ResolveExploreResourceLocationsResponse
+	23, // 30: diag.v1.ExploreService.ShareView:output_type -> diag.v1.ShareViewResponse
+	23, // [23:31] is the sub-list for method output_type
+	15, // [15:23] is the sub-list for method input_type
+	15, // [15:15] is the sub-list for extension type_name
+	15, // [15:15] is the sub-list for extension extendee
+	0,  // [0:15] is the sub-list for field type_name
 }
 
 func init() { file_diag_v1_explore_service_proto_init() }
@@ -1448,14 +1825,16 @@ func file_diag_v1_explore_service_proto_init() {
 	file_diag_v1_explore_service_proto_msgTypes[8].OneofWrappers = []any{}
 	file_diag_v1_explore_service_proto_msgTypes[10].OneofWrappers = []any{}
 	file_diag_v1_explore_service_proto_msgTypes[13].OneofWrappers = []any{}
-	file_diag_v1_explore_service_proto_msgTypes[16].OneofWrappers = []any{}
+	file_diag_v1_explore_service_proto_msgTypes[17].OneofWrappers = []any{}
+	file_diag_v1_explore_service_proto_msgTypes[20].OneofWrappers = []any{}
+	file_diag_v1_explore_service_proto_msgTypes[22].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_diag_v1_explore_service_proto_rawDesc), len(file_diag_v1_explore_service_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   19,
+			NumMessages:   25,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

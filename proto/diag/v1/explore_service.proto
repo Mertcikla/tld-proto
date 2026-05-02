@@ -29,6 +29,14 @@ service ExploreService {
   // requested visible anchors. Underlying path details stay server-side.
   rpc GetCrossBranchCounts(GetCrossBranchCountsRequest) returns (GetCrossBranchCountsResponse);
 
+  // GetExploreTagSummary returns workspace/root-scoped tag counts without
+  // forcing full view content into the browser.
+  rpc GetExploreTagSummary(GetExploreTagSummaryRequest) returns (GetExploreTagSummaryResponse);
+
+  // ResolveExploreResourceLocations maps changed resources to views so watch
+  // diffs can navigate lazily.
+  rpc ResolveExploreResourceLocations(ResolveExploreResourceLocationsRequest) returns (ResolveExploreResourceLocationsResponse);
+
   // ShareView creates a shareable token for a view.
   rpc ShareView(ShareViewRequest) returns (ShareViewResponse);
 }
@@ -110,6 +118,7 @@ message ResolveExploreFocusRequest {
   optional int32 target_element_id = 3;
   int32 max_waypoint_delta = 4;
   optional int32 root_view_id = 5;
+  int32 max_corridor_views = 6;
 }
 
 message ResolveExploreFocusResponse {
@@ -147,6 +156,38 @@ message CrossBranchCountEdge {
 message GetCrossBranchCountsResponse {
   repeated CrossBranchCountEdge edges = 1;
   int32 omitted_count = 2;
+}
+
+message ExploreTagCount {
+  string tag = 1;
+  int32 count = 2;
+}
+
+message GetExploreTagSummaryRequest {
+  optional int32 root_view_id = 1;
+}
+
+message GetExploreTagSummaryResponse {
+  repeated ExploreTagCount tags = 1;
+}
+
+message ExploreResourceLocation {
+  string resource_type = 1; // "element" or "connector"
+  int32 resource_id = 2;
+  int32 view_id = 3;
+  string view_name = 4;
+  string label = 5;
+}
+
+message ResolveExploreResourceLocationsRequest {
+  repeated int32 element_ids = 1;
+  repeated int32 connector_ids = 2;
+  optional int32 root_view_id = 3;
+  int32 limit = 4;
+}
+
+message ResolveExploreResourceLocationsResponse {
+  repeated ExploreResourceLocation locations = 1;
 }
 
 // ── Share View ───────────────────────────────────────────────────────────

@@ -48,6 +48,12 @@ const (
 	// ExploreServiceGetCrossBranchCountsProcedure is the fully-qualified name of the ExploreService's
 	// GetCrossBranchCounts RPC.
 	ExploreServiceGetCrossBranchCountsProcedure = "/diag.v1.ExploreService/GetCrossBranchCounts"
+	// ExploreServiceGetExploreTagSummaryProcedure is the fully-qualified name of the ExploreService's
+	// GetExploreTagSummary RPC.
+	ExploreServiceGetExploreTagSummaryProcedure = "/diag.v1.ExploreService/GetExploreTagSummary"
+	// ExploreServiceResolveExploreResourceLocationsProcedure is the fully-qualified name of the
+	// ExploreService's ResolveExploreResourceLocations RPC.
+	ExploreServiceResolveExploreResourceLocationsProcedure = "/diag.v1.ExploreService/ResolveExploreResourceLocations"
 	// ExploreServiceShareViewProcedure is the fully-qualified name of the ExploreService's ShareView
 	// RPC.
 	ExploreServiceShareViewProcedure = "/diag.v1.ExploreService/ShareView"
@@ -69,6 +75,12 @@ type ExploreServiceClient interface {
 	// GetCrossBranchCounts returns exact counts-only aggregate edges for the
 	// requested visible anchors. Underlying path details stay server-side.
 	GetCrossBranchCounts(context.Context, *connect.Request[v1.GetCrossBranchCountsRequest]) (*connect.Response[v1.GetCrossBranchCountsResponse], error)
+	// GetExploreTagSummary returns workspace/root-scoped tag counts without
+	// forcing full view content into the browser.
+	GetExploreTagSummary(context.Context, *connect.Request[v1.GetExploreTagSummaryRequest]) (*connect.Response[v1.GetExploreTagSummaryResponse], error)
+	// ResolveExploreResourceLocations maps changed resources to views so watch
+	// diffs can navigate lazily.
+	ResolveExploreResourceLocations(context.Context, *connect.Request[v1.ResolveExploreResourceLocationsRequest]) (*connect.Response[v1.ResolveExploreResourceLocationsResponse], error)
 	// ShareView creates a shareable token for a view.
 	ShareView(context.Context, *connect.Request[v1.ShareViewRequest]) (*connect.Response[v1.ShareViewResponse], error)
 }
@@ -114,6 +126,18 @@ func NewExploreServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(exploreServiceMethods.ByName("GetCrossBranchCounts")),
 			connect.WithClientOptions(opts...),
 		),
+		getExploreTagSummary: connect.NewClient[v1.GetExploreTagSummaryRequest, v1.GetExploreTagSummaryResponse](
+			httpClient,
+			baseURL+ExploreServiceGetExploreTagSummaryProcedure,
+			connect.WithSchema(exploreServiceMethods.ByName("GetExploreTagSummary")),
+			connect.WithClientOptions(opts...),
+		),
+		resolveExploreResourceLocations: connect.NewClient[v1.ResolveExploreResourceLocationsRequest, v1.ResolveExploreResourceLocationsResponse](
+			httpClient,
+			baseURL+ExploreServiceResolveExploreResourceLocationsProcedure,
+			connect.WithSchema(exploreServiceMethods.ByName("ResolveExploreResourceLocations")),
+			connect.WithClientOptions(opts...),
+		),
 		shareView: connect.NewClient[v1.ShareViewRequest, v1.ShareViewResponse](
 			httpClient,
 			baseURL+ExploreServiceShareViewProcedure,
@@ -125,12 +149,14 @@ func NewExploreServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 
 // exploreServiceClient implements ExploreServiceClient.
 type exploreServiceClient struct {
-	getExploreIndex      *connect.Client[v1.GetExploreIndexRequest, v1.GetExploreIndexResponse]
-	getExploreContent    *connect.Client[v1.GetExploreContentRequest, v1.GetExploreContentResponse]
-	searchExploreTargets *connect.Client[v1.SearchExploreTargetsRequest, v1.SearchExploreTargetsResponse]
-	resolveExploreFocus  *connect.Client[v1.ResolveExploreFocusRequest, v1.ResolveExploreFocusResponse]
-	getCrossBranchCounts *connect.Client[v1.GetCrossBranchCountsRequest, v1.GetCrossBranchCountsResponse]
-	shareView            *connect.Client[v1.ShareViewRequest, v1.ShareViewResponse]
+	getExploreIndex                 *connect.Client[v1.GetExploreIndexRequest, v1.GetExploreIndexResponse]
+	getExploreContent               *connect.Client[v1.GetExploreContentRequest, v1.GetExploreContentResponse]
+	searchExploreTargets            *connect.Client[v1.SearchExploreTargetsRequest, v1.SearchExploreTargetsResponse]
+	resolveExploreFocus             *connect.Client[v1.ResolveExploreFocusRequest, v1.ResolveExploreFocusResponse]
+	getCrossBranchCounts            *connect.Client[v1.GetCrossBranchCountsRequest, v1.GetCrossBranchCountsResponse]
+	getExploreTagSummary            *connect.Client[v1.GetExploreTagSummaryRequest, v1.GetExploreTagSummaryResponse]
+	resolveExploreResourceLocations *connect.Client[v1.ResolveExploreResourceLocationsRequest, v1.ResolveExploreResourceLocationsResponse]
+	shareView                       *connect.Client[v1.ShareViewRequest, v1.ShareViewResponse]
 }
 
 // GetExploreIndex calls diag.v1.ExploreService.GetExploreIndex.
@@ -158,6 +184,16 @@ func (c *exploreServiceClient) GetCrossBranchCounts(ctx context.Context, req *co
 	return c.getCrossBranchCounts.CallUnary(ctx, req)
 }
 
+// GetExploreTagSummary calls diag.v1.ExploreService.GetExploreTagSummary.
+func (c *exploreServiceClient) GetExploreTagSummary(ctx context.Context, req *connect.Request[v1.GetExploreTagSummaryRequest]) (*connect.Response[v1.GetExploreTagSummaryResponse], error) {
+	return c.getExploreTagSummary.CallUnary(ctx, req)
+}
+
+// ResolveExploreResourceLocations calls diag.v1.ExploreService.ResolveExploreResourceLocations.
+func (c *exploreServiceClient) ResolveExploreResourceLocations(ctx context.Context, req *connect.Request[v1.ResolveExploreResourceLocationsRequest]) (*connect.Response[v1.ResolveExploreResourceLocationsResponse], error) {
+	return c.resolveExploreResourceLocations.CallUnary(ctx, req)
+}
+
 // ShareView calls diag.v1.ExploreService.ShareView.
 func (c *exploreServiceClient) ShareView(ctx context.Context, req *connect.Request[v1.ShareViewRequest]) (*connect.Response[v1.ShareViewResponse], error) {
 	return c.shareView.CallUnary(ctx, req)
@@ -179,6 +215,12 @@ type ExploreServiceHandler interface {
 	// GetCrossBranchCounts returns exact counts-only aggregate edges for the
 	// requested visible anchors. Underlying path details stay server-side.
 	GetCrossBranchCounts(context.Context, *connect.Request[v1.GetCrossBranchCountsRequest]) (*connect.Response[v1.GetCrossBranchCountsResponse], error)
+	// GetExploreTagSummary returns workspace/root-scoped tag counts without
+	// forcing full view content into the browser.
+	GetExploreTagSummary(context.Context, *connect.Request[v1.GetExploreTagSummaryRequest]) (*connect.Response[v1.GetExploreTagSummaryResponse], error)
+	// ResolveExploreResourceLocations maps changed resources to views so watch
+	// diffs can navigate lazily.
+	ResolveExploreResourceLocations(context.Context, *connect.Request[v1.ResolveExploreResourceLocationsRequest]) (*connect.Response[v1.ResolveExploreResourceLocationsResponse], error)
 	// ShareView creates a shareable token for a view.
 	ShareView(context.Context, *connect.Request[v1.ShareViewRequest]) (*connect.Response[v1.ShareViewResponse], error)
 }
@@ -220,6 +262,18 @@ func NewExploreServiceHandler(svc ExploreServiceHandler, opts ...connect.Handler
 		connect.WithSchema(exploreServiceMethods.ByName("GetCrossBranchCounts")),
 		connect.WithHandlerOptions(opts...),
 	)
+	exploreServiceGetExploreTagSummaryHandler := connect.NewUnaryHandler(
+		ExploreServiceGetExploreTagSummaryProcedure,
+		svc.GetExploreTagSummary,
+		connect.WithSchema(exploreServiceMethods.ByName("GetExploreTagSummary")),
+		connect.WithHandlerOptions(opts...),
+	)
+	exploreServiceResolveExploreResourceLocationsHandler := connect.NewUnaryHandler(
+		ExploreServiceResolveExploreResourceLocationsProcedure,
+		svc.ResolveExploreResourceLocations,
+		connect.WithSchema(exploreServiceMethods.ByName("ResolveExploreResourceLocations")),
+		connect.WithHandlerOptions(opts...),
+	)
 	exploreServiceShareViewHandler := connect.NewUnaryHandler(
 		ExploreServiceShareViewProcedure,
 		svc.ShareView,
@@ -238,6 +292,10 @@ func NewExploreServiceHandler(svc ExploreServiceHandler, opts ...connect.Handler
 			exploreServiceResolveExploreFocusHandler.ServeHTTP(w, r)
 		case ExploreServiceGetCrossBranchCountsProcedure:
 			exploreServiceGetCrossBranchCountsHandler.ServeHTTP(w, r)
+		case ExploreServiceGetExploreTagSummaryProcedure:
+			exploreServiceGetExploreTagSummaryHandler.ServeHTTP(w, r)
+		case ExploreServiceResolveExploreResourceLocationsProcedure:
+			exploreServiceResolveExploreResourceLocationsHandler.ServeHTTP(w, r)
 		case ExploreServiceShareViewProcedure:
 			exploreServiceShareViewHandler.ServeHTTP(w, r)
 		default:
@@ -267,6 +325,14 @@ func (UnimplementedExploreServiceHandler) ResolveExploreFocus(context.Context, *
 
 func (UnimplementedExploreServiceHandler) GetCrossBranchCounts(context.Context, *connect.Request[v1.GetCrossBranchCountsRequest]) (*connect.Response[v1.GetCrossBranchCountsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.ExploreService.GetCrossBranchCounts is not implemented"))
+}
+
+func (UnimplementedExploreServiceHandler) GetExploreTagSummary(context.Context, *connect.Request[v1.GetExploreTagSummaryRequest]) (*connect.Response[v1.GetExploreTagSummaryResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.ExploreService.GetExploreTagSummary is not implemented"))
+}
+
+func (UnimplementedExploreServiceHandler) ResolveExploreResourceLocations(context.Context, *connect.Request[v1.ResolveExploreResourceLocationsRequest]) (*connect.Response[v1.ResolveExploreResourceLocationsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.ExploreService.ResolveExploreResourceLocations is not implemented"))
 }
 
 func (UnimplementedExploreServiceHandler) ShareView(context.Context, *connect.Request[v1.ShareViewRequest]) (*connect.Response[v1.ShareViewResponse], error) {
