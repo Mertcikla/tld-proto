@@ -251,11 +251,12 @@ type PlanViewPlacement struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Parent element ref that owns the target canonical diagram.
 	// Use "root" for the synthetic workspace root view.
-	ParentRef     string   `protobuf:"bytes,1,opt,name=parent_ref,json=parentRef,proto3" json:"parent_ref,omitempty"`
-	PositionX     *float64 `protobuf:"fixed64,2,opt,name=position_x,json=positionX,proto3,oneof" json:"position_x,omitempty"`
-	PositionY     *float64 `protobuf:"fixed64,3,opt,name=position_y,json=positionY,proto3,oneof" json:"position_y,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	ParentRef       string   `protobuf:"bytes,1,opt,name=parent_ref,json=parentRef,proto3" json:"parent_ref,omitempty"`
+	PositionX       *float64 `protobuf:"fixed64,2,opt,name=position_x,json=positionX,proto3,oneof" json:"position_x,omitempty"`
+	PositionY       *float64 `protobuf:"fixed64,3,opt,name=position_y,json=positionY,proto3,oneof" json:"position_y,omitempty"`
+	VisibilityDelta *int32   `protobuf:"varint,4,opt,name=visibility_delta,json=visibilityDelta,proto3,oneof" json:"visibility_delta,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *PlanViewPlacement) Reset() {
@@ -309,30 +310,38 @@ func (x *PlanViewPlacement) GetPositionY() float64 {
 	return 0
 }
 
+func (x *PlanViewPlacement) GetVisibilityDelta() int32 {
+	if x != nil && x.VisibilityDelta != nil {
+		return *x.VisibilityDelta
+	}
+	return 0
+}
+
 type PlanElement struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	Ref             string                 `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
-	Name            string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Kind            *string                `protobuf:"bytes,3,opt,name=kind,proto3,oneof" json:"kind,omitempty"`
-	Description     *string                `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	Technology      *string                `protobuf:"bytes,5,opt,name=technology,proto3,oneof" json:"technology,omitempty"`
-	Url             *string                `protobuf:"bytes,6,opt,name=url,proto3,oneof" json:"url,omitempty"`
-	LogoUrl         *string                `protobuf:"bytes,7,opt,name=logo_url,json=logoUrl,proto3,oneof" json:"logo_url,omitempty"`
-	TechnologyLinks []*TechnologyLink      `protobuf:"bytes,8,rep,name=technology_links,json=technologyLinks,proto3" json:"technology_links,omitempty"`
-	Tags            []string               `protobuf:"bytes,9,rep,name=tags,proto3" json:"tags,omitempty"`
-	Placements      []*PlanViewPlacement   `protobuf:"bytes,10,rep,name=placements,proto3" json:"placements,omitempty"`
-	Id              *int32                 `protobuf:"varint,11,opt,name=id,proto3,oneof" json:"id,omitempty"`
-	UpdatedAt       *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	Repo            *string                `protobuf:"bytes,13,opt,name=repo,proto3,oneof" json:"repo,omitempty"`
-	Branch          *string                `protobuf:"bytes,14,opt,name=branch,proto3,oneof" json:"branch,omitempty"`
-	Language        *string                `protobuf:"bytes,15,opt,name=language,proto3,oneof" json:"language,omitempty"`
-	FilePath        *string                `protobuf:"bytes,16,opt,name=file_path,json=filePath,proto3,oneof" json:"file_path,omitempty"`
-	HasView         bool                   `protobuf:"varint,17,opt,name=has_view,json=hasView,proto3" json:"has_view,omitempty"`
-	ViewLabel       *string                `protobuf:"bytes,18,opt,name=view_label,json=viewLabel,proto3,oneof" json:"view_label,omitempty"`
-	ViewId          *int32                 `protobuf:"varint,19,opt,name=view_id,json=viewId,proto3,oneof" json:"view_id,omitempty"`
-	ViewUpdatedAt   *timestamppb.Timestamp `protobuf:"bytes,20,opt,name=view_updated_at,json=viewUpdatedAt,proto3,oneof" json:"view_updated_at,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Ref              string                 `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
+	Name             string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Kind             *string                `protobuf:"bytes,3,opt,name=kind,proto3,oneof" json:"kind,omitempty"`
+	Description      *string                `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	Technology       *string                `protobuf:"bytes,5,opt,name=technology,proto3,oneof" json:"technology,omitempty"`
+	Url              *string                `protobuf:"bytes,6,opt,name=url,proto3,oneof" json:"url,omitempty"`
+	LogoUrl          *string                `protobuf:"bytes,7,opt,name=logo_url,json=logoUrl,proto3,oneof" json:"logo_url,omitempty"`
+	TechnologyLinks  []*TechnologyLink      `protobuf:"bytes,8,rep,name=technology_links,json=technologyLinks,proto3" json:"technology_links,omitempty"`
+	Tags             []string               `protobuf:"bytes,9,rep,name=tags,proto3" json:"tags,omitempty"`
+	Placements       []*PlanViewPlacement   `protobuf:"bytes,10,rep,name=placements,proto3" json:"placements,omitempty"`
+	Id               *int32                 `protobuf:"varint,11,opt,name=id,proto3,oneof" json:"id,omitempty"`
+	UpdatedAt        *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	Repo             *string                `protobuf:"bytes,13,opt,name=repo,proto3,oneof" json:"repo,omitempty"`
+	Branch           *string                `protobuf:"bytes,14,opt,name=branch,proto3,oneof" json:"branch,omitempty"`
+	Language         *string                `protobuf:"bytes,15,opt,name=language,proto3,oneof" json:"language,omitempty"`
+	FilePath         *string                `protobuf:"bytes,16,opt,name=file_path,json=filePath,proto3,oneof" json:"file_path,omitempty"`
+	HasView          bool                   `protobuf:"varint,17,opt,name=has_view,json=hasView,proto3" json:"has_view,omitempty"`
+	ViewLabel        *string                `protobuf:"bytes,18,opt,name=view_label,json=viewLabel,proto3,oneof" json:"view_label,omitempty"`
+	ViewId           *int32                 `protobuf:"varint,19,opt,name=view_id,json=viewId,proto3,oneof" json:"view_id,omitempty"`
+	ViewUpdatedAt    *timestamppb.Timestamp `protobuf:"bytes,20,opt,name=view_updated_at,json=viewUpdatedAt,proto3,oneof" json:"view_updated_at,omitempty"`
+	ViewDensityLevel *int32                 `protobuf:"varint,21,opt,name=view_density_level,json=viewDensityLevel,proto3,oneof" json:"view_density_level,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *PlanElement) Reset() {
@@ -505,6 +514,13 @@ func (x *PlanElement) GetViewUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *PlanElement) GetViewDensityLevel() int32 {
+	if x != nil && x.ViewDensityLevel != nil {
+		return *x.ViewDensityLevel
+	}
+	return 0
+}
+
 type PlanConnector struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Ref   string                 `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
@@ -522,6 +538,7 @@ type PlanConnector struct {
 	TargetHandle     *string                `protobuf:"bytes,12,opt,name=target_handle,json=targetHandle,proto3,oneof" json:"target_handle,omitempty"`
 	Id               *int32                 `protobuf:"varint,13,opt,name=id,proto3,oneof" json:"id,omitempty"`
 	UpdatedAt        *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	VisibilityDelta  *int32                 `protobuf:"varint,15,opt,name=visibility_delta,json=visibilityDelta,proto3,oneof" json:"visibility_delta,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -652,6 +669,13 @@ func (x *PlanConnector) GetUpdatedAt() *timestamppb.Timestamp {
 		return x.UpdatedAt
 	}
 	return nil
+}
+
+func (x *PlanConnector) GetVisibilityDelta() int32 {
+	if x != nil && x.VisibilityDelta != nil {
+		return *x.VisibilityDelta
+	}
+	return 0
 }
 
 type ApplyPlanRequest struct {
@@ -6310,16 +6334,18 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"placements\x18\x04 \x03(\v2\x19.diag.v1.ElementPlacementR\n" +
 	"placements\x12*\n" +
 	"\x06layers\x18\x05 \x03(\v2\x12.diag.v1.ViewLayerR\x06layers\x12\x1a\n" +
-	"\bprogress\x18\x06 \x01(\x01R\bprogress\"\x98\x01\n" +
+	"\bprogress\x18\x06 \x01(\x01R\bprogress\"\xdd\x01\n" +
 	"\x11PlanViewPlacement\x12\x1d\n" +
 	"\n" +
 	"parent_ref\x18\x01 \x01(\tR\tparentRef\x12\"\n" +
 	"\n" +
 	"position_x\x18\x02 \x01(\x01H\x00R\tpositionX\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"position_y\x18\x03 \x01(\x01H\x01R\tpositionY\x88\x01\x01B\r\n" +
+	"position_y\x18\x03 \x01(\x01H\x01R\tpositionY\x88\x01\x01\x12.\n" +
+	"\x10visibility_delta\x18\x04 \x01(\x05H\x02R\x0fvisibilityDelta\x88\x01\x01B\r\n" +
 	"\v_position_xB\r\n" +
-	"\v_position_y\"\x88\a\n" +
+	"\v_position_yB\x13\n" +
+	"\x11_visibility_delta\"\xd2\a\n" +
 	"\vPlanElement\x12\x10\n" +
 	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x17\n" +
@@ -6348,7 +6374,8 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\n" +
 	"view_label\x18\x12 \x01(\tH\vR\tviewLabel\x88\x01\x01\x12\x1c\n" +
 	"\aview_id\x18\x13 \x01(\x05H\fR\x06viewId\x88\x01\x01\x12G\n" +
-	"\x0fview_updated_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampH\rR\rviewUpdatedAt\x88\x01\x01B\a\n" +
+	"\x0fview_updated_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampH\rR\rviewUpdatedAt\x88\x01\x01\x121\n" +
+	"\x12view_density_level\x18\x15 \x01(\x05H\x0eR\x10viewDensityLevel\x88\x01\x01B\a\n" +
 	"\x05_kindB\x0e\n" +
 	"\f_descriptionB\r\n" +
 	"\v_technologyB\x06\n" +
@@ -6364,7 +6391,8 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\v_view_labelB\n" +
 	"\n" +
 	"\b_view_idB\x12\n" +
-	"\x10_view_updated_at\"\x86\x05\n" +
+	"\x10_view_updated_atB\x15\n" +
+	"\x13_view_density_level\"\xcb\x05\n" +
 	"\rPlanConnector\x12\x10\n" +
 	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x19\n" +
 	"\bview_ref\x18\x02 \x01(\tR\aviewRef\x12,\n" +
@@ -6381,7 +6409,9 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\rtarget_handle\x18\f \x01(\tH\aR\ftargetHandle\x88\x01\x01\x12\x13\n" +
 	"\x02id\x18\r \x01(\x05H\bR\x02id\x88\x01\x01\x12>\n" +
 	"\n" +
-	"updated_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampH\tR\tupdatedAt\x88\x01\x01B\b\n" +
+	"updated_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampH\tR\tupdatedAt\x88\x01\x01\x12.\n" +
+	"\x10visibility_delta\x18\x0f \x01(\x05H\n" +
+	"R\x0fvisibilityDelta\x88\x01\x01B\b\n" +
 	"\x06_labelB\x0e\n" +
 	"\f_descriptionB\x0f\n" +
 	"\r_relationshipB\f\n" +
@@ -6392,7 +6422,8 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\x0e_source_handleB\x10\n" +
 	"\x0e_target_handleB\x05\n" +
 	"\x03_idB\r\n" +
-	"\v_updated_at\"\xe7\x01\n" +
+	"\v_updated_atB\x13\n" +
+	"\x11_visibility_delta\"\xe7\x01\n" +
 	"\x10ApplyPlanRequest\x12\x15\n" +
 	"\x06org_id\x18\x01 \x01(\tR\x05orgId\x120\n" +
 	"\belements\x18\x02 \x03(\v2\x14.diag.v1.PlanElementR\belements\x126\n" +

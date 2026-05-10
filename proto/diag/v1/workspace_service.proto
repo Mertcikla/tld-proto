@@ -145,6 +145,7 @@ message PlanViewPlacement {
   string parent_ref = 1;
   optional double position_x = 2;
   optional double position_y = 3;
+  optional int32 visibility_delta = 4;
 }
 
 message PlanElement {
@@ -168,6 +169,7 @@ message PlanElement {
   optional string view_label = 18;
   optional int32 view_id = 19;
   optional google.protobuf.Timestamp view_updated_at = 20;
+  optional int32 view_density_level = 21;
 }
 
 message PlanConnector {
@@ -186,6 +188,7 @@ message PlanConnector {
   optional string target_handle = 12;
   optional int32 id = 13;
   optional google.protobuf.Timestamp updated_at = 14;
+  optional int32 visibility_delta = 15;
 }
 
 message ApplyPlanRequest {
