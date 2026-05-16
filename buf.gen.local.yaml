@@ -11,3 +11,7 @@ plugins:
     out: ../frontend-wrapper/src/gen
     opt:
       - target=ts
+  - remote: buf.build/bufbuild/es:v2.11.0
+    out: ../tld/frontend/src/gen
+    opt:
+      - target=ts

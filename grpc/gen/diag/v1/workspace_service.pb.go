@@ -1952,6 +1952,8 @@ type PlacedElement struct {
 	Branch          *string                `protobuf:"bytes,15,opt,name=branch,proto3,oneof" json:"branch,omitempty"`
 	FilePath        *string                `protobuf:"bytes,16,opt,name=file_path,json=filePath,proto3,oneof" json:"file_path,omitempty"`
 	Language        *string                `protobuf:"bytes,17,opt,name=language,proto3,oneof" json:"language,omitempty"`
+	HasView         bool                   `protobuf:"varint,18,opt,name=has_view,json=hasView,proto3" json:"has_view,omitempty"`
+	ViewLabel       *string                `protobuf:"bytes,19,opt,name=view_label,json=viewLabel,proto3,oneof" json:"view_label,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -2101,6 +2103,20 @@ func (x *PlacedElement) GetFilePath() string {
 func (x *PlacedElement) GetLanguage() string {
 	if x != nil && x.Language != nil {
 		return *x.Language
+	}
+	return ""
+}
+
+func (x *PlacedElement) GetHasView() bool {
+	if x != nil {
+		return x.HasView
+	}
+	return false
+}
+
+func (x *PlacedElement) GetViewLabel() string {
+	if x != nil && x.ViewLabel != nil {
+		return *x.ViewLabel
 	}
 	return ""
 }
@@ -3095,10 +3111,12 @@ func (x *ListViewsResponse) GetTotalCount() int32 {
 }
 
 type GetViewRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ViewId        int32                  `protobuf:"varint,1,opt,name=view_id,json=viewId,proto3" json:"view_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	ViewId          int32                  `protobuf:"varint,1,opt,name=view_id,json=viewId,proto3" json:"view_id,omitempty"`
+	IncludeContent  bool                   `protobuf:"varint,2,opt,name=include_content,json=includeContent,proto3" json:"include_content,omitempty"`
+	DensityOverride *int32                 `protobuf:"varint,3,opt,name=density_override,json=densityOverride,proto3,oneof" json:"density_override,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *GetViewRequest) Reset() {
@@ -3138,9 +3156,24 @@ func (x *GetViewRequest) GetViewId() int32 {
 	return 0
 }
 
+func (x *GetViewRequest) GetIncludeContent() bool {
+	if x != nil {
+		return x.IncludeContent
+	}
+	return false
+}
+
+func (x *GetViewRequest) GetDensityOverride() int32 {
+	if x != nil && x.DensityOverride != nil {
+		return *x.DensityOverride
+	}
+	return 0
+}
+
 type GetViewResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	View          *View                  `protobuf:"bytes,1,opt,name=view,proto3" json:"view,omitempty"`
+	Content       *ViewContent           `protobuf:"bytes,2,opt,name=content,proto3" json:"content,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3178,6 +3211,13 @@ func (*GetViewResponse) Descriptor() ([]byte, []int) {
 func (x *GetViewResponse) GetView() *View {
 	if x != nil {
 		return x.View
+	}
+	return nil
+}
+
+func (x *GetViewResponse) GetContent() *ViewContent {
+	if x != nil {
+		return x.Content
 	}
 	return nil
 }
@@ -6588,7 +6628,7 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\n" +
 	"position_x\x18\x04 \x01(\x01R\tpositionX\x12\x1d\n" +
 	"\n" +
-	"position_y\x18\x05 \x01(\x01R\tpositionY\"\x82\x05\n" +
+	"position_y\x18\x05 \x01(\x01R\tpositionY\"\xd0\x05\n" +
 	"\rPlacedElement\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x17\n" +
 	"\aview_id\x18\x02 \x01(\x05R\x06viewId\x12\x1d\n" +
@@ -6612,7 +6652,10 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\x04repo\x18\x0e \x01(\tH\x05R\x04repo\x88\x01\x01\x12\x1b\n" +
 	"\x06branch\x18\x0f \x01(\tH\x06R\x06branch\x88\x01\x01\x12 \n" +
 	"\tfile_path\x18\x10 \x01(\tH\aR\bfilePath\x88\x01\x01\x12\x1f\n" +
-	"\blanguage\x18\x11 \x01(\tH\bR\blanguage\x88\x01\x01B\x0e\n" +
+	"\blanguage\x18\x11 \x01(\tH\bR\blanguage\x88\x01\x01\x12\x19\n" +
+	"\bhas_view\x18\x12 \x01(\bR\ahasView\x12\"\n" +
+	"\n" +
+	"view_label\x18\x13 \x01(\tH\tR\tviewLabel\x88\x01\x01B\x0e\n" +
 	"\f_descriptionB\a\n" +
 	"\x05_kindB\r\n" +
 	"\v_technologyB\x06\n" +
@@ -6622,7 +6665,8 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\a_branchB\f\n" +
 	"\n" +
 	"_file_pathB\v\n" +
-	"\t_language\"\xe3\x04\n" +
+	"\t_languageB\r\n" +
+	"\v_view_label\"\xe3\x04\n" +
 	"\tConnector\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x17\n" +
 	"\aview_id\x18\x02 \x01(\x05R\x06viewId\x12*\n" +
@@ -6725,11 +6769,15 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\x11ListViewsResponse\x12#\n" +
 	"\x05views\x18\x01 \x03(\v2\r.diag.v1.ViewR\x05views\x12\x1f\n" +
 	"\vtotal_count\x18\x02 \x01(\x05R\n" +
-	"totalCount\")\n" +
+	"totalCount\"\x97\x01\n" +
 	"\x0eGetViewRequest\x12\x17\n" +
-	"\aview_id\x18\x01 \x01(\x05R\x06viewId\"4\n" +
+	"\aview_id\x18\x01 \x01(\x05R\x06viewId\x12'\n" +
+	"\x0finclude_content\x18\x02 \x01(\bR\x0eincludeContent\x12.\n" +
+	"\x10density_override\x18\x03 \x01(\x05H\x00R\x0fdensityOverride\x88\x01\x01B\x13\n" +
+	"\x11_density_override\"d\n" +
 	"\x0fGetViewResponse\x12!\n" +
-	"\x04view\x18\x01 \x01(\v2\r.diag.v1.ViewR\x04view\"\xad\x01\n" +
+	"\x04view\x18\x01 \x01(\v2\r.diag.v1.ViewR\x04view\x12.\n" +
+	"\acontent\x18\x02 \x01(\v2\x14.diag.v1.ViewContentR\acontent\"\xad\x01\n" +
 	"\x11UpdateViewRequest\x12\x17\n" +
 	"\aview_id\x18\x01 \x01(\x05R\x06viewId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12%\n" +
@@ -7241,107 +7289,108 @@ var file_diag_v1_workspace_service_proto_depIdxs = []int32{
 	24,  // 50: diag.v1.View.children:type_name -> diag.v1.View
 	24,  // 51: diag.v1.ListViewsResponse.views:type_name -> diag.v1.View
 	24,  // 52: diag.v1.GetViewResponse.view:type_name -> diag.v1.View
-	24,  // 53: diag.v1.UpdateViewResponse.view:type_name -> diag.v1.View
-	94,  // 54: diag.v1.ExploreTreeNode.created_at:type_name -> google.protobuf.Timestamp
-	24,  // 55: diag.v1.GetWorkspaceResponse.views:type_name -> diag.v1.View
-	93,  // 56: diag.v1.GetWorkspaceResponse.content:type_name -> diag.v1.GetWorkspaceResponse.ContentEntry
-	74,  // 57: diag.v1.GetWorkspaceResponse.navigations:type_name -> diag.v1.ElementNavigationInfo
-	45,  // 58: diag.v1.ListIncomingElementNavigationsResponse.navigations:type_name -> diag.v1.IncomingElementNavigationInfo
-	17,  // 59: diag.v1.ListElementsResponse.elements:type_name -> diag.v1.Element
-	49,  // 60: diag.v1.ListElementsResponse.pagination:type_name -> diag.v1.Pagination
-	17,  // 61: diag.v1.GetElementResponse.element:type_name -> diag.v1.Element
-	33,  // 62: diag.v1.CreateElementRequest.technology_links:type_name -> diag.v1.TechnologyLink
-	17,  // 63: diag.v1.CreateElementResponse.element:type_name -> diag.v1.Element
-	33,  // 64: diag.v1.UpdateElementRequest.technology_links:type_name -> diag.v1.TechnologyLink
-	17,  // 65: diag.v1.UpdateElementResponse.element:type_name -> diag.v1.Element
-	57,  // 66: diag.v1.ListElementPlacementsResponse.placements:type_name -> diag.v1.ViewPlacementInfo
-	20,  // 67: diag.v1.ListPlacementsResponse.placements:type_name -> diag.v1.PlacedElement
-	20,  // 68: diag.v1.CreatePlacementResponse.placement:type_name -> diag.v1.PlacedElement
-	21,  // 69: diag.v1.ListConnectorsResponse.connectors:type_name -> diag.v1.Connector
-	21,  // 70: diag.v1.CreateConnectorResponse.connector:type_name -> diag.v1.Connector
-	21,  // 71: diag.v1.UpdateConnectorResponse.connector:type_name -> diag.v1.Connector
-	74,  // 72: diag.v1.ListElementNavigationsResponse.navigations:type_name -> diag.v1.ElementNavigationInfo
-	74,  // 73: diag.v1.CreateElementNavigationResponse.navigation:type_name -> diag.v1.ElementNavigationInfo
-	94,  // 74: diag.v1.ViewLayer.created_at:type_name -> google.protobuf.Timestamp
-	94,  // 75: diag.v1.ViewLayer.updated_at:type_name -> google.protobuf.Timestamp
-	81,  // 76: diag.v1.ListViewLayersResponse.layers:type_name -> diag.v1.ViewLayer
-	81,  // 77: diag.v1.CreateViewLayerResponse.layer:type_name -> diag.v1.ViewLayer
-	81,  // 78: diag.v1.UpdateViewLayerResponse.layer:type_name -> diag.v1.ViewLayer
-	10,  // 79: diag.v1.ApplyPlanResponse.ElementMetadataEntry.value:type_name -> diag.v1.ResourceMetadata
-	10,  // 80: diag.v1.ApplyPlanResponse.ViewMetadataEntry.value:type_name -> diag.v1.ResourceMetadata
-	10,  // 81: diag.v1.ApplyPlanResponse.ConnectorMetadataEntry.value:type_name -> diag.v1.ResourceMetadata
-	23,  // 82: diag.v1.GetWorkspaceResponse.ContentEntry.value:type_name -> diag.v1.ViewContent
-	15,  // 83: diag.v1.WorkspaceService.CreateView:input_type -> diag.v1.CreateViewRequest
-	6,   // 84: diag.v1.WorkspaceService.ApplyWorkspacePlan:input_type -> diag.v1.ApplyPlanRequest
-	0,   // 85: diag.v1.WorkspaceService.ExportWorkspace:input_type -> diag.v1.ExportOrganizationRequest
-	0,   // 86: diag.v1.WorkspaceService.StreamExportWorkspace:input_type -> diag.v1.ExportOrganizationRequest
-	25,  // 87: diag.v1.WorkspaceService.DeleteView:input_type -> diag.v1.DeleteViewRequest
-	27,  // 88: diag.v1.WorkspaceService.DeleteElement:input_type -> diag.v1.DeleteElementRequest
-	29,  // 89: diag.v1.WorkspaceService.DeleteConnector:input_type -> diag.v1.DeleteConnectorRequest
-	31,  // 90: diag.v1.WorkspaceService.DeleteElementNavigation:input_type -> diag.v1.DeleteElementNavigationRequest
-	34,  // 91: diag.v1.WorkspaceService.ListViews:input_type -> diag.v1.ListViewsRequest
-	36,  // 92: diag.v1.WorkspaceService.GetView:input_type -> diag.v1.GetViewRequest
-	38,  // 93: diag.v1.WorkspaceService.UpdateView:input_type -> diag.v1.UpdateViewRequest
-	40,  // 94: diag.v1.WorkspaceService.SetViewLevel:input_type -> diag.v1.SetViewLevelRequest
-	43,  // 95: diag.v1.WorkspaceService.GetWorkspace:input_type -> diag.v1.GetWorkspaceRequest
-	46,  // 96: diag.v1.WorkspaceService.ListIncomingElementNavigations:input_type -> diag.v1.ListIncomingElementNavigationsRequest
-	48,  // 97: diag.v1.WorkspaceService.ListElements:input_type -> diag.v1.ListElementsRequest
-	51,  // 98: diag.v1.WorkspaceService.GetElement:input_type -> diag.v1.GetElementRequest
-	53,  // 99: diag.v1.WorkspaceService.CreateElement:input_type -> diag.v1.CreateElementRequest
-	55,  // 100: diag.v1.WorkspaceService.UpdateElement:input_type -> diag.v1.UpdateElementRequest
-	58,  // 101: diag.v1.WorkspaceService.ListElementPlacements:input_type -> diag.v1.ListElementPlacementsRequest
-	60,  // 102: diag.v1.WorkspaceService.ListPlacements:input_type -> diag.v1.ListPlacementsRequest
-	62,  // 103: diag.v1.WorkspaceService.CreatePlacement:input_type -> diag.v1.CreatePlacementRequest
-	64,  // 104: diag.v1.WorkspaceService.UpdatePlacementPosition:input_type -> diag.v1.UpdatePlacementPositionRequest
-	66,  // 105: diag.v1.WorkspaceService.DeletePlacement:input_type -> diag.v1.DeletePlacementRequest
-	68,  // 106: diag.v1.WorkspaceService.ListConnectors:input_type -> diag.v1.ListConnectorsRequest
-	70,  // 107: diag.v1.WorkspaceService.CreateConnector:input_type -> diag.v1.CreateConnectorRequest
-	72,  // 108: diag.v1.WorkspaceService.UpdateConnector:input_type -> diag.v1.UpdateConnectorRequest
-	75,  // 109: diag.v1.WorkspaceService.ListElementNavigations:input_type -> diag.v1.ListElementNavigationsRequest
-	77,  // 110: diag.v1.WorkspaceService.CreateElementNavigation:input_type -> diag.v1.CreateElementNavigationRequest
-	79,  // 111: diag.v1.WorkspaceService.DeleteElementNavigationById:input_type -> diag.v1.DeleteElementNavigationByIdRequest
-	82,  // 112: diag.v1.WorkspaceService.ListViewLayers:input_type -> diag.v1.ListViewLayersRequest
-	84,  // 113: diag.v1.WorkspaceService.CreateViewLayer:input_type -> diag.v1.CreateViewLayerRequest
-	86,  // 114: diag.v1.WorkspaceService.UpdateViewLayer:input_type -> diag.v1.UpdateViewLayerRequest
-	88,  // 115: diag.v1.WorkspaceService.DeleteViewLayer:input_type -> diag.v1.DeleteViewLayerRequest
-	16,  // 116: diag.v1.WorkspaceService.CreateView:output_type -> diag.v1.CreateViewResponse
-	14,  // 117: diag.v1.WorkspaceService.ApplyWorkspacePlan:output_type -> diag.v1.ApplyPlanResponse
-	1,   // 118: diag.v1.WorkspaceService.ExportWorkspace:output_type -> diag.v1.ExportOrganizationResponse
-	2,   // 119: diag.v1.WorkspaceService.StreamExportWorkspace:output_type -> diag.v1.ExportChunk
-	26,  // 120: diag.v1.WorkspaceService.DeleteView:output_type -> diag.v1.DeleteViewResponse
-	28,  // 121: diag.v1.WorkspaceService.DeleteElement:output_type -> diag.v1.DeleteElementResponse
-	30,  // 122: diag.v1.WorkspaceService.DeleteConnector:output_type -> diag.v1.DeleteConnectorResponse
-	32,  // 123: diag.v1.WorkspaceService.DeleteElementNavigation:output_type -> diag.v1.DeleteElementNavigationResponse
-	35,  // 124: diag.v1.WorkspaceService.ListViews:output_type -> diag.v1.ListViewsResponse
-	37,  // 125: diag.v1.WorkspaceService.GetView:output_type -> diag.v1.GetViewResponse
-	39,  // 126: diag.v1.WorkspaceService.UpdateView:output_type -> diag.v1.UpdateViewResponse
-	41,  // 127: diag.v1.WorkspaceService.SetViewLevel:output_type -> diag.v1.SetViewLevelResponse
-	44,  // 128: diag.v1.WorkspaceService.GetWorkspace:output_type -> diag.v1.GetWorkspaceResponse
-	47,  // 129: diag.v1.WorkspaceService.ListIncomingElementNavigations:output_type -> diag.v1.ListIncomingElementNavigationsResponse
-	50,  // 130: diag.v1.WorkspaceService.ListElements:output_type -> diag.v1.ListElementsResponse
-	52,  // 131: diag.v1.WorkspaceService.GetElement:output_type -> diag.v1.GetElementResponse
-	54,  // 132: diag.v1.WorkspaceService.CreateElement:output_type -> diag.v1.CreateElementResponse
-	56,  // 133: diag.v1.WorkspaceService.UpdateElement:output_type -> diag.v1.UpdateElementResponse
-	59,  // 134: diag.v1.WorkspaceService.ListElementPlacements:output_type -> diag.v1.ListElementPlacementsResponse
-	61,  // 135: diag.v1.WorkspaceService.ListPlacements:output_type -> diag.v1.ListPlacementsResponse
-	63,  // 136: diag.v1.WorkspaceService.CreatePlacement:output_type -> diag.v1.CreatePlacementResponse
-	65,  // 137: diag.v1.WorkspaceService.UpdatePlacementPosition:output_type -> diag.v1.UpdatePlacementPositionResponse
-	67,  // 138: diag.v1.WorkspaceService.DeletePlacement:output_type -> diag.v1.DeletePlacementResponse
-	69,  // 139: diag.v1.WorkspaceService.ListConnectors:output_type -> diag.v1.ListConnectorsResponse
-	71,  // 140: diag.v1.WorkspaceService.CreateConnector:output_type -> diag.v1.CreateConnectorResponse
-	73,  // 141: diag.v1.WorkspaceService.UpdateConnector:output_type -> diag.v1.UpdateConnectorResponse
-	76,  // 142: diag.v1.WorkspaceService.ListElementNavigations:output_type -> diag.v1.ListElementNavigationsResponse
-	78,  // 143: diag.v1.WorkspaceService.CreateElementNavigation:output_type -> diag.v1.CreateElementNavigationResponse
-	80,  // 144: diag.v1.WorkspaceService.DeleteElementNavigationById:output_type -> diag.v1.DeleteElementNavigationByIdResponse
-	83,  // 145: diag.v1.WorkspaceService.ListViewLayers:output_type -> diag.v1.ListViewLayersResponse
-	85,  // 146: diag.v1.WorkspaceService.CreateViewLayer:output_type -> diag.v1.CreateViewLayerResponse
-	87,  // 147: diag.v1.WorkspaceService.UpdateViewLayer:output_type -> diag.v1.UpdateViewLayerResponse
-	89,  // 148: diag.v1.WorkspaceService.DeleteViewLayer:output_type -> diag.v1.DeleteViewLayerResponse
-	116, // [116:149] is the sub-list for method output_type
-	83,  // [83:116] is the sub-list for method input_type
-	83,  // [83:83] is the sub-list for extension type_name
-	83,  // [83:83] is the sub-list for extension extendee
-	0,   // [0:83] is the sub-list for field type_name
+	23,  // 53: diag.v1.GetViewResponse.content:type_name -> diag.v1.ViewContent
+	24,  // 54: diag.v1.UpdateViewResponse.view:type_name -> diag.v1.View
+	94,  // 55: diag.v1.ExploreTreeNode.created_at:type_name -> google.protobuf.Timestamp
+	24,  // 56: diag.v1.GetWorkspaceResponse.views:type_name -> diag.v1.View
+	93,  // 57: diag.v1.GetWorkspaceResponse.content:type_name -> diag.v1.GetWorkspaceResponse.ContentEntry
+	74,  // 58: diag.v1.GetWorkspaceResponse.navigations:type_name -> diag.v1.ElementNavigationInfo
+	45,  // 59: diag.v1.ListIncomingElementNavigationsResponse.navigations:type_name -> diag.v1.IncomingElementNavigationInfo
+	17,  // 60: diag.v1.ListElementsResponse.elements:type_name -> diag.v1.Element
+	49,  // 61: diag.v1.ListElementsResponse.pagination:type_name -> diag.v1.Pagination
+	17,  // 62: diag.v1.GetElementResponse.element:type_name -> diag.v1.Element
+	33,  // 63: diag.v1.CreateElementRequest.technology_links:type_name -> diag.v1.TechnologyLink
+	17,  // 64: diag.v1.CreateElementResponse.element:type_name -> diag.v1.Element
+	33,  // 65: diag.v1.UpdateElementRequest.technology_links:type_name -> diag.v1.TechnologyLink
+	17,  // 66: diag.v1.UpdateElementResponse.element:type_name -> diag.v1.Element
+	57,  // 67: diag.v1.ListElementPlacementsResponse.placements:type_name -> diag.v1.ViewPlacementInfo
+	20,  // 68: diag.v1.ListPlacementsResponse.placements:type_name -> diag.v1.PlacedElement
+	20,  // 69: diag.v1.CreatePlacementResponse.placement:type_name -> diag.v1.PlacedElement
+	21,  // 70: diag.v1.ListConnectorsResponse.connectors:type_name -> diag.v1.Connector
+	21,  // 71: diag.v1.CreateConnectorResponse.connector:type_name -> diag.v1.Connector
+	21,  // 72: diag.v1.UpdateConnectorResponse.connector:type_name -> diag.v1.Connector
+	74,  // 73: diag.v1.ListElementNavigationsResponse.navigations:type_name -> diag.v1.ElementNavigationInfo
+	74,  // 74: diag.v1.CreateElementNavigationResponse.navigation:type_name -> diag.v1.ElementNavigationInfo
+	94,  // 75: diag.v1.ViewLayer.created_at:type_name -> google.protobuf.Timestamp
+	94,  // 76: diag.v1.ViewLayer.updated_at:type_name -> google.protobuf.Timestamp
+	81,  // 77: diag.v1.ListViewLayersResponse.layers:type_name -> diag.v1.ViewLayer
+	81,  // 78: diag.v1.CreateViewLayerResponse.layer:type_name -> diag.v1.ViewLayer
+	81,  // 79: diag.v1.UpdateViewLayerResponse.layer:type_name -> diag.v1.ViewLayer
+	10,  // 80: diag.v1.ApplyPlanResponse.ElementMetadataEntry.value:type_name -> diag.v1.ResourceMetadata
+	10,  // 81: diag.v1.ApplyPlanResponse.ViewMetadataEntry.value:type_name -> diag.v1.ResourceMetadata
+	10,  // 82: diag.v1.ApplyPlanResponse.ConnectorMetadataEntry.value:type_name -> diag.v1.ResourceMetadata
+	23,  // 83: diag.v1.GetWorkspaceResponse.ContentEntry.value:type_name -> diag.v1.ViewContent
+	15,  // 84: diag.v1.WorkspaceService.CreateView:input_type -> diag.v1.CreateViewRequest
+	6,   // 85: diag.v1.WorkspaceService.ApplyWorkspacePlan:input_type -> diag.v1.ApplyPlanRequest
+	0,   // 86: diag.v1.WorkspaceService.ExportWorkspace:input_type -> diag.v1.ExportOrganizationRequest
+	0,   // 87: diag.v1.WorkspaceService.StreamExportWorkspace:input_type -> diag.v1.ExportOrganizationRequest
+	25,  // 88: diag.v1.WorkspaceService.DeleteView:input_type -> diag.v1.DeleteViewRequest
+	27,  // 89: diag.v1.WorkspaceService.DeleteElement:input_type -> diag.v1.DeleteElementRequest
+	29,  // 90: diag.v1.WorkspaceService.DeleteConnector:input_type -> diag.v1.DeleteConnectorRequest
+	31,  // 91: diag.v1.WorkspaceService.DeleteElementNavigation:input_type -> diag.v1.DeleteElementNavigationRequest
+	34,  // 92: diag.v1.WorkspaceService.ListViews:input_type -> diag.v1.ListViewsRequest
+	36,  // 93: diag.v1.WorkspaceService.GetView:input_type -> diag.v1.GetViewRequest
+	38,  // 94: diag.v1.WorkspaceService.UpdateView:input_type -> diag.v1.UpdateViewRequest
+	40,  // 95: diag.v1.WorkspaceService.SetViewLevel:input_type -> diag.v1.SetViewLevelRequest
+	43,  // 96: diag.v1.WorkspaceService.GetWorkspace:input_type -> diag.v1.GetWorkspaceRequest
+	46,  // 97: diag.v1.WorkspaceService.ListIncomingElementNavigations:input_type -> diag.v1.ListIncomingElementNavigationsRequest
+	48,  // 98: diag.v1.WorkspaceService.ListElements:input_type -> diag.v1.ListElementsRequest
+	51,  // 99: diag.v1.WorkspaceService.GetElement:input_type -> diag.v1.GetElementRequest
+	53,  // 100: diag.v1.WorkspaceService.CreateElement:input_type -> diag.v1.CreateElementRequest
+	55,  // 101: diag.v1.WorkspaceService.UpdateElement:input_type -> diag.v1.UpdateElementRequest
+	58,  // 102: diag.v1.WorkspaceService.ListElementPlacements:input_type -> diag.v1.ListElementPlacementsRequest
+	60,  // 103: diag.v1.WorkspaceService.ListPlacements:input_type -> diag.v1.ListPlacementsRequest
+	62,  // 104: diag.v1.WorkspaceService.CreatePlacement:input_type -> diag.v1.CreatePlacementRequest
+	64,  // 105: diag.v1.WorkspaceService.UpdatePlacementPosition:input_type -> diag.v1.UpdatePlacementPositionRequest
+	66,  // 106: diag.v1.WorkspaceService.DeletePlacement:input_type -> diag.v1.DeletePlacementRequest
+	68,  // 107: diag.v1.WorkspaceService.ListConnectors:input_type -> diag.v1.ListConnectorsRequest
+	70,  // 108: diag.v1.WorkspaceService.CreateConnector:input_type -> diag.v1.CreateConnectorRequest
+	72,  // 109: diag.v1.WorkspaceService.UpdateConnector:input_type -> diag.v1.UpdateConnectorRequest
+	75,  // 110: diag.v1.WorkspaceService.ListElementNavigations:input_type -> diag.v1.ListElementNavigationsRequest
+	77,  // 111: diag.v1.WorkspaceService.CreateElementNavigation:input_type -> diag.v1.CreateElementNavigationRequest
+	79,  // 112: diag.v1.WorkspaceService.DeleteElementNavigationById:input_type -> diag.v1.DeleteElementNavigationByIdRequest
+	82,  // 113: diag.v1.WorkspaceService.ListViewLayers:input_type -> diag.v1.ListViewLayersRequest
+	84,  // 114: diag.v1.WorkspaceService.CreateViewLayer:input_type -> diag.v1.CreateViewLayerRequest
+	86,  // 115: diag.v1.WorkspaceService.UpdateViewLayer:input_type -> diag.v1.UpdateViewLayerRequest
+	88,  // 116: diag.v1.WorkspaceService.DeleteViewLayer:input_type -> diag.v1.DeleteViewLayerRequest
+	16,  // 117: diag.v1.WorkspaceService.CreateView:output_type -> diag.v1.CreateViewResponse
+	14,  // 118: diag.v1.WorkspaceService.ApplyWorkspacePlan:output_type -> diag.v1.ApplyPlanResponse
+	1,   // 119: diag.v1.WorkspaceService.ExportWorkspace:output_type -> diag.v1.ExportOrganizationResponse
+	2,   // 120: diag.v1.WorkspaceService.StreamExportWorkspace:output_type -> diag.v1.ExportChunk
+	26,  // 121: diag.v1.WorkspaceService.DeleteView:output_type -> diag.v1.DeleteViewResponse
+	28,  // 122: diag.v1.WorkspaceService.DeleteElement:output_type -> diag.v1.DeleteElementResponse
+	30,  // 123: diag.v1.WorkspaceService.DeleteConnector:output_type -> diag.v1.DeleteConnectorResponse
+	32,  // 124: diag.v1.WorkspaceService.DeleteElementNavigation:output_type -> diag.v1.DeleteElementNavigationResponse
+	35,  // 125: diag.v1.WorkspaceService.ListViews:output_type -> diag.v1.ListViewsResponse
+	37,  // 126: diag.v1.WorkspaceService.GetView:output_type -> diag.v1.GetViewResponse
+	39,  // 127: diag.v1.WorkspaceService.UpdateView:output_type -> diag.v1.UpdateViewResponse
+	41,  // 128: diag.v1.WorkspaceService.SetViewLevel:output_type -> diag.v1.SetViewLevelResponse
+	44,  // 129: diag.v1.WorkspaceService.GetWorkspace:output_type -> diag.v1.GetWorkspaceResponse
+	47,  // 130: diag.v1.WorkspaceService.ListIncomingElementNavigations:output_type -> diag.v1.ListIncomingElementNavigationsResponse
+	50,  // 131: diag.v1.WorkspaceService.ListElements:output_type -> diag.v1.ListElementsResponse
+	52,  // 132: diag.v1.WorkspaceService.GetElement:output_type -> diag.v1.GetElementResponse
+	54,  // 133: diag.v1.WorkspaceService.CreateElement:output_type -> diag.v1.CreateElementResponse
+	56,  // 134: diag.v1.WorkspaceService.UpdateElement:output_type -> diag.v1.UpdateElementResponse
+	59,  // 135: diag.v1.WorkspaceService.ListElementPlacements:output_type -> diag.v1.ListElementPlacementsResponse
+	61,  // 136: diag.v1.WorkspaceService.ListPlacements:output_type -> diag.v1.ListPlacementsResponse
+	63,  // 137: diag.v1.WorkspaceService.CreatePlacement:output_type -> diag.v1.CreatePlacementResponse
+	65,  // 138: diag.v1.WorkspaceService.UpdatePlacementPosition:output_type -> diag.v1.UpdatePlacementPositionResponse
+	67,  // 139: diag.v1.WorkspaceService.DeletePlacement:output_type -> diag.v1.DeletePlacementResponse
+	69,  // 140: diag.v1.WorkspaceService.ListConnectors:output_type -> diag.v1.ListConnectorsResponse
+	71,  // 141: diag.v1.WorkspaceService.CreateConnector:output_type -> diag.v1.CreateConnectorResponse
+	73,  // 142: diag.v1.WorkspaceService.UpdateConnector:output_type -> diag.v1.UpdateConnectorResponse
+	76,  // 143: diag.v1.WorkspaceService.ListElementNavigations:output_type -> diag.v1.ListElementNavigationsResponse
+	78,  // 144: diag.v1.WorkspaceService.CreateElementNavigation:output_type -> diag.v1.CreateElementNavigationResponse
+	80,  // 145: diag.v1.WorkspaceService.DeleteElementNavigationById:output_type -> diag.v1.DeleteElementNavigationByIdResponse
+	83,  // 146: diag.v1.WorkspaceService.ListViewLayers:output_type -> diag.v1.ListViewLayersResponse
+	85,  // 147: diag.v1.WorkspaceService.CreateViewLayer:output_type -> diag.v1.CreateViewLayerResponse
+	87,  // 148: diag.v1.WorkspaceService.UpdateViewLayer:output_type -> diag.v1.UpdateViewLayerResponse
+	89,  // 149: diag.v1.WorkspaceService.DeleteViewLayer:output_type -> diag.v1.DeleteViewLayerResponse
+	117, // [117:150] is the sub-list for method output_type
+	84,  // [84:117] is the sub-list for method input_type
+	84,  // [84:84] is the sub-list for extension type_name
+	84,  // [84:84] is the sub-list for extension extendee
+	0,   // [0:84] is the sub-list for field type_name
 }
 
 func init() { file_diag_v1_workspace_service_proto_init() }
@@ -7367,6 +7416,7 @@ func file_diag_v1_workspace_service_proto_init() {
 	file_diag_v1_workspace_service_proto_msgTypes[29].OneofWrappers = []any{}
 	file_diag_v1_workspace_service_proto_msgTypes[31].OneofWrappers = []any{}
 	file_diag_v1_workspace_service_proto_msgTypes[33].OneofWrappers = []any{}
+	file_diag_v1_workspace_service_proto_msgTypes[36].OneofWrappers = []any{}
 	file_diag_v1_workspace_service_proto_msgTypes[38].OneofWrappers = []any{}
 	file_diag_v1_workspace_service_proto_msgTypes[42].OneofWrappers = []any{}
 	file_diag_v1_workspace_service_proto_msgTypes[43].OneofWrappers = []any{}

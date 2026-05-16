@@ -369,6 +369,8 @@ message PlacedElement {
   optional string branch = 15;
   optional string file_path = 16;
   optional string language = 17;
+  bool has_view = 18;
+  optional string view_label = 19;
 }
 
 // Connector represents a directed connection between two elements on a view.
@@ -498,9 +500,12 @@ message ListViewsResponse {
 
 message GetViewRequest {
   int32 view_id = 1;
+  bool include_content = 2;
+  optional int32 density_override = 3;
 }
 message GetViewResponse {
   View view = 1;
+  ViewContent content = 2;
 }
 
 message UpdateViewRequest {
