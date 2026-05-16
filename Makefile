@@ -1,6 +1,9 @@
 .PHONY: generate push lint breaking
 
-## Regenerate Go (grpc/gen/) and TypeScript (../frontend/src/gen/) from proto sources.
+## Regenerate canonical artifacts from proto sources.
+## For local wrapper/core development prefer `cd .. && make dev-proto`, which
+## writes Go overlays to ../.dev/proto/go and TypeScript to
+## ../frontend-wrapper/src/gen plus ../tld/frontend/src/gen.
 generate:
 	buf generate
 
