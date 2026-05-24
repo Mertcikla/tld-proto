@@ -52,6 +52,7 @@ message DependencyConnector {
   optional string target_handle = 12;
   google.protobuf.Timestamp created_at = 13;
   google.protobuf.Timestamp updated_at = 14;
+  repeated string tags = 15;
 }
 
 message ListDependenciesRequest {}

@@ -389,6 +389,7 @@ message Connector {
   optional string target_handle = 12;
   google.protobuf.Timestamp created_at = 13;
   google.protobuf.Timestamp updated_at = 14;
+  repeated string tags = 15;
 }
 
 // ElementNavigation represents an element-to-view navigation link.
@@ -421,6 +422,7 @@ message View {
   repeated View children = 10;
   int32 depth = 11;
   optional int32 owner_element_id = 12;
+  repeated string tags = 13;
 }
 
 // ─── Delete request/response messages ────────────────────────────────────────
@@ -513,6 +515,7 @@ message UpdateViewRequest {
   string name = 2;
   optional string description = 3;
   optional string level_label = 4;
+  repeated string tags = 5;
 }
 message UpdateViewResponse {
   View view = 1;
@@ -741,6 +744,7 @@ message UpdateConnectorRequest {
   optional string url = 10;
   optional string source_handle = 11;
   optional string target_handle = 12;
+  repeated string tags = 13;
 }
 message UpdateConnectorResponse {
   Connector connector = 1;

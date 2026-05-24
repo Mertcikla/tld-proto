@@ -2138,6 +2138,7 @@ type Connector struct {
 	TargetHandle    *string                `protobuf:"bytes,12,opt,name=target_handle,json=targetHandle,proto3,oneof" json:"target_handle,omitempty"`
 	CreatedAt       *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt       *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Tags            []string               `protobuf:"bytes,15,rep,name=tags,proto3" json:"tags,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -2266,6 +2267,13 @@ func (x *Connector) GetCreatedAt() *timestamppb.Timestamp {
 func (x *Connector) GetUpdatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.UpdatedAt
+	}
+	return nil
+}
+
+func (x *Connector) GetTags() []string {
+	if x != nil {
+		return x.Tags
 	}
 	return nil
 }
@@ -2407,6 +2415,7 @@ type View struct {
 	Children       []*View                `protobuf:"bytes,10,rep,name=children,proto3" json:"children,omitempty"`
 	Depth          int32                  `protobuf:"varint,11,opt,name=depth,proto3" json:"depth,omitempty"`
 	OwnerElementId *int32                 `protobuf:"varint,12,opt,name=owner_element_id,json=ownerElementId,proto3,oneof" json:"owner_element_id,omitempty"`
+	Tags           []string               `protobuf:"bytes,13,rep,name=tags,proto3" json:"tags,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -2523,6 +2532,13 @@ func (x *View) GetOwnerElementId() int32 {
 		return *x.OwnerElementId
 	}
 	return 0
+}
+
+func (x *View) GetTags() []string {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
 }
 
 type DeleteViewRequest struct {
@@ -3228,6 +3244,7 @@ type UpdateViewRequest struct {
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Description   *string                `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	LevelLabel    *string                `protobuf:"bytes,4,opt,name=level_label,json=levelLabel,proto3,oneof" json:"level_label,omitempty"`
+	Tags          []string               `protobuf:"bytes,5,rep,name=tags,proto3" json:"tags,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3288,6 +3305,13 @@ func (x *UpdateViewRequest) GetLevelLabel() string {
 		return *x.LevelLabel
 	}
 	return ""
+}
+
+func (x *UpdateViewRequest) GetTags() []string {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
 }
 
 type UpdateViewResponse struct {
@@ -5307,6 +5331,7 @@ type UpdateConnectorRequest struct {
 	Url             *string                `protobuf:"bytes,10,opt,name=url,proto3,oneof" json:"url,omitempty"`
 	SourceHandle    *string                `protobuf:"bytes,11,opt,name=source_handle,json=sourceHandle,proto3,oneof" json:"source_handle,omitempty"`
 	TargetHandle    *string                `protobuf:"bytes,12,opt,name=target_handle,json=targetHandle,proto3,oneof" json:"target_handle,omitempty"`
+	Tags            []string               `protobuf:"bytes,13,rep,name=tags,proto3" json:"tags,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -5423,6 +5448,13 @@ func (x *UpdateConnectorRequest) GetTargetHandle() string {
 		return *x.TargetHandle
 	}
 	return ""
+}
+
+func (x *UpdateConnectorRequest) GetTags() []string {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
 }
 
 type UpdateConnectorResponse struct {
@@ -6666,7 +6698,7 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\n" +
 	"_file_pathB\v\n" +
 	"\t_languageB\r\n" +
-	"\v_view_label\"\xe3\x04\n" +
+	"\v_view_label\"\xf7\x04\n" +
 	"\tConnector\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x17\n" +
 	"\aview_id\x18\x02 \x01(\x05R\x06viewId\x12*\n" +
@@ -6684,7 +6716,8 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAtB\b\n" +
+	"updated_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x12\n" +
+	"\x04tags\x18\x0f \x03(\tR\x04tagsB\b\n" +
 	"\x06_labelB\x0e\n" +
 	"\f_descriptionB\x0f\n" +
 	"\r_relationshipB\x06\n" +
@@ -6705,7 +6738,7 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"placements\x122\n" +
 	"\n" +
 	"connectors\x18\x02 \x03(\v2\x12.diag.v1.ConnectorR\n" +
-	"connectors\"\xfd\x03\n" +
+	"connectors\"\x91\x04\n" +
 	"\x04View\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x15\n" +
 	"\x06org_id\x18\x02 \x01(\tR\x05orgId\x12\x12\n" +
@@ -6722,7 +6755,8 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\bchildren\x18\n" +
 	" \x03(\v2\r.diag.v1.ViewR\bchildren\x12\x14\n" +
 	"\x05depth\x18\v \x01(\x05R\x05depth\x12-\n" +
-	"\x10owner_element_id\x18\f \x01(\x05H\x03R\x0eownerElementId\x88\x01\x01B\x0e\n" +
+	"\x10owner_element_id\x18\f \x01(\x05H\x03R\x0eownerElementId\x88\x01\x01\x12\x12\n" +
+	"\x04tags\x18\r \x03(\tR\x04tagsB\x0e\n" +
 	"\f_descriptionB\x0e\n" +
 	"\f_level_labelB\x11\n" +
 	"\x0f_parent_view_idB\x13\n" +
@@ -6777,13 +6811,14 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\x11_density_override\"d\n" +
 	"\x0fGetViewResponse\x12!\n" +
 	"\x04view\x18\x01 \x01(\v2\r.diag.v1.ViewR\x04view\x12.\n" +
-	"\acontent\x18\x02 \x01(\v2\x14.diag.v1.ViewContentR\acontent\"\xad\x01\n" +
+	"\acontent\x18\x02 \x01(\v2\x14.diag.v1.ViewContentR\acontent\"\xc1\x01\n" +
 	"\x11UpdateViewRequest\x12\x17\n" +
 	"\aview_id\x18\x01 \x01(\x05R\x06viewId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12%\n" +
 	"\vdescription\x18\x03 \x01(\tH\x00R\vdescription\x88\x01\x01\x12$\n" +
 	"\vlevel_label\x18\x04 \x01(\tH\x01R\n" +
-	"levelLabel\x88\x01\x01B\x0e\n" +
+	"levelLabel\x88\x01\x01\x12\x12\n" +
+	"\x04tags\x18\x05 \x03(\tR\x04tagsB\x0e\n" +
 	"\f_descriptionB\x0e\n" +
 	"\f_level_label\"7\n" +
 	"\x12UpdateViewResponse\x12!\n" +
@@ -6989,7 +7024,7 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\x0e_source_handleB\x10\n" +
 	"\x0e_target_handle\"K\n" +
 	"\x17CreateConnectorResponse\x120\n" +
-	"\tconnector\x18\x01 \x01(\v2\x12.diag.v1.ConnectorR\tconnector\"\xc3\x04\n" +
+	"\tconnector\x18\x01 \x01(\v2\x12.diag.v1.ConnectorR\tconnector\"\xd7\x04\n" +
 	"\x16UpdateConnectorRequest\x12\x17\n" +
 	"\aview_id\x18\x01 \x01(\x05R\x06viewId\x12!\n" +
 	"\fconnector_id\x18\x02 \x01(\x05R\vconnectorId\x12/\n" +
@@ -7003,7 +7038,8 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\x03url\x18\n" +
 	" \x01(\tH\x05R\x03url\x88\x01\x01\x12(\n" +
 	"\rsource_handle\x18\v \x01(\tH\x06R\fsourceHandle\x88\x01\x01\x12(\n" +
-	"\rtarget_handle\x18\f \x01(\tH\aR\ftargetHandle\x88\x01\x01B\x14\n" +
+	"\rtarget_handle\x18\f \x01(\tH\aR\ftargetHandle\x88\x01\x01\x12\x12\n" +
+	"\x04tags\x18\r \x03(\tR\x04tagsB\x14\n" +
 	"\x12_source_element_idB\x14\n" +
 	"\x12_target_element_idB\b\n" +
 	"\x06_labelB\x0e\n" +

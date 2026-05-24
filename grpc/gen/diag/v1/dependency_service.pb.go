@@ -262,6 +262,7 @@ type DependencyConnector struct {
 	TargetHandle    *string                `protobuf:"bytes,12,opt,name=target_handle,json=targetHandle,proto3,oneof" json:"target_handle,omitempty"`
 	CreatedAt       *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt       *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Tags            []string               `protobuf:"bytes,15,rep,name=tags,proto3" json:"tags,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -394,6 +395,13 @@ func (x *DependencyConnector) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *DependencyConnector) GetTags() []string {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
+}
+
 type ListDependenciesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -522,7 +530,7 @@ const file_diag_v1_dependency_service_proto_rawDesc = "" +
 	"\x04type\x18\x01 \x01(\tR\x04type\x12\x12\n" +
 	"\x04slug\x18\x02 \x01(\tR\x04slug\x12\x14\n" +
 	"\x05label\x18\x03 \x01(\tR\x05label\x12&\n" +
-	"\x0fis_primary_icon\x18\x04 \x01(\bR\risPrimaryIcon\"\xed\x04\n" +
+	"\x0fis_primary_icon\x18\x04 \x01(\bR\risPrimaryIcon\"\x81\x05\n" +
 	"\x13DependencyConnector\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\aview_id\x18\x02 \x01(\tR\x06viewId\x12*\n" +
@@ -540,7 +548,8 @@ const file_diag_v1_dependency_service_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAtB\b\n" +
+	"updated_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x12\n" +
+	"\x04tags\x18\x0f \x03(\tR\x04tagsB\b\n" +
 	"\x06_labelB\x0e\n" +
 	"\f_descriptionB\x0f\n" +
 	"\r_relationshipB\x06\n" +
