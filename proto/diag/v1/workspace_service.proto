@@ -73,6 +73,11 @@ service WorkspaceService {
   rpc ListViews(ListViewsRequest) returns (ListViewsResponse);
   rpc GetView(GetViewRequest) returns (GetViewResponse);
   rpc UpdateView(UpdateViewRequest) returns (UpdateViewResponse);
+  rpc GetViewMarkdown(GetViewMarkdownRequest) returns (GetViewMarkdownResponse);
+  rpc CreateViewMarkdown(CreateViewMarkdownRequest) returns (CreateViewMarkdownResponse);
+  rpc LinkViewMarkdown(LinkViewMarkdownRequest) returns (LinkViewMarkdownResponse);
+  rpc SaveViewMarkdown(SaveViewMarkdownRequest) returns (SaveViewMarkdownResponse);
+  rpc UnlinkViewMarkdown(UnlinkViewMarkdownRequest) returns (UnlinkViewMarkdownResponse);
   rpc SetViewLevel(SetViewLevelRequest) returns (SetViewLevelResponse);
   rpc GetWorkspace(GetWorkspaceRequest) returns (GetWorkspaceResponse);
   rpc ListIncomingElementNavigations(ListIncomingElementNavigationsRequest) returns (ListIncomingElementNavigationsResponse);
@@ -409,6 +414,13 @@ message ViewContent {
 // ─── Domain types ────────────────────────────────────────────────────────────
 
 // View represents a view record.
+message ViewMarkdownDocument {
+  string path = 1;
+  bool is_managed = 2;
+  google.protobuf.Timestamp updated_at = 3;
+}
+
+// View represents a view record.
 message View {
   int32 id = 1;
   string org_id = 2;
@@ -423,6 +435,7 @@ message View {
   int32 depth = 11;
   optional int32 owner_element_id = 12;
   repeated string tags = 13;
+  ViewMarkdownDocument markdown = 14;
 }
 
 // ─── Delete request/response messages ────────────────────────────────────────
@@ -518,6 +531,52 @@ message UpdateViewRequest {
   repeated string tags = 5;
 }
 message UpdateViewResponse {
+  View view = 1;
+}
+
+message GetViewMarkdownRequest {
+  int32 view_id = 1;
+}
+
+message GetViewMarkdownResponse {
+  ViewMarkdownDocument markdown = 1;
+  string content = 2;
+}
+
+message CreateViewMarkdownRequest {
+  int32 view_id = 1;
+  optional string file_name = 2;
+  optional string initial_content = 3;
+}
+
+message CreateViewMarkdownResponse {
+  View view = 1;
+}
+
+message LinkViewMarkdownRequest {
+  int32 view_id = 1;
+  string path = 2;
+}
+
+message LinkViewMarkdownResponse {
+  View view = 1;
+}
+
+message SaveViewMarkdownRequest {
+  int32 view_id = 1;
+  string content = 2;
+}
+
+message SaveViewMarkdownResponse {
+  ViewMarkdownDocument markdown = 1;
+}
+
+message UnlinkViewMarkdownRequest {
+  int32 view_id = 1;
+  bool delete_managed_file = 2;
+}
+
+message UnlinkViewMarkdownResponse {
   View view = 1;
 }
 
@@ -726,6 +785,7 @@ message CreateConnectorRequest {
   optional string url = 9;
   optional string source_handle = 10;
   optional string target_handle = 11;
+  repeated string tags = 12;
 }
 message CreateConnectorResponse {
   Connector connector = 1;

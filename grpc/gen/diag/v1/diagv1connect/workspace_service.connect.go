@@ -66,6 +66,21 @@ const (
 	// WorkspaceServiceUpdateViewProcedure is the fully-qualified name of the WorkspaceService's
 	// UpdateView RPC.
 	WorkspaceServiceUpdateViewProcedure = "/diag.v1.WorkspaceService/UpdateView"
+	// WorkspaceServiceGetViewMarkdownProcedure is the fully-qualified name of the WorkspaceService's
+	// GetViewMarkdown RPC.
+	WorkspaceServiceGetViewMarkdownProcedure = "/diag.v1.WorkspaceService/GetViewMarkdown"
+	// WorkspaceServiceCreateViewMarkdownProcedure is the fully-qualified name of the WorkspaceService's
+	// CreateViewMarkdown RPC.
+	WorkspaceServiceCreateViewMarkdownProcedure = "/diag.v1.WorkspaceService/CreateViewMarkdown"
+	// WorkspaceServiceLinkViewMarkdownProcedure is the fully-qualified name of the WorkspaceService's
+	// LinkViewMarkdown RPC.
+	WorkspaceServiceLinkViewMarkdownProcedure = "/diag.v1.WorkspaceService/LinkViewMarkdown"
+	// WorkspaceServiceSaveViewMarkdownProcedure is the fully-qualified name of the WorkspaceService's
+	// SaveViewMarkdown RPC.
+	WorkspaceServiceSaveViewMarkdownProcedure = "/diag.v1.WorkspaceService/SaveViewMarkdown"
+	// WorkspaceServiceUnlinkViewMarkdownProcedure is the fully-qualified name of the WorkspaceService's
+	// UnlinkViewMarkdown RPC.
+	WorkspaceServiceUnlinkViewMarkdownProcedure = "/diag.v1.WorkspaceService/UnlinkViewMarkdown"
 	// WorkspaceServiceSetViewLevelProcedure is the fully-qualified name of the WorkspaceService's
 	// SetViewLevel RPC.
 	WorkspaceServiceSetViewLevelProcedure = "/diag.v1.WorkspaceService/SetViewLevel"
@@ -173,6 +188,11 @@ type WorkspaceServiceClient interface {
 	ListViews(context.Context, *connect.Request[v1.ListViewsRequest]) (*connect.Response[v1.ListViewsResponse], error)
 	GetView(context.Context, *connect.Request[v1.GetViewRequest]) (*connect.Response[v1.GetViewResponse], error)
 	UpdateView(context.Context, *connect.Request[v1.UpdateViewRequest]) (*connect.Response[v1.UpdateViewResponse], error)
+	GetViewMarkdown(context.Context, *connect.Request[v1.GetViewMarkdownRequest]) (*connect.Response[v1.GetViewMarkdownResponse], error)
+	CreateViewMarkdown(context.Context, *connect.Request[v1.CreateViewMarkdownRequest]) (*connect.Response[v1.CreateViewMarkdownResponse], error)
+	LinkViewMarkdown(context.Context, *connect.Request[v1.LinkViewMarkdownRequest]) (*connect.Response[v1.LinkViewMarkdownResponse], error)
+	SaveViewMarkdown(context.Context, *connect.Request[v1.SaveViewMarkdownRequest]) (*connect.Response[v1.SaveViewMarkdownResponse], error)
+	UnlinkViewMarkdown(context.Context, *connect.Request[v1.UnlinkViewMarkdownRequest]) (*connect.Response[v1.UnlinkViewMarkdownResponse], error)
 	SetViewLevel(context.Context, *connect.Request[v1.SetViewLevelRequest]) (*connect.Response[v1.SetViewLevelResponse], error)
 	GetWorkspace(context.Context, *connect.Request[v1.GetWorkspaceRequest]) (*connect.Response[v1.GetWorkspaceResponse], error)
 	ListIncomingElementNavigations(context.Context, *connect.Request[v1.ListIncomingElementNavigationsRequest]) (*connect.Response[v1.ListIncomingElementNavigationsResponse], error)
@@ -277,6 +297,36 @@ func NewWorkspaceServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			httpClient,
 			baseURL+WorkspaceServiceUpdateViewProcedure,
 			connect.WithSchema(workspaceServiceMethods.ByName("UpdateView")),
+			connect.WithClientOptions(opts...),
+		),
+		getViewMarkdown: connect.NewClient[v1.GetViewMarkdownRequest, v1.GetViewMarkdownResponse](
+			httpClient,
+			baseURL+WorkspaceServiceGetViewMarkdownProcedure,
+			connect.WithSchema(workspaceServiceMethods.ByName("GetViewMarkdown")),
+			connect.WithClientOptions(opts...),
+		),
+		createViewMarkdown: connect.NewClient[v1.CreateViewMarkdownRequest, v1.CreateViewMarkdownResponse](
+			httpClient,
+			baseURL+WorkspaceServiceCreateViewMarkdownProcedure,
+			connect.WithSchema(workspaceServiceMethods.ByName("CreateViewMarkdown")),
+			connect.WithClientOptions(opts...),
+		),
+		linkViewMarkdown: connect.NewClient[v1.LinkViewMarkdownRequest, v1.LinkViewMarkdownResponse](
+			httpClient,
+			baseURL+WorkspaceServiceLinkViewMarkdownProcedure,
+			connect.WithSchema(workspaceServiceMethods.ByName("LinkViewMarkdown")),
+			connect.WithClientOptions(opts...),
+		),
+		saveViewMarkdown: connect.NewClient[v1.SaveViewMarkdownRequest, v1.SaveViewMarkdownResponse](
+			httpClient,
+			baseURL+WorkspaceServiceSaveViewMarkdownProcedure,
+			connect.WithSchema(workspaceServiceMethods.ByName("SaveViewMarkdown")),
+			connect.WithClientOptions(opts...),
+		),
+		unlinkViewMarkdown: connect.NewClient[v1.UnlinkViewMarkdownRequest, v1.UnlinkViewMarkdownResponse](
+			httpClient,
+			baseURL+WorkspaceServiceUnlinkViewMarkdownProcedure,
+			connect.WithSchema(workspaceServiceMethods.ByName("UnlinkViewMarkdown")),
 			connect.WithClientOptions(opts...),
 		),
 		setViewLevel: connect.NewClient[v1.SetViewLevelRequest, v1.SetViewLevelResponse](
@@ -427,6 +477,11 @@ type workspaceServiceClient struct {
 	listViews                      *connect.Client[v1.ListViewsRequest, v1.ListViewsResponse]
 	getView                        *connect.Client[v1.GetViewRequest, v1.GetViewResponse]
 	updateView                     *connect.Client[v1.UpdateViewRequest, v1.UpdateViewResponse]
+	getViewMarkdown                *connect.Client[v1.GetViewMarkdownRequest, v1.GetViewMarkdownResponse]
+	createViewMarkdown             *connect.Client[v1.CreateViewMarkdownRequest, v1.CreateViewMarkdownResponse]
+	linkViewMarkdown               *connect.Client[v1.LinkViewMarkdownRequest, v1.LinkViewMarkdownResponse]
+	saveViewMarkdown               *connect.Client[v1.SaveViewMarkdownRequest, v1.SaveViewMarkdownResponse]
+	unlinkViewMarkdown             *connect.Client[v1.UnlinkViewMarkdownRequest, v1.UnlinkViewMarkdownResponse]
 	setViewLevel                   *connect.Client[v1.SetViewLevelRequest, v1.SetViewLevelResponse]
 	getWorkspace                   *connect.Client[v1.GetWorkspaceRequest, v1.GetWorkspaceResponse]
 	listIncomingElementNavigations *connect.Client[v1.ListIncomingElementNavigationsRequest, v1.ListIncomingElementNavigationsResponse]
@@ -504,6 +559,31 @@ func (c *workspaceServiceClient) GetView(ctx context.Context, req *connect.Reque
 // UpdateView calls diag.v1.WorkspaceService.UpdateView.
 func (c *workspaceServiceClient) UpdateView(ctx context.Context, req *connect.Request[v1.UpdateViewRequest]) (*connect.Response[v1.UpdateViewResponse], error) {
 	return c.updateView.CallUnary(ctx, req)
+}
+
+// GetViewMarkdown calls diag.v1.WorkspaceService.GetViewMarkdown.
+func (c *workspaceServiceClient) GetViewMarkdown(ctx context.Context, req *connect.Request[v1.GetViewMarkdownRequest]) (*connect.Response[v1.GetViewMarkdownResponse], error) {
+	return c.getViewMarkdown.CallUnary(ctx, req)
+}
+
+// CreateViewMarkdown calls diag.v1.WorkspaceService.CreateViewMarkdown.
+func (c *workspaceServiceClient) CreateViewMarkdown(ctx context.Context, req *connect.Request[v1.CreateViewMarkdownRequest]) (*connect.Response[v1.CreateViewMarkdownResponse], error) {
+	return c.createViewMarkdown.CallUnary(ctx, req)
+}
+
+// LinkViewMarkdown calls diag.v1.WorkspaceService.LinkViewMarkdown.
+func (c *workspaceServiceClient) LinkViewMarkdown(ctx context.Context, req *connect.Request[v1.LinkViewMarkdownRequest]) (*connect.Response[v1.LinkViewMarkdownResponse], error) {
+	return c.linkViewMarkdown.CallUnary(ctx, req)
+}
+
+// SaveViewMarkdown calls diag.v1.WorkspaceService.SaveViewMarkdown.
+func (c *workspaceServiceClient) SaveViewMarkdown(ctx context.Context, req *connect.Request[v1.SaveViewMarkdownRequest]) (*connect.Response[v1.SaveViewMarkdownResponse], error) {
+	return c.saveViewMarkdown.CallUnary(ctx, req)
+}
+
+// UnlinkViewMarkdown calls diag.v1.WorkspaceService.UnlinkViewMarkdown.
+func (c *workspaceServiceClient) UnlinkViewMarkdown(ctx context.Context, req *connect.Request[v1.UnlinkViewMarkdownRequest]) (*connect.Response[v1.UnlinkViewMarkdownResponse], error) {
+	return c.unlinkViewMarkdown.CallUnary(ctx, req)
 }
 
 // SetViewLevel calls diag.v1.WorkspaceService.SetViewLevel.
@@ -655,6 +735,11 @@ type WorkspaceServiceHandler interface {
 	ListViews(context.Context, *connect.Request[v1.ListViewsRequest]) (*connect.Response[v1.ListViewsResponse], error)
 	GetView(context.Context, *connect.Request[v1.GetViewRequest]) (*connect.Response[v1.GetViewResponse], error)
 	UpdateView(context.Context, *connect.Request[v1.UpdateViewRequest]) (*connect.Response[v1.UpdateViewResponse], error)
+	GetViewMarkdown(context.Context, *connect.Request[v1.GetViewMarkdownRequest]) (*connect.Response[v1.GetViewMarkdownResponse], error)
+	CreateViewMarkdown(context.Context, *connect.Request[v1.CreateViewMarkdownRequest]) (*connect.Response[v1.CreateViewMarkdownResponse], error)
+	LinkViewMarkdown(context.Context, *connect.Request[v1.LinkViewMarkdownRequest]) (*connect.Response[v1.LinkViewMarkdownResponse], error)
+	SaveViewMarkdown(context.Context, *connect.Request[v1.SaveViewMarkdownRequest]) (*connect.Response[v1.SaveViewMarkdownResponse], error)
+	UnlinkViewMarkdown(context.Context, *connect.Request[v1.UnlinkViewMarkdownRequest]) (*connect.Response[v1.UnlinkViewMarkdownResponse], error)
 	SetViewLevel(context.Context, *connect.Request[v1.SetViewLevelRequest]) (*connect.Response[v1.SetViewLevelResponse], error)
 	GetWorkspace(context.Context, *connect.Request[v1.GetWorkspaceRequest]) (*connect.Response[v1.GetWorkspaceResponse], error)
 	ListIncomingElementNavigations(context.Context, *connect.Request[v1.ListIncomingElementNavigationsRequest]) (*connect.Response[v1.ListIncomingElementNavigationsResponse], error)
@@ -755,6 +840,36 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 		WorkspaceServiceUpdateViewProcedure,
 		svc.UpdateView,
 		connect.WithSchema(workspaceServiceMethods.ByName("UpdateView")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workspaceServiceGetViewMarkdownHandler := connect.NewUnaryHandler(
+		WorkspaceServiceGetViewMarkdownProcedure,
+		svc.GetViewMarkdown,
+		connect.WithSchema(workspaceServiceMethods.ByName("GetViewMarkdown")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workspaceServiceCreateViewMarkdownHandler := connect.NewUnaryHandler(
+		WorkspaceServiceCreateViewMarkdownProcedure,
+		svc.CreateViewMarkdown,
+		connect.WithSchema(workspaceServiceMethods.ByName("CreateViewMarkdown")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workspaceServiceLinkViewMarkdownHandler := connect.NewUnaryHandler(
+		WorkspaceServiceLinkViewMarkdownProcedure,
+		svc.LinkViewMarkdown,
+		connect.WithSchema(workspaceServiceMethods.ByName("LinkViewMarkdown")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workspaceServiceSaveViewMarkdownHandler := connect.NewUnaryHandler(
+		WorkspaceServiceSaveViewMarkdownProcedure,
+		svc.SaveViewMarkdown,
+		connect.WithSchema(workspaceServiceMethods.ByName("SaveViewMarkdown")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workspaceServiceUnlinkViewMarkdownHandler := connect.NewUnaryHandler(
+		WorkspaceServiceUnlinkViewMarkdownProcedure,
+		svc.UnlinkViewMarkdown,
+		connect.WithSchema(workspaceServiceMethods.ByName("UnlinkViewMarkdown")),
 		connect.WithHandlerOptions(opts...),
 	)
 	workspaceServiceSetViewLevelHandler := connect.NewUnaryHandler(
@@ -913,6 +1028,16 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 			workspaceServiceGetViewHandler.ServeHTTP(w, r)
 		case WorkspaceServiceUpdateViewProcedure:
 			workspaceServiceUpdateViewHandler.ServeHTTP(w, r)
+		case WorkspaceServiceGetViewMarkdownProcedure:
+			workspaceServiceGetViewMarkdownHandler.ServeHTTP(w, r)
+		case WorkspaceServiceCreateViewMarkdownProcedure:
+			workspaceServiceCreateViewMarkdownHandler.ServeHTTP(w, r)
+		case WorkspaceServiceLinkViewMarkdownProcedure:
+			workspaceServiceLinkViewMarkdownHandler.ServeHTTP(w, r)
+		case WorkspaceServiceSaveViewMarkdownProcedure:
+			workspaceServiceSaveViewMarkdownHandler.ServeHTTP(w, r)
+		case WorkspaceServiceUnlinkViewMarkdownProcedure:
+			workspaceServiceUnlinkViewMarkdownHandler.ServeHTTP(w, r)
 		case WorkspaceServiceSetViewLevelProcedure:
 			workspaceServiceSetViewLevelHandler.ServeHTTP(w, r)
 		case WorkspaceServiceGetWorkspaceProcedure:
@@ -1008,6 +1133,26 @@ func (UnimplementedWorkspaceServiceHandler) GetView(context.Context, *connect.Re
 
 func (UnimplementedWorkspaceServiceHandler) UpdateView(context.Context, *connect.Request[v1.UpdateViewRequest]) (*connect.Response[v1.UpdateViewResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.WorkspaceService.UpdateView is not implemented"))
+}
+
+func (UnimplementedWorkspaceServiceHandler) GetViewMarkdown(context.Context, *connect.Request[v1.GetViewMarkdownRequest]) (*connect.Response[v1.GetViewMarkdownResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.WorkspaceService.GetViewMarkdown is not implemented"))
+}
+
+func (UnimplementedWorkspaceServiceHandler) CreateViewMarkdown(context.Context, *connect.Request[v1.CreateViewMarkdownRequest]) (*connect.Response[v1.CreateViewMarkdownResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.WorkspaceService.CreateViewMarkdown is not implemented"))
+}
+
+func (UnimplementedWorkspaceServiceHandler) LinkViewMarkdown(context.Context, *connect.Request[v1.LinkViewMarkdownRequest]) (*connect.Response[v1.LinkViewMarkdownResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.WorkspaceService.LinkViewMarkdown is not implemented"))
+}
+
+func (UnimplementedWorkspaceServiceHandler) SaveViewMarkdown(context.Context, *connect.Request[v1.SaveViewMarkdownRequest]) (*connect.Response[v1.SaveViewMarkdownResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.WorkspaceService.SaveViewMarkdown is not implemented"))
+}
+
+func (UnimplementedWorkspaceServiceHandler) UnlinkViewMarkdown(context.Context, *connect.Request[v1.UnlinkViewMarkdownRequest]) (*connect.Response[v1.UnlinkViewMarkdownResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.WorkspaceService.UnlinkViewMarkdown is not implemented"))
 }
 
 func (UnimplementedWorkspaceServiceHandler) SetViewLevel(context.Context, *connect.Request[v1.SetViewLevelRequest]) (*connect.Response[v1.SetViewLevelResponse], error) {
