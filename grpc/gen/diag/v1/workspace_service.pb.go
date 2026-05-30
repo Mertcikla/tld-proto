@@ -340,6 +340,7 @@ type PlanElement struct {
 	ViewId           *int32                 `protobuf:"varint,19,opt,name=view_id,json=viewId,proto3,oneof" json:"view_id,omitempty"`
 	ViewUpdatedAt    *timestamppb.Timestamp `protobuf:"bytes,20,opt,name=view_updated_at,json=viewUpdatedAt,proto3,oneof" json:"view_updated_at,omitempty"`
 	ViewDensityLevel *int32                 `protobuf:"varint,21,opt,name=view_density_level,json=viewDensityLevel,proto3,oneof" json:"view_density_level,omitempty"`
+	BypassNoiseGate  *bool                  `protobuf:"varint,22,opt,name=bypass_noise_gate,json=bypassNoiseGate,proto3,oneof" json:"bypass_noise_gate,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -519,6 +520,13 @@ func (x *PlanElement) GetViewDensityLevel() int32 {
 		return *x.ViewDensityLevel
 	}
 	return 0
+}
+
+func (x *PlanElement) GetBypassNoiseGate() bool {
+	if x != nil && x.BypassNoiseGate != nil {
+		return *x.BypassNoiseGate
+	}
+	return false
 }
 
 type PlanConnector struct {
@@ -1586,6 +1594,7 @@ type Element struct {
 	HasView         bool                   `protobuf:"varint,17,opt,name=has_view,json=hasView,proto3" json:"has_view,omitempty"`
 	ViewLabel       *string                `protobuf:"bytes,18,opt,name=view_label,json=viewLabel,proto3,oneof" json:"view_label,omitempty"`
 	Ref             string                 `protobuf:"bytes,19,opt,name=ref,proto3" json:"ref,omitempty"`
+	BypassNoiseGate bool                   `protobuf:"varint,20,opt,name=bypass_noise_gate,json=bypassNoiseGate,proto3" json:"bypass_noise_gate,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -1751,6 +1760,13 @@ func (x *Element) GetRef() string {
 		return x.Ref
 	}
 	return ""
+}
+
+func (x *Element) GetBypassNoiseGate() bool {
+	if x != nil {
+		return x.BypassNoiseGate
+	}
+	return false
 }
 
 // ViewSummary represents a view in the workspace tree.
@@ -1954,6 +1970,7 @@ type PlacedElement struct {
 	Language        *string                `protobuf:"bytes,17,opt,name=language,proto3,oneof" json:"language,omitempty"`
 	HasView         bool                   `protobuf:"varint,18,opt,name=has_view,json=hasView,proto3" json:"has_view,omitempty"`
 	ViewLabel       *string                `protobuf:"bytes,19,opt,name=view_label,json=viewLabel,proto3,oneof" json:"view_label,omitempty"`
+	BypassNoiseGate bool                   `protobuf:"varint,20,opt,name=bypass_noise_gate,json=bypassNoiseGate,proto3" json:"bypass_noise_gate,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -2119,6 +2136,13 @@ func (x *PlacedElement) GetViewLabel() string {
 		return *x.ViewLabel
 	}
 	return ""
+}
+
+func (x *PlacedElement) GetBypassNoiseGate() bool {
+	if x != nil {
+		return x.BypassNoiseGate
+	}
+	return false
 }
 
 // Connector represents a directed connection between two elements on a view.
@@ -4704,6 +4728,7 @@ type CreateElementRequest struct {
 	Branch          *string                `protobuf:"bytes,10,opt,name=branch,proto3,oneof" json:"branch,omitempty"`
 	Language        *string                `protobuf:"bytes,11,opt,name=language,proto3,oneof" json:"language,omitempty"`
 	FilePath        *string                `protobuf:"bytes,12,opt,name=file_path,json=filePath,proto3,oneof" json:"file_path,omitempty"`
+	BypassNoiseGate *bool                  `protobuf:"varint,13,opt,name=bypass_noise_gate,json=bypassNoiseGate,proto3,oneof" json:"bypass_noise_gate,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -4822,6 +4847,13 @@ func (x *CreateElementRequest) GetFilePath() string {
 	return ""
 }
 
+func (x *CreateElementRequest) GetBypassNoiseGate() bool {
+	if x != nil && x.BypassNoiseGate != nil {
+		return *x.BypassNoiseGate
+	}
+	return false
+}
+
 type CreateElementResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Element       *Element               `protobuf:"bytes,1,opt,name=element,proto3" json:"element,omitempty"`
@@ -4881,6 +4913,7 @@ type UpdateElementRequest struct {
 	Branch          *string                `protobuf:"bytes,11,opt,name=branch,proto3,oneof" json:"branch,omitempty"`
 	Language        *string                `protobuf:"bytes,12,opt,name=language,proto3,oneof" json:"language,omitempty"`
 	FilePath        *string                `protobuf:"bytes,13,opt,name=file_path,json=filePath,proto3,oneof" json:"file_path,omitempty"`
+	BypassNoiseGate *bool                  `protobuf:"varint,14,opt,name=bypass_noise_gate,json=bypassNoiseGate,proto3,oneof" json:"bypass_noise_gate,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -5004,6 +5037,13 @@ func (x *UpdateElementRequest) GetFilePath() string {
 		return *x.FilePath
 	}
 	return ""
+}
+
+func (x *UpdateElementRequest) GetBypassNoiseGate() bool {
+	if x != nil && x.BypassNoiseGate != nil {
+		return *x.BypassNoiseGate
+	}
+	return false
 }
 
 type UpdateElementResponse struct {
@@ -6982,7 +7022,7 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\x10visibility_delta\x18\x04 \x01(\x05H\x02R\x0fvisibilityDelta\x88\x01\x01B\r\n" +
 	"\v_position_xB\r\n" +
 	"\v_position_yB\x13\n" +
-	"\x11_visibility_delta\"\xd2\a\n" +
+	"\x11_visibility_delta\"\x99\b\n" +
 	"\vPlanElement\x12\x10\n" +
 	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x17\n" +
@@ -7012,7 +7052,8 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"view_label\x18\x12 \x01(\tH\vR\tviewLabel\x88\x01\x01\x12\x1c\n" +
 	"\aview_id\x18\x13 \x01(\x05H\fR\x06viewId\x88\x01\x01\x12G\n" +
 	"\x0fview_updated_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampH\rR\rviewUpdatedAt\x88\x01\x01\x121\n" +
-	"\x12view_density_level\x18\x15 \x01(\x05H\x0eR\x10viewDensityLevel\x88\x01\x01B\a\n" +
+	"\x12view_density_level\x18\x15 \x01(\x05H\x0eR\x10viewDensityLevel\x88\x01\x01\x12/\n" +
+	"\x11bypass_noise_gate\x18\x16 \x01(\bH\x0fR\x0fbypassNoiseGate\x88\x01\x01B\a\n" +
 	"\x05_kindB\x0e\n" +
 	"\f_descriptionB\r\n" +
 	"\v_technologyB\x06\n" +
@@ -7029,7 +7070,8 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\n" +
 	"\b_view_idB\x12\n" +
 	"\x10_view_updated_atB\x15\n" +
-	"\x13_view_density_level\"\xcb\x05\n" +
+	"\x13_view_density_levelB\x14\n" +
+	"\x12_bypass_noise_gate\"\xcb\x05\n" +
 	"\rPlanConnector\x12\x10\n" +
 	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x19\n" +
 	"\bview_ref\x18\x02 \x01(\tR\aviewRef\x12,\n" +
@@ -7166,7 +7208,7 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\n" +
 	"\b_api_key\"7\n" +
 	"\x12CreateViewResponse\x12!\n" +
-	"\x04view\x18\x01 \x01(\v2\r.diag.v1.ViewR\x04view\"\xf3\x05\n" +
+	"\x04view\x18\x01 \x01(\v2\r.diag.v1.ViewR\x04view\"\x9f\x06\n" +
 	"\aElement\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x15\n" +
 	"\x06org_id\x18\x02 \x01(\tR\x05orgId\x12\x12\n" +
@@ -7192,7 +7234,8 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\bhas_view\x18\x11 \x01(\bR\ahasView\x12\"\n" +
 	"\n" +
 	"view_label\x18\x12 \x01(\tH\tR\tviewLabel\x88\x01\x01\x12\x10\n" +
-	"\x03ref\x18\x13 \x01(\tR\x03refB\a\n" +
+	"\x03ref\x18\x13 \x01(\tR\x03ref\x12*\n" +
+	"\x11bypass_noise_gate\x18\x14 \x01(\bR\x0fbypassNoiseGateB\a\n" +
 	"\x05_kindB\x0e\n" +
 	"\f_descriptionB\r\n" +
 	"\v_technologyB\x06\n" +
@@ -7225,7 +7268,7 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\n" +
 	"position_x\x18\x04 \x01(\x01R\tpositionX\x12\x1d\n" +
 	"\n" +
-	"position_y\x18\x05 \x01(\x01R\tpositionY\"\xd0\x05\n" +
+	"position_y\x18\x05 \x01(\x01R\tpositionY\"\xfc\x05\n" +
 	"\rPlacedElement\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x17\n" +
 	"\aview_id\x18\x02 \x01(\x05R\x06viewId\x12\x1d\n" +
@@ -7252,7 +7295,8 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\blanguage\x18\x11 \x01(\tH\bR\blanguage\x88\x01\x01\x12\x19\n" +
 	"\bhas_view\x18\x12 \x01(\bR\ahasView\x12\"\n" +
 	"\n" +
-	"view_label\x18\x13 \x01(\tH\tR\tviewLabel\x88\x01\x01B\x0e\n" +
+	"view_label\x18\x13 \x01(\tH\tR\tviewLabel\x88\x01\x01\x12*\n" +
+	"\x11bypass_noise_gate\x18\x14 \x01(\bR\x0fbypassNoiseGateB\x0e\n" +
 	"\f_descriptionB\a\n" +
 	"\x05_kindB\r\n" +
 	"\v_technologyB\x06\n" +
@@ -7496,7 +7540,7 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\n" +
 	"element_id\x18\x01 \x01(\x05R\telementId\"@\n" +
 	"\x12GetElementResponse\x12*\n" +
-	"\aelement\x18\x01 \x01(\v2\x10.diag.v1.ElementR\aelement\"\x83\x04\n" +
+	"\aelement\x18\x01 \x01(\v2\x10.diag.v1.ElementR\aelement\"\xca\x04\n" +
 	"\x14CreateElementRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x17\n" +
 	"\x04kind\x18\x02 \x01(\tH\x00R\x04kind\x88\x01\x01\x12%\n" +
@@ -7512,7 +7556,8 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\x06branch\x18\n" +
 	" \x01(\tH\x06R\x06branch\x88\x01\x01\x12\x1f\n" +
 	"\blanguage\x18\v \x01(\tH\aR\blanguage\x88\x01\x01\x12 \n" +
-	"\tfile_path\x18\f \x01(\tH\bR\bfilePath\x88\x01\x01B\a\n" +
+	"\tfile_path\x18\f \x01(\tH\bR\bfilePath\x88\x01\x01\x12/\n" +
+	"\x11bypass_noise_gate\x18\r \x01(\bH\tR\x0fbypassNoiseGate\x88\x01\x01B\a\n" +
 	"\x05_kindB\x0e\n" +
 	"\f_descriptionB\r\n" +
 	"\v_technologyB\x06\n" +
@@ -7522,9 +7567,10 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\a_branchB\v\n" +
 	"\t_languageB\f\n" +
 	"\n" +
-	"_file_path\"C\n" +
+	"_file_pathB\x14\n" +
+	"\x12_bypass_noise_gate\"C\n" +
 	"\x15CreateElementResponse\x12*\n" +
-	"\aelement\x18\x01 \x01(\v2\x10.diag.v1.ElementR\aelement\"\xa2\x04\n" +
+	"\aelement\x18\x01 \x01(\v2\x10.diag.v1.ElementR\aelement\"\xe9\x04\n" +
 	"\x14UpdateElementRequest\x12\x1d\n" +
 	"\n" +
 	"element_id\x18\x01 \x01(\x05R\telementId\x12\x12\n" +
@@ -7542,7 +7588,8 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	" \x01(\tH\x05R\x04repo\x88\x01\x01\x12\x1b\n" +
 	"\x06branch\x18\v \x01(\tH\x06R\x06branch\x88\x01\x01\x12\x1f\n" +
 	"\blanguage\x18\f \x01(\tH\aR\blanguage\x88\x01\x01\x12 \n" +
-	"\tfile_path\x18\r \x01(\tH\bR\bfilePath\x88\x01\x01B\a\n" +
+	"\tfile_path\x18\r \x01(\tH\bR\bfilePath\x88\x01\x01\x12/\n" +
+	"\x11bypass_noise_gate\x18\x0e \x01(\bH\tR\x0fbypassNoiseGate\x88\x01\x01B\a\n" +
 	"\x05_kindB\x0e\n" +
 	"\f_descriptionB\r\n" +
 	"\v_technologyB\x06\n" +
@@ -7552,7 +7599,8 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\a_branchB\v\n" +
 	"\t_languageB\f\n" +
 	"\n" +
-	"_file_path\"C\n" +
+	"_file_pathB\x14\n" +
+	"\x12_bypass_noise_gate\"C\n" +
 	"\x15UpdateElementResponse\x12*\n" +
 	"\aelement\x18\x01 \x01(\v2\x10.diag.v1.ElementR\aelement\"I\n" +
 	"\x11ViewPlacementInfo\x12\x17\n" +

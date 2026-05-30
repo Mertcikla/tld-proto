@@ -175,6 +175,7 @@ message PlanElement {
   optional int32 view_id = 19;
   optional google.protobuf.Timestamp view_updated_at = 20;
   optional int32 view_density_level = 21;
+  optional bool bypass_noise_gate = 22;
 }
 
 message PlanConnector {
@@ -331,6 +332,7 @@ message Element {
   bool has_view = 17;
   optional string view_label = 18;
   string ref = 19;
+  bool bypass_noise_gate = 20;
 }
 
 // ViewSummary represents a view in the workspace tree.
@@ -376,6 +378,7 @@ message PlacedElement {
   optional string language = 17;
   bool has_view = 18;
   optional string view_label = 19;
+  bool bypass_noise_gate = 20;
 }
 
 // Connector represents a directed connection between two elements on a view.
@@ -687,6 +690,7 @@ message CreateElementRequest {
   optional string branch = 10;
   optional string language = 11;
   optional string file_path = 12;
+  optional bool bypass_noise_gate = 13;
 }
 message CreateElementResponse {
   Element element = 1;
@@ -706,6 +710,7 @@ message UpdateElementRequest {
   optional string branch = 11;
   optional string language = 12;
   optional string file_path = 13;
+  optional bool bypass_noise_gate = 14;
 }
 message UpdateElementResponse {
   Element element = 1;
