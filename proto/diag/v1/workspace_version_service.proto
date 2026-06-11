@@ -14,6 +14,10 @@ service WorkspaceVersionService {
   rpc CreateVersion(CreateVersionRequest) returns (CreateVersionResponse);
   rpc GetSettings(GetVersionSettingsRequest) returns (GetVersionSettingsResponse);
   rpc UpdateSettings(UpdateVersionSettingsRequest) returns (UpdateVersionSettingsResponse);
+
+  rpc GetWorkspaceSourceStatus(GetWorkspaceSourceStatusRequest) returns (WorkspaceSourceStatus);
+  rpc ExportWorkspaceSource(WorkspaceSourceRequest) returns (WorkspaceSourceResult);
+  rpc ImportWorkspaceSource(ImportWorkspaceSourceRequest) returns (WorkspaceSourceResult);
 }
 
 // ── Workspace Version ────────────────────────────────────────────────────
@@ -73,4 +77,47 @@ message UpdateVersionSettingsRequest {
 }
 message UpdateVersionSettingsResponse {
   bool cli_versioning_enabled = 1;
+}
+
+// ── Workspace Source ────────────────────────────────────────────────────────
+
+message GetWorkspaceSourceStatusRequest {
+  string repository = 1;
+}
+
+message WorkspaceSourceRequest {
+  string repository = 1;
+}
+
+message ImportWorkspaceSourceRequest {
+  bool dry_run = 1;
+  string repository = 2;
+}
+
+message WorkspaceSourceStatus {
+  bool available = 1;
+  string root_path = 2;
+  string views_dir = 3;
+  string message = 4;
+}
+
+message WorkspaceSourceCounts {
+  int32 planned = 1;
+  int32 applied = 2;
+  int32 created = 3;
+  int32 updated = 4;
+  int32 deleted = 5;
+}
+
+message WorkspaceSourceResult {
+  bool available = 1;
+  bool dry_run = 2;
+  string root_path = 3;
+  string views_dir = 4;
+  string hash = 5;
+  WorkspaceSourceCounts views = 6;
+  WorkspaceSourceCounts elements = 7;
+  WorkspaceSourceCounts connectors = 8;
+  repeated string warnings = 9;
+  string message = 10;
 }
