@@ -1,0 +1,129 @@
+syntax = "proto3";
+
+package diag.v1;
+
+import "diag/v1/workspace_service.proto";
+
+option go_package = "buf.build/gen/go/tldiagramcom/diagram/protocolbuffers/go/diag/v1;diagv1";
+
+// MermaidService provides backend-owned Mermaid parsing, import, export, and
+// markdown block sync helpers.
+service MermaidService {
+  rpc ParseMermaid(ParseMermaidRequest) returns (ParseMermaidResponse);
+  rpc ImportMermaidIntoView(ImportMermaidIntoViewRequest) returns (ImportMermaidIntoViewResponse);
+  rpc ExportMermaidView(ExportMermaidViewRequest) returns (ExportMermaidViewResponse);
+  rpc InspectMermaidMarkdown(InspectMermaidMarkdownRequest) returns (InspectMermaidMarkdownResponse);
+  rpc UpsertMermaidMarkdownBlock(UpsertMermaidMarkdownBlockRequest) returns (UpsertMermaidMarkdownBlockResponse);
+}
+
+enum MermaidDirection {
+  MERMAID_DIRECTION_UNSPECIFIED = 0;
+  MERMAID_DIRECTION_TB = 1;
+  MERMAID_DIRECTION_TD = 2;
+  MERMAID_DIRECTION_BT = 3;
+  MERMAID_DIRECTION_RL = 4;
+  MERMAID_DIRECTION_LR = 5;
+}
+
+enum MermaidMarkdownSyncStatus {
+  MERMAID_MARKDOWN_SYNC_STATUS_UNSPECIFIED = 0;
+  MERMAID_MARKDOWN_SYNC_STATUS_MISSING = 1;
+  MERMAID_MARKDOWN_SYNC_STATUS_SYNCED = 2;
+  MERMAID_MARKDOWN_SYNC_STATUS_STALE = 3;
+  MERMAID_MARKDOWN_SYNC_STATUS_OTHER_VIEW = 4;
+  MERMAID_MARKDOWN_SYNC_STATUS_UNLINKED = 5;
+}
+
+message ParseMermaidRequest {
+  string source = 1;
+}
+
+message ParseMermaidResponse {
+  repeated PlanElement elements = 1;
+  repeated PlanConnector connectors = 2;
+  repeated string warnings = 3;
+  MermaidDirection direction = 4;
+  string source = 5;
+}
+
+message ImportMermaidIntoViewRequest {
+  string org_id = 1;
+  int32 view_id = 2;
+  string source = 3;
+  double center_x = 4;
+  double center_y = 5;
+  bool dry_run = 6;
+}
+
+message MermaidImportSummary {
+  int32 resolved_element_count = 1;
+  int32 created_element_count = 2;
+  int32 resolved_connector_count = 3;
+  int32 created_connector_count = 4;
+  repeated int32 imported_element_ids = 5;
+  repeated int32 resolved_element_ids = 6;
+  repeated int32 created_element_ids = 7;
+  repeated int32 resolved_connector_ids = 8;
+  repeated int32 created_connector_ids = 9;
+}
+
+message ImportMermaidIntoViewResponse {
+  MermaidImportSummary summary = 1;
+  repeated string warnings = 2;
+  ViewContent content = 3;
+}
+
+message ExportMermaidViewRequest {
+  string org_id = 1;
+  int32 view_id = 2;
+  bool include_tld_metadata = 3;
+  optional int32 density_override = 4;
+  bool markdown_block = 5;
+}
+
+message ExportMermaidViewResponse {
+  string code = 1;
+  string markdown = 2;
+  repeated string warnings = 3;
+}
+
+message MermaidMarkdownBlockInfo {
+  int32 index = 1;
+  int32 start = 2;
+  int32 end = 3;
+  int32 code_start = 4;
+  int32 code_end = 5;
+  int32 line_start = 6;
+  int32 line_end = 7;
+  string fence = 8;
+  string code = 9;
+  optional int32 view_id = 10;
+  bool has_tld_metadata = 11;
+  string preview = 12;
+  MermaidMarkdownSyncStatus sync_status = 13;
+}
+
+message InspectMermaidMarkdownRequest {
+  string org_id = 1;
+  string markdown = 2;
+  optional int32 view_id = 3;
+}
+
+message InspectMermaidMarkdownResponse {
+  repeated MermaidMarkdownBlockInfo blocks = 1;
+  MermaidMarkdownSyncStatus sync_status = 2;
+  repeated string warnings = 3;
+}
+
+message UpsertMermaidMarkdownBlockRequest {
+  string org_id = 1;
+  int32 view_id = 2;
+  string markdown = 3;
+  bool include_tld_metadata = 4;
+}
+
+message UpsertMermaidMarkdownBlockResponse {
+  string markdown = 1;
+  MermaidMarkdownSyncStatus previous_status = 2;
+  repeated string warnings = 3;
+}

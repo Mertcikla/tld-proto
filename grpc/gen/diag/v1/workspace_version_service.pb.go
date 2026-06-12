@@ -586,406 +586,6 @@ func (x *UpdateVersionSettingsResponse) GetCliVersioningEnabled() bool {
 	return false
 }
 
-type GetWorkspaceSourceStatusRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Repository    string                 `protobuf:"bytes,1,opt,name=repository,proto3" json:"repository,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetWorkspaceSourceStatusRequest) Reset() {
-	*x = GetWorkspaceSourceStatusRequest{}
-	mi := &file_diag_v1_workspace_version_service_proto_msgTypes[11]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetWorkspaceSourceStatusRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetWorkspaceSourceStatusRequest) ProtoMessage() {}
-
-func (x *GetWorkspaceSourceStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_version_service_proto_msgTypes[11]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetWorkspaceSourceStatusRequest.ProtoReflect.Descriptor instead.
-func (*GetWorkspaceSourceStatusRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_version_service_proto_rawDescGZIP(), []int{11}
-}
-
-func (x *GetWorkspaceSourceStatusRequest) GetRepository() string {
-	if x != nil {
-		return x.Repository
-	}
-	return ""
-}
-
-type WorkspaceSourceRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Repository    string                 `protobuf:"bytes,1,opt,name=repository,proto3" json:"repository,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *WorkspaceSourceRequest) Reset() {
-	*x = WorkspaceSourceRequest{}
-	mi := &file_diag_v1_workspace_version_service_proto_msgTypes[12]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *WorkspaceSourceRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*WorkspaceSourceRequest) ProtoMessage() {}
-
-func (x *WorkspaceSourceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_version_service_proto_msgTypes[12]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use WorkspaceSourceRequest.ProtoReflect.Descriptor instead.
-func (*WorkspaceSourceRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_version_service_proto_rawDescGZIP(), []int{12}
-}
-
-func (x *WorkspaceSourceRequest) GetRepository() string {
-	if x != nil {
-		return x.Repository
-	}
-	return ""
-}
-
-type ImportWorkspaceSourceRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	DryRun        bool                   `protobuf:"varint,1,opt,name=dry_run,json=dryRun,proto3" json:"dry_run,omitempty"`
-	Repository    string                 `protobuf:"bytes,2,opt,name=repository,proto3" json:"repository,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ImportWorkspaceSourceRequest) Reset() {
-	*x = ImportWorkspaceSourceRequest{}
-	mi := &file_diag_v1_workspace_version_service_proto_msgTypes[13]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ImportWorkspaceSourceRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ImportWorkspaceSourceRequest) ProtoMessage() {}
-
-func (x *ImportWorkspaceSourceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_version_service_proto_msgTypes[13]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ImportWorkspaceSourceRequest.ProtoReflect.Descriptor instead.
-func (*ImportWorkspaceSourceRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_version_service_proto_rawDescGZIP(), []int{13}
-}
-
-func (x *ImportWorkspaceSourceRequest) GetDryRun() bool {
-	if x != nil {
-		return x.DryRun
-	}
-	return false
-}
-
-func (x *ImportWorkspaceSourceRequest) GetRepository() string {
-	if x != nil {
-		return x.Repository
-	}
-	return ""
-}
-
-type WorkspaceSourceStatus struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Available     bool                   `protobuf:"varint,1,opt,name=available,proto3" json:"available,omitempty"`
-	RootPath      string                 `protobuf:"bytes,2,opt,name=root_path,json=rootPath,proto3" json:"root_path,omitempty"`
-	ViewsDir      string                 `protobuf:"bytes,3,opt,name=views_dir,json=viewsDir,proto3" json:"views_dir,omitempty"`
-	Message       string                 `protobuf:"bytes,4,opt,name=message,proto3" json:"message,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *WorkspaceSourceStatus) Reset() {
-	*x = WorkspaceSourceStatus{}
-	mi := &file_diag_v1_workspace_version_service_proto_msgTypes[14]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *WorkspaceSourceStatus) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*WorkspaceSourceStatus) ProtoMessage() {}
-
-func (x *WorkspaceSourceStatus) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_version_service_proto_msgTypes[14]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use WorkspaceSourceStatus.ProtoReflect.Descriptor instead.
-func (*WorkspaceSourceStatus) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_version_service_proto_rawDescGZIP(), []int{14}
-}
-
-func (x *WorkspaceSourceStatus) GetAvailable() bool {
-	if x != nil {
-		return x.Available
-	}
-	return false
-}
-
-func (x *WorkspaceSourceStatus) GetRootPath() string {
-	if x != nil {
-		return x.RootPath
-	}
-	return ""
-}
-
-func (x *WorkspaceSourceStatus) GetViewsDir() string {
-	if x != nil {
-		return x.ViewsDir
-	}
-	return ""
-}
-
-func (x *WorkspaceSourceStatus) GetMessage() string {
-	if x != nil {
-		return x.Message
-	}
-	return ""
-}
-
-type WorkspaceSourceCounts struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Planned       int32                  `protobuf:"varint,1,opt,name=planned,proto3" json:"planned,omitempty"`
-	Applied       int32                  `protobuf:"varint,2,opt,name=applied,proto3" json:"applied,omitempty"`
-	Created       int32                  `protobuf:"varint,3,opt,name=created,proto3" json:"created,omitempty"`
-	Updated       int32                  `protobuf:"varint,4,opt,name=updated,proto3" json:"updated,omitempty"`
-	Deleted       int32                  `protobuf:"varint,5,opt,name=deleted,proto3" json:"deleted,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *WorkspaceSourceCounts) Reset() {
-	*x = WorkspaceSourceCounts{}
-	mi := &file_diag_v1_workspace_version_service_proto_msgTypes[15]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *WorkspaceSourceCounts) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*WorkspaceSourceCounts) ProtoMessage() {}
-
-func (x *WorkspaceSourceCounts) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_version_service_proto_msgTypes[15]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use WorkspaceSourceCounts.ProtoReflect.Descriptor instead.
-func (*WorkspaceSourceCounts) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_version_service_proto_rawDescGZIP(), []int{15}
-}
-
-func (x *WorkspaceSourceCounts) GetPlanned() int32 {
-	if x != nil {
-		return x.Planned
-	}
-	return 0
-}
-
-func (x *WorkspaceSourceCounts) GetApplied() int32 {
-	if x != nil {
-		return x.Applied
-	}
-	return 0
-}
-
-func (x *WorkspaceSourceCounts) GetCreated() int32 {
-	if x != nil {
-		return x.Created
-	}
-	return 0
-}
-
-func (x *WorkspaceSourceCounts) GetUpdated() int32 {
-	if x != nil {
-		return x.Updated
-	}
-	return 0
-}
-
-func (x *WorkspaceSourceCounts) GetDeleted() int32 {
-	if x != nil {
-		return x.Deleted
-	}
-	return 0
-}
-
-type WorkspaceSourceResult struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Available     bool                   `protobuf:"varint,1,opt,name=available,proto3" json:"available,omitempty"`
-	DryRun        bool                   `protobuf:"varint,2,opt,name=dry_run,json=dryRun,proto3" json:"dry_run,omitempty"`
-	RootPath      string                 `protobuf:"bytes,3,opt,name=root_path,json=rootPath,proto3" json:"root_path,omitempty"`
-	ViewsDir      string                 `protobuf:"bytes,4,opt,name=views_dir,json=viewsDir,proto3" json:"views_dir,omitempty"`
-	Hash          string                 `protobuf:"bytes,5,opt,name=hash,proto3" json:"hash,omitempty"`
-	Views         *WorkspaceSourceCounts `protobuf:"bytes,6,opt,name=views,proto3" json:"views,omitempty"`
-	Elements      *WorkspaceSourceCounts `protobuf:"bytes,7,opt,name=elements,proto3" json:"elements,omitempty"`
-	Connectors    *WorkspaceSourceCounts `protobuf:"bytes,8,opt,name=connectors,proto3" json:"connectors,omitempty"`
-	Warnings      []string               `protobuf:"bytes,9,rep,name=warnings,proto3" json:"warnings,omitempty"`
-	Message       string                 `protobuf:"bytes,10,opt,name=message,proto3" json:"message,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *WorkspaceSourceResult) Reset() {
-	*x = WorkspaceSourceResult{}
-	mi := &file_diag_v1_workspace_version_service_proto_msgTypes[16]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *WorkspaceSourceResult) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*WorkspaceSourceResult) ProtoMessage() {}
-
-func (x *WorkspaceSourceResult) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_workspace_version_service_proto_msgTypes[16]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use WorkspaceSourceResult.ProtoReflect.Descriptor instead.
-func (*WorkspaceSourceResult) Descriptor() ([]byte, []int) {
-	return file_diag_v1_workspace_version_service_proto_rawDescGZIP(), []int{16}
-}
-
-func (x *WorkspaceSourceResult) GetAvailable() bool {
-	if x != nil {
-		return x.Available
-	}
-	return false
-}
-
-func (x *WorkspaceSourceResult) GetDryRun() bool {
-	if x != nil {
-		return x.DryRun
-	}
-	return false
-}
-
-func (x *WorkspaceSourceResult) GetRootPath() string {
-	if x != nil {
-		return x.RootPath
-	}
-	return ""
-}
-
-func (x *WorkspaceSourceResult) GetViewsDir() string {
-	if x != nil {
-		return x.ViewsDir
-	}
-	return ""
-}
-
-func (x *WorkspaceSourceResult) GetHash() string {
-	if x != nil {
-		return x.Hash
-	}
-	return ""
-}
-
-func (x *WorkspaceSourceResult) GetViews() *WorkspaceSourceCounts {
-	if x != nil {
-		return x.Views
-	}
-	return nil
-}
-
-func (x *WorkspaceSourceResult) GetElements() *WorkspaceSourceCounts {
-	if x != nil {
-		return x.Elements
-	}
-	return nil
-}
-
-func (x *WorkspaceSourceResult) GetConnectors() *WorkspaceSourceCounts {
-	if x != nil {
-		return x.Connectors
-	}
-	return nil
-}
-
-func (x *WorkspaceSourceResult) GetWarnings() []string {
-	if x != nil {
-		return x.Warnings
-	}
-	return nil
-}
-
-func (x *WorkspaceSourceResult) GetMessage() string {
-	if x != nil {
-		return x.Message
-	}
-	return ""
-}
-
 var File_diag_v1_workspace_version_service_proto protoreflect.FileDescriptor
 
 const file_diag_v1_workspace_version_service_proto_rawDesc = "" +
@@ -1032,54 +632,13 @@ const file_diag_v1_workspace_version_service_proto_rawDesc = "" +
 	"\x1cUpdateVersionSettingsRequest\x124\n" +
 	"\x16cli_versioning_enabled\x18\x01 \x01(\bR\x14cliVersioningEnabled\"U\n" +
 	"\x1dUpdateVersionSettingsResponse\x124\n" +
-	"\x16cli_versioning_enabled\x18\x01 \x01(\bR\x14cliVersioningEnabled\"A\n" +
-	"\x1fGetWorkspaceSourceStatusRequest\x12\x1e\n" +
-	"\n" +
-	"repository\x18\x01 \x01(\tR\n" +
-	"repository\"8\n" +
-	"\x16WorkspaceSourceRequest\x12\x1e\n" +
-	"\n" +
-	"repository\x18\x01 \x01(\tR\n" +
-	"repository\"W\n" +
-	"\x1cImportWorkspaceSourceRequest\x12\x17\n" +
-	"\adry_run\x18\x01 \x01(\bR\x06dryRun\x12\x1e\n" +
-	"\n" +
-	"repository\x18\x02 \x01(\tR\n" +
-	"repository\"\x89\x01\n" +
-	"\x15WorkspaceSourceStatus\x12\x1c\n" +
-	"\tavailable\x18\x01 \x01(\bR\tavailable\x12\x1b\n" +
-	"\troot_path\x18\x02 \x01(\tR\brootPath\x12\x1b\n" +
-	"\tviews_dir\x18\x03 \x01(\tR\bviewsDir\x12\x18\n" +
-	"\amessage\x18\x04 \x01(\tR\amessage\"\x99\x01\n" +
-	"\x15WorkspaceSourceCounts\x12\x18\n" +
-	"\aplanned\x18\x01 \x01(\x05R\aplanned\x12\x18\n" +
-	"\aapplied\x18\x02 \x01(\x05R\aapplied\x12\x18\n" +
-	"\acreated\x18\x03 \x01(\x05R\acreated\x12\x18\n" +
-	"\aupdated\x18\x04 \x01(\x05R\aupdated\x12\x18\n" +
-	"\adeleted\x18\x05 \x01(\x05R\adeleted\"\x84\x03\n" +
-	"\x15WorkspaceSourceResult\x12\x1c\n" +
-	"\tavailable\x18\x01 \x01(\bR\tavailable\x12\x17\n" +
-	"\adry_run\x18\x02 \x01(\bR\x06dryRun\x12\x1b\n" +
-	"\troot_path\x18\x03 \x01(\tR\brootPath\x12\x1b\n" +
-	"\tviews_dir\x18\x04 \x01(\tR\bviewsDir\x12\x12\n" +
-	"\x04hash\x18\x05 \x01(\tR\x04hash\x124\n" +
-	"\x05views\x18\x06 \x01(\v2\x1e.diag.v1.WorkspaceSourceCountsR\x05views\x12:\n" +
-	"\belements\x18\a \x01(\v2\x1e.diag.v1.WorkspaceSourceCountsR\belements\x12>\n" +
-	"\n" +
-	"connectors\x18\b \x01(\v2\x1e.diag.v1.WorkspaceSourceCountsR\n" +
-	"connectors\x12\x1a\n" +
-	"\bwarnings\x18\t \x03(\tR\bwarnings\x12\x18\n" +
-	"\amessage\x18\n" +
-	" \x01(\tR\amessage2\xe1\x05\n" +
+	"\x16cli_versioning_enabled\x18\x01 \x01(\bR\x14cliVersioningEnabled2\xc1\x03\n" +
 	"\x17WorkspaceVersionService\x12K\n" +
 	"\fListVersions\x12\x1c.diag.v1.ListVersionsRequest\x1a\x1d.diag.v1.ListVersionsResponse\x12P\n" +
 	"\tGetLatest\x12 .diag.v1.GetLatestVersionRequest\x1a!.diag.v1.GetLatestVersionResponse\x12N\n" +
 	"\rCreateVersion\x12\x1d.diag.v1.CreateVersionRequest\x1a\x1e.diag.v1.CreateVersionResponse\x12V\n" +
 	"\vGetSettings\x12\".diag.v1.GetVersionSettingsRequest\x1a#.diag.v1.GetVersionSettingsResponse\x12_\n" +
-	"\x0eUpdateSettings\x12%.diag.v1.UpdateVersionSettingsRequest\x1a&.diag.v1.UpdateVersionSettingsResponse\x12d\n" +
-	"\x18GetWorkspaceSourceStatus\x12(.diag.v1.GetWorkspaceSourceStatusRequest\x1a\x1e.diag.v1.WorkspaceSourceStatus\x12X\n" +
-	"\x15ExportWorkspaceSource\x12\x1f.diag.v1.WorkspaceSourceRequest\x1a\x1e.diag.v1.WorkspaceSourceResult\x12^\n" +
-	"\x15ImportWorkspaceSource\x12%.diag.v1.ImportWorkspaceSourceRequest\x1a\x1e.diag.v1.WorkspaceSourceResultBIZGbuf.build/gen/go/tldiagramcom/diagram/protocolbuffers/go/diag/v1;diagv1b\x06proto3"
+	"\x0eUpdateSettings\x12%.diag.v1.UpdateVersionSettingsRequest\x1a&.diag.v1.UpdateVersionSettingsResponseBIZGbuf.build/gen/go/tldiagramcom/diagram/protocolbuffers/go/diag/v1;diagv1b\x06proto3"
 
 var (
 	file_diag_v1_workspace_version_service_proto_rawDescOnce sync.Once
@@ -1093,56 +652,41 @@ func file_diag_v1_workspace_version_service_proto_rawDescGZIP() []byte {
 	return file_diag_v1_workspace_version_service_proto_rawDescData
 }
 
-var file_diag_v1_workspace_version_service_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
+var file_diag_v1_workspace_version_service_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_diag_v1_workspace_version_service_proto_goTypes = []any{
-	(*WorkspaceVersionInfo)(nil),            // 0: diag.v1.WorkspaceVersionInfo
-	(*ListVersionsRequest)(nil),             // 1: diag.v1.ListVersionsRequest
-	(*ListVersionsResponse)(nil),            // 2: diag.v1.ListVersionsResponse
-	(*GetLatestVersionRequest)(nil),         // 3: diag.v1.GetLatestVersionRequest
-	(*GetLatestVersionResponse)(nil),        // 4: diag.v1.GetLatestVersionResponse
-	(*CreateVersionRequest)(nil),            // 5: diag.v1.CreateVersionRequest
-	(*CreateVersionResponse)(nil),           // 6: diag.v1.CreateVersionResponse
-	(*GetVersionSettingsRequest)(nil),       // 7: diag.v1.GetVersionSettingsRequest
-	(*GetVersionSettingsResponse)(nil),      // 8: diag.v1.GetVersionSettingsResponse
-	(*UpdateVersionSettingsRequest)(nil),    // 9: diag.v1.UpdateVersionSettingsRequest
-	(*UpdateVersionSettingsResponse)(nil),   // 10: diag.v1.UpdateVersionSettingsResponse
-	(*GetWorkspaceSourceStatusRequest)(nil), // 11: diag.v1.GetWorkspaceSourceStatusRequest
-	(*WorkspaceSourceRequest)(nil),          // 12: diag.v1.WorkspaceSourceRequest
-	(*ImportWorkspaceSourceRequest)(nil),    // 13: diag.v1.ImportWorkspaceSourceRequest
-	(*WorkspaceSourceStatus)(nil),           // 14: diag.v1.WorkspaceSourceStatus
-	(*WorkspaceSourceCounts)(nil),           // 15: diag.v1.WorkspaceSourceCounts
-	(*WorkspaceSourceResult)(nil),           // 16: diag.v1.WorkspaceSourceResult
-	(*timestamppb.Timestamp)(nil),           // 17: google.protobuf.Timestamp
+	(*WorkspaceVersionInfo)(nil),          // 0: diag.v1.WorkspaceVersionInfo
+	(*ListVersionsRequest)(nil),           // 1: diag.v1.ListVersionsRequest
+	(*ListVersionsResponse)(nil),          // 2: diag.v1.ListVersionsResponse
+	(*GetLatestVersionRequest)(nil),       // 3: diag.v1.GetLatestVersionRequest
+	(*GetLatestVersionResponse)(nil),      // 4: diag.v1.GetLatestVersionResponse
+	(*CreateVersionRequest)(nil),          // 5: diag.v1.CreateVersionRequest
+	(*CreateVersionResponse)(nil),         // 6: diag.v1.CreateVersionResponse
+	(*GetVersionSettingsRequest)(nil),     // 7: diag.v1.GetVersionSettingsRequest
+	(*GetVersionSettingsResponse)(nil),    // 8: diag.v1.GetVersionSettingsResponse
+	(*UpdateVersionSettingsRequest)(nil),  // 9: diag.v1.UpdateVersionSettingsRequest
+	(*UpdateVersionSettingsResponse)(nil), // 10: diag.v1.UpdateVersionSettingsResponse
+	(*timestamppb.Timestamp)(nil),         // 11: google.protobuf.Timestamp
 }
 var file_diag_v1_workspace_version_service_proto_depIdxs = []int32{
-	17, // 0: diag.v1.WorkspaceVersionInfo.created_at:type_name -> google.protobuf.Timestamp
+	11, // 0: diag.v1.WorkspaceVersionInfo.created_at:type_name -> google.protobuf.Timestamp
 	0,  // 1: diag.v1.ListVersionsResponse.versions:type_name -> diag.v1.WorkspaceVersionInfo
 	0,  // 2: diag.v1.GetLatestVersionResponse.version:type_name -> diag.v1.WorkspaceVersionInfo
 	0,  // 3: diag.v1.CreateVersionResponse.version:type_name -> diag.v1.WorkspaceVersionInfo
-	15, // 4: diag.v1.WorkspaceSourceResult.views:type_name -> diag.v1.WorkspaceSourceCounts
-	15, // 5: diag.v1.WorkspaceSourceResult.elements:type_name -> diag.v1.WorkspaceSourceCounts
-	15, // 6: diag.v1.WorkspaceSourceResult.connectors:type_name -> diag.v1.WorkspaceSourceCounts
-	1,  // 7: diag.v1.WorkspaceVersionService.ListVersions:input_type -> diag.v1.ListVersionsRequest
-	3,  // 8: diag.v1.WorkspaceVersionService.GetLatest:input_type -> diag.v1.GetLatestVersionRequest
-	5,  // 9: diag.v1.WorkspaceVersionService.CreateVersion:input_type -> diag.v1.CreateVersionRequest
-	7,  // 10: diag.v1.WorkspaceVersionService.GetSettings:input_type -> diag.v1.GetVersionSettingsRequest
-	9,  // 11: diag.v1.WorkspaceVersionService.UpdateSettings:input_type -> diag.v1.UpdateVersionSettingsRequest
-	11, // 12: diag.v1.WorkspaceVersionService.GetWorkspaceSourceStatus:input_type -> diag.v1.GetWorkspaceSourceStatusRequest
-	12, // 13: diag.v1.WorkspaceVersionService.ExportWorkspaceSource:input_type -> diag.v1.WorkspaceSourceRequest
-	13, // 14: diag.v1.WorkspaceVersionService.ImportWorkspaceSource:input_type -> diag.v1.ImportWorkspaceSourceRequest
-	2,  // 15: diag.v1.WorkspaceVersionService.ListVersions:output_type -> diag.v1.ListVersionsResponse
-	4,  // 16: diag.v1.WorkspaceVersionService.GetLatest:output_type -> diag.v1.GetLatestVersionResponse
-	6,  // 17: diag.v1.WorkspaceVersionService.CreateVersion:output_type -> diag.v1.CreateVersionResponse
-	8,  // 18: diag.v1.WorkspaceVersionService.GetSettings:output_type -> diag.v1.GetVersionSettingsResponse
-	10, // 19: diag.v1.WorkspaceVersionService.UpdateSettings:output_type -> diag.v1.UpdateVersionSettingsResponse
-	14, // 20: diag.v1.WorkspaceVersionService.GetWorkspaceSourceStatus:output_type -> diag.v1.WorkspaceSourceStatus
-	16, // 21: diag.v1.WorkspaceVersionService.ExportWorkspaceSource:output_type -> diag.v1.WorkspaceSourceResult
-	16, // 22: diag.v1.WorkspaceVersionService.ImportWorkspaceSource:output_type -> diag.v1.WorkspaceSourceResult
-	15, // [15:23] is the sub-list for method output_type
-	7,  // [7:15] is the sub-list for method input_type
-	7,  // [7:7] is the sub-list for extension type_name
-	7,  // [7:7] is the sub-list for extension extendee
-	0,  // [0:7] is the sub-list for field type_name
+	1,  // 4: diag.v1.WorkspaceVersionService.ListVersions:input_type -> diag.v1.ListVersionsRequest
+	3,  // 5: diag.v1.WorkspaceVersionService.GetLatest:input_type -> diag.v1.GetLatestVersionRequest
+	5,  // 6: diag.v1.WorkspaceVersionService.CreateVersion:input_type -> diag.v1.CreateVersionRequest
+	7,  // 7: diag.v1.WorkspaceVersionService.GetSettings:input_type -> diag.v1.GetVersionSettingsRequest
+	9,  // 8: diag.v1.WorkspaceVersionService.UpdateSettings:input_type -> diag.v1.UpdateVersionSettingsRequest
+	2,  // 9: diag.v1.WorkspaceVersionService.ListVersions:output_type -> diag.v1.ListVersionsResponse
+	4,  // 10: diag.v1.WorkspaceVersionService.GetLatest:output_type -> diag.v1.GetLatestVersionResponse
+	6,  // 11: diag.v1.WorkspaceVersionService.CreateVersion:output_type -> diag.v1.CreateVersionResponse
+	8,  // 12: diag.v1.WorkspaceVersionService.GetSettings:output_type -> diag.v1.GetVersionSettingsResponse
+	10, // 13: diag.v1.WorkspaceVersionService.UpdateSettings:output_type -> diag.v1.UpdateVersionSettingsResponse
+	9,  // [9:14] is the sub-list for method output_type
+	4,  // [4:9] is the sub-list for method input_type
+	4,  // [4:4] is the sub-list for extension type_name
+	4,  // [4:4] is the sub-list for extension extendee
+	0,  // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_diag_v1_workspace_version_service_proto_init() }
@@ -1157,7 +701,7 @@ func file_diag_v1_workspace_version_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_diag_v1_workspace_version_service_proto_rawDesc), len(file_diag_v1_workspace_version_service_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   17,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

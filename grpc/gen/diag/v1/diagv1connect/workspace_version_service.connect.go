@@ -48,15 +48,6 @@ const (
 	// WorkspaceVersionServiceUpdateSettingsProcedure is the fully-qualified name of the
 	// WorkspaceVersionService's UpdateSettings RPC.
 	WorkspaceVersionServiceUpdateSettingsProcedure = "/diag.v1.WorkspaceVersionService/UpdateSettings"
-	// WorkspaceVersionServiceGetWorkspaceSourceStatusProcedure is the fully-qualified name of the
-	// WorkspaceVersionService's GetWorkspaceSourceStatus RPC.
-	WorkspaceVersionServiceGetWorkspaceSourceStatusProcedure = "/diag.v1.WorkspaceVersionService/GetWorkspaceSourceStatus"
-	// WorkspaceVersionServiceExportWorkspaceSourceProcedure is the fully-qualified name of the
-	// WorkspaceVersionService's ExportWorkspaceSource RPC.
-	WorkspaceVersionServiceExportWorkspaceSourceProcedure = "/diag.v1.WorkspaceVersionService/ExportWorkspaceSource"
-	// WorkspaceVersionServiceImportWorkspaceSourceProcedure is the fully-qualified name of the
-	// WorkspaceVersionService's ImportWorkspaceSource RPC.
-	WorkspaceVersionServiceImportWorkspaceSourceProcedure = "/diag.v1.WorkspaceVersionService/ImportWorkspaceSource"
 )
 
 // WorkspaceVersionServiceClient is a client for the diag.v1.WorkspaceVersionService service.
@@ -66,9 +57,6 @@ type WorkspaceVersionServiceClient interface {
 	CreateVersion(context.Context, *connect.Request[v1.CreateVersionRequest]) (*connect.Response[v1.CreateVersionResponse], error)
 	GetSettings(context.Context, *connect.Request[v1.GetVersionSettingsRequest]) (*connect.Response[v1.GetVersionSettingsResponse], error)
 	UpdateSettings(context.Context, *connect.Request[v1.UpdateVersionSettingsRequest]) (*connect.Response[v1.UpdateVersionSettingsResponse], error)
-	GetWorkspaceSourceStatus(context.Context, *connect.Request[v1.GetWorkspaceSourceStatusRequest]) (*connect.Response[v1.WorkspaceSourceStatus], error)
-	ExportWorkspaceSource(context.Context, *connect.Request[v1.WorkspaceSourceRequest]) (*connect.Response[v1.WorkspaceSourceResult], error)
-	ImportWorkspaceSource(context.Context, *connect.Request[v1.ImportWorkspaceSourceRequest]) (*connect.Response[v1.WorkspaceSourceResult], error)
 }
 
 // NewWorkspaceVersionServiceClient constructs a client for the diag.v1.WorkspaceVersionService
@@ -112,37 +100,16 @@ func NewWorkspaceVersionServiceClient(httpClient connect.HTTPClient, baseURL str
 			connect.WithSchema(workspaceVersionServiceMethods.ByName("UpdateSettings")),
 			connect.WithClientOptions(opts...),
 		),
-		getWorkspaceSourceStatus: connect.NewClient[v1.GetWorkspaceSourceStatusRequest, v1.WorkspaceSourceStatus](
-			httpClient,
-			baseURL+WorkspaceVersionServiceGetWorkspaceSourceStatusProcedure,
-			connect.WithSchema(workspaceVersionServiceMethods.ByName("GetWorkspaceSourceStatus")),
-			connect.WithClientOptions(opts...),
-		),
-		exportWorkspaceSource: connect.NewClient[v1.WorkspaceSourceRequest, v1.WorkspaceSourceResult](
-			httpClient,
-			baseURL+WorkspaceVersionServiceExportWorkspaceSourceProcedure,
-			connect.WithSchema(workspaceVersionServiceMethods.ByName("ExportWorkspaceSource")),
-			connect.WithClientOptions(opts...),
-		),
-		importWorkspaceSource: connect.NewClient[v1.ImportWorkspaceSourceRequest, v1.WorkspaceSourceResult](
-			httpClient,
-			baseURL+WorkspaceVersionServiceImportWorkspaceSourceProcedure,
-			connect.WithSchema(workspaceVersionServiceMethods.ByName("ImportWorkspaceSource")),
-			connect.WithClientOptions(opts...),
-		),
 	}
 }
 
 // workspaceVersionServiceClient implements WorkspaceVersionServiceClient.
 type workspaceVersionServiceClient struct {
-	listVersions             *connect.Client[v1.ListVersionsRequest, v1.ListVersionsResponse]
-	getLatest                *connect.Client[v1.GetLatestVersionRequest, v1.GetLatestVersionResponse]
-	createVersion            *connect.Client[v1.CreateVersionRequest, v1.CreateVersionResponse]
-	getSettings              *connect.Client[v1.GetVersionSettingsRequest, v1.GetVersionSettingsResponse]
-	updateSettings           *connect.Client[v1.UpdateVersionSettingsRequest, v1.UpdateVersionSettingsResponse]
-	getWorkspaceSourceStatus *connect.Client[v1.GetWorkspaceSourceStatusRequest, v1.WorkspaceSourceStatus]
-	exportWorkspaceSource    *connect.Client[v1.WorkspaceSourceRequest, v1.WorkspaceSourceResult]
-	importWorkspaceSource    *connect.Client[v1.ImportWorkspaceSourceRequest, v1.WorkspaceSourceResult]
+	listVersions   *connect.Client[v1.ListVersionsRequest, v1.ListVersionsResponse]
+	getLatest      *connect.Client[v1.GetLatestVersionRequest, v1.GetLatestVersionResponse]
+	createVersion  *connect.Client[v1.CreateVersionRequest, v1.CreateVersionResponse]
+	getSettings    *connect.Client[v1.GetVersionSettingsRequest, v1.GetVersionSettingsResponse]
+	updateSettings *connect.Client[v1.UpdateVersionSettingsRequest, v1.UpdateVersionSettingsResponse]
 }
 
 // ListVersions calls diag.v1.WorkspaceVersionService.ListVersions.
@@ -170,21 +137,6 @@ func (c *workspaceVersionServiceClient) UpdateSettings(ctx context.Context, req 
 	return c.updateSettings.CallUnary(ctx, req)
 }
 
-// GetWorkspaceSourceStatus calls diag.v1.WorkspaceVersionService.GetWorkspaceSourceStatus.
-func (c *workspaceVersionServiceClient) GetWorkspaceSourceStatus(ctx context.Context, req *connect.Request[v1.GetWorkspaceSourceStatusRequest]) (*connect.Response[v1.WorkspaceSourceStatus], error) {
-	return c.getWorkspaceSourceStatus.CallUnary(ctx, req)
-}
-
-// ExportWorkspaceSource calls diag.v1.WorkspaceVersionService.ExportWorkspaceSource.
-func (c *workspaceVersionServiceClient) ExportWorkspaceSource(ctx context.Context, req *connect.Request[v1.WorkspaceSourceRequest]) (*connect.Response[v1.WorkspaceSourceResult], error) {
-	return c.exportWorkspaceSource.CallUnary(ctx, req)
-}
-
-// ImportWorkspaceSource calls diag.v1.WorkspaceVersionService.ImportWorkspaceSource.
-func (c *workspaceVersionServiceClient) ImportWorkspaceSource(ctx context.Context, req *connect.Request[v1.ImportWorkspaceSourceRequest]) (*connect.Response[v1.WorkspaceSourceResult], error) {
-	return c.importWorkspaceSource.CallUnary(ctx, req)
-}
-
 // WorkspaceVersionServiceHandler is an implementation of the diag.v1.WorkspaceVersionService
 // service.
 type WorkspaceVersionServiceHandler interface {
@@ -193,9 +145,6 @@ type WorkspaceVersionServiceHandler interface {
 	CreateVersion(context.Context, *connect.Request[v1.CreateVersionRequest]) (*connect.Response[v1.CreateVersionResponse], error)
 	GetSettings(context.Context, *connect.Request[v1.GetVersionSettingsRequest]) (*connect.Response[v1.GetVersionSettingsResponse], error)
 	UpdateSettings(context.Context, *connect.Request[v1.UpdateVersionSettingsRequest]) (*connect.Response[v1.UpdateVersionSettingsResponse], error)
-	GetWorkspaceSourceStatus(context.Context, *connect.Request[v1.GetWorkspaceSourceStatusRequest]) (*connect.Response[v1.WorkspaceSourceStatus], error)
-	ExportWorkspaceSource(context.Context, *connect.Request[v1.WorkspaceSourceRequest]) (*connect.Response[v1.WorkspaceSourceResult], error)
-	ImportWorkspaceSource(context.Context, *connect.Request[v1.ImportWorkspaceSourceRequest]) (*connect.Response[v1.WorkspaceSourceResult], error)
 }
 
 // NewWorkspaceVersionServiceHandler builds an HTTP handler from the service implementation. It
@@ -235,24 +184,6 @@ func NewWorkspaceVersionServiceHandler(svc WorkspaceVersionServiceHandler, opts 
 		connect.WithSchema(workspaceVersionServiceMethods.ByName("UpdateSettings")),
 		connect.WithHandlerOptions(opts...),
 	)
-	workspaceVersionServiceGetWorkspaceSourceStatusHandler := connect.NewUnaryHandler(
-		WorkspaceVersionServiceGetWorkspaceSourceStatusProcedure,
-		svc.GetWorkspaceSourceStatus,
-		connect.WithSchema(workspaceVersionServiceMethods.ByName("GetWorkspaceSourceStatus")),
-		connect.WithHandlerOptions(opts...),
-	)
-	workspaceVersionServiceExportWorkspaceSourceHandler := connect.NewUnaryHandler(
-		WorkspaceVersionServiceExportWorkspaceSourceProcedure,
-		svc.ExportWorkspaceSource,
-		connect.WithSchema(workspaceVersionServiceMethods.ByName("ExportWorkspaceSource")),
-		connect.WithHandlerOptions(opts...),
-	)
-	workspaceVersionServiceImportWorkspaceSourceHandler := connect.NewUnaryHandler(
-		WorkspaceVersionServiceImportWorkspaceSourceProcedure,
-		svc.ImportWorkspaceSource,
-		connect.WithSchema(workspaceVersionServiceMethods.ByName("ImportWorkspaceSource")),
-		connect.WithHandlerOptions(opts...),
-	)
 	return "/diag.v1.WorkspaceVersionService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case WorkspaceVersionServiceListVersionsProcedure:
@@ -265,12 +196,6 @@ func NewWorkspaceVersionServiceHandler(svc WorkspaceVersionServiceHandler, opts 
 			workspaceVersionServiceGetSettingsHandler.ServeHTTP(w, r)
 		case WorkspaceVersionServiceUpdateSettingsProcedure:
 			workspaceVersionServiceUpdateSettingsHandler.ServeHTTP(w, r)
-		case WorkspaceVersionServiceGetWorkspaceSourceStatusProcedure:
-			workspaceVersionServiceGetWorkspaceSourceStatusHandler.ServeHTTP(w, r)
-		case WorkspaceVersionServiceExportWorkspaceSourceProcedure:
-			workspaceVersionServiceExportWorkspaceSourceHandler.ServeHTTP(w, r)
-		case WorkspaceVersionServiceImportWorkspaceSourceProcedure:
-			workspaceVersionServiceImportWorkspaceSourceHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -298,16 +223,4 @@ func (UnimplementedWorkspaceVersionServiceHandler) GetSettings(context.Context, 
 
 func (UnimplementedWorkspaceVersionServiceHandler) UpdateSettings(context.Context, *connect.Request[v1.UpdateVersionSettingsRequest]) (*connect.Response[v1.UpdateVersionSettingsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.WorkspaceVersionService.UpdateSettings is not implemented"))
-}
-
-func (UnimplementedWorkspaceVersionServiceHandler) GetWorkspaceSourceStatus(context.Context, *connect.Request[v1.GetWorkspaceSourceStatusRequest]) (*connect.Response[v1.WorkspaceSourceStatus], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.WorkspaceVersionService.GetWorkspaceSourceStatus is not implemented"))
-}
-
-func (UnimplementedWorkspaceVersionServiceHandler) ExportWorkspaceSource(context.Context, *connect.Request[v1.WorkspaceSourceRequest]) (*connect.Response[v1.WorkspaceSourceResult], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.WorkspaceVersionService.ExportWorkspaceSource is not implemented"))
-}
-
-func (UnimplementedWorkspaceVersionServiceHandler) ImportWorkspaceSource(context.Context, *connect.Request[v1.ImportWorkspaceSourceRequest]) (*connect.Response[v1.WorkspaceSourceResult], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.WorkspaceVersionService.ImportWorkspaceSource is not implemented"))
 }
