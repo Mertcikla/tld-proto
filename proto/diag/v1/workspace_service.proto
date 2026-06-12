@@ -421,6 +421,14 @@ message ViewMarkdownDocument {
   string path = 1;
   bool is_managed = 2;
   google.protobuf.Timestamp updated_at = 3;
+  string source_kind = 4;
+  bool exists = 5;
+  bool writable = 6;
+  bool can_edit = 7;
+  string git_state = 8;
+  optional string repo_relative_path = 9;
+  int32 linked_view_count = 10;
+  string file_version = 11;
 }
 
 // View represents a view record.
@@ -550,6 +558,8 @@ message CreateViewMarkdownRequest {
   int32 view_id = 1;
   optional string file_name = 2;
   optional string initial_content = 3;
+  string target_kind = 4;
+  optional string path = 5;
 }
 
 message CreateViewMarkdownResponse {
@@ -568,6 +578,8 @@ message LinkViewMarkdownResponse {
 message SaveViewMarkdownRequest {
   int32 view_id = 1;
   string content = 2;
+  optional string expected_file_version = 3;
+  bool force = 4;
 }
 
 message SaveViewMarkdownResponse {

@@ -2426,12 +2426,20 @@ func (x *ViewContent) GetConnectors() []*Connector {
 
 // View represents a view record.
 type ViewMarkdownDocument struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Path          string                 `protobuf:"bytes,1,opt,name=path,proto3" json:"path,omitempty"`
-	IsManaged     bool                   `protobuf:"varint,2,opt,name=is_managed,json=isManaged,proto3" json:"is_managed,omitempty"`
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Path             string                 `protobuf:"bytes,1,opt,name=path,proto3" json:"path,omitempty"`
+	IsManaged        bool                   `protobuf:"varint,2,opt,name=is_managed,json=isManaged,proto3" json:"is_managed,omitempty"`
+	UpdatedAt        *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	SourceKind       string                 `protobuf:"bytes,4,opt,name=source_kind,json=sourceKind,proto3" json:"source_kind,omitempty"`
+	Exists           bool                   `protobuf:"varint,5,opt,name=exists,proto3" json:"exists,omitempty"`
+	Writable         bool                   `protobuf:"varint,6,opt,name=writable,proto3" json:"writable,omitempty"`
+	CanEdit          bool                   `protobuf:"varint,7,opt,name=can_edit,json=canEdit,proto3" json:"can_edit,omitempty"`
+	GitState         string                 `protobuf:"bytes,8,opt,name=git_state,json=gitState,proto3" json:"git_state,omitempty"`
+	RepoRelativePath *string                `protobuf:"bytes,9,opt,name=repo_relative_path,json=repoRelativePath,proto3,oneof" json:"repo_relative_path,omitempty"`
+	LinkedViewCount  int32                  `protobuf:"varint,10,opt,name=linked_view_count,json=linkedViewCount,proto3" json:"linked_view_count,omitempty"`
+	FileVersion      string                 `protobuf:"bytes,11,opt,name=file_version,json=fileVersion,proto3" json:"file_version,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *ViewMarkdownDocument) Reset() {
@@ -2483,6 +2491,62 @@ func (x *ViewMarkdownDocument) GetUpdatedAt() *timestamppb.Timestamp {
 		return x.UpdatedAt
 	}
 	return nil
+}
+
+func (x *ViewMarkdownDocument) GetSourceKind() string {
+	if x != nil {
+		return x.SourceKind
+	}
+	return ""
+}
+
+func (x *ViewMarkdownDocument) GetExists() bool {
+	if x != nil {
+		return x.Exists
+	}
+	return false
+}
+
+func (x *ViewMarkdownDocument) GetWritable() bool {
+	if x != nil {
+		return x.Writable
+	}
+	return false
+}
+
+func (x *ViewMarkdownDocument) GetCanEdit() bool {
+	if x != nil {
+		return x.CanEdit
+	}
+	return false
+}
+
+func (x *ViewMarkdownDocument) GetGitState() string {
+	if x != nil {
+		return x.GitState
+	}
+	return ""
+}
+
+func (x *ViewMarkdownDocument) GetRepoRelativePath() string {
+	if x != nil && x.RepoRelativePath != nil {
+		return *x.RepoRelativePath
+	}
+	return ""
+}
+
+func (x *ViewMarkdownDocument) GetLinkedViewCount() int32 {
+	if x != nil {
+		return x.LinkedViewCount
+	}
+	return 0
+}
+
+func (x *ViewMarkdownDocument) GetFileVersion() string {
+	if x != nil {
+		return x.FileVersion
+	}
+	return ""
 }
 
 // View represents a view record.
@@ -3552,6 +3616,8 @@ type CreateViewMarkdownRequest struct {
 	ViewId         int32                  `protobuf:"varint,1,opt,name=view_id,json=viewId,proto3" json:"view_id,omitempty"`
 	FileName       *string                `protobuf:"bytes,2,opt,name=file_name,json=fileName,proto3,oneof" json:"file_name,omitempty"`
 	InitialContent *string                `protobuf:"bytes,3,opt,name=initial_content,json=initialContent,proto3,oneof" json:"initial_content,omitempty"`
+	TargetKind     string                 `protobuf:"bytes,4,opt,name=target_kind,json=targetKind,proto3" json:"target_kind,omitempty"`
+	Path           *string                `protobuf:"bytes,5,opt,name=path,proto3,oneof" json:"path,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -3603,6 +3669,20 @@ func (x *CreateViewMarkdownRequest) GetFileName() string {
 func (x *CreateViewMarkdownRequest) GetInitialContent() string {
 	if x != nil && x.InitialContent != nil {
 		return *x.InitialContent
+	}
+	return ""
+}
+
+func (x *CreateViewMarkdownRequest) GetTargetKind() string {
+	if x != nil {
+		return x.TargetKind
+	}
+	return ""
+}
+
+func (x *CreateViewMarkdownRequest) GetPath() string {
+	if x != nil && x.Path != nil {
+		return *x.Path
 	}
 	return ""
 }
@@ -3748,11 +3828,13 @@ func (x *LinkViewMarkdownResponse) GetView() *View {
 }
 
 type SaveViewMarkdownRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ViewId        int32                  `protobuf:"varint,1,opt,name=view_id,json=viewId,proto3" json:"view_id,omitempty"`
-	Content       string                 `protobuf:"bytes,2,opt,name=content,proto3" json:"content,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state               protoimpl.MessageState `protogen:"open.v1"`
+	ViewId              int32                  `protobuf:"varint,1,opt,name=view_id,json=viewId,proto3" json:"view_id,omitempty"`
+	Content             string                 `protobuf:"bytes,2,opt,name=content,proto3" json:"content,omitempty"`
+	ExpectedFileVersion *string                `protobuf:"bytes,3,opt,name=expected_file_version,json=expectedFileVersion,proto3,oneof" json:"expected_file_version,omitempty"`
+	Force               bool                   `protobuf:"varint,4,opt,name=force,proto3" json:"force,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
 }
 
 func (x *SaveViewMarkdownRequest) Reset() {
@@ -3797,6 +3879,20 @@ func (x *SaveViewMarkdownRequest) GetContent() string {
 		return x.Content
 	}
 	return ""
+}
+
+func (x *SaveViewMarkdownRequest) GetExpectedFileVersion() string {
+	if x != nil && x.ExpectedFileVersion != nil {
+		return *x.ExpectedFileVersion
+	}
+	return ""
+}
+
+func (x *SaveViewMarkdownRequest) GetForce() bool {
+	if x != nil {
+		return x.Force
+	}
+	return false
 }
 
 type SaveViewMarkdownResponse struct {
@@ -7347,13 +7443,24 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"placements\x122\n" +
 	"\n" +
 	"connectors\x18\x02 \x03(\v2\x12.diag.v1.ConnectorR\n" +
-	"connectors\"\x84\x01\n" +
+	"connectors\"\xaa\x03\n" +
 	"\x14ViewMarkdownDocument\x12\x12\n" +
 	"\x04path\x18\x01 \x01(\tR\x04path\x12\x1d\n" +
 	"\n" +
 	"is_managed\x18\x02 \x01(\bR\tisManaged\x129\n" +
 	"\n" +
-	"updated_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xcc\x04\n" +
+	"updated_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x1f\n" +
+	"\vsource_kind\x18\x04 \x01(\tR\n" +
+	"sourceKind\x12\x16\n" +
+	"\x06exists\x18\x05 \x01(\bR\x06exists\x12\x1a\n" +
+	"\bwritable\x18\x06 \x01(\bR\bwritable\x12\x19\n" +
+	"\bcan_edit\x18\a \x01(\bR\acanEdit\x12\x1b\n" +
+	"\tgit_state\x18\b \x01(\tR\bgitState\x121\n" +
+	"\x12repo_relative_path\x18\t \x01(\tH\x00R\x10repoRelativePath\x88\x01\x01\x12*\n" +
+	"\x11linked_view_count\x18\n" +
+	" \x01(\x05R\x0flinkedViewCount\x12!\n" +
+	"\ffile_version\x18\v \x01(\tR\vfileVersionB\x15\n" +
+	"\x13_repo_relative_path\"\xcc\x04\n" +
 	"\x04View\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x15\n" +
 	"\x06org_id\x18\x02 \x01(\tR\x05orgId\x12\x12\n" +
@@ -7443,24 +7550,31 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\aview_id\x18\x01 \x01(\x05R\x06viewId\"n\n" +
 	"\x17GetViewMarkdownResponse\x129\n" +
 	"\bmarkdown\x18\x01 \x01(\v2\x1d.diag.v1.ViewMarkdownDocumentR\bmarkdown\x12\x18\n" +
-	"\acontent\x18\x02 \x01(\tR\acontent\"\xa6\x01\n" +
+	"\acontent\x18\x02 \x01(\tR\acontent\"\xe9\x01\n" +
 	"\x19CreateViewMarkdownRequest\x12\x17\n" +
 	"\aview_id\x18\x01 \x01(\x05R\x06viewId\x12 \n" +
 	"\tfile_name\x18\x02 \x01(\tH\x00R\bfileName\x88\x01\x01\x12,\n" +
-	"\x0finitial_content\x18\x03 \x01(\tH\x01R\x0einitialContent\x88\x01\x01B\f\n" +
+	"\x0finitial_content\x18\x03 \x01(\tH\x01R\x0einitialContent\x88\x01\x01\x12\x1f\n" +
+	"\vtarget_kind\x18\x04 \x01(\tR\n" +
+	"targetKind\x12\x17\n" +
+	"\x04path\x18\x05 \x01(\tH\x02R\x04path\x88\x01\x01B\f\n" +
 	"\n" +
 	"_file_nameB\x12\n" +
-	"\x10_initial_content\"?\n" +
+	"\x10_initial_contentB\a\n" +
+	"\x05_path\"?\n" +
 	"\x1aCreateViewMarkdownResponse\x12!\n" +
 	"\x04view\x18\x01 \x01(\v2\r.diag.v1.ViewR\x04view\"F\n" +
 	"\x17LinkViewMarkdownRequest\x12\x17\n" +
 	"\aview_id\x18\x01 \x01(\x05R\x06viewId\x12\x12\n" +
 	"\x04path\x18\x02 \x01(\tR\x04path\"=\n" +
 	"\x18LinkViewMarkdownResponse\x12!\n" +
-	"\x04view\x18\x01 \x01(\v2\r.diag.v1.ViewR\x04view\"L\n" +
+	"\x04view\x18\x01 \x01(\v2\r.diag.v1.ViewR\x04view\"\xb5\x01\n" +
 	"\x17SaveViewMarkdownRequest\x12\x17\n" +
 	"\aview_id\x18\x01 \x01(\x05R\x06viewId\x12\x18\n" +
-	"\acontent\x18\x02 \x01(\tR\acontent\"U\n" +
+	"\acontent\x18\x02 \x01(\tR\acontent\x127\n" +
+	"\x15expected_file_version\x18\x03 \x01(\tH\x00R\x13expectedFileVersion\x88\x01\x01\x12\x14\n" +
+	"\x05force\x18\x04 \x01(\bR\x05forceB\x18\n" +
+	"\x16_expected_file_version\"U\n" +
 	"\x18SaveViewMarkdownResponse\x129\n" +
 	"\bmarkdown\x18\x01 \x01(\v2\x1d.diag.v1.ViewMarkdownDocumentR\bmarkdown\"d\n" +
 	"\x19UnlinkViewMarkdownRequest\x12\x17\n" +
@@ -8129,6 +8243,7 @@ func file_diag_v1_workspace_service_proto_init() {
 	file_diag_v1_workspace_service_proto_msgTypes[18].OneofWrappers = []any{}
 	file_diag_v1_workspace_service_proto_msgTypes[20].OneofWrappers = []any{}
 	file_diag_v1_workspace_service_proto_msgTypes[21].OneofWrappers = []any{}
+	file_diag_v1_workspace_service_proto_msgTypes[24].OneofWrappers = []any{}
 	file_diag_v1_workspace_service_proto_msgTypes[25].OneofWrappers = []any{}
 	file_diag_v1_workspace_service_proto_msgTypes[26].OneofWrappers = []any{}
 	file_diag_v1_workspace_service_proto_msgTypes[28].OneofWrappers = []any{}
@@ -8138,6 +8253,7 @@ func file_diag_v1_workspace_service_proto_init() {
 	file_diag_v1_workspace_service_proto_msgTypes[37].OneofWrappers = []any{}
 	file_diag_v1_workspace_service_proto_msgTypes[39].OneofWrappers = []any{}
 	file_diag_v1_workspace_service_proto_msgTypes[43].OneofWrappers = []any{}
+	file_diag_v1_workspace_service_proto_msgTypes[47].OneofWrappers = []any{}
 	file_diag_v1_workspace_service_proto_msgTypes[53].OneofWrappers = []any{}
 	file_diag_v1_workspace_service_proto_msgTypes[54].OneofWrappers = []any{}
 	file_diag_v1_workspace_service_proto_msgTypes[64].OneofWrappers = []any{}
