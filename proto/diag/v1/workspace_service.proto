@@ -87,6 +87,7 @@ service WorkspaceService {
   rpc GetElement(GetElementRequest) returns (GetElementResponse);
   rpc CreateElement(CreateElementRequest) returns (CreateElementResponse);
   rpc UpdateElement(UpdateElementRequest) returns (UpdateElementResponse);
+  rpc CreateCustomTechnology(CreateCustomTechnologyRequest) returns (CreateCustomTechnologyResponse);
   rpc ListElementPlacements(ListElementPlacementsRequest) returns (ListElementPlacementsResponse);
 
   // Placements
@@ -507,6 +508,18 @@ message TechnologyLink {
   bool is_primary_icon = 4;
 }
 
+message TechnologyCatalogItem {
+  string icon_url = 1;
+  string name = 2;
+  optional string provider = 3;
+  optional string docs_url = 4;
+  optional string description = 5;
+  optional string website_url = 6;
+  string name_short = 7;
+  string default_slug = 8;
+  repeated string aliases = 9;
+}
+
 // ─── Browser-facing request/response messages ────────────────────────────────
 
 // ── Views ────────────────────────────────────────────────────────────────
@@ -726,6 +739,18 @@ message UpdateElementRequest {
 }
 message UpdateElementResponse {
   Element element = 1;
+}
+
+message CreateCustomTechnologyRequest {
+  string name = 1;
+  optional string name_short = 2;
+  repeated string aliases = 3;
+  bytes icon = 4;
+  string media_type = 5;
+  optional string preferred_slug = 6;
+}
+message CreateCustomTechnologyResponse {
+  TechnologyCatalogItem item = 1;
 }
 
 message ViewPlacementInfo {

@@ -102,6 +102,9 @@ const (
 	// WorkspaceServiceUpdateElementProcedure is the fully-qualified name of the WorkspaceService's
 	// UpdateElement RPC.
 	WorkspaceServiceUpdateElementProcedure = "/diag.v1.WorkspaceService/UpdateElement"
+	// WorkspaceServiceCreateCustomTechnologyProcedure is the fully-qualified name of the
+	// WorkspaceService's CreateCustomTechnology RPC.
+	WorkspaceServiceCreateCustomTechnologyProcedure = "/diag.v1.WorkspaceService/CreateCustomTechnology"
 	// WorkspaceServiceListElementPlacementsProcedure is the fully-qualified name of the
 	// WorkspaceService's ListElementPlacements RPC.
 	WorkspaceServiceListElementPlacementsProcedure = "/diag.v1.WorkspaceService/ListElementPlacements"
@@ -201,6 +204,7 @@ type WorkspaceServiceClient interface {
 	GetElement(context.Context, *connect.Request[v1.GetElementRequest]) (*connect.Response[v1.GetElementResponse], error)
 	CreateElement(context.Context, *connect.Request[v1.CreateElementRequest]) (*connect.Response[v1.CreateElementResponse], error)
 	UpdateElement(context.Context, *connect.Request[v1.UpdateElementRequest]) (*connect.Response[v1.UpdateElementResponse], error)
+	CreateCustomTechnology(context.Context, *connect.Request[v1.CreateCustomTechnologyRequest]) (*connect.Response[v1.CreateCustomTechnologyResponse], error)
 	ListElementPlacements(context.Context, *connect.Request[v1.ListElementPlacementsRequest]) (*connect.Response[v1.ListElementPlacementsResponse], error)
 	// Placements
 	ListPlacements(context.Context, *connect.Request[v1.ListPlacementsRequest]) (*connect.Response[v1.ListPlacementsResponse], error)
@@ -371,6 +375,12 @@ func NewWorkspaceServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			connect.WithSchema(workspaceServiceMethods.ByName("UpdateElement")),
 			connect.WithClientOptions(opts...),
 		),
+		createCustomTechnology: connect.NewClient[v1.CreateCustomTechnologyRequest, v1.CreateCustomTechnologyResponse](
+			httpClient,
+			baseURL+WorkspaceServiceCreateCustomTechnologyProcedure,
+			connect.WithSchema(workspaceServiceMethods.ByName("CreateCustomTechnology")),
+			connect.WithClientOptions(opts...),
+		),
 		listElementPlacements: connect.NewClient[v1.ListElementPlacementsRequest, v1.ListElementPlacementsResponse](
 			httpClient,
 			baseURL+WorkspaceServiceListElementPlacementsProcedure,
@@ -489,6 +499,7 @@ type workspaceServiceClient struct {
 	getElement                     *connect.Client[v1.GetElementRequest, v1.GetElementResponse]
 	createElement                  *connect.Client[v1.CreateElementRequest, v1.CreateElementResponse]
 	updateElement                  *connect.Client[v1.UpdateElementRequest, v1.UpdateElementResponse]
+	createCustomTechnology         *connect.Client[v1.CreateCustomTechnologyRequest, v1.CreateCustomTechnologyResponse]
 	listElementPlacements          *connect.Client[v1.ListElementPlacementsRequest, v1.ListElementPlacementsResponse]
 	listPlacements                 *connect.Client[v1.ListPlacementsRequest, v1.ListPlacementsResponse]
 	createPlacement                *connect.Client[v1.CreatePlacementRequest, v1.CreatePlacementResponse]
@@ -621,6 +632,11 @@ func (c *workspaceServiceClient) UpdateElement(ctx context.Context, req *connect
 	return c.updateElement.CallUnary(ctx, req)
 }
 
+// CreateCustomTechnology calls diag.v1.WorkspaceService.CreateCustomTechnology.
+func (c *workspaceServiceClient) CreateCustomTechnology(ctx context.Context, req *connect.Request[v1.CreateCustomTechnologyRequest]) (*connect.Response[v1.CreateCustomTechnologyResponse], error) {
+	return c.createCustomTechnology.CallUnary(ctx, req)
+}
+
 // ListElementPlacements calls diag.v1.WorkspaceService.ListElementPlacements.
 func (c *workspaceServiceClient) ListElementPlacements(ctx context.Context, req *connect.Request[v1.ListElementPlacementsRequest]) (*connect.Response[v1.ListElementPlacementsResponse], error) {
 	return c.listElementPlacements.CallUnary(ctx, req)
@@ -748,6 +764,7 @@ type WorkspaceServiceHandler interface {
 	GetElement(context.Context, *connect.Request[v1.GetElementRequest]) (*connect.Response[v1.GetElementResponse], error)
 	CreateElement(context.Context, *connect.Request[v1.CreateElementRequest]) (*connect.Response[v1.CreateElementResponse], error)
 	UpdateElement(context.Context, *connect.Request[v1.UpdateElementRequest]) (*connect.Response[v1.UpdateElementResponse], error)
+	CreateCustomTechnology(context.Context, *connect.Request[v1.CreateCustomTechnologyRequest]) (*connect.Response[v1.CreateCustomTechnologyResponse], error)
 	ListElementPlacements(context.Context, *connect.Request[v1.ListElementPlacementsRequest]) (*connect.Response[v1.ListElementPlacementsResponse], error)
 	// Placements
 	ListPlacements(context.Context, *connect.Request[v1.ListPlacementsRequest]) (*connect.Response[v1.ListPlacementsResponse], error)
@@ -914,6 +931,12 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 		connect.WithSchema(workspaceServiceMethods.ByName("UpdateElement")),
 		connect.WithHandlerOptions(opts...),
 	)
+	workspaceServiceCreateCustomTechnologyHandler := connect.NewUnaryHandler(
+		WorkspaceServiceCreateCustomTechnologyProcedure,
+		svc.CreateCustomTechnology,
+		connect.WithSchema(workspaceServiceMethods.ByName("CreateCustomTechnology")),
+		connect.WithHandlerOptions(opts...),
+	)
 	workspaceServiceListElementPlacementsHandler := connect.NewUnaryHandler(
 		WorkspaceServiceListElementPlacementsProcedure,
 		svc.ListElementPlacements,
@@ -1052,6 +1075,8 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 			workspaceServiceCreateElementHandler.ServeHTTP(w, r)
 		case WorkspaceServiceUpdateElementProcedure:
 			workspaceServiceUpdateElementHandler.ServeHTTP(w, r)
+		case WorkspaceServiceCreateCustomTechnologyProcedure:
+			workspaceServiceCreateCustomTechnologyHandler.ServeHTTP(w, r)
 		case WorkspaceServiceListElementPlacementsProcedure:
 			workspaceServiceListElementPlacementsHandler.ServeHTTP(w, r)
 		case WorkspaceServiceListPlacementsProcedure:
@@ -1181,6 +1206,10 @@ func (UnimplementedWorkspaceServiceHandler) CreateElement(context.Context, *conn
 
 func (UnimplementedWorkspaceServiceHandler) UpdateElement(context.Context, *connect.Request[v1.UpdateElementRequest]) (*connect.Response[v1.UpdateElementResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.WorkspaceService.UpdateElement is not implemented"))
+}
+
+func (UnimplementedWorkspaceServiceHandler) CreateCustomTechnology(context.Context, *connect.Request[v1.CreateCustomTechnologyRequest]) (*connect.Response[v1.CreateCustomTechnologyResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.WorkspaceService.CreateCustomTechnology is not implemented"))
 }
 
 func (UnimplementedWorkspaceServiceHandler) ListElementPlacements(context.Context, *connect.Request[v1.ListElementPlacementsRequest]) (*connect.Response[v1.ListElementPlacementsResponse], error) {
