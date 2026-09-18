@@ -1,0 +1,313 @@
+syntax = "proto3";
+
+package diag.v1;
+
+option go_package = "buf.build/gen/go/tldiagramcom/diagram/protocolbuffers/go/diag/v1;diagv1";
+
+// ImpactService manages git repositories bound to a local workspace and
+// reconciles a git change set against the authored architecture.
+//
+// A repository is a top-level element carrying a git source (repo + branch).
+// Impact analysis is read-only: it never edits the architecture. It reports
+// which authored elements a change touches, which code is unowned, and how
+// completely the change set could be reconciled.
+service ImpactService {
+  // ListRepositories returns repositories defined in the workspace, enriched
+  // with the last known local checkout and head commit.
+  rpc ListRepositories(ListRepositoriesRequest) returns (ListRepositoriesResponse);
+
+  // AddRepository registers a local git checkout as a top-level repository
+  // element in the workspace.
+  rpc AddRepository(AddRepositoryRequest) returns (AddRepositoryResponse);
+
+  // UpdateRepository changes a repository element's tracked branch.
+  rpc UpdateRepository(UpdateRepositoryRequest) returns (UpdateRepositoryResponse);
+
+  // RemoveRepository removes a repository element from the workspace.
+  rpc RemoveRepository(RemoveRepositoryRequest) returns (RemoveRepositoryResponse);
+
+  // GetRepositoryStatus reports a repository's git identity, whether the
+  // workspace has architecture for it, and recent commits.
+  rpc GetRepositoryStatus(GetRepositoryStatusRequest) returns (GetRepositoryStatusResponse);
+
+  // ListCommits returns recent commits for a repository, newest first.
+  rpc ListCommits(ListCommitsRequest) returns (ListCommitsResponse);
+
+  // ListCommitGraph returns recent commits with parent links and ref
+  // decorations for rendering a commit graph, newest first. Unlike
+  // ListCommits it includes merge commits, which are the branching points
+  // of the graph.
+  rpc ListCommitGraph(ListCommitGraphRequest) returns (ListCommitGraphResponse);
+
+  // GetCommitDetails returns the files changed by a single commit.
+  rpc GetCommitDetails(GetCommitDetailsRequest) returns (GetCommitDetailsResponse);
+
+  // GetRangeStats returns aggregate file statistics between two commits
+  // without running a full impact analysis.
+  rpc GetRangeStats(GetRangeStatsRequest) returns (GetRangeStatsResponse);
+
+  // AnalyzeImpact reconciles the diff between two commits against the authored
+  // architecture and returns the impacted subgraph, coverage, and findings.
+  // The result is persisted so it can be reloaded without recomputation.
+  rpc AnalyzeImpact(AnalyzeImpactRequest) returns (AnalyzeImpactResponse);
+
+  // GetLatestImpact returns the most recently persisted impact run for a
+  // repository checkout, so a page refresh does not recompute the analysis.
+  rpc GetLatestImpact(GetLatestImpactRequest) returns (GetLatestImpactResponse);
+
+  // ListImpactRuns returns persisted impact runs for a repository checkout,
+  // newest first, for browsing analysis history. Each snapshot carries the
+  // full report so selecting one loads it without recomputation.
+  rpc ListImpactRuns(ListImpactRunsRequest) returns (ListImpactRunsResponse);
+}
+
+message RepositoryCommit {
+  string sha = 1;
+  string short_sha = 2;
+  string subject = 3;
+  string author = 4;
+  string date = 5;
+  // Full SHAs of the commit's parents, in git order. Empty for root commits,
+  // more than one entry for merge commits.
+  repeated string parents = 6;
+  // Ref decorations from `git log --decorate` (e.g. "HEAD -> main",
+  // "origin/main", "tag: v1.2"). Empty when the commit has no refs.
+  repeated string refs = 7;
+  string author_email = 8;
+  // Commit message body without the subject line. May be empty.
+  string body = 9;
+}
+
+message Repository {
+  string ref = 1;
+  string name = 2;
+  string remote_url = 3;
+  string branch = 4;
+  string local_path = 5;
+  string head_commit = 6;
+  bool has_architecture = 7;
+  int32 element_id = 8;
+}
+
+message ListRepositoriesRequest {
+  string org_id = 1;
+}
+
+message ListRepositoriesResponse {
+  repeated Repository repositories = 1;
+}
+
+message AddRepositoryRequest {
+  string org_id = 1;
+  string path = 2;
+  optional string name = 3;
+  optional string branch = 4;
+}
+
+message AddRepositoryResponse {
+  Repository repository = 1;
+}
+
+message UpdateRepositoryRequest {
+  string org_id = 1;
+  string ref = 2;
+  string branch = 3;
+  // Optional local checkout to associate with an existing repository element.
+  optional string path = 4;
+}
+
+message UpdateRepositoryResponse {
+  Repository repository = 1;
+}
+
+message RemoveRepositoryRequest {
+  string org_id = 1;
+  string ref = 2;
+}
+
+message RemoveRepositoryResponse {}
+
+message GetRepositoryStatusRequest {
+  string org_id = 1;
+  string ref = 2;
+}
+
+message GetRepositoryStatusResponse {
+  Repository repository = 1;
+  repeated RepositoryCommit commits = 2;
+}
+
+message ListCommitsRequest {
+  string org_id = 1;
+  string path = 2;
+  int32 limit = 3;
+}
+
+message ListCommitsResponse {
+  repeated RepositoryCommit commits = 1;
+}
+
+message ListCommitGraphRequest {
+  string org_id = 1;
+  string path = 2;
+  int32 limit = 3;
+}
+
+message ListCommitGraphResponse {
+  repeated RepositoryCommit commits = 1;
+}
+
+message GetCommitDetailsRequest {
+  string org_id = 1;
+  string path = 2;
+  string sha = 3;
+}
+
+message GetCommitDetailsResponse {
+  RepositoryCommit commit = 1;
+  repeated ImpactFile files = 2;
+  int32 added = 3;
+  int32 removed = 4;
+}
+
+message GetRangeStatsRequest {
+  string org_id = 1;
+  string path = 2;
+  string base = 3;
+  string head = 4;
+}
+
+message GetRangeStatsResponse {
+  // Number of commits in base..head, exclusive of base.
+  int32 commits = 1;
+  int32 files_changed = 2;
+  int32 added = 3;
+  int32 removed = 4;
+}
+
+enum ImpactChangeType {
+  IMPACT_CHANGE_TYPE_UNSPECIFIED = 0;
+  IMPACT_CHANGE_TYPE_ADDED = 1;
+  IMPACT_CHANGE_TYPE_MODIFIED = 2;
+  IMPACT_CHANGE_TYPE_DELETED = 3;
+}
+
+message ImpactElement {
+  string ref = 1;
+  string name = 2;
+  string kind = 3;
+  optional int32 element_id = 4;
+  ImpactChangeType change = 5;
+  repeated string evidence = 6;
+}
+
+message ImpactEdge {
+  string source_ref = 1;
+  string target_ref = 2;
+  string label = 3;
+  optional int32 connector_id = 4;
+  bool observed = 5;
+}
+
+// ImpactFile is a changed file in the analyzed diff, with line counts.
+message ImpactFile {
+  string path = 1;
+  ImpactChangeType change = 2;
+  int32 added = 3;
+  int32 removed = 4;
+}
+
+message ImpactFinding {
+  string type = 1;
+  string severity = 2;
+  string message = 3;
+  bool observed = 4;
+}
+
+message ImpactCoverageGap {
+  string file = 1;
+  string change = 2;
+  string reason = 3;
+  string suggested_element_ref = 4;
+  string suggested_element_name = 5;
+  double suggested_score = 6;
+  string suggested_element_pattern = 7;
+  string suggested_new_element = 8;
+  string suggested_new_ref = 9;
+}
+
+message ImpactCoverage {
+  bool applicable = 1;
+  bool complete = 2;
+  double score = 3;
+  int32 percent = 4;
+  string confidence = 5;
+  int32 source_files = 6;
+  int32 bound_source_files = 7;
+  int32 weak_source_files = 8;
+  int32 unmapped_source_files = 9;
+  int32 non_source_files = 10;
+  int32 anchored_elements = 11;
+  int32 total_elements = 12;
+  repeated ImpactCoverageGap gaps = 13;
+}
+
+message AnalyzeImpactRequest {
+  string org_id = 1;
+  string path = 2;
+  string base = 3;
+  string head = 4;
+  bool evidence = 5;
+  bool suggest_bindings = 6;
+}
+
+message AnalyzeImpactResponse {
+  string base = 1;
+  string head = 2;
+  string repo_root = 3;
+  repeated ImpactElement changed = 4;
+  repeated ImpactElement candidates = 5;
+  repeated ImpactElement related = 6;
+  repeated ImpactEdge edges = 7;
+  repeated string unmapped = 8;
+  ImpactCoverage coverage = 9;
+  repeated ImpactFinding findings = 10;
+  repeated ImpactFile changed_files = 12;
+}
+
+message GetLatestImpactRequest {
+  string org_id = 1;
+  // Local checkout path (repository root) whose last run should be loaded.
+  string path = 2;
+}
+
+message GetLatestImpactResponse {
+  bool found = 1;
+  AnalyzeImpactResponse report = 2;
+}
+
+// ImpactRunSnapshot is one persisted impact analysis with its identity and
+// full report, so the UI can list history and reload a snapshot on demand.
+message ImpactRunSnapshot {
+  int64 id = 1;
+  string base = 2;
+  string head = 3;
+  string created_at = 4;
+  AnalyzeImpactResponse report = 5;
+}
+
+message ListImpactRunsRequest {
+  string org_id = 1;
+  // Local checkout path (repository root) whose runs should be listed.
+  string path = 2;
+  // Page size, newest first. Defaults to 5 when unset; capped at 50.
+  int32 limit = 3;
+  // Zero-based offset into the newest-first ordering.
+  int32 offset = 4;
+}
+
+message ListImpactRunsResponse {
+  repeated ImpactRunSnapshot runs = 1;
+  // True when more runs exist beyond this page.
+  bool has_more = 2;
+}
