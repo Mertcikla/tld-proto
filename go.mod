@@ -8,7 +8,7 @@ tool (
 )
 
 require (
-	buf.build/gen/go/tldiagramcom/diagram/protocolbuffers/go v1.36.11-20260414113744-f49e221fed77.1
-	connectrpc.com/connect v1.19.1
-	google.golang.org/protobuf v1.36.11
+	buf.build/gen/go/tldiagramcom/diagram/protocolbuffers/go v1.36.12-20261001025305-f90b1fd4390d.2
+	connectrpc.com/connect v1.21.0
+	google.golang.org/protobuf v1.36.12
 )

@@ -33,6 +33,9 @@ const (
 	FactKind_FACT_KIND_ENUM        FactKind = 6
 	FactKind_FACT_KIND_TYPE        FactKind = 7
 	FactKind_FACT_KIND_CONSTRUCTOR FactKind = 8
+	// A whole source file. One is published per discovered file so the file's
+	// content can be chunked and embedded alongside its symbols.
+	FactKind_FACT_KIND_FILE FactKind = 9
 	// Infrastructure, configuration, and repository-level facts. These carry a
 	// subject/object pair rather than a captured code body and are produced by
 	// deterministic config scanners, not the code indexers.
@@ -50,10 +53,11 @@ const (
 	FactKind_FACT_KIND_RPC               FactKind = 32
 	FactKind_FACT_KIND_PERSON            FactKind = 33
 	FactKind_FACT_KIND_BRIDGE_HTTP       FactKind = 34
-	FactKind_FACT_KIND_IMPORT            FactKind = 39
-	FactKind_FACT_KIND_CONFIG_REF        FactKind = 43
-	FactKind_FACT_KIND_DB_CLIENT         FactKind = 47
-	FactKind_FACT_KIND_SCHEMA            FactKind = 48
+	// Retained for wire compatibility. Import facts are no longer produced.
+	FactKind_FACT_KIND_IMPORT     FactKind = 39
+	FactKind_FACT_KIND_CONFIG_REF FactKind = 43
+	FactKind_FACT_KIND_DB_CLIENT  FactKind = 47
+	FactKind_FACT_KIND_SCHEMA     FactKind = 48
 )
 
 // Enum value maps for FactKind.
@@ -68,6 +72,7 @@ var (
 		6:  "FACT_KIND_ENUM",
 		7:  "FACT_KIND_TYPE",
 		8:  "FACT_KIND_CONSTRUCTOR",
+		9:  "FACT_KIND_FILE",
 		20: "FACT_KIND_DEPLOYABLE",
 		21: "FACT_KIND_DEPENDENCY",
 		22: "FACT_KIND_ROUTE",
@@ -97,6 +102,7 @@ var (
 		"FACT_KIND_ENUM":              6,
 		"FACT_KIND_TYPE":              7,
 		"FACT_KIND_CONSTRUCTOR":       8,
+		"FACT_KIND_FILE":              9,
 		"FACT_KIND_DEPLOYABLE":        20,
 		"FACT_KIND_DEPENDENCY":        21,
 		"FACT_KIND_ROUTE":             22,
@@ -4437,7 +4443,7 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"\x0eSearchResponse\x12+\n" +
 	"\x04hits\x18\x01 \x03(\v2\x17.codeindex.v1.SearchHitR\x04hits\x12%\n" +
 	"\x0eembedded_count\x18\x02 \x01(\rR\rembeddedCount\x12)\n" +
-	"\x10embeddable_count\x18\x03 \x01(\rR\x0fembeddableCount*\x8f\x05\n" +
+	"\x10embeddable_count\x18\x03 \x01(\rR\x0fembeddableCount*\xa3\x05\n" +
 	"\bFactKind\x12\x19\n" +
 	"\x15FACT_KIND_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12FACT_KIND_FUNCTION\x10\x01\x12\x14\n" +
@@ -4447,7 +4453,8 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"\x13FACT_KIND_INTERFACE\x10\x05\x12\x12\n" +
 	"\x0eFACT_KIND_ENUM\x10\x06\x12\x12\n" +
 	"\x0eFACT_KIND_TYPE\x10\a\x12\x19\n" +
-	"\x15FACT_KIND_CONSTRUCTOR\x10\b\x12\x18\n" +
+	"\x15FACT_KIND_CONSTRUCTOR\x10\b\x12\x12\n" +
+	"\x0eFACT_KIND_FILE\x10\t\x12\x18\n" +
 	"\x14FACT_KIND_DEPLOYABLE\x10\x14\x12\x18\n" +
 	"\x14FACT_KIND_DEPENDENCY\x10\x15\x12\x13\n" +
 	"\x0fFACT_KIND_ROUTE\x10\x16\x12\x16\n" +

@@ -44,6 +44,9 @@ enum FactKind {
   FACT_KIND_ENUM = 6;
   FACT_KIND_TYPE = 7;
   FACT_KIND_CONSTRUCTOR = 8;
+  // A whole source file. One is published per discovered file so the file's
+  // content can be chunked and embedded alongside its symbols.
+  FACT_KIND_FILE = 9;
   // Infrastructure, configuration, and repository-level facts. These carry a
   // subject/object pair rather than a captured code body and are produced by
   // deterministic config scanners, not the code indexers.
@@ -61,6 +64,7 @@ enum FactKind {
   FACT_KIND_RPC = 32;
   FACT_KIND_PERSON = 33;
   FACT_KIND_BRIDGE_HTTP = 34;
+  // Retained for wire compatibility. Import facts are no longer produced.
   FACT_KIND_IMPORT = 39;
   FACT_KIND_CONFIG_REF = 43;
   FACT_KIND_DB_CLIENT = 47;
