@@ -169,10 +169,21 @@ message ListRepositoriesRequest {}
 message ListRepositoriesResponse {
   repeated RepositorySummary repositories = 1;
 }
-// RepositoryService lists the repositories indexed by the in-process codeindex
-// engine. Indexing itself is invoked through Go interfaces / the CLI.
+message DeleteRepositoryRequest {
+  string id = 1;
+  // When set, also deletes the workspace views, elements, and connectors that
+  // were materialized from this repository. When unset, only the repository and
+  // its snapshots are deleted and materialized resources remain in the
+  // workspace.
+  bool delete_materialized = 2;
+}
+message DeleteRepositoryResponse {}
+// RepositoryService lists and deletes the repositories indexed by the
+// in-process codeindex engine. Indexing itself is invoked through Go interfaces
+// / the CLI.
 service RepositoryService {
   rpc ListRepositories(ListRepositoriesRequest) returns (ListRepositoriesResponse);
+  rpc DeleteRepository(DeleteRepositoryRequest) returns (DeleteRepositoryResponse);
 }
 // Snapshot is an immutable indexed revision of a repository. It is published
 // only after ingestion completes, and the repository's latest pointer advances
@@ -481,4 +492,43 @@ service AnalysisService {
   rpc ListRuns(AnalysisRunFilter) returns (AnalysisRunPage);
   rpc ListGroups(GroupFilter) returns (GroupPage);
   rpc ListGroupFacts(GroupFactsRequest) returns (CodeFactPage);
+}
+// MapperService runs the deterministic embedding clustering/binning pipeline
+// over a repository snapshot and materializes the result into the workspace. It
+// streams progress while the pipeline runs and terminates with one MapResult.
+service MapperService {
+  rpc MapRepository(MapRepositoryRequest) returns (stream MapRepositoryEvent);
+}
+message MapRepositoryRequest {
+  string repository_id = 1;
+  // Optional snapshot; the repository's latest published snapshot when empty.
+  string snapshot_id = 2;
+  // Optional embedding profile; the snapshot's majority profile when empty.
+  string profile = 3;
+  // When set, external imports declared by the indexed files are materialized
+  // under an External element and connected to the files that import them.
+  bool include_imports = 4;
+}
+message MapRepositoryEvent {
+  oneof event {
+    MapProgress progress = 1;
+    MapResult result = 2;
+  }
+}
+message MapProgress {
+  // One of: loading, clustering, binning, materializing.
+  string stage = 1;
+  uint32 current = 2;
+  uint32 total = 3;
+  string detail = 4;
+}
+// MapResult summarizes a completed mapper run.
+message MapResult {
+  string run_id = 1;
+  int64 view_id = 2;
+  uint32 facts = 3;
+  uint32 clusters = 4;
+  uint32 bins = 5;
+  uint32 unclustered = 6;
+  double weighted_tightness = 7;
 }

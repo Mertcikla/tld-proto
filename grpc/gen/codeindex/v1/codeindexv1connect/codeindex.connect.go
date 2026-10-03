@@ -29,6 +29,8 @@ const (
 	SearchServiceName = "codeindex.v1.SearchService"
 	// AnalysisServiceName is the fully-qualified name of the AnalysisService service.
 	AnalysisServiceName = "codeindex.v1.AnalysisService"
+	// MapperServiceName is the fully-qualified name of the MapperService service.
+	MapperServiceName = "codeindex.v1.MapperService"
 )
 
 // These constants are the fully-qualified names of the RPCs defined in this package. They're
@@ -42,6 +44,9 @@ const (
 	// RepositoryServiceListRepositoriesProcedure is the fully-qualified name of the RepositoryService's
 	// ListRepositories RPC.
 	RepositoryServiceListRepositoriesProcedure = "/codeindex.v1.RepositoryService/ListRepositories"
+	// RepositoryServiceDeleteRepositoryProcedure is the fully-qualified name of the RepositoryService's
+	// DeleteRepository RPC.
+	RepositoryServiceDeleteRepositoryProcedure = "/codeindex.v1.RepositoryService/DeleteRepository"
 	// CodeFactServiceGetFactProcedure is the fully-qualified name of the CodeFactService's GetFact RPC.
 	CodeFactServiceGetFactProcedure = "/codeindex.v1.CodeFactService/GetFact"
 	// CodeFactServiceListFactsProcedure is the fully-qualified name of the CodeFactService's ListFacts
@@ -98,11 +103,15 @@ const (
 	// AnalysisServiceListGroupFactsProcedure is the fully-qualified name of the AnalysisService's
 	// ListGroupFacts RPC.
 	AnalysisServiceListGroupFactsProcedure = "/codeindex.v1.AnalysisService/ListGroupFacts"
+	// MapperServiceMapRepositoryProcedure is the fully-qualified name of the MapperService's
+	// MapRepository RPC.
+	MapperServiceMapRepositoryProcedure = "/codeindex.v1.MapperService/MapRepository"
 )
 
 // RepositoryServiceClient is a client for the codeindex.v1.RepositoryService service.
 type RepositoryServiceClient interface {
 	ListRepositories(context.Context, *connect.Request[v1.ListRepositoriesRequest]) (*connect.Response[v1.ListRepositoriesResponse], error)
+	DeleteRepository(context.Context, *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[v1.DeleteRepositoryResponse], error)
 }
 
 // NewRepositoryServiceClient constructs a client for the codeindex.v1.RepositoryService service. By
@@ -122,12 +131,19 @@ func NewRepositoryServiceClient(httpClient connect.HTTPClient, baseURL string, o
 			connect.WithSchema(repositoryServiceMethods.ByName("ListRepositories")),
 			connect.WithClientOptions(opts...),
 		),
+		deleteRepository: connect.NewClient[v1.DeleteRepositoryRequest, v1.DeleteRepositoryResponse](
+			httpClient,
+			baseURL+RepositoryServiceDeleteRepositoryProcedure,
+			connect.WithSchema(repositoryServiceMethods.ByName("DeleteRepository")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // repositoryServiceClient implements RepositoryServiceClient.
 type repositoryServiceClient struct {
 	listRepositories *connect.Client[v1.ListRepositoriesRequest, v1.ListRepositoriesResponse]
+	deleteRepository *connect.Client[v1.DeleteRepositoryRequest, v1.DeleteRepositoryResponse]
 }
 
 // ListRepositories calls codeindex.v1.RepositoryService.ListRepositories.
@@ -135,9 +151,15 @@ func (c *repositoryServiceClient) ListRepositories(ctx context.Context, req *con
 	return c.listRepositories.CallUnary(ctx, req)
 }
 
+// DeleteRepository calls codeindex.v1.RepositoryService.DeleteRepository.
+func (c *repositoryServiceClient) DeleteRepository(ctx context.Context, req *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[v1.DeleteRepositoryResponse], error) {
+	return c.deleteRepository.CallUnary(ctx, req)
+}
+
 // RepositoryServiceHandler is an implementation of the codeindex.v1.RepositoryService service.
 type RepositoryServiceHandler interface {
 	ListRepositories(context.Context, *connect.Request[v1.ListRepositoriesRequest]) (*connect.Response[v1.ListRepositoriesResponse], error)
+	DeleteRepository(context.Context, *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[v1.DeleteRepositoryResponse], error)
 }
 
 // NewRepositoryServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -153,10 +175,18 @@ func NewRepositoryServiceHandler(svc RepositoryServiceHandler, opts ...connect.H
 		connect.WithSchema(repositoryServiceMethods.ByName("ListRepositories")),
 		connect.WithHandlerOptions(opts...),
 	)
+	repositoryServiceDeleteRepositoryHandler := connect.NewUnaryHandler(
+		RepositoryServiceDeleteRepositoryProcedure,
+		svc.DeleteRepository,
+		connect.WithSchema(repositoryServiceMethods.ByName("DeleteRepository")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/codeindex.v1.RepositoryService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case RepositoryServiceListRepositoriesProcedure:
 			repositoryServiceListRepositoriesHandler.ServeHTTP(w, r)
+		case RepositoryServiceDeleteRepositoryProcedure:
+			repositoryServiceDeleteRepositoryHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -168,6 +198,10 @@ type UnimplementedRepositoryServiceHandler struct{}
 
 func (UnimplementedRepositoryServiceHandler) ListRepositories(context.Context, *connect.Request[v1.ListRepositoriesRequest]) (*connect.Response[v1.ListRepositoriesResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.ListRepositories is not implemented"))
+}
+
+func (UnimplementedRepositoryServiceHandler) DeleteRepository(context.Context, *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[v1.DeleteRepositoryResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.DeleteRepository is not implemented"))
 }
 
 // CodeFactServiceClient is a client for the codeindex.v1.CodeFactService service.
@@ -826,4 +860,74 @@ func (UnimplementedAnalysisServiceHandler) ListGroups(context.Context, *connect.
 
 func (UnimplementedAnalysisServiceHandler) ListGroupFacts(context.Context, *connect.Request[v1.GroupFactsRequest]) (*connect.Response[v1.CodeFactPage], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.AnalysisService.ListGroupFacts is not implemented"))
+}
+
+// MapperServiceClient is a client for the codeindex.v1.MapperService service.
+type MapperServiceClient interface {
+	MapRepository(context.Context, *connect.Request[v1.MapRepositoryRequest]) (*connect.ServerStreamForClient[v1.MapRepositoryEvent], error)
+}
+
+// NewMapperServiceClient constructs a client for the codeindex.v1.MapperService service. By
+// default, it uses the Connect protocol with the binary Protobuf Codec, asks for gzipped responses,
+// and sends uncompressed requests. To use the gRPC or gRPC-Web protocols, supply the
+// connect.WithGRPC() or connect.WithGRPCWeb() options.
+//
+// The URL supplied here should be the base URL for the Connect or gRPC server (for example,
+// http://api.acme.com or https://acme.com/grpc).
+func NewMapperServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) MapperServiceClient {
+	baseURL = strings.TrimRight(baseURL, "/")
+	mapperServiceMethods := v1.File_codeindex_v1_codeindex_proto.Services().ByName("MapperService").Methods()
+	return &mapperServiceClient{
+		mapRepository: connect.NewClient[v1.MapRepositoryRequest, v1.MapRepositoryEvent](
+			httpClient,
+			baseURL+MapperServiceMapRepositoryProcedure,
+			connect.WithSchema(mapperServiceMethods.ByName("MapRepository")),
+			connect.WithClientOptions(opts...),
+		),
+	}
+}
+
+// mapperServiceClient implements MapperServiceClient.
+type mapperServiceClient struct {
+	mapRepository *connect.Client[v1.MapRepositoryRequest, v1.MapRepositoryEvent]
+}
+
+// MapRepository calls codeindex.v1.MapperService.MapRepository.
+func (c *mapperServiceClient) MapRepository(ctx context.Context, req *connect.Request[v1.MapRepositoryRequest]) (*connect.ServerStreamForClient[v1.MapRepositoryEvent], error) {
+	return c.mapRepository.CallServerStream(ctx, req)
+}
+
+// MapperServiceHandler is an implementation of the codeindex.v1.MapperService service.
+type MapperServiceHandler interface {
+	MapRepository(context.Context, *connect.Request[v1.MapRepositoryRequest], *connect.ServerStream[v1.MapRepositoryEvent]) error
+}
+
+// NewMapperServiceHandler builds an HTTP handler from the service implementation. It returns the
+// path on which to mount the handler and the handler itself.
+//
+// By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
+// and JSON codecs. They also support gzip compression.
+func NewMapperServiceHandler(svc MapperServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
+	mapperServiceMethods := v1.File_codeindex_v1_codeindex_proto.Services().ByName("MapperService").Methods()
+	mapperServiceMapRepositoryHandler := connect.NewServerStreamHandler(
+		MapperServiceMapRepositoryProcedure,
+		svc.MapRepository,
+		connect.WithSchema(mapperServiceMethods.ByName("MapRepository")),
+		connect.WithHandlerOptions(opts...),
+	)
+	return "/codeindex.v1.MapperService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case MapperServiceMapRepositoryProcedure:
+			mapperServiceMapRepositoryHandler.ServeHTTP(w, r)
+		default:
+			http.NotFound(w, r)
+		}
+	})
+}
+
+// UnimplementedMapperServiceHandler returns CodeUnimplemented from all methods.
+type UnimplementedMapperServiceHandler struct{}
+
+func (UnimplementedMapperServiceHandler) MapRepository(context.Context, *connect.Request[v1.MapRepositoryRequest], *connect.ServerStream[v1.MapRepositoryEvent]) error {
+	return connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.MapperService.MapRepository is not implemented"))
 }
