@@ -184,6 +184,98 @@ message DeleteRepositoryResponse {}
 service RepositoryService {
   rpc ListRepositories(ListRepositoriesRequest) returns (ListRepositoriesResponse);
   rpc DeleteRepository(DeleteRepositoryRequest) returns (DeleteRepositoryResponse);
+  rpc GetGitHistory(GetGitHistoryRequest) returns (GetGitHistoryResponse);
+  rpc GetCommitDetails(GetCommitDetailsRequest) returns (GetCommitDetailsResponse);
+}
+// WatchService starts, stops, and reports the per-repository codeindex watcher.
+// The server supervises a CLI child process and shares the watcher's control
+// record so the UI and the CLI operate the same watcher interchangeably.
+service WatchService {
+  rpc StartWatch(StartWatchRequest) returns (WatchStatus);
+  rpc StopWatch(StopWatchRequest) returns (WatchStatus);
+  rpc GetWatchStatus(GetWatchStatusRequest) returns (WatchStatus);
+  rpc ListWatches(ListWatchesRequest) returns (ListWatchesResponse);
+}
+message StartWatchRequest {
+  string repository_id = 1;
+  // Passed through to the spawned watcher. Zero uses the CLI defaults.
+  bool embed = 2;
+  bool materialize = 3;
+}
+message StopWatchRequest { string repository_id = 1; }
+message GetWatchStatusRequest { string repository_id = 1; }
+message ListWatchesRequest {}
+message ListWatchesResponse { repeated WatchStatus watchers = 1; }
+// WatchStatus is the exact, shared state of a repository's watcher.
+message WatchStatus {
+  string repository_id = 1;
+  bool running = 2;
+  bool managed = 3;
+  string state = 4;
+  string stage = 5;
+  string owner_kind = 6;
+  int64 owner_pid = 7;
+  string repo_root = 8;
+  string git_branch = 9;
+  string git_revision = 10;
+  string snapshot_id = 11;
+  string content_fingerprint = 12;
+  uint32 changed_files = 13;
+  uint32 pending_files = 14;
+  int64 started_unix = 15;
+  int64 last_scan_unix = 16;
+  int64 last_scan_ms = 17;
+  int64 heartbeat_unix = 18;
+  bool stop_requested = 19;
+  int64 poll_interval_ms = 20;
+  int64 debounce_ms = 21;
+  string error = 22;
+  // Whether a standalone `tld` CLI is available to spawn a watcher. False on
+  // desktop builds without an installed CLI.
+  bool cli_available = 23;
+  string install_hint = 24;
+}
+// Git references describe current local refs, not a snapshot's captured branch.
+message GitCommit {
+  string sha = 1;
+  string subject = 2;
+  string author = 3;
+  string author_email = 4;
+  int64 created_unix = 5;
+  repeated string parents = 6;
+  repeated string refs = 7;
+  string body = 8;
+}
+message GitBranch {
+  string name = 1;
+  string sha = 2;
+}
+message GetGitHistoryRequest {
+  string repository_id = 1;
+  string branch = 2;
+  uint32 limit = 3;
+}
+message GetGitHistoryResponse {
+  repeated GitCommit commits = 1;
+  repeated GitBranch branches = 2;
+  string head_sha = 3;
+  string current_branch = 4;
+  bool has_more = 5;
+  bool is_git = 6;
+}
+message GetCommitDetailsRequest {
+  string repository_id = 1;
+  string revision = 2;
+}
+message CommitFileChange {
+  string path = 1;
+  uint32 added = 2;
+  uint32 removed = 3;
+  bool binary = 4;
+}
+message GetCommitDetailsResponse {
+  GitCommit commit = 1;
+  repeated CommitFileChange files = 2;
 }
 // Snapshot is an immutable indexed revision of a repository. It is published
 // only after ingestion completes, and the repository's latest pointer advances
@@ -202,6 +294,18 @@ message Snapshot {
   string config_hash = 11;
   // Git branch the working tree was on when the snapshot was captured.
   string git_branch = 12;
+  // commit, working_tree, or empty for snapshots with unknown legacy provenance.
+  string provenance = 13;
+  // Hash of the source manifest, HEAD, and indexing configuration.
+  string content_fingerprint = 14;
+  // Counts of records belonging to this snapshot, populated when reading it.
+  SnapshotStatistics statistics = 15;
+}
+message SnapshotStatistics {
+  uint32 facts = 1;
+  uint32 edges = 2;
+  uint32 sources = 3;
+  uint32 chunks = 4;
 }
 message IndexRequest {
   string directory = 1;
@@ -316,6 +420,8 @@ message SourceChange {
   ChangeKind change = 2;
   string from_hash = 3;
   string to_hash = 4;
+  optional uint32 lines_added = 5;
+  optional uint32 lines_removed = 6;
 }
 // Deltas are keyed by stable logical identity, so a rename is an add plus a
 // remove and a changed body is a modification.
@@ -498,6 +604,71 @@ service AnalysisService {
 // streams progress while the pipeline runs and terminates with one MapResult.
 service MapperService {
   rpc MapRepository(MapRepositoryRequest) returns (stream MapRepositoryEvent);
+  rpc ListMaps(ListMapsRequest) returns (ListMapsResponse);
+  rpc CompareRepository(CompareRepositoryRequest) returns (stream CompareRepositoryEvent);
+  rpc GetLiveImpact(GetLiveImpactRequest) returns (LiveImpact);
+  rpc SetImpactRadius(SetImpactRadiusRequest) returns (ImpactDiagram);
+}
+// A comparison target uses the same selection semantics as MapRepository.
+message ComparisonTarget {
+  string snapshot_id = 1;
+  string git_revision = 2;
+  bool working_tree = 3;
+  string git_branch = 4;
+}
+message CompareRepositoryRequest {
+  string repository_id = 1;
+  ComparisonTarget base = 2;
+  ComparisonTarget head = 3;
+  uint32 radius = 4;
+}
+message CompareRepositoryEvent {
+  oneof event {
+    MapProgress progress = 1;
+    ImpactDiagram result = 2;
+  }
+}
+message ImpactNode {
+  string key = 1;
+  string path = 2;
+  string name = 3;
+  ChangeKind change = 4;
+  // Unchanged context is distinguished from directly changed code.
+  bool context = 5;
+  int64 element_id = 6;
+  CodeFactDelta symbols = 7;
+  double x = 8;
+  double y = 9;
+}
+message ImpactEdge {
+  string from_key = 1;
+  string to_key = 2;
+  ChangeKind change = 3;
+  double weight = 4;
+}
+message ImpactDiagram {
+  string repository_id = 1;
+  string comparison_key = 2;
+  int64 view_id = 3;
+  SnapshotDiff diff = 4;
+  repeated ImpactNode nodes = 5;
+  repeated ImpactEdge edges = 6;
+  uint32 radius = 7;
+  uint32 max_radius = 8;
+  string version = 9;
+}
+message GetLiveImpactRequest { string repository_id = 1; }
+message LiveImpact {
+  ImpactDiagram diagram = 1;
+  bool watching = 2;
+  string error = 3;
+  string git_branch = 4;
+  string git_revision = 5;
+}
+message SetImpactRadiusRequest {
+  string repository_id = 1;
+  string comparison_key = 2;
+  uint32 radius = 3;
 }
 message MapRepositoryRequest {
   string repository_id = 1;
@@ -508,6 +679,11 @@ message MapRepositoryRequest {
   // When set, external imports declared by the indexed files are materialized
   // under an External element and connected to the files that import them.
   bool include_imports = 4;
+  // Mutually exclusive with snapshot_id and working_tree. Resolved to a commit.
+  string git_revision = 5;
+  bool working_tree = 6;
+  // Branch context captured for a commit selected through the history browser.
+  string git_branch = 7;
 }
 message MapRepositoryEvent {
   oneof event {
@@ -516,7 +692,7 @@ message MapRepositoryEvent {
   }
 }
 message MapProgress {
-  // One of: loading, clustering, binning, materializing.
+  // One of: preparing, indexing, embedding, loading, clustering, binning, materializing.
   string stage = 1;
   uint32 current = 2;
   uint32 total = 3;
@@ -531,4 +707,16 @@ message MapResult {
   uint32 bins = 5;
   uint32 unclustered = 6;
   double weighted_tightness = 7;
+  string snapshot_id = 8;
 }
+
+// Only successful materializations are returned as completed maps.
+message CompletedMap {
+  MapResult result = 1;
+  int64 completed_unix = 2;
+  string profile = 3;
+  bool include_imports = 4;
+  string config_hash = 5;
+}
+message ListMapsRequest { string repository_id = 1; }
+message ListMapsResponse { repeated CompletedMap maps = 1; }

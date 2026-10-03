@@ -23,6 +23,8 @@ const _ = connect.IsAtLeastVersion1_13_0
 const (
 	// RepositoryServiceName is the fully-qualified name of the RepositoryService service.
 	RepositoryServiceName = "codeindex.v1.RepositoryService"
+	// WatchServiceName is the fully-qualified name of the WatchService service.
+	WatchServiceName = "codeindex.v1.WatchService"
 	// CodeFactServiceName is the fully-qualified name of the CodeFactService service.
 	CodeFactServiceName = "codeindex.v1.CodeFactService"
 	// SearchServiceName is the fully-qualified name of the SearchService service.
@@ -47,6 +49,22 @@ const (
 	// RepositoryServiceDeleteRepositoryProcedure is the fully-qualified name of the RepositoryService's
 	// DeleteRepository RPC.
 	RepositoryServiceDeleteRepositoryProcedure = "/codeindex.v1.RepositoryService/DeleteRepository"
+	// RepositoryServiceGetGitHistoryProcedure is the fully-qualified name of the RepositoryService's
+	// GetGitHistory RPC.
+	RepositoryServiceGetGitHistoryProcedure = "/codeindex.v1.RepositoryService/GetGitHistory"
+	// RepositoryServiceGetCommitDetailsProcedure is the fully-qualified name of the RepositoryService's
+	// GetCommitDetails RPC.
+	RepositoryServiceGetCommitDetailsProcedure = "/codeindex.v1.RepositoryService/GetCommitDetails"
+	// WatchServiceStartWatchProcedure is the fully-qualified name of the WatchService's StartWatch RPC.
+	WatchServiceStartWatchProcedure = "/codeindex.v1.WatchService/StartWatch"
+	// WatchServiceStopWatchProcedure is the fully-qualified name of the WatchService's StopWatch RPC.
+	WatchServiceStopWatchProcedure = "/codeindex.v1.WatchService/StopWatch"
+	// WatchServiceGetWatchStatusProcedure is the fully-qualified name of the WatchService's
+	// GetWatchStatus RPC.
+	WatchServiceGetWatchStatusProcedure = "/codeindex.v1.WatchService/GetWatchStatus"
+	// WatchServiceListWatchesProcedure is the fully-qualified name of the WatchService's ListWatches
+	// RPC.
+	WatchServiceListWatchesProcedure = "/codeindex.v1.WatchService/ListWatches"
 	// CodeFactServiceGetFactProcedure is the fully-qualified name of the CodeFactService's GetFact RPC.
 	CodeFactServiceGetFactProcedure = "/codeindex.v1.CodeFactService/GetFact"
 	// CodeFactServiceListFactsProcedure is the fully-qualified name of the CodeFactService's ListFacts
@@ -106,12 +124,25 @@ const (
 	// MapperServiceMapRepositoryProcedure is the fully-qualified name of the MapperService's
 	// MapRepository RPC.
 	MapperServiceMapRepositoryProcedure = "/codeindex.v1.MapperService/MapRepository"
+	// MapperServiceListMapsProcedure is the fully-qualified name of the MapperService's ListMaps RPC.
+	MapperServiceListMapsProcedure = "/codeindex.v1.MapperService/ListMaps"
+	// MapperServiceCompareRepositoryProcedure is the fully-qualified name of the MapperService's
+	// CompareRepository RPC.
+	MapperServiceCompareRepositoryProcedure = "/codeindex.v1.MapperService/CompareRepository"
+	// MapperServiceGetLiveImpactProcedure is the fully-qualified name of the MapperService's
+	// GetLiveImpact RPC.
+	MapperServiceGetLiveImpactProcedure = "/codeindex.v1.MapperService/GetLiveImpact"
+	// MapperServiceSetImpactRadiusProcedure is the fully-qualified name of the MapperService's
+	// SetImpactRadius RPC.
+	MapperServiceSetImpactRadiusProcedure = "/codeindex.v1.MapperService/SetImpactRadius"
 )
 
 // RepositoryServiceClient is a client for the codeindex.v1.RepositoryService service.
 type RepositoryServiceClient interface {
 	ListRepositories(context.Context, *connect.Request[v1.ListRepositoriesRequest]) (*connect.Response[v1.ListRepositoriesResponse], error)
 	DeleteRepository(context.Context, *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[v1.DeleteRepositoryResponse], error)
+	GetGitHistory(context.Context, *connect.Request[v1.GetGitHistoryRequest]) (*connect.Response[v1.GetGitHistoryResponse], error)
+	GetCommitDetails(context.Context, *connect.Request[v1.GetCommitDetailsRequest]) (*connect.Response[v1.GetCommitDetailsResponse], error)
 }
 
 // NewRepositoryServiceClient constructs a client for the codeindex.v1.RepositoryService service. By
@@ -137,6 +168,18 @@ func NewRepositoryServiceClient(httpClient connect.HTTPClient, baseURL string, o
 			connect.WithSchema(repositoryServiceMethods.ByName("DeleteRepository")),
 			connect.WithClientOptions(opts...),
 		),
+		getGitHistory: connect.NewClient[v1.GetGitHistoryRequest, v1.GetGitHistoryResponse](
+			httpClient,
+			baseURL+RepositoryServiceGetGitHistoryProcedure,
+			connect.WithSchema(repositoryServiceMethods.ByName("GetGitHistory")),
+			connect.WithClientOptions(opts...),
+		),
+		getCommitDetails: connect.NewClient[v1.GetCommitDetailsRequest, v1.GetCommitDetailsResponse](
+			httpClient,
+			baseURL+RepositoryServiceGetCommitDetailsProcedure,
+			connect.WithSchema(repositoryServiceMethods.ByName("GetCommitDetails")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -144,6 +187,8 @@ func NewRepositoryServiceClient(httpClient connect.HTTPClient, baseURL string, o
 type repositoryServiceClient struct {
 	listRepositories *connect.Client[v1.ListRepositoriesRequest, v1.ListRepositoriesResponse]
 	deleteRepository *connect.Client[v1.DeleteRepositoryRequest, v1.DeleteRepositoryResponse]
+	getGitHistory    *connect.Client[v1.GetGitHistoryRequest, v1.GetGitHistoryResponse]
+	getCommitDetails *connect.Client[v1.GetCommitDetailsRequest, v1.GetCommitDetailsResponse]
 }
 
 // ListRepositories calls codeindex.v1.RepositoryService.ListRepositories.
@@ -156,10 +201,22 @@ func (c *repositoryServiceClient) DeleteRepository(ctx context.Context, req *con
 	return c.deleteRepository.CallUnary(ctx, req)
 }
 
+// GetGitHistory calls codeindex.v1.RepositoryService.GetGitHistory.
+func (c *repositoryServiceClient) GetGitHistory(ctx context.Context, req *connect.Request[v1.GetGitHistoryRequest]) (*connect.Response[v1.GetGitHistoryResponse], error) {
+	return c.getGitHistory.CallUnary(ctx, req)
+}
+
+// GetCommitDetails calls codeindex.v1.RepositoryService.GetCommitDetails.
+func (c *repositoryServiceClient) GetCommitDetails(ctx context.Context, req *connect.Request[v1.GetCommitDetailsRequest]) (*connect.Response[v1.GetCommitDetailsResponse], error) {
+	return c.getCommitDetails.CallUnary(ctx, req)
+}
+
 // RepositoryServiceHandler is an implementation of the codeindex.v1.RepositoryService service.
 type RepositoryServiceHandler interface {
 	ListRepositories(context.Context, *connect.Request[v1.ListRepositoriesRequest]) (*connect.Response[v1.ListRepositoriesResponse], error)
 	DeleteRepository(context.Context, *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[v1.DeleteRepositoryResponse], error)
+	GetGitHistory(context.Context, *connect.Request[v1.GetGitHistoryRequest]) (*connect.Response[v1.GetGitHistoryResponse], error)
+	GetCommitDetails(context.Context, *connect.Request[v1.GetCommitDetailsRequest]) (*connect.Response[v1.GetCommitDetailsResponse], error)
 }
 
 // NewRepositoryServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -181,12 +238,28 @@ func NewRepositoryServiceHandler(svc RepositoryServiceHandler, opts ...connect.H
 		connect.WithSchema(repositoryServiceMethods.ByName("DeleteRepository")),
 		connect.WithHandlerOptions(opts...),
 	)
+	repositoryServiceGetGitHistoryHandler := connect.NewUnaryHandler(
+		RepositoryServiceGetGitHistoryProcedure,
+		svc.GetGitHistory,
+		connect.WithSchema(repositoryServiceMethods.ByName("GetGitHistory")),
+		connect.WithHandlerOptions(opts...),
+	)
+	repositoryServiceGetCommitDetailsHandler := connect.NewUnaryHandler(
+		RepositoryServiceGetCommitDetailsProcedure,
+		svc.GetCommitDetails,
+		connect.WithSchema(repositoryServiceMethods.ByName("GetCommitDetails")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/codeindex.v1.RepositoryService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case RepositoryServiceListRepositoriesProcedure:
 			repositoryServiceListRepositoriesHandler.ServeHTTP(w, r)
 		case RepositoryServiceDeleteRepositoryProcedure:
 			repositoryServiceDeleteRepositoryHandler.ServeHTTP(w, r)
+		case RepositoryServiceGetGitHistoryProcedure:
+			repositoryServiceGetGitHistoryHandler.ServeHTTP(w, r)
+		case RepositoryServiceGetCommitDetailsProcedure:
+			repositoryServiceGetCommitDetailsHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -202,6 +275,162 @@ func (UnimplementedRepositoryServiceHandler) ListRepositories(context.Context, *
 
 func (UnimplementedRepositoryServiceHandler) DeleteRepository(context.Context, *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[v1.DeleteRepositoryResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.DeleteRepository is not implemented"))
+}
+
+func (UnimplementedRepositoryServiceHandler) GetGitHistory(context.Context, *connect.Request[v1.GetGitHistoryRequest]) (*connect.Response[v1.GetGitHistoryResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.GetGitHistory is not implemented"))
+}
+
+func (UnimplementedRepositoryServiceHandler) GetCommitDetails(context.Context, *connect.Request[v1.GetCommitDetailsRequest]) (*connect.Response[v1.GetCommitDetailsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.GetCommitDetails is not implemented"))
+}
+
+// WatchServiceClient is a client for the codeindex.v1.WatchService service.
+type WatchServiceClient interface {
+	StartWatch(context.Context, *connect.Request[v1.StartWatchRequest]) (*connect.Response[v1.WatchStatus], error)
+	StopWatch(context.Context, *connect.Request[v1.StopWatchRequest]) (*connect.Response[v1.WatchStatus], error)
+	GetWatchStatus(context.Context, *connect.Request[v1.GetWatchStatusRequest]) (*connect.Response[v1.WatchStatus], error)
+	ListWatches(context.Context, *connect.Request[v1.ListWatchesRequest]) (*connect.Response[v1.ListWatchesResponse], error)
+}
+
+// NewWatchServiceClient constructs a client for the codeindex.v1.WatchService service. By default,
+// it uses the Connect protocol with the binary Protobuf Codec, asks for gzipped responses, and
+// sends uncompressed requests. To use the gRPC or gRPC-Web protocols, supply the connect.WithGRPC()
+// or connect.WithGRPCWeb() options.
+//
+// The URL supplied here should be the base URL for the Connect or gRPC server (for example,
+// http://api.acme.com or https://acme.com/grpc).
+func NewWatchServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) WatchServiceClient {
+	baseURL = strings.TrimRight(baseURL, "/")
+	watchServiceMethods := v1.File_codeindex_v1_codeindex_proto.Services().ByName("WatchService").Methods()
+	return &watchServiceClient{
+		startWatch: connect.NewClient[v1.StartWatchRequest, v1.WatchStatus](
+			httpClient,
+			baseURL+WatchServiceStartWatchProcedure,
+			connect.WithSchema(watchServiceMethods.ByName("StartWatch")),
+			connect.WithClientOptions(opts...),
+		),
+		stopWatch: connect.NewClient[v1.StopWatchRequest, v1.WatchStatus](
+			httpClient,
+			baseURL+WatchServiceStopWatchProcedure,
+			connect.WithSchema(watchServiceMethods.ByName("StopWatch")),
+			connect.WithClientOptions(opts...),
+		),
+		getWatchStatus: connect.NewClient[v1.GetWatchStatusRequest, v1.WatchStatus](
+			httpClient,
+			baseURL+WatchServiceGetWatchStatusProcedure,
+			connect.WithSchema(watchServiceMethods.ByName("GetWatchStatus")),
+			connect.WithClientOptions(opts...),
+		),
+		listWatches: connect.NewClient[v1.ListWatchesRequest, v1.ListWatchesResponse](
+			httpClient,
+			baseURL+WatchServiceListWatchesProcedure,
+			connect.WithSchema(watchServiceMethods.ByName("ListWatches")),
+			connect.WithClientOptions(opts...),
+		),
+	}
+}
+
+// watchServiceClient implements WatchServiceClient.
+type watchServiceClient struct {
+	startWatch     *connect.Client[v1.StartWatchRequest, v1.WatchStatus]
+	stopWatch      *connect.Client[v1.StopWatchRequest, v1.WatchStatus]
+	getWatchStatus *connect.Client[v1.GetWatchStatusRequest, v1.WatchStatus]
+	listWatches    *connect.Client[v1.ListWatchesRequest, v1.ListWatchesResponse]
+}
+
+// StartWatch calls codeindex.v1.WatchService.StartWatch.
+func (c *watchServiceClient) StartWatch(ctx context.Context, req *connect.Request[v1.StartWatchRequest]) (*connect.Response[v1.WatchStatus], error) {
+	return c.startWatch.CallUnary(ctx, req)
+}
+
+// StopWatch calls codeindex.v1.WatchService.StopWatch.
+func (c *watchServiceClient) StopWatch(ctx context.Context, req *connect.Request[v1.StopWatchRequest]) (*connect.Response[v1.WatchStatus], error) {
+	return c.stopWatch.CallUnary(ctx, req)
+}
+
+// GetWatchStatus calls codeindex.v1.WatchService.GetWatchStatus.
+func (c *watchServiceClient) GetWatchStatus(ctx context.Context, req *connect.Request[v1.GetWatchStatusRequest]) (*connect.Response[v1.WatchStatus], error) {
+	return c.getWatchStatus.CallUnary(ctx, req)
+}
+
+// ListWatches calls codeindex.v1.WatchService.ListWatches.
+func (c *watchServiceClient) ListWatches(ctx context.Context, req *connect.Request[v1.ListWatchesRequest]) (*connect.Response[v1.ListWatchesResponse], error) {
+	return c.listWatches.CallUnary(ctx, req)
+}
+
+// WatchServiceHandler is an implementation of the codeindex.v1.WatchService service.
+type WatchServiceHandler interface {
+	StartWatch(context.Context, *connect.Request[v1.StartWatchRequest]) (*connect.Response[v1.WatchStatus], error)
+	StopWatch(context.Context, *connect.Request[v1.StopWatchRequest]) (*connect.Response[v1.WatchStatus], error)
+	GetWatchStatus(context.Context, *connect.Request[v1.GetWatchStatusRequest]) (*connect.Response[v1.WatchStatus], error)
+	ListWatches(context.Context, *connect.Request[v1.ListWatchesRequest]) (*connect.Response[v1.ListWatchesResponse], error)
+}
+
+// NewWatchServiceHandler builds an HTTP handler from the service implementation. It returns the
+// path on which to mount the handler and the handler itself.
+//
+// By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
+// and JSON codecs. They also support gzip compression.
+func NewWatchServiceHandler(svc WatchServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
+	watchServiceMethods := v1.File_codeindex_v1_codeindex_proto.Services().ByName("WatchService").Methods()
+	watchServiceStartWatchHandler := connect.NewUnaryHandler(
+		WatchServiceStartWatchProcedure,
+		svc.StartWatch,
+		connect.WithSchema(watchServiceMethods.ByName("StartWatch")),
+		connect.WithHandlerOptions(opts...),
+	)
+	watchServiceStopWatchHandler := connect.NewUnaryHandler(
+		WatchServiceStopWatchProcedure,
+		svc.StopWatch,
+		connect.WithSchema(watchServiceMethods.ByName("StopWatch")),
+		connect.WithHandlerOptions(opts...),
+	)
+	watchServiceGetWatchStatusHandler := connect.NewUnaryHandler(
+		WatchServiceGetWatchStatusProcedure,
+		svc.GetWatchStatus,
+		connect.WithSchema(watchServiceMethods.ByName("GetWatchStatus")),
+		connect.WithHandlerOptions(opts...),
+	)
+	watchServiceListWatchesHandler := connect.NewUnaryHandler(
+		WatchServiceListWatchesProcedure,
+		svc.ListWatches,
+		connect.WithSchema(watchServiceMethods.ByName("ListWatches")),
+		connect.WithHandlerOptions(opts...),
+	)
+	return "/codeindex.v1.WatchService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case WatchServiceStartWatchProcedure:
+			watchServiceStartWatchHandler.ServeHTTP(w, r)
+		case WatchServiceStopWatchProcedure:
+			watchServiceStopWatchHandler.ServeHTTP(w, r)
+		case WatchServiceGetWatchStatusProcedure:
+			watchServiceGetWatchStatusHandler.ServeHTTP(w, r)
+		case WatchServiceListWatchesProcedure:
+			watchServiceListWatchesHandler.ServeHTTP(w, r)
+		default:
+			http.NotFound(w, r)
+		}
+	})
+}
+
+// UnimplementedWatchServiceHandler returns CodeUnimplemented from all methods.
+type UnimplementedWatchServiceHandler struct{}
+
+func (UnimplementedWatchServiceHandler) StartWatch(context.Context, *connect.Request[v1.StartWatchRequest]) (*connect.Response[v1.WatchStatus], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.WatchService.StartWatch is not implemented"))
+}
+
+func (UnimplementedWatchServiceHandler) StopWatch(context.Context, *connect.Request[v1.StopWatchRequest]) (*connect.Response[v1.WatchStatus], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.WatchService.StopWatch is not implemented"))
+}
+
+func (UnimplementedWatchServiceHandler) GetWatchStatus(context.Context, *connect.Request[v1.GetWatchStatusRequest]) (*connect.Response[v1.WatchStatus], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.WatchService.GetWatchStatus is not implemented"))
+}
+
+func (UnimplementedWatchServiceHandler) ListWatches(context.Context, *connect.Request[v1.ListWatchesRequest]) (*connect.Response[v1.ListWatchesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.WatchService.ListWatches is not implemented"))
 }
 
 // CodeFactServiceClient is a client for the codeindex.v1.CodeFactService service.
@@ -865,6 +1094,10 @@ func (UnimplementedAnalysisServiceHandler) ListGroupFacts(context.Context, *conn
 // MapperServiceClient is a client for the codeindex.v1.MapperService service.
 type MapperServiceClient interface {
 	MapRepository(context.Context, *connect.Request[v1.MapRepositoryRequest]) (*connect.ServerStreamForClient[v1.MapRepositoryEvent], error)
+	ListMaps(context.Context, *connect.Request[v1.ListMapsRequest]) (*connect.Response[v1.ListMapsResponse], error)
+	CompareRepository(context.Context, *connect.Request[v1.CompareRepositoryRequest]) (*connect.ServerStreamForClient[v1.CompareRepositoryEvent], error)
+	GetLiveImpact(context.Context, *connect.Request[v1.GetLiveImpactRequest]) (*connect.Response[v1.LiveImpact], error)
+	SetImpactRadius(context.Context, *connect.Request[v1.SetImpactRadiusRequest]) (*connect.Response[v1.ImpactDiagram], error)
 }
 
 // NewMapperServiceClient constructs a client for the codeindex.v1.MapperService service. By
@@ -884,12 +1117,40 @@ func NewMapperServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 			connect.WithSchema(mapperServiceMethods.ByName("MapRepository")),
 			connect.WithClientOptions(opts...),
 		),
+		listMaps: connect.NewClient[v1.ListMapsRequest, v1.ListMapsResponse](
+			httpClient,
+			baseURL+MapperServiceListMapsProcedure,
+			connect.WithSchema(mapperServiceMethods.ByName("ListMaps")),
+			connect.WithClientOptions(opts...),
+		),
+		compareRepository: connect.NewClient[v1.CompareRepositoryRequest, v1.CompareRepositoryEvent](
+			httpClient,
+			baseURL+MapperServiceCompareRepositoryProcedure,
+			connect.WithSchema(mapperServiceMethods.ByName("CompareRepository")),
+			connect.WithClientOptions(opts...),
+		),
+		getLiveImpact: connect.NewClient[v1.GetLiveImpactRequest, v1.LiveImpact](
+			httpClient,
+			baseURL+MapperServiceGetLiveImpactProcedure,
+			connect.WithSchema(mapperServiceMethods.ByName("GetLiveImpact")),
+			connect.WithClientOptions(opts...),
+		),
+		setImpactRadius: connect.NewClient[v1.SetImpactRadiusRequest, v1.ImpactDiagram](
+			httpClient,
+			baseURL+MapperServiceSetImpactRadiusProcedure,
+			connect.WithSchema(mapperServiceMethods.ByName("SetImpactRadius")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // mapperServiceClient implements MapperServiceClient.
 type mapperServiceClient struct {
-	mapRepository *connect.Client[v1.MapRepositoryRequest, v1.MapRepositoryEvent]
+	mapRepository     *connect.Client[v1.MapRepositoryRequest, v1.MapRepositoryEvent]
+	listMaps          *connect.Client[v1.ListMapsRequest, v1.ListMapsResponse]
+	compareRepository *connect.Client[v1.CompareRepositoryRequest, v1.CompareRepositoryEvent]
+	getLiveImpact     *connect.Client[v1.GetLiveImpactRequest, v1.LiveImpact]
+	setImpactRadius   *connect.Client[v1.SetImpactRadiusRequest, v1.ImpactDiagram]
 }
 
 // MapRepository calls codeindex.v1.MapperService.MapRepository.
@@ -897,9 +1158,33 @@ func (c *mapperServiceClient) MapRepository(ctx context.Context, req *connect.Re
 	return c.mapRepository.CallServerStream(ctx, req)
 }
 
+// ListMaps calls codeindex.v1.MapperService.ListMaps.
+func (c *mapperServiceClient) ListMaps(ctx context.Context, req *connect.Request[v1.ListMapsRequest]) (*connect.Response[v1.ListMapsResponse], error) {
+	return c.listMaps.CallUnary(ctx, req)
+}
+
+// CompareRepository calls codeindex.v1.MapperService.CompareRepository.
+func (c *mapperServiceClient) CompareRepository(ctx context.Context, req *connect.Request[v1.CompareRepositoryRequest]) (*connect.ServerStreamForClient[v1.CompareRepositoryEvent], error) {
+	return c.compareRepository.CallServerStream(ctx, req)
+}
+
+// GetLiveImpact calls codeindex.v1.MapperService.GetLiveImpact.
+func (c *mapperServiceClient) GetLiveImpact(ctx context.Context, req *connect.Request[v1.GetLiveImpactRequest]) (*connect.Response[v1.LiveImpact], error) {
+	return c.getLiveImpact.CallUnary(ctx, req)
+}
+
+// SetImpactRadius calls codeindex.v1.MapperService.SetImpactRadius.
+func (c *mapperServiceClient) SetImpactRadius(ctx context.Context, req *connect.Request[v1.SetImpactRadiusRequest]) (*connect.Response[v1.ImpactDiagram], error) {
+	return c.setImpactRadius.CallUnary(ctx, req)
+}
+
 // MapperServiceHandler is an implementation of the codeindex.v1.MapperService service.
 type MapperServiceHandler interface {
 	MapRepository(context.Context, *connect.Request[v1.MapRepositoryRequest], *connect.ServerStream[v1.MapRepositoryEvent]) error
+	ListMaps(context.Context, *connect.Request[v1.ListMapsRequest]) (*connect.Response[v1.ListMapsResponse], error)
+	CompareRepository(context.Context, *connect.Request[v1.CompareRepositoryRequest], *connect.ServerStream[v1.CompareRepositoryEvent]) error
+	GetLiveImpact(context.Context, *connect.Request[v1.GetLiveImpactRequest]) (*connect.Response[v1.LiveImpact], error)
+	SetImpactRadius(context.Context, *connect.Request[v1.SetImpactRadiusRequest]) (*connect.Response[v1.ImpactDiagram], error)
 }
 
 // NewMapperServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -915,10 +1200,42 @@ func NewMapperServiceHandler(svc MapperServiceHandler, opts ...connect.HandlerOp
 		connect.WithSchema(mapperServiceMethods.ByName("MapRepository")),
 		connect.WithHandlerOptions(opts...),
 	)
+	mapperServiceListMapsHandler := connect.NewUnaryHandler(
+		MapperServiceListMapsProcedure,
+		svc.ListMaps,
+		connect.WithSchema(mapperServiceMethods.ByName("ListMaps")),
+		connect.WithHandlerOptions(opts...),
+	)
+	mapperServiceCompareRepositoryHandler := connect.NewServerStreamHandler(
+		MapperServiceCompareRepositoryProcedure,
+		svc.CompareRepository,
+		connect.WithSchema(mapperServiceMethods.ByName("CompareRepository")),
+		connect.WithHandlerOptions(opts...),
+	)
+	mapperServiceGetLiveImpactHandler := connect.NewUnaryHandler(
+		MapperServiceGetLiveImpactProcedure,
+		svc.GetLiveImpact,
+		connect.WithSchema(mapperServiceMethods.ByName("GetLiveImpact")),
+		connect.WithHandlerOptions(opts...),
+	)
+	mapperServiceSetImpactRadiusHandler := connect.NewUnaryHandler(
+		MapperServiceSetImpactRadiusProcedure,
+		svc.SetImpactRadius,
+		connect.WithSchema(mapperServiceMethods.ByName("SetImpactRadius")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/codeindex.v1.MapperService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case MapperServiceMapRepositoryProcedure:
 			mapperServiceMapRepositoryHandler.ServeHTTP(w, r)
+		case MapperServiceListMapsProcedure:
+			mapperServiceListMapsHandler.ServeHTTP(w, r)
+		case MapperServiceCompareRepositoryProcedure:
+			mapperServiceCompareRepositoryHandler.ServeHTTP(w, r)
+		case MapperServiceGetLiveImpactProcedure:
+			mapperServiceGetLiveImpactHandler.ServeHTTP(w, r)
+		case MapperServiceSetImpactRadiusProcedure:
+			mapperServiceSetImpactRadiusHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -930,4 +1247,20 @@ type UnimplementedMapperServiceHandler struct{}
 
 func (UnimplementedMapperServiceHandler) MapRepository(context.Context, *connect.Request[v1.MapRepositoryRequest], *connect.ServerStream[v1.MapRepositoryEvent]) error {
 	return connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.MapperService.MapRepository is not implemented"))
+}
+
+func (UnimplementedMapperServiceHandler) ListMaps(context.Context, *connect.Request[v1.ListMapsRequest]) (*connect.Response[v1.ListMapsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.MapperService.ListMaps is not implemented"))
+}
+
+func (UnimplementedMapperServiceHandler) CompareRepository(context.Context, *connect.Request[v1.CompareRepositoryRequest], *connect.ServerStream[v1.CompareRepositoryEvent]) error {
+	return connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.MapperService.CompareRepository is not implemented"))
+}
+
+func (UnimplementedMapperServiceHandler) GetLiveImpact(context.Context, *connect.Request[v1.GetLiveImpactRequest]) (*connect.Response[v1.LiveImpact], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.MapperService.GetLiveImpact is not implemented"))
+}
+
+func (UnimplementedMapperServiceHandler) SetImpactRadius(context.Context, *connect.Request[v1.SetImpactRadiusRequest]) (*connect.Response[v1.ImpactDiagram], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.MapperService.SetImpactRadius is not implemented"))
 }
