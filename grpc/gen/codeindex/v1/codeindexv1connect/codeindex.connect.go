@@ -103,6 +103,9 @@ const (
 	// CodeFactServiceDiffSnapshotsProcedure is the fully-qualified name of the CodeFactService's
 	// DiffSnapshots RPC.
 	CodeFactServiceDiffSnapshotsProcedure = "/codeindex.v1.CodeFactService/DiffSnapshots"
+	// CodeFactServiceDeleteSnapshotProcedure is the fully-qualified name of the CodeFactService's
+	// DeleteSnapshot RPC.
+	CodeFactServiceDeleteSnapshotProcedure = "/codeindex.v1.CodeFactService/DeleteSnapshot"
 	// SearchServiceFullTextProcedure is the fully-qualified name of the SearchService's FullText RPC.
 	SearchServiceFullTextProcedure = "/codeindex.v1.SearchService/FullText"
 	// SearchServiceVectorProcedure is the fully-qualified name of the SearchService's Vector RPC.
@@ -450,6 +453,7 @@ type CodeFactServiceClient interface {
 	ListSnapshots(context.Context, *connect.Request[v1.RepositoryID]) (*connect.Response[v1.ListSnapshotsResponse], error)
 	GetRepository(context.Context, *connect.Request[v1.RepositoryID]) (*connect.Response[v1.Repository], error)
 	DiffSnapshots(context.Context, *connect.Request[v1.SnapshotDiffRequest]) (*connect.Response[v1.SnapshotDiff], error)
+	DeleteSnapshot(context.Context, *connect.Request[v1.DeleteSnapshotRequest]) (*connect.Response[v1.DeleteSnapshotResponse], error)
 }
 
 // NewCodeFactServiceClient constructs a client for the codeindex.v1.CodeFactService service. By
@@ -541,6 +545,12 @@ func NewCodeFactServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(codeFactServiceMethods.ByName("DiffSnapshots")),
 			connect.WithClientOptions(opts...),
 		),
+		deleteSnapshot: connect.NewClient[v1.DeleteSnapshotRequest, v1.DeleteSnapshotResponse](
+			httpClient,
+			baseURL+CodeFactServiceDeleteSnapshotProcedure,
+			connect.WithSchema(codeFactServiceMethods.ByName("DeleteSnapshot")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -559,6 +569,7 @@ type codeFactServiceClient struct {
 	listSnapshots   *connect.Client[v1.RepositoryID, v1.ListSnapshotsResponse]
 	getRepository   *connect.Client[v1.RepositoryID, v1.Repository]
 	diffSnapshots   *connect.Client[v1.SnapshotDiffRequest, v1.SnapshotDiff]
+	deleteSnapshot  *connect.Client[v1.DeleteSnapshotRequest, v1.DeleteSnapshotResponse]
 }
 
 // GetFact calls codeindex.v1.CodeFactService.GetFact.
@@ -626,6 +637,11 @@ func (c *codeFactServiceClient) DiffSnapshots(ctx context.Context, req *connect.
 	return c.diffSnapshots.CallUnary(ctx, req)
 }
 
+// DeleteSnapshot calls codeindex.v1.CodeFactService.DeleteSnapshot.
+func (c *codeFactServiceClient) DeleteSnapshot(ctx context.Context, req *connect.Request[v1.DeleteSnapshotRequest]) (*connect.Response[v1.DeleteSnapshotResponse], error) {
+	return c.deleteSnapshot.CallUnary(ctx, req)
+}
+
 // CodeFactServiceHandler is an implementation of the codeindex.v1.CodeFactService service.
 type CodeFactServiceHandler interface {
 	GetFact(context.Context, *connect.Request[v1.CodeFactID]) (*connect.Response[v1.CodeFact], error)
@@ -643,6 +659,7 @@ type CodeFactServiceHandler interface {
 	ListSnapshots(context.Context, *connect.Request[v1.RepositoryID]) (*connect.Response[v1.ListSnapshotsResponse], error)
 	GetRepository(context.Context, *connect.Request[v1.RepositoryID]) (*connect.Response[v1.Repository], error)
 	DiffSnapshots(context.Context, *connect.Request[v1.SnapshotDiffRequest]) (*connect.Response[v1.SnapshotDiff], error)
+	DeleteSnapshot(context.Context, *connect.Request[v1.DeleteSnapshotRequest]) (*connect.Response[v1.DeleteSnapshotResponse], error)
 }
 
 // NewCodeFactServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -730,6 +747,12 @@ func NewCodeFactServiceHandler(svc CodeFactServiceHandler, opts ...connect.Handl
 		connect.WithSchema(codeFactServiceMethods.ByName("DiffSnapshots")),
 		connect.WithHandlerOptions(opts...),
 	)
+	codeFactServiceDeleteSnapshotHandler := connect.NewUnaryHandler(
+		CodeFactServiceDeleteSnapshotProcedure,
+		svc.DeleteSnapshot,
+		connect.WithSchema(codeFactServiceMethods.ByName("DeleteSnapshot")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/codeindex.v1.CodeFactService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case CodeFactServiceGetFactProcedure:
@@ -758,6 +781,8 @@ func NewCodeFactServiceHandler(svc CodeFactServiceHandler, opts ...connect.Handl
 			codeFactServiceGetRepositoryHandler.ServeHTTP(w, r)
 		case CodeFactServiceDiffSnapshotsProcedure:
 			codeFactServiceDiffSnapshotsHandler.ServeHTTP(w, r)
+		case CodeFactServiceDeleteSnapshotProcedure:
+			codeFactServiceDeleteSnapshotHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -817,6 +842,10 @@ func (UnimplementedCodeFactServiceHandler) GetRepository(context.Context, *conne
 
 func (UnimplementedCodeFactServiceHandler) DiffSnapshots(context.Context, *connect.Request[v1.SnapshotDiffRequest]) (*connect.Response[v1.SnapshotDiff], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.CodeFactService.DiffSnapshots is not implemented"))
+}
+
+func (UnimplementedCodeFactServiceHandler) DeleteSnapshot(context.Context, *connect.Request[v1.DeleteSnapshotRequest]) (*connect.Response[v1.DeleteSnapshotResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.CodeFactService.DeleteSnapshot is not implemented"))
 }
 
 // SearchServiceClient is a client for the codeindex.v1.SearchService service.

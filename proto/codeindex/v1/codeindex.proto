@@ -334,6 +334,8 @@ message JobID { string id = 1; }
 message SnapshotID { string id = 1; }
 message RepositoryID { string id = 1; }
 message ListSnapshotsResponse { repeated Snapshot snapshots = 1; }
+message DeleteSnapshotRequest { string snapshot_id = 1; }
+message DeleteSnapshotResponse {}
 message CodeFactID { string id = 1; }
 message CodeFactFilter {
   string repository_id = 1;
@@ -562,6 +564,7 @@ service CodeFactService {
   rpc ListSnapshots(RepositoryID) returns (ListSnapshotsResponse);
   rpc GetRepository(RepositoryID) returns (Repository);
   rpc DiffSnapshots(SnapshotDiffRequest) returns (SnapshotDiff);
+  rpc DeleteSnapshot(DeleteSnapshotRequest) returns (DeleteSnapshotResponse);
 }
 message SearchRequest {
   CodeFactFilter filter = 1;
