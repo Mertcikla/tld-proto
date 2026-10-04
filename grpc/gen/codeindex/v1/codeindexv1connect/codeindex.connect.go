@@ -43,6 +43,9 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
+	// RepositoryServiceGetWorktreeSourceProcedure is the fully-qualified name of the
+	// RepositoryService's GetWorktreeSource RPC.
+	RepositoryServiceGetWorktreeSourceProcedure = "/codeindex.v1.RepositoryService/GetWorktreeSource"
 	// RepositoryServiceGetRepositorySettingsProcedure is the fully-qualified name of the
 	// RepositoryService's GetRepositorySettings RPC.
 	RepositoryServiceGetRepositorySettingsProcedure = "/codeindex.v1.RepositoryService/GetRepositorySettings"
@@ -55,6 +58,9 @@ const (
 	// RepositoryServiceListRepositoriesProcedure is the fully-qualified name of the RepositoryService's
 	// ListRepositories RPC.
 	RepositoryServiceListRepositoriesProcedure = "/codeindex.v1.RepositoryService/ListRepositories"
+	// RepositoryServiceCheckRepositoryIndexersProcedure is the fully-qualified name of the
+	// RepositoryService's CheckRepositoryIndexers RPC.
+	RepositoryServiceCheckRepositoryIndexersProcedure = "/codeindex.v1.RepositoryService/CheckRepositoryIndexers"
 	// RepositoryServiceAddRepositoryProcedure is the fully-qualified name of the RepositoryService's
 	// AddRepository RPC.
 	RepositoryServiceAddRepositoryProcedure = "/codeindex.v1.RepositoryService/AddRepository"
@@ -156,10 +162,15 @@ const (
 
 // RepositoryServiceClient is a client for the codeindex.v1.RepositoryService service.
 type RepositoryServiceClient interface {
+	GetWorktreeSource(context.Context, *connect.Request[v1.GetWorktreeSourceRequest]) (*connect.Response[v1.GetWorktreeSourceResponse], error)
 	GetRepositorySettings(context.Context, *connect.Request[v1.GetRepositorySettingsRequest]) (*connect.Response[v1.RepositorySettings], error)
 	UpdateRepositoryMapConfiguration(context.Context, *connect.Request[v1.UpdateRepositoryMapConfigurationRequest]) (*connect.Response[v1.RepositorySettings], error)
 	UpdateRepositoryRemote(context.Context, *connect.Request[v1.UpdateRepositoryRemoteRequest]) (*connect.Response[v1.RepositorySettings], error)
 	ListRepositories(context.Context, *connect.Request[v1.ListRepositoriesRequest]) (*connect.Response[v1.ListRepositoriesResponse], error)
+	// CheckRepositoryIndexers inspects a repository's project markers and reports
+	// the SCIP indexers indexing will require, so callers can install missing
+	// tools before AddRepository runs.
+	CheckRepositoryIndexers(context.Context, *connect.Request[v1.CheckRepositoryIndexersRequest]) (*connect.Response[v1.CheckRepositoryIndexersResponse], error)
 	AddRepository(context.Context, *connect.Request[v1.AddRepositoryRequest]) (*connect.ServerStreamForClient[v1.AddRepositoryEvent], error)
 	DeleteRepository(context.Context, *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[v1.DeleteRepositoryResponse], error)
 	GetGitHistory(context.Context, *connect.Request[v1.GetGitHistoryRequest]) (*connect.Response[v1.GetGitHistoryResponse], error)
@@ -179,6 +190,12 @@ func NewRepositoryServiceClient(httpClient connect.HTTPClient, baseURL string, o
 	baseURL = strings.TrimRight(baseURL, "/")
 	repositoryServiceMethods := v1.File_codeindex_v1_codeindex_proto.Services().ByName("RepositoryService").Methods()
 	return &repositoryServiceClient{
+		getWorktreeSource: connect.NewClient[v1.GetWorktreeSourceRequest, v1.GetWorktreeSourceResponse](
+			httpClient,
+			baseURL+RepositoryServiceGetWorktreeSourceProcedure,
+			connect.WithSchema(repositoryServiceMethods.ByName("GetWorktreeSource")),
+			connect.WithClientOptions(opts...),
+		),
 		getRepositorySettings: connect.NewClient[v1.GetRepositorySettingsRequest, v1.RepositorySettings](
 			httpClient,
 			baseURL+RepositoryServiceGetRepositorySettingsProcedure,
@@ -201,6 +218,12 @@ func NewRepositoryServiceClient(httpClient connect.HTTPClient, baseURL string, o
 			httpClient,
 			baseURL+RepositoryServiceListRepositoriesProcedure,
 			connect.WithSchema(repositoryServiceMethods.ByName("ListRepositories")),
+			connect.WithClientOptions(opts...),
+		),
+		checkRepositoryIndexers: connect.NewClient[v1.CheckRepositoryIndexersRequest, v1.CheckRepositoryIndexersResponse](
+			httpClient,
+			baseURL+RepositoryServiceCheckRepositoryIndexersProcedure,
+			connect.WithSchema(repositoryServiceMethods.ByName("CheckRepositoryIndexers")),
 			connect.WithClientOptions(opts...),
 		),
 		addRepository: connect.NewClient[v1.AddRepositoryRequest, v1.AddRepositoryEvent](
@@ -244,16 +267,23 @@ func NewRepositoryServiceClient(httpClient connect.HTTPClient, baseURL string, o
 
 // repositoryServiceClient implements RepositoryServiceClient.
 type repositoryServiceClient struct {
+	getWorktreeSource                *connect.Client[v1.GetWorktreeSourceRequest, v1.GetWorktreeSourceResponse]
 	getRepositorySettings            *connect.Client[v1.GetRepositorySettingsRequest, v1.RepositorySettings]
 	updateRepositoryMapConfiguration *connect.Client[v1.UpdateRepositoryMapConfigurationRequest, v1.RepositorySettings]
 	updateRepositoryRemote           *connect.Client[v1.UpdateRepositoryRemoteRequest, v1.RepositorySettings]
 	listRepositories                 *connect.Client[v1.ListRepositoriesRequest, v1.ListRepositoriesResponse]
+	checkRepositoryIndexers          *connect.Client[v1.CheckRepositoryIndexersRequest, v1.CheckRepositoryIndexersResponse]
 	addRepository                    *connect.Client[v1.AddRepositoryRequest, v1.AddRepositoryEvent]
 	deleteRepository                 *connect.Client[v1.DeleteRepositoryRequest, v1.DeleteRepositoryResponse]
 	getGitHistory                    *connect.Client[v1.GetGitHistoryRequest, v1.GetGitHistoryResponse]
 	getCommitDetails                 *connect.Client[v1.GetCommitDetailsRequest, v1.GetCommitDetailsResponse]
 	getPullRequest                   *connect.Client[v1.GetPullRequestRequest, v1.GetPullRequestResponse]
 	listPullRequests                 *connect.Client[v1.ListPullRequestsRequest, v1.ListPullRequestsResponse]
+}
+
+// GetWorktreeSource calls codeindex.v1.RepositoryService.GetWorktreeSource.
+func (c *repositoryServiceClient) GetWorktreeSource(ctx context.Context, req *connect.Request[v1.GetWorktreeSourceRequest]) (*connect.Response[v1.GetWorktreeSourceResponse], error) {
+	return c.getWorktreeSource.CallUnary(ctx, req)
 }
 
 // GetRepositorySettings calls codeindex.v1.RepositoryService.GetRepositorySettings.
@@ -275,6 +305,11 @@ func (c *repositoryServiceClient) UpdateRepositoryRemote(ctx context.Context, re
 // ListRepositories calls codeindex.v1.RepositoryService.ListRepositories.
 func (c *repositoryServiceClient) ListRepositories(ctx context.Context, req *connect.Request[v1.ListRepositoriesRequest]) (*connect.Response[v1.ListRepositoriesResponse], error) {
 	return c.listRepositories.CallUnary(ctx, req)
+}
+
+// CheckRepositoryIndexers calls codeindex.v1.RepositoryService.CheckRepositoryIndexers.
+func (c *repositoryServiceClient) CheckRepositoryIndexers(ctx context.Context, req *connect.Request[v1.CheckRepositoryIndexersRequest]) (*connect.Response[v1.CheckRepositoryIndexersResponse], error) {
+	return c.checkRepositoryIndexers.CallUnary(ctx, req)
 }
 
 // AddRepository calls codeindex.v1.RepositoryService.AddRepository.
@@ -309,10 +344,15 @@ func (c *repositoryServiceClient) ListPullRequests(ctx context.Context, req *con
 
 // RepositoryServiceHandler is an implementation of the codeindex.v1.RepositoryService service.
 type RepositoryServiceHandler interface {
+	GetWorktreeSource(context.Context, *connect.Request[v1.GetWorktreeSourceRequest]) (*connect.Response[v1.GetWorktreeSourceResponse], error)
 	GetRepositorySettings(context.Context, *connect.Request[v1.GetRepositorySettingsRequest]) (*connect.Response[v1.RepositorySettings], error)
 	UpdateRepositoryMapConfiguration(context.Context, *connect.Request[v1.UpdateRepositoryMapConfigurationRequest]) (*connect.Response[v1.RepositorySettings], error)
 	UpdateRepositoryRemote(context.Context, *connect.Request[v1.UpdateRepositoryRemoteRequest]) (*connect.Response[v1.RepositorySettings], error)
 	ListRepositories(context.Context, *connect.Request[v1.ListRepositoriesRequest]) (*connect.Response[v1.ListRepositoriesResponse], error)
+	// CheckRepositoryIndexers inspects a repository's project markers and reports
+	// the SCIP indexers indexing will require, so callers can install missing
+	// tools before AddRepository runs.
+	CheckRepositoryIndexers(context.Context, *connect.Request[v1.CheckRepositoryIndexersRequest]) (*connect.Response[v1.CheckRepositoryIndexersResponse], error)
 	AddRepository(context.Context, *connect.Request[v1.AddRepositoryRequest], *connect.ServerStream[v1.AddRepositoryEvent]) error
 	DeleteRepository(context.Context, *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[v1.DeleteRepositoryResponse], error)
 	GetGitHistory(context.Context, *connect.Request[v1.GetGitHistoryRequest]) (*connect.Response[v1.GetGitHistoryResponse], error)
@@ -328,6 +368,12 @@ type RepositoryServiceHandler interface {
 // and JSON codecs. They also support gzip compression.
 func NewRepositoryServiceHandler(svc RepositoryServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
 	repositoryServiceMethods := v1.File_codeindex_v1_codeindex_proto.Services().ByName("RepositoryService").Methods()
+	repositoryServiceGetWorktreeSourceHandler := connect.NewUnaryHandler(
+		RepositoryServiceGetWorktreeSourceProcedure,
+		svc.GetWorktreeSource,
+		connect.WithSchema(repositoryServiceMethods.ByName("GetWorktreeSource")),
+		connect.WithHandlerOptions(opts...),
+	)
 	repositoryServiceGetRepositorySettingsHandler := connect.NewUnaryHandler(
 		RepositoryServiceGetRepositorySettingsProcedure,
 		svc.GetRepositorySettings,
@@ -350,6 +396,12 @@ func NewRepositoryServiceHandler(svc RepositoryServiceHandler, opts ...connect.H
 		RepositoryServiceListRepositoriesProcedure,
 		svc.ListRepositories,
 		connect.WithSchema(repositoryServiceMethods.ByName("ListRepositories")),
+		connect.WithHandlerOptions(opts...),
+	)
+	repositoryServiceCheckRepositoryIndexersHandler := connect.NewUnaryHandler(
+		RepositoryServiceCheckRepositoryIndexersProcedure,
+		svc.CheckRepositoryIndexers,
+		connect.WithSchema(repositoryServiceMethods.ByName("CheckRepositoryIndexers")),
 		connect.WithHandlerOptions(opts...),
 	)
 	repositoryServiceAddRepositoryHandler := connect.NewServerStreamHandler(
@@ -390,6 +442,8 @@ func NewRepositoryServiceHandler(svc RepositoryServiceHandler, opts ...connect.H
 	)
 	return "/codeindex.v1.RepositoryService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
+		case RepositoryServiceGetWorktreeSourceProcedure:
+			repositoryServiceGetWorktreeSourceHandler.ServeHTTP(w, r)
 		case RepositoryServiceGetRepositorySettingsProcedure:
 			repositoryServiceGetRepositorySettingsHandler.ServeHTTP(w, r)
 		case RepositoryServiceUpdateRepositoryMapConfigurationProcedure:
@@ -398,6 +452,8 @@ func NewRepositoryServiceHandler(svc RepositoryServiceHandler, opts ...connect.H
 			repositoryServiceUpdateRepositoryRemoteHandler.ServeHTTP(w, r)
 		case RepositoryServiceListRepositoriesProcedure:
 			repositoryServiceListRepositoriesHandler.ServeHTTP(w, r)
+		case RepositoryServiceCheckRepositoryIndexersProcedure:
+			repositoryServiceCheckRepositoryIndexersHandler.ServeHTTP(w, r)
 		case RepositoryServiceAddRepositoryProcedure:
 			repositoryServiceAddRepositoryHandler.ServeHTTP(w, r)
 		case RepositoryServiceDeleteRepositoryProcedure:
@@ -419,6 +475,10 @@ func NewRepositoryServiceHandler(svc RepositoryServiceHandler, opts ...connect.H
 // UnimplementedRepositoryServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedRepositoryServiceHandler struct{}
 
+func (UnimplementedRepositoryServiceHandler) GetWorktreeSource(context.Context, *connect.Request[v1.GetWorktreeSourceRequest]) (*connect.Response[v1.GetWorktreeSourceResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.GetWorktreeSource is not implemented"))
+}
+
 func (UnimplementedRepositoryServiceHandler) GetRepositorySettings(context.Context, *connect.Request[v1.GetRepositorySettingsRequest]) (*connect.Response[v1.RepositorySettings], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.GetRepositorySettings is not implemented"))
 }
@@ -433,6 +493,10 @@ func (UnimplementedRepositoryServiceHandler) UpdateRepositoryRemote(context.Cont
 
 func (UnimplementedRepositoryServiceHandler) ListRepositories(context.Context, *connect.Request[v1.ListRepositoriesRequest]) (*connect.Response[v1.ListRepositoriesResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.ListRepositories is not implemented"))
+}
+
+func (UnimplementedRepositoryServiceHandler) CheckRepositoryIndexers(context.Context, *connect.Request[v1.CheckRepositoryIndexersRequest]) (*connect.Response[v1.CheckRepositoryIndexersResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.CheckRepositoryIndexers is not implemented"))
 }
 
 func (UnimplementedRepositoryServiceHandler) AddRepository(context.Context, *connect.Request[v1.AddRepositoryRequest], *connect.ServerStream[v1.AddRepositoryEvent]) error {

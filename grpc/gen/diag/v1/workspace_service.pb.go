@@ -341,8 +341,11 @@ type PlanElement struct {
 	ViewUpdatedAt    *timestamppb.Timestamp `protobuf:"bytes,20,opt,name=view_updated_at,json=viewUpdatedAt,proto3,oneof" json:"view_updated_at,omitempty"`
 	ViewDensityLevel *int32                 `protobuf:"varint,21,opt,name=view_density_level,json=viewDensityLevel,proto3,oneof" json:"view_density_level,omitempty"`
 	BypassNoiseGate  *bool                  `protobuf:"varint,22,opt,name=bypass_noise_gate,json=bypassNoiseGate,proto3,oneof" json:"bypass_noise_gate,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	// Optional. Identifier of the indexed codeindex repository this element is
+	// linked to.
+	RepositoryId  *string `protobuf:"bytes,23,opt,name=repository_id,json=repositoryId,proto3,oneof" json:"repository_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *PlanElement) Reset() {
@@ -527,6 +530,13 @@ func (x *PlanElement) GetBypassNoiseGate() bool {
 		return *x.BypassNoiseGate
 	}
 	return false
+}
+
+func (x *PlanElement) GetRepositoryId() string {
+	if x != nil && x.RepositoryId != nil {
+		return *x.RepositoryId
+	}
+	return ""
 }
 
 type PlanConnector struct {
@@ -1595,8 +1605,11 @@ type Element struct {
 	ViewLabel       *string                `protobuf:"bytes,18,opt,name=view_label,json=viewLabel,proto3,oneof" json:"view_label,omitempty"`
 	Ref             string                 `protobuf:"bytes,19,opt,name=ref,proto3" json:"ref,omitempty"`
 	BypassNoiseGate bool                   `protobuf:"varint,20,opt,name=bypass_noise_gate,json=bypassNoiseGate,proto3" json:"bypass_noise_gate,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// Optional. Identifier of the indexed codeindex repository this element is
+	// linked to. When empty, the repo/branch/file_path fields carry the link.
+	RepositoryId  *string `protobuf:"bytes,21,opt,name=repository_id,json=repositoryId,proto3,oneof" json:"repository_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Element) Reset() {
@@ -1767,6 +1780,13 @@ func (x *Element) GetBypassNoiseGate() bool {
 		return x.BypassNoiseGate
 	}
 	return false
+}
+
+func (x *Element) GetRepositoryId() string {
+	if x != nil && x.RepositoryId != nil {
+		return *x.RepositoryId
+	}
+	return ""
 }
 
 // ViewSummary represents a view in the workspace tree.
@@ -1971,8 +1991,11 @@ type PlacedElement struct {
 	HasView         bool                   `protobuf:"varint,18,opt,name=has_view,json=hasView,proto3" json:"has_view,omitempty"`
 	ViewLabel       *string                `protobuf:"bytes,19,opt,name=view_label,json=viewLabel,proto3,oneof" json:"view_label,omitempty"`
 	BypassNoiseGate bool                   `protobuf:"varint,20,opt,name=bypass_noise_gate,json=bypassNoiseGate,proto3" json:"bypass_noise_gate,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// Optional. Identifier of the indexed codeindex repository this element is
+	// linked to. When empty, the repo/branch/file_path fields carry the link.
+	RepositoryId  *string `protobuf:"bytes,21,opt,name=repository_id,json=repositoryId,proto3,oneof" json:"repository_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *PlacedElement) Reset() {
@@ -2143,6 +2166,13 @@ func (x *PlacedElement) GetBypassNoiseGate() bool {
 		return x.BypassNoiseGate
 	}
 	return false
+}
+
+func (x *PlacedElement) GetRepositoryId() string {
+	if x != nil && x.RepositoryId != nil {
+		return *x.RepositoryId
+	}
+	return ""
 }
 
 // Connector represents a directed connection between two elements on a view.
@@ -4933,8 +4963,10 @@ type CreateElementRequest struct {
 	Language        *string                `protobuf:"bytes,11,opt,name=language,proto3,oneof" json:"language,omitempty"`
 	FilePath        *string                `protobuf:"bytes,12,opt,name=file_path,json=filePath,proto3,oneof" json:"file_path,omitempty"`
 	BypassNoiseGate *bool                  `protobuf:"varint,13,opt,name=bypass_noise_gate,json=bypassNoiseGate,proto3,oneof" json:"bypass_noise_gate,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// Optional. Identifier of the indexed codeindex repository to link.
+	RepositoryId  *string `protobuf:"bytes,14,opt,name=repository_id,json=repositoryId,proto3,oneof" json:"repository_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CreateElementRequest) Reset() {
@@ -5058,6 +5090,13 @@ func (x *CreateElementRequest) GetBypassNoiseGate() bool {
 	return false
 }
 
+func (x *CreateElementRequest) GetRepositoryId() string {
+	if x != nil && x.RepositoryId != nil {
+		return *x.RepositoryId
+	}
+	return ""
+}
+
 type CreateElementResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Element       *Element               `protobuf:"bytes,1,opt,name=element,proto3" json:"element,omitempty"`
@@ -5118,8 +5157,11 @@ type UpdateElementRequest struct {
 	Language        *string                `protobuf:"bytes,12,opt,name=language,proto3,oneof" json:"language,omitempty"`
 	FilePath        *string                `protobuf:"bytes,13,opt,name=file_path,json=filePath,proto3,oneof" json:"file_path,omitempty"`
 	BypassNoiseGate *bool                  `protobuf:"varint,14,opt,name=bypass_noise_gate,json=bypassNoiseGate,proto3,oneof" json:"bypass_noise_gate,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// Optional. Identifier of the indexed codeindex repository to link. Set to
+	// the empty string to clear the link.
+	RepositoryId  *string `protobuf:"bytes,15,opt,name=repository_id,json=repositoryId,proto3,oneof" json:"repository_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UpdateElementRequest) Reset() {
@@ -5248,6 +5290,13 @@ func (x *UpdateElementRequest) GetBypassNoiseGate() bool {
 		return *x.BypassNoiseGate
 	}
 	return false
+}
+
+func (x *UpdateElementRequest) GetRepositoryId() string {
+	if x != nil && x.RepositoryId != nil {
+		return *x.RepositoryId
+	}
+	return ""
 }
 
 type UpdateElementResponse struct {
@@ -7354,7 +7403,7 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\x10visibility_delta\x18\x04 \x01(\x05H\x02R\x0fvisibilityDelta\x88\x01\x01B\r\n" +
 	"\v_position_xB\r\n" +
 	"\v_position_yB\x13\n" +
-	"\x11_visibility_delta\"\x99\b\n" +
+	"\x11_visibility_delta\"\xd5\b\n" +
 	"\vPlanElement\x12\x10\n" +
 	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x17\n" +
@@ -7385,7 +7434,8 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\aview_id\x18\x13 \x01(\x05H\fR\x06viewId\x88\x01\x01\x12G\n" +
 	"\x0fview_updated_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampH\rR\rviewUpdatedAt\x88\x01\x01\x121\n" +
 	"\x12view_density_level\x18\x15 \x01(\x05H\x0eR\x10viewDensityLevel\x88\x01\x01\x12/\n" +
-	"\x11bypass_noise_gate\x18\x16 \x01(\bH\x0fR\x0fbypassNoiseGate\x88\x01\x01B\a\n" +
+	"\x11bypass_noise_gate\x18\x16 \x01(\bH\x0fR\x0fbypassNoiseGate\x88\x01\x01\x12(\n" +
+	"\rrepository_id\x18\x17 \x01(\tH\x10R\frepositoryId\x88\x01\x01B\a\n" +
 	"\x05_kindB\x0e\n" +
 	"\f_descriptionB\r\n" +
 	"\v_technologyB\x06\n" +
@@ -7403,7 +7453,8 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\b_view_idB\x12\n" +
 	"\x10_view_updated_atB\x15\n" +
 	"\x13_view_density_levelB\x14\n" +
-	"\x12_bypass_noise_gate\"\xcb\x05\n" +
+	"\x12_bypass_noise_gateB\x10\n" +
+	"\x0e_repository_id\"\xcb\x05\n" +
 	"\rPlanConnector\x12\x10\n" +
 	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x19\n" +
 	"\bview_ref\x18\x02 \x01(\tR\aviewRef\x12,\n" +
@@ -7540,7 +7591,7 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\n" +
 	"\b_api_key\"7\n" +
 	"\x12CreateViewResponse\x12!\n" +
-	"\x04view\x18\x01 \x01(\v2\r.diag.v1.ViewR\x04view\"\x9f\x06\n" +
+	"\x04view\x18\x01 \x01(\v2\r.diag.v1.ViewR\x04view\"\xdb\x06\n" +
 	"\aElement\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x15\n" +
 	"\x06org_id\x18\x02 \x01(\tR\x05orgId\x12\x12\n" +
@@ -7567,7 +7618,9 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\n" +
 	"view_label\x18\x12 \x01(\tH\tR\tviewLabel\x88\x01\x01\x12\x10\n" +
 	"\x03ref\x18\x13 \x01(\tR\x03ref\x12*\n" +
-	"\x11bypass_noise_gate\x18\x14 \x01(\bR\x0fbypassNoiseGateB\a\n" +
+	"\x11bypass_noise_gate\x18\x14 \x01(\bR\x0fbypassNoiseGate\x12(\n" +
+	"\rrepository_id\x18\x15 \x01(\tH\n" +
+	"R\frepositoryId\x88\x01\x01B\a\n" +
 	"\x05_kindB\x0e\n" +
 	"\f_descriptionB\r\n" +
 	"\v_technologyB\x06\n" +
@@ -7578,7 +7631,8 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\t_languageB\f\n" +
 	"\n" +
 	"_file_pathB\r\n" +
-	"\v_view_label\"\xc0\x02\n" +
+	"\v_view_labelB\x10\n" +
+	"\x0e_repository_id\"\xc0\x02\n" +
 	"\vViewSummary\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x15\n" +
 	"\x06org_id\x18\x02 \x01(\tR\x05orgId\x12-\n" +
@@ -7600,7 +7654,7 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\n" +
 	"position_x\x18\x04 \x01(\x01R\tpositionX\x12\x1d\n" +
 	"\n" +
-	"position_y\x18\x05 \x01(\x01R\tpositionY\"\xfc\x05\n" +
+	"position_y\x18\x05 \x01(\x01R\tpositionY\"\xb8\x06\n" +
 	"\rPlacedElement\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x17\n" +
 	"\aview_id\x18\x02 \x01(\x05R\x06viewId\x12\x1d\n" +
@@ -7628,7 +7682,9 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\bhas_view\x18\x12 \x01(\bR\ahasView\x12\"\n" +
 	"\n" +
 	"view_label\x18\x13 \x01(\tH\tR\tviewLabel\x88\x01\x01\x12*\n" +
-	"\x11bypass_noise_gate\x18\x14 \x01(\bR\x0fbypassNoiseGateB\x0e\n" +
+	"\x11bypass_noise_gate\x18\x14 \x01(\bR\x0fbypassNoiseGate\x12(\n" +
+	"\rrepository_id\x18\x15 \x01(\tH\n" +
+	"R\frepositoryId\x88\x01\x01B\x0e\n" +
 	"\f_descriptionB\a\n" +
 	"\x05_kindB\r\n" +
 	"\v_technologyB\x06\n" +
@@ -7639,7 +7695,8 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\n" +
 	"_file_pathB\v\n" +
 	"\t_languageB\r\n" +
-	"\v_view_label\"\xf7\x04\n" +
+	"\v_view_labelB\x10\n" +
+	"\x0e_repository_id\"\xf7\x04\n" +
 	"\tConnector\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x17\n" +
 	"\aview_id\x18\x02 \x01(\x05R\x06viewId\x12*\n" +
@@ -7906,7 +7963,7 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\n" +
 	"element_id\x18\x01 \x01(\x05R\telementId\"@\n" +
 	"\x12GetElementResponse\x12*\n" +
-	"\aelement\x18\x01 \x01(\v2\x10.diag.v1.ElementR\aelement\"\xca\x04\n" +
+	"\aelement\x18\x01 \x01(\v2\x10.diag.v1.ElementR\aelement\"\x86\x05\n" +
 	"\x14CreateElementRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x17\n" +
 	"\x04kind\x18\x02 \x01(\tH\x00R\x04kind\x88\x01\x01\x12%\n" +
@@ -7923,7 +7980,9 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	" \x01(\tH\x06R\x06branch\x88\x01\x01\x12\x1f\n" +
 	"\blanguage\x18\v \x01(\tH\aR\blanguage\x88\x01\x01\x12 \n" +
 	"\tfile_path\x18\f \x01(\tH\bR\bfilePath\x88\x01\x01\x12/\n" +
-	"\x11bypass_noise_gate\x18\r \x01(\bH\tR\x0fbypassNoiseGate\x88\x01\x01B\a\n" +
+	"\x11bypass_noise_gate\x18\r \x01(\bH\tR\x0fbypassNoiseGate\x88\x01\x01\x12(\n" +
+	"\rrepository_id\x18\x0e \x01(\tH\n" +
+	"R\frepositoryId\x88\x01\x01B\a\n" +
 	"\x05_kindB\x0e\n" +
 	"\f_descriptionB\r\n" +
 	"\v_technologyB\x06\n" +
@@ -7934,9 +7993,10 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\t_languageB\f\n" +
 	"\n" +
 	"_file_pathB\x14\n" +
-	"\x12_bypass_noise_gate\"C\n" +
+	"\x12_bypass_noise_gateB\x10\n" +
+	"\x0e_repository_id\"C\n" +
 	"\x15CreateElementResponse\x12*\n" +
-	"\aelement\x18\x01 \x01(\v2\x10.diag.v1.ElementR\aelement\"\xe9\x04\n" +
+	"\aelement\x18\x01 \x01(\v2\x10.diag.v1.ElementR\aelement\"\xa5\x05\n" +
 	"\x14UpdateElementRequest\x12\x1d\n" +
 	"\n" +
 	"element_id\x18\x01 \x01(\x05R\telementId\x12\x12\n" +
@@ -7955,7 +8015,9 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\x06branch\x18\v \x01(\tH\x06R\x06branch\x88\x01\x01\x12\x1f\n" +
 	"\blanguage\x18\f \x01(\tH\aR\blanguage\x88\x01\x01\x12 \n" +
 	"\tfile_path\x18\r \x01(\tH\bR\bfilePath\x88\x01\x01\x12/\n" +
-	"\x11bypass_noise_gate\x18\x0e \x01(\bH\tR\x0fbypassNoiseGate\x88\x01\x01B\a\n" +
+	"\x11bypass_noise_gate\x18\x0e \x01(\bH\tR\x0fbypassNoiseGate\x88\x01\x01\x12(\n" +
+	"\rrepository_id\x18\x0f \x01(\tH\n" +
+	"R\frepositoryId\x88\x01\x01B\a\n" +
 	"\x05_kindB\x0e\n" +
 	"\f_descriptionB\r\n" +
 	"\v_technologyB\x06\n" +
@@ -7966,7 +8028,8 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\t_languageB\f\n" +
 	"\n" +
 	"_file_pathB\x14\n" +
-	"\x12_bypass_noise_gate\"C\n" +
+	"\x12_bypass_noise_gateB\x10\n" +
+	"\x0e_repository_id\"C\n" +
 	"\x15UpdateElementResponse\x12*\n" +
 	"\aelement\x18\x01 \x01(\v2\x10.diag.v1.ElementR\aelement\"\xf2\x01\n" +
 	"\x1dCreateCustomTechnologyRequest\x12\x12\n" +

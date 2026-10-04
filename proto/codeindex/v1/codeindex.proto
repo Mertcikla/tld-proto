@@ -164,6 +164,18 @@ message ListRepositoriesRequest {}
 message ListRepositoriesResponse {
   repeated RepositorySummary repositories = 1;
 }
+// Reads current worktree content for source previews, confined to a registered
+// repository. This does not read immutable snapshot content (see GetSource).
+message GetWorktreeSourceRequest {
+  string repository_id = 1;
+  // Local path or remote URL used by legacy workspace source links.
+  string repo = 2;
+  string file_path = 3;
+}
+message GetWorktreeSourceResponse {
+  string content = 1;
+  string path = 2;
+}
 // Unset fields inherit global map defaults. Update replaces all overrides.
 message RepositoryMapConfiguration {
   optional double resolution = 1;
@@ -276,6 +288,7 @@ message IndexProgress {
 // in-process codeindex engine. Indexing runs in-process; the CLI remains
 // available for scripted and watch workflows.
 service RepositoryService {
+  rpc GetWorktreeSource(GetWorktreeSourceRequest) returns (GetWorktreeSourceResponse);
   rpc GetRepositorySettings(GetRepositorySettingsRequest) returns (RepositorySettings);
   rpc UpdateRepositoryMapConfiguration(UpdateRepositoryMapConfigurationRequest) returns (RepositorySettings);
   rpc UpdateRepositoryRemote(UpdateRepositoryRemoteRequest) returns (RepositorySettings);
