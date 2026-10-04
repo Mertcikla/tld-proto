@@ -45,7 +45,7 @@ enum FactKind {
   FACT_KIND_TYPE = 7;
   FACT_KIND_CONSTRUCTOR = 8;
   // A whole source file. One is published per discovered file so the file's
-  // content can be chunked and embedded alongside its symbols.
+  // content can be chunked alongside its symbols.
   FACT_KIND_FILE = 9;
   // Infrastructure, configuration, and repository-level facts. These carry a
   // subject/object pair rather than a captured code body and are produced by
@@ -124,18 +124,6 @@ message EdgeFact {
   // Observation count for this logical edge (separate observations remain separate records).
   double weight = 11;
 }
-message Embedding {
-  string id = 1;
-  string chunk_id = 2;
-  string snapshot_id = 3;
-  string profile = 4;
-  string model = 5;
-  uint32 dimensions = 6;
-  string input_hash = 7;
-  repeated float vector = 8;
-  // Owning CodeFact, stored as a record link to code_fact.
-  string fact_id = 9;
-}
 message Project {
   string root = 1;
   string language = 2;
@@ -186,6 +174,8 @@ service RepositoryService {
   rpc DeleteRepository(DeleteRepositoryRequest) returns (DeleteRepositoryResponse);
   rpc GetGitHistory(GetGitHistoryRequest) returns (GetGitHistoryResponse);
   rpc GetCommitDetails(GetCommitDetailsRequest) returns (GetCommitDetailsResponse);
+  rpc GetPullRequest(GetPullRequestRequest) returns (GetPullRequestResponse);
+  rpc ListPullRequests(ListPullRequestsRequest) returns (ListPullRequestsResponse);
 }
 // WatchService starts, stops, and reports the per-repository codeindex watcher.
 // The server supervises a CLI child process and shares the watcher's control
@@ -199,7 +189,6 @@ service WatchService {
 message StartWatchRequest {
   string repository_id = 1;
   // Passed through to the spawned watcher. Zero uses the CLI defaults.
-  bool embed = 2;
   bool materialize = 3;
 }
 message StopWatchRequest { string repository_id = 1; }
@@ -262,7 +251,32 @@ message GetGitHistoryResponse {
   string current_branch = 4;
   bool has_more = 5;
   bool is_git = 6;
+  // Browser URL derived from the checkout origin, without embedded credentials.
+  string repository_url = 7;
 }
+// Resolves a GitHub PR through the local gh CLI and fetches its commits for review.
+message GetPullRequestRequest {
+  string repository_id = 1;
+  // PR number or URL, scoped to this repository's origin.
+  string pull_request = 2;
+}
+message GetPullRequestResponse {
+  string title = 1;
+  string url = 2;
+  string base_sha = 3;
+  string head_sha = 4;
+  string base_branch = 5;
+  string head_branch = 6;
+}
+message ListPullRequestsRequest { string repository_id = 1; }
+message OpenPullRequest {
+  uint32 number = 1;
+  string title = 2;
+  string url = 3;
+  string base_branch = 4;
+  string head_branch = 5;
+}
+message ListPullRequestsResponse { repeated OpenPullRequest pull_requests = 1; }
 message GetCommitDetailsRequest {
   string repository_id = 1;
   string revision = 2;
@@ -288,7 +302,6 @@ message Snapshot {
   repeated Project projects = 5;
   repeated SourceFile sources = 6;
   string ingestion_status = 7;
-  string embedding_status = 8;
   repeated string warnings = 9;
   map<string, string> tool_versions = 10;
   string config_hash = 11;
@@ -300,6 +313,9 @@ message Snapshot {
   string content_fingerprint = 14;
   // Counts of records belonging to this snapshot, populated when reading it.
   SnapshotStatistics statistics = 15;
+  // Subject line of the Git commit at git_revision when the snapshot was
+  // captured. Empty for non-Git repositories.
+  string commit_message = 16;
 }
 message SnapshotStatistics {
   uint32 facts = 1;
@@ -510,8 +526,6 @@ message Group {
   string snapshot_id = 3;
   string label = 4;
   GroupKind kind = 5;
-  // Embedding profile for clusters; empty for communities.
-  string profile = 6;
   uint32 size = 7;
   // Member CodeFact ids. Present on Save; omitted by ListGroups.
   repeated string fact_ids = 8;
@@ -570,28 +584,16 @@ message SearchRequest {
   CodeFactFilter filter = 1;
   string query = 2;
   uint32 limit = 3;
-  string profile = 4;
-  // Jina code-embedding task selecting the task-specific query instruction:
-  // nl2code, code2code, code2nl, code2completion, or qa. Empty uses the
-  // configured default. The task's passage instruction must match the one used
-  // to index the snapshot or the search is rejected.
-  string task = 5;
 }
 message SearchHit {
   CodeFact fact = 1;
   float score = 2;
-  repeated string chunk_ids = 3;
 }
 message SearchResponse {
   repeated SearchHit hits = 1;
-  uint32 embedded_count = 2;
-  uint32 embeddable_count = 3;
 }
 service SearchService {
   rpc FullText(SearchRequest) returns (SearchResponse);
-  rpc Vector(SearchRequest) returns (SearchResponse);
-  // Reciprocal rank fusion of lexical and vector retrieval over code Facts.
-  rpc Hybrid(SearchRequest) returns (SearchResponse);
 }
 // AnalysisService persists and serves grouping decisions produced downstream.
 // The indexer never infers a grouping; it records the decision, its provenance,
@@ -602,9 +604,10 @@ service AnalysisService {
   rpc ListGroups(GroupFilter) returns (GroupPage);
   rpc ListGroupFacts(GroupFactsRequest) returns (CodeFactPage);
 }
-// MapperService runs the deterministic embedding clustering/binning pipeline
-// over a repository snapshot and materializes the result into the workspace. It
-// streams progress while the pipeline runs and terminates with one MapResult.
+// MapperService runs the deterministic dependency-graph community grouping
+// pipeline over a repository snapshot and materializes the result into the
+// workspace. It streams progress while the pipeline runs and terminates with one
+// MapResult.
 service MapperService {
   rpc MapRepository(MapRepositoryRequest) returns (stream MapRepositoryEvent);
   rpc ListMaps(ListMapsRequest) returns (ListMapsResponse);
@@ -677,8 +680,6 @@ message MapRepositoryRequest {
   string repository_id = 1;
   // Optional snapshot; the repository's latest published snapshot when empty.
   string snapshot_id = 2;
-  // Optional embedding profile; the snapshot's majority profile when empty.
-  string profile = 3;
   // When set, external imports declared by the indexed files are materialized
   // under an External element and connected to the files that import them.
   bool include_imports = 4;
@@ -695,7 +696,7 @@ message MapRepositoryEvent {
   }
 }
 message MapProgress {
-  // One of: preparing, indexing, embedding, loading, clustering, binning, materializing.
+  // One of: preparing, indexing, loading, grouping, materializing.
   string stage = 1;
   uint32 current = 2;
   uint32 total = 3;
@@ -717,7 +718,6 @@ message MapResult {
 message CompletedMap {
   MapResult result = 1;
   int64 completed_unix = 2;
-  string profile = 3;
   bool include_imports = 4;
   string config_hash = 5;
 }

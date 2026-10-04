@@ -55,6 +55,12 @@ const (
 	// RepositoryServiceGetCommitDetailsProcedure is the fully-qualified name of the RepositoryService's
 	// GetCommitDetails RPC.
 	RepositoryServiceGetCommitDetailsProcedure = "/codeindex.v1.RepositoryService/GetCommitDetails"
+	// RepositoryServiceGetPullRequestProcedure is the fully-qualified name of the RepositoryService's
+	// GetPullRequest RPC.
+	RepositoryServiceGetPullRequestProcedure = "/codeindex.v1.RepositoryService/GetPullRequest"
+	// RepositoryServiceListPullRequestsProcedure is the fully-qualified name of the RepositoryService's
+	// ListPullRequests RPC.
+	RepositoryServiceListPullRequestsProcedure = "/codeindex.v1.RepositoryService/ListPullRequests"
 	// WatchServiceStartWatchProcedure is the fully-qualified name of the WatchService's StartWatch RPC.
 	WatchServiceStartWatchProcedure = "/codeindex.v1.WatchService/StartWatch"
 	// WatchServiceStopWatchProcedure is the fully-qualified name of the WatchService's StopWatch RPC.
@@ -108,10 +114,6 @@ const (
 	CodeFactServiceDeleteSnapshotProcedure = "/codeindex.v1.CodeFactService/DeleteSnapshot"
 	// SearchServiceFullTextProcedure is the fully-qualified name of the SearchService's FullText RPC.
 	SearchServiceFullTextProcedure = "/codeindex.v1.SearchService/FullText"
-	// SearchServiceVectorProcedure is the fully-qualified name of the SearchService's Vector RPC.
-	SearchServiceVectorProcedure = "/codeindex.v1.SearchService/Vector"
-	// SearchServiceHybridProcedure is the fully-qualified name of the SearchService's Hybrid RPC.
-	SearchServiceHybridProcedure = "/codeindex.v1.SearchService/Hybrid"
 	// AnalysisServiceSaveAnalysisProcedure is the fully-qualified name of the AnalysisService's
 	// SaveAnalysis RPC.
 	AnalysisServiceSaveAnalysisProcedure = "/codeindex.v1.AnalysisService/SaveAnalysis"
@@ -146,6 +148,8 @@ type RepositoryServiceClient interface {
 	DeleteRepository(context.Context, *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[v1.DeleteRepositoryResponse], error)
 	GetGitHistory(context.Context, *connect.Request[v1.GetGitHistoryRequest]) (*connect.Response[v1.GetGitHistoryResponse], error)
 	GetCommitDetails(context.Context, *connect.Request[v1.GetCommitDetailsRequest]) (*connect.Response[v1.GetCommitDetailsResponse], error)
+	GetPullRequest(context.Context, *connect.Request[v1.GetPullRequestRequest]) (*connect.Response[v1.GetPullRequestResponse], error)
+	ListPullRequests(context.Context, *connect.Request[v1.ListPullRequestsRequest]) (*connect.Response[v1.ListPullRequestsResponse], error)
 }
 
 // NewRepositoryServiceClient constructs a client for the codeindex.v1.RepositoryService service. By
@@ -183,6 +187,18 @@ func NewRepositoryServiceClient(httpClient connect.HTTPClient, baseURL string, o
 			connect.WithSchema(repositoryServiceMethods.ByName("GetCommitDetails")),
 			connect.WithClientOptions(opts...),
 		),
+		getPullRequest: connect.NewClient[v1.GetPullRequestRequest, v1.GetPullRequestResponse](
+			httpClient,
+			baseURL+RepositoryServiceGetPullRequestProcedure,
+			connect.WithSchema(repositoryServiceMethods.ByName("GetPullRequest")),
+			connect.WithClientOptions(opts...),
+		),
+		listPullRequests: connect.NewClient[v1.ListPullRequestsRequest, v1.ListPullRequestsResponse](
+			httpClient,
+			baseURL+RepositoryServiceListPullRequestsProcedure,
+			connect.WithSchema(repositoryServiceMethods.ByName("ListPullRequests")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -192,6 +208,8 @@ type repositoryServiceClient struct {
 	deleteRepository *connect.Client[v1.DeleteRepositoryRequest, v1.DeleteRepositoryResponse]
 	getGitHistory    *connect.Client[v1.GetGitHistoryRequest, v1.GetGitHistoryResponse]
 	getCommitDetails *connect.Client[v1.GetCommitDetailsRequest, v1.GetCommitDetailsResponse]
+	getPullRequest   *connect.Client[v1.GetPullRequestRequest, v1.GetPullRequestResponse]
+	listPullRequests *connect.Client[v1.ListPullRequestsRequest, v1.ListPullRequestsResponse]
 }
 
 // ListRepositories calls codeindex.v1.RepositoryService.ListRepositories.
@@ -214,12 +232,24 @@ func (c *repositoryServiceClient) GetCommitDetails(ctx context.Context, req *con
 	return c.getCommitDetails.CallUnary(ctx, req)
 }
 
+// GetPullRequest calls codeindex.v1.RepositoryService.GetPullRequest.
+func (c *repositoryServiceClient) GetPullRequest(ctx context.Context, req *connect.Request[v1.GetPullRequestRequest]) (*connect.Response[v1.GetPullRequestResponse], error) {
+	return c.getPullRequest.CallUnary(ctx, req)
+}
+
+// ListPullRequests calls codeindex.v1.RepositoryService.ListPullRequests.
+func (c *repositoryServiceClient) ListPullRequests(ctx context.Context, req *connect.Request[v1.ListPullRequestsRequest]) (*connect.Response[v1.ListPullRequestsResponse], error) {
+	return c.listPullRequests.CallUnary(ctx, req)
+}
+
 // RepositoryServiceHandler is an implementation of the codeindex.v1.RepositoryService service.
 type RepositoryServiceHandler interface {
 	ListRepositories(context.Context, *connect.Request[v1.ListRepositoriesRequest]) (*connect.Response[v1.ListRepositoriesResponse], error)
 	DeleteRepository(context.Context, *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[v1.DeleteRepositoryResponse], error)
 	GetGitHistory(context.Context, *connect.Request[v1.GetGitHistoryRequest]) (*connect.Response[v1.GetGitHistoryResponse], error)
 	GetCommitDetails(context.Context, *connect.Request[v1.GetCommitDetailsRequest]) (*connect.Response[v1.GetCommitDetailsResponse], error)
+	GetPullRequest(context.Context, *connect.Request[v1.GetPullRequestRequest]) (*connect.Response[v1.GetPullRequestResponse], error)
+	ListPullRequests(context.Context, *connect.Request[v1.ListPullRequestsRequest]) (*connect.Response[v1.ListPullRequestsResponse], error)
 }
 
 // NewRepositoryServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -253,6 +283,18 @@ func NewRepositoryServiceHandler(svc RepositoryServiceHandler, opts ...connect.H
 		connect.WithSchema(repositoryServiceMethods.ByName("GetCommitDetails")),
 		connect.WithHandlerOptions(opts...),
 	)
+	repositoryServiceGetPullRequestHandler := connect.NewUnaryHandler(
+		RepositoryServiceGetPullRequestProcedure,
+		svc.GetPullRequest,
+		connect.WithSchema(repositoryServiceMethods.ByName("GetPullRequest")),
+		connect.WithHandlerOptions(opts...),
+	)
+	repositoryServiceListPullRequestsHandler := connect.NewUnaryHandler(
+		RepositoryServiceListPullRequestsProcedure,
+		svc.ListPullRequests,
+		connect.WithSchema(repositoryServiceMethods.ByName("ListPullRequests")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/codeindex.v1.RepositoryService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case RepositoryServiceListRepositoriesProcedure:
@@ -263,6 +305,10 @@ func NewRepositoryServiceHandler(svc RepositoryServiceHandler, opts ...connect.H
 			repositoryServiceGetGitHistoryHandler.ServeHTTP(w, r)
 		case RepositoryServiceGetCommitDetailsProcedure:
 			repositoryServiceGetCommitDetailsHandler.ServeHTTP(w, r)
+		case RepositoryServiceGetPullRequestProcedure:
+			repositoryServiceGetPullRequestHandler.ServeHTTP(w, r)
+		case RepositoryServiceListPullRequestsProcedure:
+			repositoryServiceListPullRequestsHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -286,6 +332,14 @@ func (UnimplementedRepositoryServiceHandler) GetGitHistory(context.Context, *con
 
 func (UnimplementedRepositoryServiceHandler) GetCommitDetails(context.Context, *connect.Request[v1.GetCommitDetailsRequest]) (*connect.Response[v1.GetCommitDetailsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.GetCommitDetails is not implemented"))
+}
+
+func (UnimplementedRepositoryServiceHandler) GetPullRequest(context.Context, *connect.Request[v1.GetPullRequestRequest]) (*connect.Response[v1.GetPullRequestResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.GetPullRequest is not implemented"))
+}
+
+func (UnimplementedRepositoryServiceHandler) ListPullRequests(context.Context, *connect.Request[v1.ListPullRequestsRequest]) (*connect.Response[v1.ListPullRequestsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.ListPullRequests is not implemented"))
 }
 
 // WatchServiceClient is a client for the codeindex.v1.WatchService service.
@@ -851,9 +905,6 @@ func (UnimplementedCodeFactServiceHandler) DeleteSnapshot(context.Context, *conn
 // SearchServiceClient is a client for the codeindex.v1.SearchService service.
 type SearchServiceClient interface {
 	FullText(context.Context, *connect.Request[v1.SearchRequest]) (*connect.Response[v1.SearchResponse], error)
-	Vector(context.Context, *connect.Request[v1.SearchRequest]) (*connect.Response[v1.SearchResponse], error)
-	// Reciprocal rank fusion of lexical and vector retrieval over code Facts.
-	Hybrid(context.Context, *connect.Request[v1.SearchRequest]) (*connect.Response[v1.SearchResponse], error)
 }
 
 // NewSearchServiceClient constructs a client for the codeindex.v1.SearchService service. By
@@ -873,26 +924,12 @@ func NewSearchServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 			connect.WithSchema(searchServiceMethods.ByName("FullText")),
 			connect.WithClientOptions(opts...),
 		),
-		vector: connect.NewClient[v1.SearchRequest, v1.SearchResponse](
-			httpClient,
-			baseURL+SearchServiceVectorProcedure,
-			connect.WithSchema(searchServiceMethods.ByName("Vector")),
-			connect.WithClientOptions(opts...),
-		),
-		hybrid: connect.NewClient[v1.SearchRequest, v1.SearchResponse](
-			httpClient,
-			baseURL+SearchServiceHybridProcedure,
-			connect.WithSchema(searchServiceMethods.ByName("Hybrid")),
-			connect.WithClientOptions(opts...),
-		),
 	}
 }
 
 // searchServiceClient implements SearchServiceClient.
 type searchServiceClient struct {
 	fullText *connect.Client[v1.SearchRequest, v1.SearchResponse]
-	vector   *connect.Client[v1.SearchRequest, v1.SearchResponse]
-	hybrid   *connect.Client[v1.SearchRequest, v1.SearchResponse]
 }
 
 // FullText calls codeindex.v1.SearchService.FullText.
@@ -900,22 +937,9 @@ func (c *searchServiceClient) FullText(ctx context.Context, req *connect.Request
 	return c.fullText.CallUnary(ctx, req)
 }
 
-// Vector calls codeindex.v1.SearchService.Vector.
-func (c *searchServiceClient) Vector(ctx context.Context, req *connect.Request[v1.SearchRequest]) (*connect.Response[v1.SearchResponse], error) {
-	return c.vector.CallUnary(ctx, req)
-}
-
-// Hybrid calls codeindex.v1.SearchService.Hybrid.
-func (c *searchServiceClient) Hybrid(ctx context.Context, req *connect.Request[v1.SearchRequest]) (*connect.Response[v1.SearchResponse], error) {
-	return c.hybrid.CallUnary(ctx, req)
-}
-
 // SearchServiceHandler is an implementation of the codeindex.v1.SearchService service.
 type SearchServiceHandler interface {
 	FullText(context.Context, *connect.Request[v1.SearchRequest]) (*connect.Response[v1.SearchResponse], error)
-	Vector(context.Context, *connect.Request[v1.SearchRequest]) (*connect.Response[v1.SearchResponse], error)
-	// Reciprocal rank fusion of lexical and vector retrieval over code Facts.
-	Hybrid(context.Context, *connect.Request[v1.SearchRequest]) (*connect.Response[v1.SearchResponse], error)
 }
 
 // NewSearchServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -931,26 +955,10 @@ func NewSearchServiceHandler(svc SearchServiceHandler, opts ...connect.HandlerOp
 		connect.WithSchema(searchServiceMethods.ByName("FullText")),
 		connect.WithHandlerOptions(opts...),
 	)
-	searchServiceVectorHandler := connect.NewUnaryHandler(
-		SearchServiceVectorProcedure,
-		svc.Vector,
-		connect.WithSchema(searchServiceMethods.ByName("Vector")),
-		connect.WithHandlerOptions(opts...),
-	)
-	searchServiceHybridHandler := connect.NewUnaryHandler(
-		SearchServiceHybridProcedure,
-		svc.Hybrid,
-		connect.WithSchema(searchServiceMethods.ByName("Hybrid")),
-		connect.WithHandlerOptions(opts...),
-	)
 	return "/codeindex.v1.SearchService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case SearchServiceFullTextProcedure:
 			searchServiceFullTextHandler.ServeHTTP(w, r)
-		case SearchServiceVectorProcedure:
-			searchServiceVectorHandler.ServeHTTP(w, r)
-		case SearchServiceHybridProcedure:
-			searchServiceHybridHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -962,14 +970,6 @@ type UnimplementedSearchServiceHandler struct{}
 
 func (UnimplementedSearchServiceHandler) FullText(context.Context, *connect.Request[v1.SearchRequest]) (*connect.Response[v1.SearchResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.SearchService.FullText is not implemented"))
-}
-
-func (UnimplementedSearchServiceHandler) Vector(context.Context, *connect.Request[v1.SearchRequest]) (*connect.Response[v1.SearchResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.SearchService.Vector is not implemented"))
-}
-
-func (UnimplementedSearchServiceHandler) Hybrid(context.Context, *connect.Request[v1.SearchRequest]) (*connect.Response[v1.SearchResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.SearchService.Hybrid is not implemented"))
 }
 
 // AnalysisServiceClient is a client for the codeindex.v1.AnalysisService service.
