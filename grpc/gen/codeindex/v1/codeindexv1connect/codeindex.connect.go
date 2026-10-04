@@ -46,6 +46,9 @@ const (
 	// RepositoryServiceListRepositoriesProcedure is the fully-qualified name of the RepositoryService's
 	// ListRepositories RPC.
 	RepositoryServiceListRepositoriesProcedure = "/codeindex.v1.RepositoryService/ListRepositories"
+	// RepositoryServiceAddRepositoryProcedure is the fully-qualified name of the RepositoryService's
+	// AddRepository RPC.
+	RepositoryServiceAddRepositoryProcedure = "/codeindex.v1.RepositoryService/AddRepository"
 	// RepositoryServiceDeleteRepositoryProcedure is the fully-qualified name of the RepositoryService's
 	// DeleteRepository RPC.
 	RepositoryServiceDeleteRepositoryProcedure = "/codeindex.v1.RepositoryService/DeleteRepository"
@@ -145,6 +148,7 @@ const (
 // RepositoryServiceClient is a client for the codeindex.v1.RepositoryService service.
 type RepositoryServiceClient interface {
 	ListRepositories(context.Context, *connect.Request[v1.ListRepositoriesRequest]) (*connect.Response[v1.ListRepositoriesResponse], error)
+	AddRepository(context.Context, *connect.Request[v1.AddRepositoryRequest]) (*connect.ServerStreamForClient[v1.AddRepositoryEvent], error)
 	DeleteRepository(context.Context, *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[v1.DeleteRepositoryResponse], error)
 	GetGitHistory(context.Context, *connect.Request[v1.GetGitHistoryRequest]) (*connect.Response[v1.GetGitHistoryResponse], error)
 	GetCommitDetails(context.Context, *connect.Request[v1.GetCommitDetailsRequest]) (*connect.Response[v1.GetCommitDetailsResponse], error)
@@ -167,6 +171,12 @@ func NewRepositoryServiceClient(httpClient connect.HTTPClient, baseURL string, o
 			httpClient,
 			baseURL+RepositoryServiceListRepositoriesProcedure,
 			connect.WithSchema(repositoryServiceMethods.ByName("ListRepositories")),
+			connect.WithClientOptions(opts...),
+		),
+		addRepository: connect.NewClient[v1.AddRepositoryRequest, v1.AddRepositoryEvent](
+			httpClient,
+			baseURL+RepositoryServiceAddRepositoryProcedure,
+			connect.WithSchema(repositoryServiceMethods.ByName("AddRepository")),
 			connect.WithClientOptions(opts...),
 		),
 		deleteRepository: connect.NewClient[v1.DeleteRepositoryRequest, v1.DeleteRepositoryResponse](
@@ -205,6 +215,7 @@ func NewRepositoryServiceClient(httpClient connect.HTTPClient, baseURL string, o
 // repositoryServiceClient implements RepositoryServiceClient.
 type repositoryServiceClient struct {
 	listRepositories *connect.Client[v1.ListRepositoriesRequest, v1.ListRepositoriesResponse]
+	addRepository    *connect.Client[v1.AddRepositoryRequest, v1.AddRepositoryEvent]
 	deleteRepository *connect.Client[v1.DeleteRepositoryRequest, v1.DeleteRepositoryResponse]
 	getGitHistory    *connect.Client[v1.GetGitHistoryRequest, v1.GetGitHistoryResponse]
 	getCommitDetails *connect.Client[v1.GetCommitDetailsRequest, v1.GetCommitDetailsResponse]
@@ -215,6 +226,11 @@ type repositoryServiceClient struct {
 // ListRepositories calls codeindex.v1.RepositoryService.ListRepositories.
 func (c *repositoryServiceClient) ListRepositories(ctx context.Context, req *connect.Request[v1.ListRepositoriesRequest]) (*connect.Response[v1.ListRepositoriesResponse], error) {
 	return c.listRepositories.CallUnary(ctx, req)
+}
+
+// AddRepository calls codeindex.v1.RepositoryService.AddRepository.
+func (c *repositoryServiceClient) AddRepository(ctx context.Context, req *connect.Request[v1.AddRepositoryRequest]) (*connect.ServerStreamForClient[v1.AddRepositoryEvent], error) {
+	return c.addRepository.CallServerStream(ctx, req)
 }
 
 // DeleteRepository calls codeindex.v1.RepositoryService.DeleteRepository.
@@ -245,6 +261,7 @@ func (c *repositoryServiceClient) ListPullRequests(ctx context.Context, req *con
 // RepositoryServiceHandler is an implementation of the codeindex.v1.RepositoryService service.
 type RepositoryServiceHandler interface {
 	ListRepositories(context.Context, *connect.Request[v1.ListRepositoriesRequest]) (*connect.Response[v1.ListRepositoriesResponse], error)
+	AddRepository(context.Context, *connect.Request[v1.AddRepositoryRequest], *connect.ServerStream[v1.AddRepositoryEvent]) error
 	DeleteRepository(context.Context, *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[v1.DeleteRepositoryResponse], error)
 	GetGitHistory(context.Context, *connect.Request[v1.GetGitHistoryRequest]) (*connect.Response[v1.GetGitHistoryResponse], error)
 	GetCommitDetails(context.Context, *connect.Request[v1.GetCommitDetailsRequest]) (*connect.Response[v1.GetCommitDetailsResponse], error)
@@ -263,6 +280,12 @@ func NewRepositoryServiceHandler(svc RepositoryServiceHandler, opts ...connect.H
 		RepositoryServiceListRepositoriesProcedure,
 		svc.ListRepositories,
 		connect.WithSchema(repositoryServiceMethods.ByName("ListRepositories")),
+		connect.WithHandlerOptions(opts...),
+	)
+	repositoryServiceAddRepositoryHandler := connect.NewServerStreamHandler(
+		RepositoryServiceAddRepositoryProcedure,
+		svc.AddRepository,
+		connect.WithSchema(repositoryServiceMethods.ByName("AddRepository")),
 		connect.WithHandlerOptions(opts...),
 	)
 	repositoryServiceDeleteRepositoryHandler := connect.NewUnaryHandler(
@@ -299,6 +322,8 @@ func NewRepositoryServiceHandler(svc RepositoryServiceHandler, opts ...connect.H
 		switch r.URL.Path {
 		case RepositoryServiceListRepositoriesProcedure:
 			repositoryServiceListRepositoriesHandler.ServeHTTP(w, r)
+		case RepositoryServiceAddRepositoryProcedure:
+			repositoryServiceAddRepositoryHandler.ServeHTTP(w, r)
 		case RepositoryServiceDeleteRepositoryProcedure:
 			repositoryServiceDeleteRepositoryHandler.ServeHTTP(w, r)
 		case RepositoryServiceGetGitHistoryProcedure:
@@ -320,6 +345,10 @@ type UnimplementedRepositoryServiceHandler struct{}
 
 func (UnimplementedRepositoryServiceHandler) ListRepositories(context.Context, *connect.Request[v1.ListRepositoriesRequest]) (*connect.Response[v1.ListRepositoriesResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.ListRepositories is not implemented"))
+}
+
+func (UnimplementedRepositoryServiceHandler) AddRepository(context.Context, *connect.Request[v1.AddRepositoryRequest], *connect.ServerStream[v1.AddRepositoryEvent]) error {
+	return connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.AddRepository is not implemented"))
 }
 
 func (UnimplementedRepositoryServiceHandler) DeleteRepository(context.Context, *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[v1.DeleteRepositoryResponse], error) {

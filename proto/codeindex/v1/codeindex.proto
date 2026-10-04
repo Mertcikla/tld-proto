@@ -166,11 +166,29 @@ message DeleteRepositoryRequest {
   bool delete_materialized = 2;
 }
 message DeleteRepositoryResponse {}
-// RepositoryService lists and deletes the repositories indexed by the
-// in-process codeindex engine. Indexing itself is invoked through Go interfaces
-// / the CLI.
+message AddRepositoryRequest {
+  // Absolute local filesystem path to the repository directory to index.
+  string path = 1;
+}
+message AddRepositoryEvent {
+  oneof event {
+    IndexProgress progress = 1;
+    Repository repository = 2;
+  }
+}
+// IndexProgress reports coarse indexing progress.
+message IndexProgress {
+  string stage = 1;
+  uint32 current = 2;
+  uint32 total = 3;
+  string detail = 4;
+}
+// RepositoryService lists, adds, and deletes the repositories indexed by the
+// in-process codeindex engine. Indexing runs in-process; the CLI remains
+// available for scripted and watch workflows.
 service RepositoryService {
   rpc ListRepositories(ListRepositoriesRequest) returns (ListRepositoriesResponse);
+  rpc AddRepository(AddRepositoryRequest) returns (stream AddRepositoryEvent);
   rpc DeleteRepository(DeleteRepositoryRequest) returns (DeleteRepositoryResponse);
   rpc GetGitHistory(GetGitHistoryRequest) returns (GetGitHistoryResponse);
   rpc GetCommitDetails(GetCommitDetailsRequest) returns (GetCommitDetailsResponse);
