@@ -177,6 +177,9 @@ message PlanElement {
   optional google.protobuf.Timestamp view_updated_at = 20;
   optional int32 view_density_level = 21;
   optional bool bypass_noise_gate = 22;
+  // Optional. Identifier of the indexed codeindex repository this element is
+  // linked to.
+  optional string repository_id = 23;
 }
 
 message PlanConnector {
@@ -334,6 +337,9 @@ message Element {
   optional string view_label = 18;
   string ref = 19;
   bool bypass_noise_gate = 20;
+  // Optional. Identifier of the indexed codeindex repository this element is
+  // linked to. When empty, the repo/branch/file_path fields carry the link.
+  optional string repository_id = 21;
 }
 
 // ViewSummary represents a view in the workspace tree.
@@ -380,6 +386,9 @@ message PlacedElement {
   bool has_view = 18;
   optional string view_label = 19;
   bool bypass_noise_gate = 20;
+  // Optional. Identifier of the indexed codeindex repository this element is
+  // linked to. When empty, the repo/branch/file_path fields carry the link.
+  optional string repository_id = 21;
 }
 
 // Connector represents a directed connection between two elements on a view.
@@ -716,6 +725,8 @@ message CreateElementRequest {
   optional string language = 11;
   optional string file_path = 12;
   optional bool bypass_noise_gate = 13;
+  // Optional. Identifier of the indexed codeindex repository to link.
+  optional string repository_id = 14;
 }
 message CreateElementResponse {
   Element element = 1;
@@ -736,6 +747,9 @@ message UpdateElementRequest {
   optional string language = 12;
   optional string file_path = 13;
   optional bool bypass_noise_gate = 14;
+  // Optional. Identifier of the indexed codeindex repository to link. Set to
+  // the empty string to clear the link.
+  optional string repository_id = 15;
 }
 message UpdateElementResponse {
   Element element = 1;

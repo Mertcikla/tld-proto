@@ -152,6 +152,13 @@ message RepositorySummary {
   uint32 chunks = 8;
   uint32 edges = 9;
   uint32 sources = 10;
+  // Canonical browser URL of the repository's default remote when the checkout
+  // has one (for example https://github.com/owner/repo). Empty otherwise.
+  string remote_url = 11;
+  // Display name for the repository, derived from the remote or root basename.
+  string name = 12;
+  // True when tld cloned and owns the checkout (see AddRepositoryRequest.remote_url).
+  bool managed = 13;
 }
 message ListRepositoriesRequest {}
 message ListRepositoriesResponse {
@@ -205,17 +212,58 @@ message DeleteRepositoryRequest {
   // its snapshots are deleted and materialized resources remain in the
   // workspace.
   bool delete_materialized = 2;
+  // When set and the repository is a tld-managed clone, also deletes the local
+  // checkout. Ignored for repositories registered from user-provided paths.
+  bool delete_clone = 3;
 }
 message DeleteRepositoryResponse {}
 message AddRepositoryRequest {
   // Absolute local filesystem path to the repository directory to index.
   string path = 1;
+  // Remote Git URL (or GitHub owner/repo shorthand) to clone into tld-managed
+  // storage and index. Mutually exclusive with path. Credentials embedded in
+  // the URL are rejected.
+  string remote_url = 2;
+  // When set, projects the published snapshot into the workspace after
+  // indexing: candidate elements and connectors become workspace resources,
+  // the same projection as `tld index --materialize`.
+  bool materialize = 3;
 }
 message AddRepositoryEvent {
   oneof event {
     IndexProgress progress = 1;
     Repository repository = 2;
   }
+}
+// CheckRepositoryIndexersRequest identifies a repository to inspect. Exactly
+// one of path or remote_url must be set.
+message CheckRepositoryIndexersRequest {
+  // Absolute local filesystem path to inspect. Mutually exclusive with
+  // remote_url.
+  string path = 1;
+  // Remote Git URL (or GitHub owner/repo shorthand). When the checkout is not
+  // already present it is cloned into tld-managed storage so required indexers
+  // can be detected from project markers.
+  string remote_url = 2;
+}
+// IndexerRequirement reports one external SCIP indexer a repository needs,
+// derived from the project families discovered in it.
+message IndexerRequirement {
+  // Indexer family: go, web, python, dotnet, clang, jvm, dart, php, ruby, rust.
+  string family = 1;
+  // Executable the pipeline resolves on PATH (for example scip-go).
+  string tool = 2;
+  // Detected project languages that mapped to this family.
+  repeated string languages = 3;
+  // Whether the executable resolves with the current tool configuration.
+  bool installed = 4;
+  // Copy-pasteable install command for the tool.
+  string install_hint = 5;
+}
+message CheckRepositoryIndexersResponse {
+  repeated IndexerRequirement indexers = 1;
+  // True when every required indexer is installed.
+  bool ready = 2;
 }
 // IndexProgress reports coarse indexing progress.
 message IndexProgress {
@@ -232,6 +280,10 @@ service RepositoryService {
   rpc UpdateRepositoryMapConfiguration(UpdateRepositoryMapConfigurationRequest) returns (RepositorySettings);
   rpc UpdateRepositoryRemote(UpdateRepositoryRemoteRequest) returns (RepositorySettings);
   rpc ListRepositories(ListRepositoriesRequest) returns (ListRepositoriesResponse);
+  // CheckRepositoryIndexers inspects a repository's project markers and reports
+  // the SCIP indexers indexing will require, so callers can install missing
+  // tools before AddRepository runs.
+  rpc CheckRepositoryIndexers(CheckRepositoryIndexersRequest) returns (CheckRepositoryIndexersResponse);
   rpc AddRepository(AddRepositoryRequest) returns (stream AddRepositoryEvent);
   rpc DeleteRepository(DeleteRepositoryRequest) returns (DeleteRepositoryResponse);
   rpc GetGitHistory(GetGitHistoryRequest) returns (GetGitHistoryResponse);
@@ -743,7 +795,8 @@ message MapRepositoryRequest {
   // Optional snapshot; the repository's latest published snapshot when empty.
   string snapshot_id = 2;
   // When set, external imports declared by the indexed files are materialized
-  // under an External element and connected to the files that import them.
+  // under an External element and connected to the files that import them. Off
+  // by default: external imports can dominate the map's connector budget.
   bool include_imports = 4;
   // Mutually exclusive with snapshot_id and working_tree. Resolved to a commit.
   string git_revision = 5;
@@ -780,6 +833,8 @@ message MapResult {
 message CompletedMap {
   MapResult result = 1;
   int64 completed_unix = 2;
+  // Whether the completed run materialized external imports. Defaults to
+  // false; see MapRepositoryRequest.include_imports.
   bool include_imports = 4;
   string config_hash = 5;
 }
