@@ -157,6 +157,47 @@ message ListRepositoriesRequest {}
 message ListRepositoriesResponse {
   repeated RepositorySummary repositories = 1;
 }
+// Unset fields inherit global map defaults. Update replaces all overrides.
+message RepositoryMapConfiguration {
+  optional double resolution = 1;
+  optional uint32 min_group_size = 2;
+  optional uint32 min_root_groups = 3;
+  optional uint32 max_root_groups = 4;
+  optional uint32 max_children = 5;
+  optional uint32 max_depth = 6;
+  optional uint32 max_leaf_files = 7;
+  optional uint32 max_connectors_per_view = 8;
+  optional uint32 max_leaf_connectors_per_view = 9;
+}
+message RepositoryRemote {
+  string name = 1;
+  repeated string fetch_urls = 2;
+  repeated string push_urls = 3;
+}
+message GetRepositorySettingsRequest { string repository_id = 1; }
+message RepositorySettings {
+  RepositoryMapConfiguration map_defaults = 1;
+  RepositoryMapConfiguration map_overrides = 2;
+  RepositoryMapConfiguration effective_map = 3;
+  repeated RepositoryRemote remotes = 4;
+  bool is_git = 5;
+  string current_branch = 6;
+  string head_sha = 7;
+  // Set when changed global defaults conflict with persisted repository overrides.
+  // Settings remain readable so the user can repair or clear the overrides.
+  string map_validation_error = 8;
+}
+message UpdateRepositoryMapConfigurationRequest {
+  string repository_id = 1;
+  RepositoryMapConfiguration overrides = 2;
+}
+// Changes the local Git checkout's remote configuration, without network I/O.
+// Replaces the remote's URL lists; remove deletes the named remote instead.
+message UpdateRepositoryRemoteRequest {
+  string repository_id = 1;
+  RepositoryRemote remote = 2;
+  bool remove = 3;
+}
 message DeleteRepositoryRequest {
   string id = 1;
   // When set, also deletes the workspace views, elements, and connectors that
@@ -187,6 +228,9 @@ message IndexProgress {
 // in-process codeindex engine. Indexing runs in-process; the CLI remains
 // available for scripted and watch workflows.
 service RepositoryService {
+  rpc GetRepositorySettings(GetRepositorySettingsRequest) returns (RepositorySettings);
+  rpc UpdateRepositoryMapConfiguration(UpdateRepositoryMapConfigurationRequest) returns (RepositorySettings);
+  rpc UpdateRepositoryRemote(UpdateRepositoryRemoteRequest) returns (RepositorySettings);
   rpc ListRepositories(ListRepositoriesRequest) returns (ListRepositoriesResponse);
   rpc AddRepository(AddRepositoryRequest) returns (stream AddRepositoryEvent);
   rpc DeleteRepository(DeleteRepositoryRequest) returns (DeleteRepositoryResponse);

@@ -43,6 +43,15 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
+	// RepositoryServiceGetRepositorySettingsProcedure is the fully-qualified name of the
+	// RepositoryService's GetRepositorySettings RPC.
+	RepositoryServiceGetRepositorySettingsProcedure = "/codeindex.v1.RepositoryService/GetRepositorySettings"
+	// RepositoryServiceUpdateRepositoryMapConfigurationProcedure is the fully-qualified name of the
+	// RepositoryService's UpdateRepositoryMapConfiguration RPC.
+	RepositoryServiceUpdateRepositoryMapConfigurationProcedure = "/codeindex.v1.RepositoryService/UpdateRepositoryMapConfiguration"
+	// RepositoryServiceUpdateRepositoryRemoteProcedure is the fully-qualified name of the
+	// RepositoryService's UpdateRepositoryRemote RPC.
+	RepositoryServiceUpdateRepositoryRemoteProcedure = "/codeindex.v1.RepositoryService/UpdateRepositoryRemote"
 	// RepositoryServiceListRepositoriesProcedure is the fully-qualified name of the RepositoryService's
 	// ListRepositories RPC.
 	RepositoryServiceListRepositoriesProcedure = "/codeindex.v1.RepositoryService/ListRepositories"
@@ -147,6 +156,9 @@ const (
 
 // RepositoryServiceClient is a client for the codeindex.v1.RepositoryService service.
 type RepositoryServiceClient interface {
+	GetRepositorySettings(context.Context, *connect.Request[v1.GetRepositorySettingsRequest]) (*connect.Response[v1.RepositorySettings], error)
+	UpdateRepositoryMapConfiguration(context.Context, *connect.Request[v1.UpdateRepositoryMapConfigurationRequest]) (*connect.Response[v1.RepositorySettings], error)
+	UpdateRepositoryRemote(context.Context, *connect.Request[v1.UpdateRepositoryRemoteRequest]) (*connect.Response[v1.RepositorySettings], error)
 	ListRepositories(context.Context, *connect.Request[v1.ListRepositoriesRequest]) (*connect.Response[v1.ListRepositoriesResponse], error)
 	AddRepository(context.Context, *connect.Request[v1.AddRepositoryRequest]) (*connect.ServerStreamForClient[v1.AddRepositoryEvent], error)
 	DeleteRepository(context.Context, *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[v1.DeleteRepositoryResponse], error)
@@ -167,6 +179,24 @@ func NewRepositoryServiceClient(httpClient connect.HTTPClient, baseURL string, o
 	baseURL = strings.TrimRight(baseURL, "/")
 	repositoryServiceMethods := v1.File_codeindex_v1_codeindex_proto.Services().ByName("RepositoryService").Methods()
 	return &repositoryServiceClient{
+		getRepositorySettings: connect.NewClient[v1.GetRepositorySettingsRequest, v1.RepositorySettings](
+			httpClient,
+			baseURL+RepositoryServiceGetRepositorySettingsProcedure,
+			connect.WithSchema(repositoryServiceMethods.ByName("GetRepositorySettings")),
+			connect.WithClientOptions(opts...),
+		),
+		updateRepositoryMapConfiguration: connect.NewClient[v1.UpdateRepositoryMapConfigurationRequest, v1.RepositorySettings](
+			httpClient,
+			baseURL+RepositoryServiceUpdateRepositoryMapConfigurationProcedure,
+			connect.WithSchema(repositoryServiceMethods.ByName("UpdateRepositoryMapConfiguration")),
+			connect.WithClientOptions(opts...),
+		),
+		updateRepositoryRemote: connect.NewClient[v1.UpdateRepositoryRemoteRequest, v1.RepositorySettings](
+			httpClient,
+			baseURL+RepositoryServiceUpdateRepositoryRemoteProcedure,
+			connect.WithSchema(repositoryServiceMethods.ByName("UpdateRepositoryRemote")),
+			connect.WithClientOptions(opts...),
+		),
 		listRepositories: connect.NewClient[v1.ListRepositoriesRequest, v1.ListRepositoriesResponse](
 			httpClient,
 			baseURL+RepositoryServiceListRepositoriesProcedure,
@@ -214,13 +244,32 @@ func NewRepositoryServiceClient(httpClient connect.HTTPClient, baseURL string, o
 
 // repositoryServiceClient implements RepositoryServiceClient.
 type repositoryServiceClient struct {
-	listRepositories *connect.Client[v1.ListRepositoriesRequest, v1.ListRepositoriesResponse]
-	addRepository    *connect.Client[v1.AddRepositoryRequest, v1.AddRepositoryEvent]
-	deleteRepository *connect.Client[v1.DeleteRepositoryRequest, v1.DeleteRepositoryResponse]
-	getGitHistory    *connect.Client[v1.GetGitHistoryRequest, v1.GetGitHistoryResponse]
-	getCommitDetails *connect.Client[v1.GetCommitDetailsRequest, v1.GetCommitDetailsResponse]
-	getPullRequest   *connect.Client[v1.GetPullRequestRequest, v1.GetPullRequestResponse]
-	listPullRequests *connect.Client[v1.ListPullRequestsRequest, v1.ListPullRequestsResponse]
+	getRepositorySettings            *connect.Client[v1.GetRepositorySettingsRequest, v1.RepositorySettings]
+	updateRepositoryMapConfiguration *connect.Client[v1.UpdateRepositoryMapConfigurationRequest, v1.RepositorySettings]
+	updateRepositoryRemote           *connect.Client[v1.UpdateRepositoryRemoteRequest, v1.RepositorySettings]
+	listRepositories                 *connect.Client[v1.ListRepositoriesRequest, v1.ListRepositoriesResponse]
+	addRepository                    *connect.Client[v1.AddRepositoryRequest, v1.AddRepositoryEvent]
+	deleteRepository                 *connect.Client[v1.DeleteRepositoryRequest, v1.DeleteRepositoryResponse]
+	getGitHistory                    *connect.Client[v1.GetGitHistoryRequest, v1.GetGitHistoryResponse]
+	getCommitDetails                 *connect.Client[v1.GetCommitDetailsRequest, v1.GetCommitDetailsResponse]
+	getPullRequest                   *connect.Client[v1.GetPullRequestRequest, v1.GetPullRequestResponse]
+	listPullRequests                 *connect.Client[v1.ListPullRequestsRequest, v1.ListPullRequestsResponse]
+}
+
+// GetRepositorySettings calls codeindex.v1.RepositoryService.GetRepositorySettings.
+func (c *repositoryServiceClient) GetRepositorySettings(ctx context.Context, req *connect.Request[v1.GetRepositorySettingsRequest]) (*connect.Response[v1.RepositorySettings], error) {
+	return c.getRepositorySettings.CallUnary(ctx, req)
+}
+
+// UpdateRepositoryMapConfiguration calls
+// codeindex.v1.RepositoryService.UpdateRepositoryMapConfiguration.
+func (c *repositoryServiceClient) UpdateRepositoryMapConfiguration(ctx context.Context, req *connect.Request[v1.UpdateRepositoryMapConfigurationRequest]) (*connect.Response[v1.RepositorySettings], error) {
+	return c.updateRepositoryMapConfiguration.CallUnary(ctx, req)
+}
+
+// UpdateRepositoryRemote calls codeindex.v1.RepositoryService.UpdateRepositoryRemote.
+func (c *repositoryServiceClient) UpdateRepositoryRemote(ctx context.Context, req *connect.Request[v1.UpdateRepositoryRemoteRequest]) (*connect.Response[v1.RepositorySettings], error) {
+	return c.updateRepositoryRemote.CallUnary(ctx, req)
 }
 
 // ListRepositories calls codeindex.v1.RepositoryService.ListRepositories.
@@ -260,6 +309,9 @@ func (c *repositoryServiceClient) ListPullRequests(ctx context.Context, req *con
 
 // RepositoryServiceHandler is an implementation of the codeindex.v1.RepositoryService service.
 type RepositoryServiceHandler interface {
+	GetRepositorySettings(context.Context, *connect.Request[v1.GetRepositorySettingsRequest]) (*connect.Response[v1.RepositorySettings], error)
+	UpdateRepositoryMapConfiguration(context.Context, *connect.Request[v1.UpdateRepositoryMapConfigurationRequest]) (*connect.Response[v1.RepositorySettings], error)
+	UpdateRepositoryRemote(context.Context, *connect.Request[v1.UpdateRepositoryRemoteRequest]) (*connect.Response[v1.RepositorySettings], error)
 	ListRepositories(context.Context, *connect.Request[v1.ListRepositoriesRequest]) (*connect.Response[v1.ListRepositoriesResponse], error)
 	AddRepository(context.Context, *connect.Request[v1.AddRepositoryRequest], *connect.ServerStream[v1.AddRepositoryEvent]) error
 	DeleteRepository(context.Context, *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[v1.DeleteRepositoryResponse], error)
@@ -276,6 +328,24 @@ type RepositoryServiceHandler interface {
 // and JSON codecs. They also support gzip compression.
 func NewRepositoryServiceHandler(svc RepositoryServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
 	repositoryServiceMethods := v1.File_codeindex_v1_codeindex_proto.Services().ByName("RepositoryService").Methods()
+	repositoryServiceGetRepositorySettingsHandler := connect.NewUnaryHandler(
+		RepositoryServiceGetRepositorySettingsProcedure,
+		svc.GetRepositorySettings,
+		connect.WithSchema(repositoryServiceMethods.ByName("GetRepositorySettings")),
+		connect.WithHandlerOptions(opts...),
+	)
+	repositoryServiceUpdateRepositoryMapConfigurationHandler := connect.NewUnaryHandler(
+		RepositoryServiceUpdateRepositoryMapConfigurationProcedure,
+		svc.UpdateRepositoryMapConfiguration,
+		connect.WithSchema(repositoryServiceMethods.ByName("UpdateRepositoryMapConfiguration")),
+		connect.WithHandlerOptions(opts...),
+	)
+	repositoryServiceUpdateRepositoryRemoteHandler := connect.NewUnaryHandler(
+		RepositoryServiceUpdateRepositoryRemoteProcedure,
+		svc.UpdateRepositoryRemote,
+		connect.WithSchema(repositoryServiceMethods.ByName("UpdateRepositoryRemote")),
+		connect.WithHandlerOptions(opts...),
+	)
 	repositoryServiceListRepositoriesHandler := connect.NewUnaryHandler(
 		RepositoryServiceListRepositoriesProcedure,
 		svc.ListRepositories,
@@ -320,6 +390,12 @@ func NewRepositoryServiceHandler(svc RepositoryServiceHandler, opts ...connect.H
 	)
 	return "/codeindex.v1.RepositoryService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
+		case RepositoryServiceGetRepositorySettingsProcedure:
+			repositoryServiceGetRepositorySettingsHandler.ServeHTTP(w, r)
+		case RepositoryServiceUpdateRepositoryMapConfigurationProcedure:
+			repositoryServiceUpdateRepositoryMapConfigurationHandler.ServeHTTP(w, r)
+		case RepositoryServiceUpdateRepositoryRemoteProcedure:
+			repositoryServiceUpdateRepositoryRemoteHandler.ServeHTTP(w, r)
 		case RepositoryServiceListRepositoriesProcedure:
 			repositoryServiceListRepositoriesHandler.ServeHTTP(w, r)
 		case RepositoryServiceAddRepositoryProcedure:
@@ -342,6 +418,18 @@ func NewRepositoryServiceHandler(svc RepositoryServiceHandler, opts ...connect.H
 
 // UnimplementedRepositoryServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedRepositoryServiceHandler struct{}
+
+func (UnimplementedRepositoryServiceHandler) GetRepositorySettings(context.Context, *connect.Request[v1.GetRepositorySettingsRequest]) (*connect.Response[v1.RepositorySettings], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.GetRepositorySettings is not implemented"))
+}
+
+func (UnimplementedRepositoryServiceHandler) UpdateRepositoryMapConfiguration(context.Context, *connect.Request[v1.UpdateRepositoryMapConfigurationRequest]) (*connect.Response[v1.RepositorySettings], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.UpdateRepositoryMapConfiguration is not implemented"))
+}
+
+func (UnimplementedRepositoryServiceHandler) UpdateRepositoryRemote(context.Context, *connect.Request[v1.UpdateRepositoryRemoteRequest]) (*connect.Response[v1.RepositorySettings], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.UpdateRepositoryRemote is not implemented"))
+}
 
 func (UnimplementedRepositoryServiceHandler) ListRepositories(context.Context, *connect.Request[v1.ListRepositoriesRequest]) (*connect.Response[v1.ListRepositoriesResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.ListRepositories is not implemented"))
