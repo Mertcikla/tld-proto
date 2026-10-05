@@ -187,6 +187,7 @@ message RepositoryMapConfiguration {
   optional uint32 max_leaf_files = 7;
   optional uint32 max_connectors_per_view = 8;
   optional uint32 max_leaf_connectors_per_view = 9;
+  optional bool include_external_imports = 10;
 }
 message RepositoryRemote {
   string name = 1;

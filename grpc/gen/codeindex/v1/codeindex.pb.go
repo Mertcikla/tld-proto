@@ -1470,6 +1470,7 @@ type RepositoryMapConfiguration struct {
 	MaxLeafFiles             *uint32                `protobuf:"varint,7,opt,name=max_leaf_files,json=maxLeafFiles,proto3,oneof" json:"max_leaf_files,omitempty"`
 	MaxConnectorsPerView     *uint32                `protobuf:"varint,8,opt,name=max_connectors_per_view,json=maxConnectorsPerView,proto3,oneof" json:"max_connectors_per_view,omitempty"`
 	MaxLeafConnectorsPerView *uint32                `protobuf:"varint,9,opt,name=max_leaf_connectors_per_view,json=maxLeafConnectorsPerView,proto3,oneof" json:"max_leaf_connectors_per_view,omitempty"`
+	IncludeExternalImports   *bool                  `protobuf:"varint,10,opt,name=include_external_imports,json=includeExternalImports,proto3,oneof" json:"include_external_imports,omitempty"`
 	unknownFields            protoimpl.UnknownFields
 	sizeCache                protoimpl.SizeCache
 }
@@ -1565,6 +1566,13 @@ func (x *RepositoryMapConfiguration) GetMaxLeafConnectorsPerView() uint32 {
 		return *x.MaxLeafConnectorsPerView
 	}
 	return 0
+}
+
+func (x *RepositoryMapConfiguration) GetIncludeExternalImports() bool {
+	if x != nil && x.IncludeExternalImports != nil {
+		return *x.IncludeExternalImports
+	}
+	return false
 }
 
 type RepositoryRemote struct {
@@ -7729,7 +7737,7 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"\tfile_path\x18\x03 \x01(\tR\bfilePath\"I\n" +
 	"\x19GetWorktreeSourceResponse\x12\x18\n" +
 	"\acontent\x18\x01 \x01(\tR\acontent\x12\x12\n" +
-	"\x04path\x18\x02 \x01(\tR\x04path\"\xf5\x04\n" +
+	"\x04path\x18\x02 \x01(\tR\x04path\"\xd1\x05\n" +
 	"\x1aRepositoryMapConfiguration\x12#\n" +
 	"\n" +
 	"resolution\x18\x01 \x01(\x01H\x00R\n" +
@@ -7741,7 +7749,9 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"\tmax_depth\x18\x06 \x01(\rH\x05R\bmaxDepth\x88\x01\x01\x12)\n" +
 	"\x0emax_leaf_files\x18\a \x01(\rH\x06R\fmaxLeafFiles\x88\x01\x01\x12:\n" +
 	"\x17max_connectors_per_view\x18\b \x01(\rH\aR\x14maxConnectorsPerView\x88\x01\x01\x12C\n" +
-	"\x1cmax_leaf_connectors_per_view\x18\t \x01(\rH\bR\x18maxLeafConnectorsPerView\x88\x01\x01B\r\n" +
+	"\x1cmax_leaf_connectors_per_view\x18\t \x01(\rH\bR\x18maxLeafConnectorsPerView\x88\x01\x01\x12=\n" +
+	"\x18include_external_imports\x18\n" +
+	" \x01(\bH\tR\x16includeExternalImports\x88\x01\x01B\r\n" +
 	"\v_resolutionB\x11\n" +
 	"\x0f_min_group_sizeB\x12\n" +
 	"\x10_min_root_groupsB\x12\n" +
@@ -7751,7 +7761,8 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"_max_depthB\x11\n" +
 	"\x0f_max_leaf_filesB\x1a\n" +
 	"\x18_max_connectors_per_viewB\x1f\n" +
-	"\x1d_max_leaf_connectors_per_view\"b\n" +
+	"\x1d_max_leaf_connectors_per_viewB\x1b\n" +
+	"\x19_include_external_imports\"b\n" +
 	"\x10RepositoryRemote\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1d\n" +
 	"\n" +
