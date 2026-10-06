@@ -780,6 +780,21 @@ message ImpactEdge {
   ChangeKind change = 3;
   double weight = 4;
 }
+// ImpactGroup is one node of the impact diagram's nested hierarchy. It mirrors
+// the workspace's nested views when the displayed files are materialized, and
+// the dependency-graph community hierarchy otherwise.
+message ImpactGroup {
+  // Stable identity: the view logical key or the community group key.
+  string key = 1;
+  string name = 2;
+  // Provenance: "view", "community", or "folder".
+  string source = 3;
+  // Owning workspace view when source is "view".
+  int64 view_id = 4;
+  // ImpactNode.key values placed directly in this group.
+  repeated string node_keys = 5;
+  repeated ImpactGroup children = 6;
+}
 message ImpactDiagram {
   string repository_id = 1;
   string comparison_key = 2;
@@ -790,6 +805,8 @@ message ImpactDiagram {
   uint32 radius = 7;
   uint32 max_radius = 8;
   string version = 9;
+  // Root groups of the nested hierarchy, outermost first.
+  repeated ImpactGroup groups = 10;
 }
 message GetLiveImpactRequest { string repository_id = 1; }
 message LiveImpact {

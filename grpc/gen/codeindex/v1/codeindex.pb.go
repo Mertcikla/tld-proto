@@ -6831,6 +6831,97 @@ func (x *ImpactEdge) GetWeight() float64 {
 	return 0
 }
 
+// ImpactGroup is one node of the impact diagram's nested hierarchy. It mirrors
+// the workspace's nested views when the displayed files are materialized, and
+// the dependency-graph community hierarchy otherwise.
+type ImpactGroup struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Stable identity: the view logical key or the community group key.
+	Key  string `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// Provenance: "view", "community", or "folder".
+	Source string `protobuf:"bytes,3,opt,name=source,proto3" json:"source,omitempty"`
+	// Owning workspace view when source is "view".
+	ViewId int64 `protobuf:"varint,4,opt,name=view_id,json=viewId,proto3" json:"view_id,omitempty"`
+	// ImpactNode.key values placed directly in this group.
+	NodeKeys      []string       `protobuf:"bytes,5,rep,name=node_keys,json=nodeKeys,proto3" json:"node_keys,omitempty"`
+	Children      []*ImpactGroup `protobuf:"bytes,6,rep,name=children,proto3" json:"children,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ImpactGroup) Reset() {
+	*x = ImpactGroup{}
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[90]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ImpactGroup) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ImpactGroup) ProtoMessage() {}
+
+func (x *ImpactGroup) ProtoReflect() protoreflect.Message {
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[90]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ImpactGroup.ProtoReflect.Descriptor instead.
+func (*ImpactGroup) Descriptor() ([]byte, []int) {
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{90}
+}
+
+func (x *ImpactGroup) GetKey() string {
+	if x != nil {
+		return x.Key
+	}
+	return ""
+}
+
+func (x *ImpactGroup) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *ImpactGroup) GetSource() string {
+	if x != nil {
+		return x.Source
+	}
+	return ""
+}
+
+func (x *ImpactGroup) GetViewId() int64 {
+	if x != nil {
+		return x.ViewId
+	}
+	return 0
+}
+
+func (x *ImpactGroup) GetNodeKeys() []string {
+	if x != nil {
+		return x.NodeKeys
+	}
+	return nil
+}
+
+func (x *ImpactGroup) GetChildren() []*ImpactGroup {
+	if x != nil {
+		return x.Children
+	}
+	return nil
+}
+
 type ImpactDiagram struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	RepositoryId  string                 `protobuf:"bytes,1,opt,name=repository_id,json=repositoryId,proto3" json:"repository_id,omitempty"`
@@ -6842,13 +6933,15 @@ type ImpactDiagram struct {
 	Radius        uint32                 `protobuf:"varint,7,opt,name=radius,proto3" json:"radius,omitempty"`
 	MaxRadius     uint32                 `protobuf:"varint,8,opt,name=max_radius,json=maxRadius,proto3" json:"max_radius,omitempty"`
 	Version       string                 `protobuf:"bytes,9,opt,name=version,proto3" json:"version,omitempty"`
+	// Root groups of the nested hierarchy, outermost first.
+	Groups        []*ImpactGroup `protobuf:"bytes,10,rep,name=groups,proto3" json:"groups,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ImpactDiagram) Reset() {
 	*x = ImpactDiagram{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[90]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[91]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6860,7 +6953,7 @@ func (x *ImpactDiagram) String() string {
 func (*ImpactDiagram) ProtoMessage() {}
 
 func (x *ImpactDiagram) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[90]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[91]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6873,7 +6966,7 @@ func (x *ImpactDiagram) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ImpactDiagram.ProtoReflect.Descriptor instead.
 func (*ImpactDiagram) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{90}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{91}
 }
 
 func (x *ImpactDiagram) GetRepositoryId() string {
@@ -6939,6 +7032,13 @@ func (x *ImpactDiagram) GetVersion() string {
 	return ""
 }
 
+func (x *ImpactDiagram) GetGroups() []*ImpactGroup {
+	if x != nil {
+		return x.Groups
+	}
+	return nil
+}
+
 type GetLiveImpactRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	RepositoryId  string                 `protobuf:"bytes,1,opt,name=repository_id,json=repositoryId,proto3" json:"repository_id,omitempty"`
@@ -6948,7 +7048,7 @@ type GetLiveImpactRequest struct {
 
 func (x *GetLiveImpactRequest) Reset() {
 	*x = GetLiveImpactRequest{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[91]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[92]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6960,7 +7060,7 @@ func (x *GetLiveImpactRequest) String() string {
 func (*GetLiveImpactRequest) ProtoMessage() {}
 
 func (x *GetLiveImpactRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[91]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[92]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6973,7 +7073,7 @@ func (x *GetLiveImpactRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetLiveImpactRequest.ProtoReflect.Descriptor instead.
 func (*GetLiveImpactRequest) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{91}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{92}
 }
 
 func (x *GetLiveImpactRequest) GetRepositoryId() string {
@@ -6996,7 +7096,7 @@ type LiveImpact struct {
 
 func (x *LiveImpact) Reset() {
 	*x = LiveImpact{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[92]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[93]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7008,7 +7108,7 @@ func (x *LiveImpact) String() string {
 func (*LiveImpact) ProtoMessage() {}
 
 func (x *LiveImpact) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[92]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[93]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7021,7 +7121,7 @@ func (x *LiveImpact) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LiveImpact.ProtoReflect.Descriptor instead.
 func (*LiveImpact) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{92}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{93}
 }
 
 func (x *LiveImpact) GetDiagram() *ImpactDiagram {
@@ -7070,7 +7170,7 @@ type SetImpactRadiusRequest struct {
 
 func (x *SetImpactRadiusRequest) Reset() {
 	*x = SetImpactRadiusRequest{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[93]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[94]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7082,7 +7182,7 @@ func (x *SetImpactRadiusRequest) String() string {
 func (*SetImpactRadiusRequest) ProtoMessage() {}
 
 func (x *SetImpactRadiusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[93]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[94]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7095,7 +7195,7 @@ func (x *SetImpactRadiusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetImpactRadiusRequest.ProtoReflect.Descriptor instead.
 func (*SetImpactRadiusRequest) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{93}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{94}
 }
 
 func (x *SetImpactRadiusRequest) GetRepositoryId() string {
@@ -7139,7 +7239,7 @@ type MapRepositoryRequest struct {
 
 func (x *MapRepositoryRequest) Reset() {
 	*x = MapRepositoryRequest{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[94]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[95]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7151,7 +7251,7 @@ func (x *MapRepositoryRequest) String() string {
 func (*MapRepositoryRequest) ProtoMessage() {}
 
 func (x *MapRepositoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[94]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[95]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7164,7 +7264,7 @@ func (x *MapRepositoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MapRepositoryRequest.ProtoReflect.Descriptor instead.
 func (*MapRepositoryRequest) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{94}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{95}
 }
 
 func (x *MapRepositoryRequest) GetRepositoryId() string {
@@ -7222,7 +7322,7 @@ type MapRepositoryEvent struct {
 
 func (x *MapRepositoryEvent) Reset() {
 	*x = MapRepositoryEvent{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[95]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[96]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7234,7 +7334,7 @@ func (x *MapRepositoryEvent) String() string {
 func (*MapRepositoryEvent) ProtoMessage() {}
 
 func (x *MapRepositoryEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[95]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[96]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7247,7 +7347,7 @@ func (x *MapRepositoryEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MapRepositoryEvent.ProtoReflect.Descriptor instead.
 func (*MapRepositoryEvent) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{95}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{96}
 }
 
 func (x *MapRepositoryEvent) GetEvent() isMapRepositoryEvent_Event {
@@ -7304,7 +7404,7 @@ type MapProgress struct {
 
 func (x *MapProgress) Reset() {
 	*x = MapProgress{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[96]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[97]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7316,7 +7416,7 @@ func (x *MapProgress) String() string {
 func (*MapProgress) ProtoMessage() {}
 
 func (x *MapProgress) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[96]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[97]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7329,7 +7429,7 @@ func (x *MapProgress) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MapProgress.ProtoReflect.Descriptor instead.
 func (*MapProgress) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{96}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{97}
 }
 
 func (x *MapProgress) GetStage() string {
@@ -7377,7 +7477,7 @@ type MapResult struct {
 
 func (x *MapResult) Reset() {
 	*x = MapResult{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[97]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[98]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7389,7 +7489,7 @@ func (x *MapResult) String() string {
 func (*MapResult) ProtoMessage() {}
 
 func (x *MapResult) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[97]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[98]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7402,7 +7502,7 @@ func (x *MapResult) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MapResult.ProtoReflect.Descriptor instead.
 func (*MapResult) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{97}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{98}
 }
 
 func (x *MapResult) GetRunId() string {
@@ -7476,7 +7576,7 @@ type CompletedMap struct {
 
 func (x *CompletedMap) Reset() {
 	*x = CompletedMap{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[98]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[99]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7488,7 +7588,7 @@ func (x *CompletedMap) String() string {
 func (*CompletedMap) ProtoMessage() {}
 
 func (x *CompletedMap) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[98]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[99]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7501,7 +7601,7 @@ func (x *CompletedMap) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CompletedMap.ProtoReflect.Descriptor instead.
 func (*CompletedMap) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{98}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{99}
 }
 
 func (x *CompletedMap) GetResult() *MapResult {
@@ -7541,7 +7641,7 @@ type ListMapsRequest struct {
 
 func (x *ListMapsRequest) Reset() {
 	*x = ListMapsRequest{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[99]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[100]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7553,7 +7653,7 @@ func (x *ListMapsRequest) String() string {
 func (*ListMapsRequest) ProtoMessage() {}
 
 func (x *ListMapsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[99]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[100]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7566,7 +7666,7 @@ func (x *ListMapsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListMapsRequest.ProtoReflect.Descriptor instead.
 func (*ListMapsRequest) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{99}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{100}
 }
 
 func (x *ListMapsRequest) GetRepositoryId() string {
@@ -7585,7 +7685,7 @@ type ListMapsResponse struct {
 
 func (x *ListMapsResponse) Reset() {
 	*x = ListMapsResponse{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[100]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[101]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7597,7 +7697,7 @@ func (x *ListMapsResponse) String() string {
 func (*ListMapsResponse) ProtoMessage() {}
 
 func (x *ListMapsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[100]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[101]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7610,7 +7710,7 @@ func (x *ListMapsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListMapsResponse.ProtoReflect.Descriptor instead.
 func (*ListMapsResponse) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{100}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{101}
 }
 
 func (x *ListMapsResponse) GetMaps() []*CompletedMap {
@@ -8214,7 +8314,14 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"\bfrom_key\x18\x01 \x01(\tR\afromKey\x12\x15\n" +
 	"\x06to_key\x18\x02 \x01(\tR\x05toKey\x120\n" +
 	"\x06change\x18\x03 \x01(\x0e2\x18.codeindex.v1.ChangeKindR\x06change\x12\x16\n" +
-	"\x06weight\x18\x04 \x01(\x01R\x06weight\"\xd5\x02\n" +
+	"\x06weight\x18\x04 \x01(\x01R\x06weight\"\xb8\x01\n" +
+	"\vImpactGroup\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
+	"\x06source\x18\x03 \x01(\tR\x06source\x12\x17\n" +
+	"\aview_id\x18\x04 \x01(\x03R\x06viewId\x12\x1b\n" +
+	"\tnode_keys\x18\x05 \x03(\tR\bnodeKeys\x125\n" +
+	"\bchildren\x18\x06 \x03(\v2\x19.codeindex.v1.ImpactGroupR\bchildren\"\x88\x03\n" +
 	"\rImpactDiagram\x12#\n" +
 	"\rrepository_id\x18\x01 \x01(\tR\frepositoryId\x12%\n" +
 	"\x0ecomparison_key\x18\x02 \x01(\tR\rcomparisonKey\x12\x17\n" +
@@ -8225,7 +8332,9 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"\x06radius\x18\a \x01(\rR\x06radius\x12\x1d\n" +
 	"\n" +
 	"max_radius\x18\b \x01(\rR\tmaxRadius\x12\x18\n" +
-	"\aversion\x18\t \x01(\tR\aversion\";\n" +
+	"\aversion\x18\t \x01(\tR\aversion\x121\n" +
+	"\x06groups\x18\n" +
+	" \x03(\v2\x19.codeindex.v1.ImpactGroupR\x06groups\";\n" +
 	"\x14GetLiveImpactRequest\x12#\n" +
 	"\rrepository_id\x18\x01 \x01(\tR\frepositoryId\"\xb7\x01\n" +
 	"\n" +
@@ -8389,7 +8498,7 @@ func file_codeindex_v1_codeindex_proto_rawDescGZIP() []byte {
 }
 
 var file_codeindex_v1_codeindex_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
-var file_codeindex_v1_codeindex_proto_msgTypes = make([]protoimpl.MessageInfo, 105)
+var file_codeindex_v1_codeindex_proto_msgTypes = make([]protoimpl.MessageInfo, 106)
 var file_codeindex_v1_codeindex_proto_goTypes = []any{
 	(FactKind)(0),                                   // 0: codeindex.v1.FactKind
 	(EdgeKind)(0),                                   // 1: codeindex.v1.EdgeKind
@@ -8486,21 +8595,22 @@ var file_codeindex_v1_codeindex_proto_goTypes = []any{
 	(*CompareRepositoryEvent)(nil),                  // 92: codeindex.v1.CompareRepositoryEvent
 	(*ImpactNode)(nil),                              // 93: codeindex.v1.ImpactNode
 	(*ImpactEdge)(nil),                              // 94: codeindex.v1.ImpactEdge
-	(*ImpactDiagram)(nil),                           // 95: codeindex.v1.ImpactDiagram
-	(*GetLiveImpactRequest)(nil),                    // 96: codeindex.v1.GetLiveImpactRequest
-	(*LiveImpact)(nil),                              // 97: codeindex.v1.LiveImpact
-	(*SetImpactRadiusRequest)(nil),                  // 98: codeindex.v1.SetImpactRadiusRequest
-	(*MapRepositoryRequest)(nil),                    // 99: codeindex.v1.MapRepositoryRequest
-	(*MapRepositoryEvent)(nil),                      // 100: codeindex.v1.MapRepositoryEvent
-	(*MapProgress)(nil),                             // 101: codeindex.v1.MapProgress
-	(*MapResult)(nil),                               // 102: codeindex.v1.MapResult
-	(*CompletedMap)(nil),                            // 103: codeindex.v1.CompletedMap
-	(*ListMapsRequest)(nil),                         // 104: codeindex.v1.ListMapsRequest
-	(*ListMapsResponse)(nil),                        // 105: codeindex.v1.ListMapsResponse
-	nil,                                             // 106: codeindex.v1.Snapshot.ToolVersionsEntry
-	nil,                                             // 107: codeindex.v1.IndexRequest.ScipArtifactsEntry
-	nil,                                             // 108: codeindex.v1.AnalysisRun.ParamsEntry
-	nil,                                             // 109: codeindex.v1.AnalysisRequest.ParamsEntry
+	(*ImpactGroup)(nil),                             // 95: codeindex.v1.ImpactGroup
+	(*ImpactDiagram)(nil),                           // 96: codeindex.v1.ImpactDiagram
+	(*GetLiveImpactRequest)(nil),                    // 97: codeindex.v1.GetLiveImpactRequest
+	(*LiveImpact)(nil),                              // 98: codeindex.v1.LiveImpact
+	(*SetImpactRadiusRequest)(nil),                  // 99: codeindex.v1.SetImpactRadiusRequest
+	(*MapRepositoryRequest)(nil),                    // 100: codeindex.v1.MapRepositoryRequest
+	(*MapRepositoryEvent)(nil),                      // 101: codeindex.v1.MapRepositoryEvent
+	(*MapProgress)(nil),                             // 102: codeindex.v1.MapProgress
+	(*MapResult)(nil),                               // 103: codeindex.v1.MapResult
+	(*CompletedMap)(nil),                            // 104: codeindex.v1.CompletedMap
+	(*ListMapsRequest)(nil),                         // 105: codeindex.v1.ListMapsRequest
+	(*ListMapsResponse)(nil),                        // 106: codeindex.v1.ListMapsResponse
+	nil,                                             // 107: codeindex.v1.Snapshot.ToolVersionsEntry
+	nil,                                             // 108: codeindex.v1.IndexRequest.ScipArtifactsEntry
+	nil,                                             // 109: codeindex.v1.AnalysisRun.ParamsEntry
+	nil,                                             // 110: codeindex.v1.AnalysisRequest.ParamsEntry
 }
 var file_codeindex_v1_codeindex_proto_depIdxs = []int32{
 	5,   // 0: codeindex.v1.Evidence.anchor:type_name -> codeindex.v1.SourceAnchor
@@ -8529,9 +8639,9 @@ var file_codeindex_v1_codeindex_proto_depIdxs = []int32{
 	48,  // 23: codeindex.v1.GetCommitDetailsResponse.files:type_name -> codeindex.v1.CommitFileChange
 	10,  // 24: codeindex.v1.Snapshot.projects:type_name -> codeindex.v1.Project
 	11,  // 25: codeindex.v1.Snapshot.sources:type_name -> codeindex.v1.SourceFile
-	106, // 26: codeindex.v1.Snapshot.tool_versions:type_name -> codeindex.v1.Snapshot.ToolVersionsEntry
+	107, // 26: codeindex.v1.Snapshot.tool_versions:type_name -> codeindex.v1.Snapshot.ToolVersionsEntry
 	51,  // 27: codeindex.v1.Snapshot.statistics:type_name -> codeindex.v1.SnapshotStatistics
-	107, // 28: codeindex.v1.IndexRequest.scip_artifacts:type_name -> codeindex.v1.IndexRequest.ScipArtifactsEntry
+	108, // 28: codeindex.v1.IndexRequest.scip_artifacts:type_name -> codeindex.v1.IndexRequest.ScipArtifactsEntry
 	50,  // 29: codeindex.v1.ListSnapshotsResponse.snapshots:type_name -> codeindex.v1.Snapshot
 	0,   // 30: codeindex.v1.CodeFactFilter.kind:type_name -> codeindex.v1.FactKind
 	7,   // 31: codeindex.v1.CodeFactPage.facts:type_name -> codeindex.v1.CodeFact
@@ -8556,12 +8666,12 @@ var file_codeindex_v1_codeindex_proto_depIdxs = []int32{
 	1,   // 50: codeindex.v1.EdgeAggregate.kind:type_name -> codeindex.v1.EdgeKind
 	9,   // 51: codeindex.v1.EdgeAggregate.observations:type_name -> codeindex.v1.EdgeFact
 	76,  // 52: codeindex.v1.EdgeAggregatePage.edges:type_name -> codeindex.v1.EdgeAggregate
-	108, // 53: codeindex.v1.AnalysisRun.params:type_name -> codeindex.v1.AnalysisRun.ParamsEntry
+	109, // 53: codeindex.v1.AnalysisRun.params:type_name -> codeindex.v1.AnalysisRun.ParamsEntry
 	78,  // 54: codeindex.v1.AnalysisRunPage.runs:type_name -> codeindex.v1.AnalysisRun
 	4,   // 55: codeindex.v1.Group.kind:type_name -> codeindex.v1.GroupKind
 	4,   // 56: codeindex.v1.GroupFilter.kind:type_name -> codeindex.v1.GroupKind
 	81,  // 57: codeindex.v1.GroupPage.groups:type_name -> codeindex.v1.Group
-	109, // 58: codeindex.v1.AnalysisRequest.params:type_name -> codeindex.v1.AnalysisRequest.ParamsEntry
+	110, // 58: codeindex.v1.AnalysisRequest.params:type_name -> codeindex.v1.AnalysisRequest.ParamsEntry
 	81,  // 59: codeindex.v1.AnalysisRequest.groups:type_name -> codeindex.v1.Group
 	78,  // 60: codeindex.v1.AnalysisResult.run:type_name -> codeindex.v1.AnalysisRun
 	61,  // 61: codeindex.v1.SearchRequest.filter:type_name -> codeindex.v1.CodeFactFilter
@@ -8569,104 +8679,106 @@ var file_codeindex_v1_codeindex_proto_depIdxs = []int32{
 	88,  // 63: codeindex.v1.SearchResponse.hits:type_name -> codeindex.v1.SearchHit
 	90,  // 64: codeindex.v1.CompareRepositoryRequest.base:type_name -> codeindex.v1.ComparisonTarget
 	90,  // 65: codeindex.v1.CompareRepositoryRequest.head:type_name -> codeindex.v1.ComparisonTarget
-	101, // 66: codeindex.v1.CompareRepositoryEvent.progress:type_name -> codeindex.v1.MapProgress
-	95,  // 67: codeindex.v1.CompareRepositoryEvent.result:type_name -> codeindex.v1.ImpactDiagram
+	102, // 66: codeindex.v1.CompareRepositoryEvent.progress:type_name -> codeindex.v1.MapProgress
+	96,  // 67: codeindex.v1.CompareRepositoryEvent.result:type_name -> codeindex.v1.ImpactDiagram
 	3,   // 68: codeindex.v1.ImpactNode.change:type_name -> codeindex.v1.ChangeKind
 	72,  // 69: codeindex.v1.ImpactNode.symbols:type_name -> codeindex.v1.CodeFactDelta
 	3,   // 70: codeindex.v1.ImpactEdge.change:type_name -> codeindex.v1.ChangeKind
-	75,  // 71: codeindex.v1.ImpactDiagram.diff:type_name -> codeindex.v1.SnapshotDiff
-	93,  // 72: codeindex.v1.ImpactDiagram.nodes:type_name -> codeindex.v1.ImpactNode
-	94,  // 73: codeindex.v1.ImpactDiagram.edges:type_name -> codeindex.v1.ImpactEdge
-	95,  // 74: codeindex.v1.LiveImpact.diagram:type_name -> codeindex.v1.ImpactDiagram
-	101, // 75: codeindex.v1.MapRepositoryEvent.progress:type_name -> codeindex.v1.MapProgress
-	102, // 76: codeindex.v1.MapRepositoryEvent.result:type_name -> codeindex.v1.MapResult
-	102, // 77: codeindex.v1.CompletedMap.result:type_name -> codeindex.v1.MapResult
-	103, // 78: codeindex.v1.ListMapsResponse.maps:type_name -> codeindex.v1.CompletedMap
-	16,  // 79: codeindex.v1.RepositoryService.GetWorktreeSource:input_type -> codeindex.v1.GetWorktreeSourceRequest
-	20,  // 80: codeindex.v1.RepositoryService.GetRepositorySettings:input_type -> codeindex.v1.GetRepositorySettingsRequest
-	22,  // 81: codeindex.v1.RepositoryService.UpdateRepositoryMapConfiguration:input_type -> codeindex.v1.UpdateRepositoryMapConfigurationRequest
-	23,  // 82: codeindex.v1.RepositoryService.UpdateRepositoryRemote:input_type -> codeindex.v1.UpdateRepositoryRemoteRequest
-	14,  // 83: codeindex.v1.RepositoryService.ListRepositories:input_type -> codeindex.v1.ListRepositoriesRequest
-	28,  // 84: codeindex.v1.RepositoryService.CheckRepositoryIndexers:input_type -> codeindex.v1.CheckRepositoryIndexersRequest
-	26,  // 85: codeindex.v1.RepositoryService.AddRepository:input_type -> codeindex.v1.AddRepositoryRequest
-	24,  // 86: codeindex.v1.RepositoryService.DeleteRepository:input_type -> codeindex.v1.DeleteRepositoryRequest
-	40,  // 87: codeindex.v1.RepositoryService.GetGitHistory:input_type -> codeindex.v1.GetGitHistoryRequest
-	47,  // 88: codeindex.v1.RepositoryService.GetCommitDetails:input_type -> codeindex.v1.GetCommitDetailsRequest
-	42,  // 89: codeindex.v1.RepositoryService.GetPullRequest:input_type -> codeindex.v1.GetPullRequestRequest
-	44,  // 90: codeindex.v1.RepositoryService.ListPullRequests:input_type -> codeindex.v1.ListPullRequestsRequest
-	32,  // 91: codeindex.v1.WatchService.StartWatch:input_type -> codeindex.v1.StartWatchRequest
-	33,  // 92: codeindex.v1.WatchService.StopWatch:input_type -> codeindex.v1.StopWatchRequest
-	34,  // 93: codeindex.v1.WatchService.GetWatchStatus:input_type -> codeindex.v1.GetWatchStatusRequest
-	35,  // 94: codeindex.v1.WatchService.ListWatches:input_type -> codeindex.v1.ListWatchesRequest
-	60,  // 95: codeindex.v1.CodeFactService.GetFact:input_type -> codeindex.v1.CodeFactID
-	61,  // 96: codeindex.v1.CodeFactService.ListFacts:input_type -> codeindex.v1.CodeFactFilter
-	63,  // 97: codeindex.v1.CodeFactService.GetEdgeFact:input_type -> codeindex.v1.EdgeFactID
-	64,  // 98: codeindex.v1.CodeFactService.ListEdgeFacts:input_type -> codeindex.v1.EdgeFactFilter
-	66,  // 99: codeindex.v1.CodeFactService.GetSource:input_type -> codeindex.v1.SourceRequest
-	68,  // 100: codeindex.v1.CodeFactService.ResolveSymbol:input_type -> codeindex.v1.SymbolQuery
-	68,  // 101: codeindex.v1.CodeFactService.FindDefinitions:input_type -> codeindex.v1.SymbolQuery
-	68,  // 102: codeindex.v1.CodeFactService.FindReferences:input_type -> codeindex.v1.SymbolQuery
-	69,  // 103: codeindex.v1.CodeFactService.Traverse:input_type -> codeindex.v1.GraphRequest
-	64,  // 104: codeindex.v1.CodeFactService.AggregateEdges:input_type -> codeindex.v1.EdgeFactFilter
-	56,  // 105: codeindex.v1.CodeFactService.ListSnapshots:input_type -> codeindex.v1.RepositoryID
-	56,  // 106: codeindex.v1.CodeFactService.GetRepository:input_type -> codeindex.v1.RepositoryID
-	74,  // 107: codeindex.v1.CodeFactService.DiffSnapshots:input_type -> codeindex.v1.SnapshotDiffRequest
-	58,  // 108: codeindex.v1.CodeFactService.DeleteSnapshot:input_type -> codeindex.v1.DeleteSnapshotRequest
-	87,  // 109: codeindex.v1.SearchService.FullText:input_type -> codeindex.v1.SearchRequest
-	85,  // 110: codeindex.v1.AnalysisService.SaveAnalysis:input_type -> codeindex.v1.AnalysisRequest
-	79,  // 111: codeindex.v1.AnalysisService.ListRuns:input_type -> codeindex.v1.AnalysisRunFilter
-	82,  // 112: codeindex.v1.AnalysisService.ListGroups:input_type -> codeindex.v1.GroupFilter
-	84,  // 113: codeindex.v1.AnalysisService.ListGroupFacts:input_type -> codeindex.v1.GroupFactsRequest
-	99,  // 114: codeindex.v1.MapperService.MapRepository:input_type -> codeindex.v1.MapRepositoryRequest
-	104, // 115: codeindex.v1.MapperService.ListMaps:input_type -> codeindex.v1.ListMapsRequest
-	91,  // 116: codeindex.v1.MapperService.CompareRepository:input_type -> codeindex.v1.CompareRepositoryRequest
-	96,  // 117: codeindex.v1.MapperService.GetLiveImpact:input_type -> codeindex.v1.GetLiveImpactRequest
-	98,  // 118: codeindex.v1.MapperService.SetImpactRadius:input_type -> codeindex.v1.SetImpactRadiusRequest
-	17,  // 119: codeindex.v1.RepositoryService.GetWorktreeSource:output_type -> codeindex.v1.GetWorktreeSourceResponse
-	21,  // 120: codeindex.v1.RepositoryService.GetRepositorySettings:output_type -> codeindex.v1.RepositorySettings
-	21,  // 121: codeindex.v1.RepositoryService.UpdateRepositoryMapConfiguration:output_type -> codeindex.v1.RepositorySettings
-	21,  // 122: codeindex.v1.RepositoryService.UpdateRepositoryRemote:output_type -> codeindex.v1.RepositorySettings
-	15,  // 123: codeindex.v1.RepositoryService.ListRepositories:output_type -> codeindex.v1.ListRepositoriesResponse
-	30,  // 124: codeindex.v1.RepositoryService.CheckRepositoryIndexers:output_type -> codeindex.v1.CheckRepositoryIndexersResponse
-	27,  // 125: codeindex.v1.RepositoryService.AddRepository:output_type -> codeindex.v1.AddRepositoryEvent
-	25,  // 126: codeindex.v1.RepositoryService.DeleteRepository:output_type -> codeindex.v1.DeleteRepositoryResponse
-	41,  // 127: codeindex.v1.RepositoryService.GetGitHistory:output_type -> codeindex.v1.GetGitHistoryResponse
-	49,  // 128: codeindex.v1.RepositoryService.GetCommitDetails:output_type -> codeindex.v1.GetCommitDetailsResponse
-	43,  // 129: codeindex.v1.RepositoryService.GetPullRequest:output_type -> codeindex.v1.GetPullRequestResponse
-	46,  // 130: codeindex.v1.RepositoryService.ListPullRequests:output_type -> codeindex.v1.ListPullRequestsResponse
-	37,  // 131: codeindex.v1.WatchService.StartWatch:output_type -> codeindex.v1.WatchStatus
-	37,  // 132: codeindex.v1.WatchService.StopWatch:output_type -> codeindex.v1.WatchStatus
-	37,  // 133: codeindex.v1.WatchService.GetWatchStatus:output_type -> codeindex.v1.WatchStatus
-	36,  // 134: codeindex.v1.WatchService.ListWatches:output_type -> codeindex.v1.ListWatchesResponse
-	7,   // 135: codeindex.v1.CodeFactService.GetFact:output_type -> codeindex.v1.CodeFact
-	62,  // 136: codeindex.v1.CodeFactService.ListFacts:output_type -> codeindex.v1.CodeFactPage
-	9,   // 137: codeindex.v1.CodeFactService.GetEdgeFact:output_type -> codeindex.v1.EdgeFact
-	65,  // 138: codeindex.v1.CodeFactService.ListEdgeFacts:output_type -> codeindex.v1.EdgeFactPage
-	67,  // 139: codeindex.v1.CodeFactService.GetSource:output_type -> codeindex.v1.SourceResponse
-	62,  // 140: codeindex.v1.CodeFactService.ResolveSymbol:output_type -> codeindex.v1.CodeFactPage
-	62,  // 141: codeindex.v1.CodeFactService.FindDefinitions:output_type -> codeindex.v1.CodeFactPage
-	65,  // 142: codeindex.v1.CodeFactService.FindReferences:output_type -> codeindex.v1.EdgeFactPage
-	70,  // 143: codeindex.v1.CodeFactService.Traverse:output_type -> codeindex.v1.Graph
-	77,  // 144: codeindex.v1.CodeFactService.AggregateEdges:output_type -> codeindex.v1.EdgeAggregatePage
-	57,  // 145: codeindex.v1.CodeFactService.ListSnapshots:output_type -> codeindex.v1.ListSnapshotsResponse
-	12,  // 146: codeindex.v1.CodeFactService.GetRepository:output_type -> codeindex.v1.Repository
-	75,  // 147: codeindex.v1.CodeFactService.DiffSnapshots:output_type -> codeindex.v1.SnapshotDiff
-	59,  // 148: codeindex.v1.CodeFactService.DeleteSnapshot:output_type -> codeindex.v1.DeleteSnapshotResponse
-	89,  // 149: codeindex.v1.SearchService.FullText:output_type -> codeindex.v1.SearchResponse
-	86,  // 150: codeindex.v1.AnalysisService.SaveAnalysis:output_type -> codeindex.v1.AnalysisResult
-	80,  // 151: codeindex.v1.AnalysisService.ListRuns:output_type -> codeindex.v1.AnalysisRunPage
-	83,  // 152: codeindex.v1.AnalysisService.ListGroups:output_type -> codeindex.v1.GroupPage
-	62,  // 153: codeindex.v1.AnalysisService.ListGroupFacts:output_type -> codeindex.v1.CodeFactPage
-	100, // 154: codeindex.v1.MapperService.MapRepository:output_type -> codeindex.v1.MapRepositoryEvent
-	105, // 155: codeindex.v1.MapperService.ListMaps:output_type -> codeindex.v1.ListMapsResponse
-	92,  // 156: codeindex.v1.MapperService.CompareRepository:output_type -> codeindex.v1.CompareRepositoryEvent
-	97,  // 157: codeindex.v1.MapperService.GetLiveImpact:output_type -> codeindex.v1.LiveImpact
-	95,  // 158: codeindex.v1.MapperService.SetImpactRadius:output_type -> codeindex.v1.ImpactDiagram
-	119, // [119:159] is the sub-list for method output_type
-	79,  // [79:119] is the sub-list for method input_type
-	79,  // [79:79] is the sub-list for extension type_name
-	79,  // [79:79] is the sub-list for extension extendee
-	0,   // [0:79] is the sub-list for field type_name
+	95,  // 71: codeindex.v1.ImpactGroup.children:type_name -> codeindex.v1.ImpactGroup
+	75,  // 72: codeindex.v1.ImpactDiagram.diff:type_name -> codeindex.v1.SnapshotDiff
+	93,  // 73: codeindex.v1.ImpactDiagram.nodes:type_name -> codeindex.v1.ImpactNode
+	94,  // 74: codeindex.v1.ImpactDiagram.edges:type_name -> codeindex.v1.ImpactEdge
+	95,  // 75: codeindex.v1.ImpactDiagram.groups:type_name -> codeindex.v1.ImpactGroup
+	96,  // 76: codeindex.v1.LiveImpact.diagram:type_name -> codeindex.v1.ImpactDiagram
+	102, // 77: codeindex.v1.MapRepositoryEvent.progress:type_name -> codeindex.v1.MapProgress
+	103, // 78: codeindex.v1.MapRepositoryEvent.result:type_name -> codeindex.v1.MapResult
+	103, // 79: codeindex.v1.CompletedMap.result:type_name -> codeindex.v1.MapResult
+	104, // 80: codeindex.v1.ListMapsResponse.maps:type_name -> codeindex.v1.CompletedMap
+	16,  // 81: codeindex.v1.RepositoryService.GetWorktreeSource:input_type -> codeindex.v1.GetWorktreeSourceRequest
+	20,  // 82: codeindex.v1.RepositoryService.GetRepositorySettings:input_type -> codeindex.v1.GetRepositorySettingsRequest
+	22,  // 83: codeindex.v1.RepositoryService.UpdateRepositoryMapConfiguration:input_type -> codeindex.v1.UpdateRepositoryMapConfigurationRequest
+	23,  // 84: codeindex.v1.RepositoryService.UpdateRepositoryRemote:input_type -> codeindex.v1.UpdateRepositoryRemoteRequest
+	14,  // 85: codeindex.v1.RepositoryService.ListRepositories:input_type -> codeindex.v1.ListRepositoriesRequest
+	28,  // 86: codeindex.v1.RepositoryService.CheckRepositoryIndexers:input_type -> codeindex.v1.CheckRepositoryIndexersRequest
+	26,  // 87: codeindex.v1.RepositoryService.AddRepository:input_type -> codeindex.v1.AddRepositoryRequest
+	24,  // 88: codeindex.v1.RepositoryService.DeleteRepository:input_type -> codeindex.v1.DeleteRepositoryRequest
+	40,  // 89: codeindex.v1.RepositoryService.GetGitHistory:input_type -> codeindex.v1.GetGitHistoryRequest
+	47,  // 90: codeindex.v1.RepositoryService.GetCommitDetails:input_type -> codeindex.v1.GetCommitDetailsRequest
+	42,  // 91: codeindex.v1.RepositoryService.GetPullRequest:input_type -> codeindex.v1.GetPullRequestRequest
+	44,  // 92: codeindex.v1.RepositoryService.ListPullRequests:input_type -> codeindex.v1.ListPullRequestsRequest
+	32,  // 93: codeindex.v1.WatchService.StartWatch:input_type -> codeindex.v1.StartWatchRequest
+	33,  // 94: codeindex.v1.WatchService.StopWatch:input_type -> codeindex.v1.StopWatchRequest
+	34,  // 95: codeindex.v1.WatchService.GetWatchStatus:input_type -> codeindex.v1.GetWatchStatusRequest
+	35,  // 96: codeindex.v1.WatchService.ListWatches:input_type -> codeindex.v1.ListWatchesRequest
+	60,  // 97: codeindex.v1.CodeFactService.GetFact:input_type -> codeindex.v1.CodeFactID
+	61,  // 98: codeindex.v1.CodeFactService.ListFacts:input_type -> codeindex.v1.CodeFactFilter
+	63,  // 99: codeindex.v1.CodeFactService.GetEdgeFact:input_type -> codeindex.v1.EdgeFactID
+	64,  // 100: codeindex.v1.CodeFactService.ListEdgeFacts:input_type -> codeindex.v1.EdgeFactFilter
+	66,  // 101: codeindex.v1.CodeFactService.GetSource:input_type -> codeindex.v1.SourceRequest
+	68,  // 102: codeindex.v1.CodeFactService.ResolveSymbol:input_type -> codeindex.v1.SymbolQuery
+	68,  // 103: codeindex.v1.CodeFactService.FindDefinitions:input_type -> codeindex.v1.SymbolQuery
+	68,  // 104: codeindex.v1.CodeFactService.FindReferences:input_type -> codeindex.v1.SymbolQuery
+	69,  // 105: codeindex.v1.CodeFactService.Traverse:input_type -> codeindex.v1.GraphRequest
+	64,  // 106: codeindex.v1.CodeFactService.AggregateEdges:input_type -> codeindex.v1.EdgeFactFilter
+	56,  // 107: codeindex.v1.CodeFactService.ListSnapshots:input_type -> codeindex.v1.RepositoryID
+	56,  // 108: codeindex.v1.CodeFactService.GetRepository:input_type -> codeindex.v1.RepositoryID
+	74,  // 109: codeindex.v1.CodeFactService.DiffSnapshots:input_type -> codeindex.v1.SnapshotDiffRequest
+	58,  // 110: codeindex.v1.CodeFactService.DeleteSnapshot:input_type -> codeindex.v1.DeleteSnapshotRequest
+	87,  // 111: codeindex.v1.SearchService.FullText:input_type -> codeindex.v1.SearchRequest
+	85,  // 112: codeindex.v1.AnalysisService.SaveAnalysis:input_type -> codeindex.v1.AnalysisRequest
+	79,  // 113: codeindex.v1.AnalysisService.ListRuns:input_type -> codeindex.v1.AnalysisRunFilter
+	82,  // 114: codeindex.v1.AnalysisService.ListGroups:input_type -> codeindex.v1.GroupFilter
+	84,  // 115: codeindex.v1.AnalysisService.ListGroupFacts:input_type -> codeindex.v1.GroupFactsRequest
+	100, // 116: codeindex.v1.MapperService.MapRepository:input_type -> codeindex.v1.MapRepositoryRequest
+	105, // 117: codeindex.v1.MapperService.ListMaps:input_type -> codeindex.v1.ListMapsRequest
+	91,  // 118: codeindex.v1.MapperService.CompareRepository:input_type -> codeindex.v1.CompareRepositoryRequest
+	97,  // 119: codeindex.v1.MapperService.GetLiveImpact:input_type -> codeindex.v1.GetLiveImpactRequest
+	99,  // 120: codeindex.v1.MapperService.SetImpactRadius:input_type -> codeindex.v1.SetImpactRadiusRequest
+	17,  // 121: codeindex.v1.RepositoryService.GetWorktreeSource:output_type -> codeindex.v1.GetWorktreeSourceResponse
+	21,  // 122: codeindex.v1.RepositoryService.GetRepositorySettings:output_type -> codeindex.v1.RepositorySettings
+	21,  // 123: codeindex.v1.RepositoryService.UpdateRepositoryMapConfiguration:output_type -> codeindex.v1.RepositorySettings
+	21,  // 124: codeindex.v1.RepositoryService.UpdateRepositoryRemote:output_type -> codeindex.v1.RepositorySettings
+	15,  // 125: codeindex.v1.RepositoryService.ListRepositories:output_type -> codeindex.v1.ListRepositoriesResponse
+	30,  // 126: codeindex.v1.RepositoryService.CheckRepositoryIndexers:output_type -> codeindex.v1.CheckRepositoryIndexersResponse
+	27,  // 127: codeindex.v1.RepositoryService.AddRepository:output_type -> codeindex.v1.AddRepositoryEvent
+	25,  // 128: codeindex.v1.RepositoryService.DeleteRepository:output_type -> codeindex.v1.DeleteRepositoryResponse
+	41,  // 129: codeindex.v1.RepositoryService.GetGitHistory:output_type -> codeindex.v1.GetGitHistoryResponse
+	49,  // 130: codeindex.v1.RepositoryService.GetCommitDetails:output_type -> codeindex.v1.GetCommitDetailsResponse
+	43,  // 131: codeindex.v1.RepositoryService.GetPullRequest:output_type -> codeindex.v1.GetPullRequestResponse
+	46,  // 132: codeindex.v1.RepositoryService.ListPullRequests:output_type -> codeindex.v1.ListPullRequestsResponse
+	37,  // 133: codeindex.v1.WatchService.StartWatch:output_type -> codeindex.v1.WatchStatus
+	37,  // 134: codeindex.v1.WatchService.StopWatch:output_type -> codeindex.v1.WatchStatus
+	37,  // 135: codeindex.v1.WatchService.GetWatchStatus:output_type -> codeindex.v1.WatchStatus
+	36,  // 136: codeindex.v1.WatchService.ListWatches:output_type -> codeindex.v1.ListWatchesResponse
+	7,   // 137: codeindex.v1.CodeFactService.GetFact:output_type -> codeindex.v1.CodeFact
+	62,  // 138: codeindex.v1.CodeFactService.ListFacts:output_type -> codeindex.v1.CodeFactPage
+	9,   // 139: codeindex.v1.CodeFactService.GetEdgeFact:output_type -> codeindex.v1.EdgeFact
+	65,  // 140: codeindex.v1.CodeFactService.ListEdgeFacts:output_type -> codeindex.v1.EdgeFactPage
+	67,  // 141: codeindex.v1.CodeFactService.GetSource:output_type -> codeindex.v1.SourceResponse
+	62,  // 142: codeindex.v1.CodeFactService.ResolveSymbol:output_type -> codeindex.v1.CodeFactPage
+	62,  // 143: codeindex.v1.CodeFactService.FindDefinitions:output_type -> codeindex.v1.CodeFactPage
+	65,  // 144: codeindex.v1.CodeFactService.FindReferences:output_type -> codeindex.v1.EdgeFactPage
+	70,  // 145: codeindex.v1.CodeFactService.Traverse:output_type -> codeindex.v1.Graph
+	77,  // 146: codeindex.v1.CodeFactService.AggregateEdges:output_type -> codeindex.v1.EdgeAggregatePage
+	57,  // 147: codeindex.v1.CodeFactService.ListSnapshots:output_type -> codeindex.v1.ListSnapshotsResponse
+	12,  // 148: codeindex.v1.CodeFactService.GetRepository:output_type -> codeindex.v1.Repository
+	75,  // 149: codeindex.v1.CodeFactService.DiffSnapshots:output_type -> codeindex.v1.SnapshotDiff
+	59,  // 150: codeindex.v1.CodeFactService.DeleteSnapshot:output_type -> codeindex.v1.DeleteSnapshotResponse
+	89,  // 151: codeindex.v1.SearchService.FullText:output_type -> codeindex.v1.SearchResponse
+	86,  // 152: codeindex.v1.AnalysisService.SaveAnalysis:output_type -> codeindex.v1.AnalysisResult
+	80,  // 153: codeindex.v1.AnalysisService.ListRuns:output_type -> codeindex.v1.AnalysisRunPage
+	83,  // 154: codeindex.v1.AnalysisService.ListGroups:output_type -> codeindex.v1.GroupPage
+	62,  // 155: codeindex.v1.AnalysisService.ListGroupFacts:output_type -> codeindex.v1.CodeFactPage
+	101, // 156: codeindex.v1.MapperService.MapRepository:output_type -> codeindex.v1.MapRepositoryEvent
+	106, // 157: codeindex.v1.MapperService.ListMaps:output_type -> codeindex.v1.ListMapsResponse
+	92,  // 158: codeindex.v1.MapperService.CompareRepository:output_type -> codeindex.v1.CompareRepositoryEvent
+	98,  // 159: codeindex.v1.MapperService.GetLiveImpact:output_type -> codeindex.v1.LiveImpact
+	96,  // 160: codeindex.v1.MapperService.SetImpactRadius:output_type -> codeindex.v1.ImpactDiagram
+	121, // [121:161] is the sub-list for method output_type
+	81,  // [81:121] is the sub-list for method input_type
+	81,  // [81:81] is the sub-list for extension type_name
+	81,  // [81:81] is the sub-list for extension extendee
+	0,   // [0:81] is the sub-list for field type_name
 }
 
 func init() { file_codeindex_v1_codeindex_proto_init() }
@@ -8684,7 +8796,7 @@ func file_codeindex_v1_codeindex_proto_init() {
 		(*CompareRepositoryEvent_Progress)(nil),
 		(*CompareRepositoryEvent_Result)(nil),
 	}
-	file_codeindex_v1_codeindex_proto_msgTypes[95].OneofWrappers = []any{
+	file_codeindex_v1_codeindex_proto_msgTypes[96].OneofWrappers = []any{
 		(*MapRepositoryEvent_Progress)(nil),
 		(*MapRepositoryEvent_Result)(nil),
 	}
@@ -8694,7 +8806,7 @@ func file_codeindex_v1_codeindex_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_codeindex_v1_codeindex_proto_rawDesc), len(file_codeindex_v1_codeindex_proto_rawDesc)),
 			NumEnums:      5,
-			NumMessages:   105,
+			NumMessages:   106,
 			NumExtensions: 0,
 			NumServices:   6,
 		},
