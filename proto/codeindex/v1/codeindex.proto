@@ -84,8 +84,6 @@ enum FactKind {
   FACT_KIND_ENUM = 6;
   FACT_KIND_TYPE = 7;
   FACT_KIND_CONSTRUCTOR = 8;
-  // A whole source file. One is published per discovered file so the file's
-  // content can be chunked alongside its symbols.
   FACT_KIND_FILE = 9;
   // Infrastructure, configuration, and repository-level facts. These carry a
   // subject/object pair rather than a captured code body and are produced by
@@ -123,24 +121,13 @@ message CodeFact {
   string symbol_key = 9;
   string signature = 10;
   string documentation = 11;
-  string code = 12;
+  string body_hash = 12;
   string parent_fact_id = 13;
   repeated Evidence evidence = 14;
   // Import paths declared by the fact's source file, in declaration order.
   repeated string imports = 15;
   // Stable identity that survives across snapshots, enabling cross-snapshot joins.
   string logical_key = 16;
-}
-
-message Chunk {
-  string id = 1;
-  string fact_id = 2;
-  string snapshot_id = 3;
-  SourceAnchor anchor = 4;
-  string text = 5;
-  string context = 6;
-  uint32 index = 7;
-  uint32 total = 8;
 }
 
 enum EdgeKind {
@@ -191,7 +178,6 @@ message Repository {
   string git_revision = 5;
   string git_branch = 6;
   uint32 facts = 7;
-  uint32 chunks = 8;
   uint32 edges = 9;
   uint32 sources = 10;
   // Canonical browser URL of the repository's default remote when the checkout
@@ -269,7 +255,6 @@ message SnapshotStatistics {
   uint32 facts = 1;
   uint32 edges = 2;
   uint32 sources = 3;
-  uint32 chunks = 4;
 }
 
 message IndexRequest {
@@ -278,10 +263,10 @@ message IndexRequest {
   repeated string exclude = 3;
   map<string, string> scip_artifacts = 4;
   bool detached = 5;
-  // When true and the repository has a published snapshot, facts, chunks, and
-  // edges for sources whose content is unchanged are carried forward. An
-  // indexer re-runs only for projects with changed sources, and its unchanged
-  // documents are skipped. A snapshot with no changes is reused verbatim.
+  // When true and the repository has a published snapshot, facts and edges for
+  // sources whose content is unchanged are carried forward. An indexer re-runs
+  // only for projects with changed sources, and its unchanged documents are
+  // skipped. A snapshot with no changes is reused verbatim.
   bool incremental = 6;
 }
 

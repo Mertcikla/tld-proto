@@ -35,9 +35,7 @@ const (
 	FactKind_FACT_KIND_ENUM        FactKind = 6
 	FactKind_FACT_KIND_TYPE        FactKind = 7
 	FactKind_FACT_KIND_CONSTRUCTOR FactKind = 8
-	// A whole source file. One is published per discovered file so the file's
-	// content can be chunked alongside its symbols.
-	FactKind_FACT_KIND_FILE FactKind = 9
+	FactKind_FACT_KIND_FILE        FactKind = 9
 	// Infrastructure, configuration, and repository-level facts. These carry a
 	// subject/object pair rather than a captured code body and are produced by
 	// deterministic config scanners, not the code indexers.
@@ -645,7 +643,7 @@ type CodeFact struct {
 	SymbolKey     string                 `protobuf:"bytes,9,opt,name=symbol_key,json=symbolKey,proto3" json:"symbol_key,omitempty"`
 	Signature     string                 `protobuf:"bytes,10,opt,name=signature,proto3" json:"signature,omitempty"`
 	Documentation string                 `protobuf:"bytes,11,opt,name=documentation,proto3" json:"documentation,omitempty"`
-	Code          string                 `protobuf:"bytes,12,opt,name=code,proto3" json:"code,omitempty"`
+	BodyHash      string                 `protobuf:"bytes,12,opt,name=body_hash,json=bodyHash,proto3" json:"body_hash,omitempty"`
 	ParentFactId  string                 `protobuf:"bytes,13,opt,name=parent_fact_id,json=parentFactId,proto3" json:"parent_fact_id,omitempty"`
 	Evidence      []*Evidence            `protobuf:"bytes,14,rep,name=evidence,proto3" json:"evidence,omitempty"`
 	// Import paths declared by the fact's source file, in declaration order.
@@ -763,9 +761,9 @@ func (x *CodeFact) GetDocumentation() string {
 	return ""
 }
 
-func (x *CodeFact) GetCode() string {
+func (x *CodeFact) GetBodyHash() string {
 	if x != nil {
-		return x.Code
+		return x.BodyHash
 	}
 	return ""
 }
@@ -798,106 +796,6 @@ func (x *CodeFact) GetLogicalKey() string {
 	return ""
 }
 
-type Chunk struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	FactId        string                 `protobuf:"bytes,2,opt,name=fact_id,json=factId,proto3" json:"fact_id,omitempty"`
-	SnapshotId    string                 `protobuf:"bytes,3,opt,name=snapshot_id,json=snapshotId,proto3" json:"snapshot_id,omitempty"`
-	Anchor        *SourceAnchor          `protobuf:"bytes,4,opt,name=anchor,proto3" json:"anchor,omitempty"`
-	Text          string                 `protobuf:"bytes,5,opt,name=text,proto3" json:"text,omitempty"`
-	Context       string                 `protobuf:"bytes,6,opt,name=context,proto3" json:"context,omitempty"`
-	Index         uint32                 `protobuf:"varint,7,opt,name=index,proto3" json:"index,omitempty"`
-	Total         uint32                 `protobuf:"varint,8,opt,name=total,proto3" json:"total,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Chunk) Reset() {
-	*x = Chunk{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[6]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Chunk) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Chunk) ProtoMessage() {}
-
-func (x *Chunk) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[6]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Chunk.ProtoReflect.Descriptor instead.
-func (*Chunk) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{6}
-}
-
-func (x *Chunk) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *Chunk) GetFactId() string {
-	if x != nil {
-		return x.FactId
-	}
-	return ""
-}
-
-func (x *Chunk) GetSnapshotId() string {
-	if x != nil {
-		return x.SnapshotId
-	}
-	return ""
-}
-
-func (x *Chunk) GetAnchor() *SourceAnchor {
-	if x != nil {
-		return x.Anchor
-	}
-	return nil
-}
-
-func (x *Chunk) GetText() string {
-	if x != nil {
-		return x.Text
-	}
-	return ""
-}
-
-func (x *Chunk) GetContext() string {
-	if x != nil {
-		return x.Context
-	}
-	return ""
-}
-
-func (x *Chunk) GetIndex() uint32 {
-	if x != nil {
-		return x.Index
-	}
-	return 0
-}
-
-func (x *Chunk) GetTotal() uint32 {
-	if x != nil {
-		return x.Total
-	}
-	return 0
-}
-
 // One observed relationship, including its site and unresolved target key.
 type EdgeFact struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
@@ -920,7 +818,7 @@ type EdgeFact struct {
 
 func (x *EdgeFact) Reset() {
 	*x = EdgeFact{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[7]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -932,7 +830,7 @@ func (x *EdgeFact) String() string {
 func (*EdgeFact) ProtoMessage() {}
 
 func (x *EdgeFact) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[7]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -945,7 +843,7 @@ func (x *EdgeFact) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EdgeFact.ProtoReflect.Descriptor instead.
 func (*EdgeFact) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{7}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *EdgeFact) GetId() string {
@@ -1036,7 +934,7 @@ type Project struct {
 
 func (x *Project) Reset() {
 	*x = Project{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[8]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1048,7 +946,7 @@ func (x *Project) String() string {
 func (*Project) ProtoMessage() {}
 
 func (x *Project) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[8]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1061,7 +959,7 @@ func (x *Project) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Project.ProtoReflect.Descriptor instead.
 func (*Project) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{8}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *Project) GetRoot() string {
@@ -1096,7 +994,7 @@ type SourceFile struct {
 
 func (x *SourceFile) Reset() {
 	*x = SourceFile{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[9]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1108,7 +1006,7 @@ func (x *SourceFile) String() string {
 func (*SourceFile) ProtoMessage() {}
 
 func (x *SourceFile) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[9]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1121,7 +1019,7 @@ func (x *SourceFile) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SourceFile.ProtoReflect.Descriptor instead.
 func (*SourceFile) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{9}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *SourceFile) GetPath() string {
@@ -1155,7 +1053,6 @@ type Repository struct {
 	GitRevision       string                 `protobuf:"bytes,5,opt,name=git_revision,json=gitRevision,proto3" json:"git_revision,omitempty"`
 	GitBranch         string                 `protobuf:"bytes,6,opt,name=git_branch,json=gitBranch,proto3" json:"git_branch,omitempty"`
 	Facts             uint32                 `protobuf:"varint,7,opt,name=facts,proto3" json:"facts,omitempty"`
-	Chunks            uint32                 `protobuf:"varint,8,opt,name=chunks,proto3" json:"chunks,omitempty"`
 	Edges             uint32                 `protobuf:"varint,9,opt,name=edges,proto3" json:"edges,omitempty"`
 	Sources           uint32                 `protobuf:"varint,10,opt,name=sources,proto3" json:"sources,omitempty"`
 	// Canonical browser URL of the repository's default remote when the checkout
@@ -1171,7 +1068,7 @@ type Repository struct {
 
 func (x *Repository) Reset() {
 	*x = Repository{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[10]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1183,7 +1080,7 @@ func (x *Repository) String() string {
 func (*Repository) ProtoMessage() {}
 
 func (x *Repository) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[10]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1196,7 +1093,7 @@ func (x *Repository) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Repository.ProtoReflect.Descriptor instead.
 func (*Repository) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{10}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *Repository) GetId() string {
@@ -1244,13 +1141,6 @@ func (x *Repository) GetGitBranch() string {
 func (x *Repository) GetFacts() uint32 {
 	if x != nil {
 		return x.Facts
-	}
-	return 0
-}
-
-func (x *Repository) GetChunks() uint32 {
-	if x != nil {
-		return x.Chunks
 	}
 	return 0
 }
@@ -1309,7 +1199,7 @@ type RepositoryMapConfiguration struct {
 
 func (x *RepositoryMapConfiguration) Reset() {
 	*x = RepositoryMapConfiguration{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[11]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1321,7 +1211,7 @@ func (x *RepositoryMapConfiguration) String() string {
 func (*RepositoryMapConfiguration) ProtoMessage() {}
 
 func (x *RepositoryMapConfiguration) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[11]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1334,7 +1224,7 @@ func (x *RepositoryMapConfiguration) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RepositoryMapConfiguration.ProtoReflect.Descriptor instead.
 func (*RepositoryMapConfiguration) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{11}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *RepositoryMapConfiguration) GetResolution() float64 {
@@ -1418,7 +1308,7 @@ type RepositoryRemote struct {
 
 func (x *RepositoryRemote) Reset() {
 	*x = RepositoryRemote{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[12]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1430,7 +1320,7 @@ func (x *RepositoryRemote) String() string {
 func (*RepositoryRemote) ProtoMessage() {}
 
 func (x *RepositoryRemote) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[12]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1443,7 +1333,7 @@ func (x *RepositoryRemote) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RepositoryRemote.ProtoReflect.Descriptor instead.
 func (*RepositoryRemote) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{12}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *RepositoryRemote) GetName() string {
@@ -1485,7 +1375,7 @@ type RepositorySettings struct {
 
 func (x *RepositorySettings) Reset() {
 	*x = RepositorySettings{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[13]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1497,7 +1387,7 @@ func (x *RepositorySettings) String() string {
 func (*RepositorySettings) ProtoMessage() {}
 
 func (x *RepositorySettings) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[13]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1510,7 +1400,7 @@ func (x *RepositorySettings) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RepositorySettings.ProtoReflect.Descriptor instead.
 func (*RepositorySettings) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{13}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *RepositorySettings) GetMapDefaults() *RepositoryMapConfiguration {
@@ -1601,7 +1491,7 @@ type Snapshot struct {
 
 func (x *Snapshot) Reset() {
 	*x = Snapshot{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[14]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1613,7 +1503,7 @@ func (x *Snapshot) String() string {
 func (*Snapshot) ProtoMessage() {}
 
 func (x *Snapshot) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[14]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1626,7 +1516,7 @@ func (x *Snapshot) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Snapshot.ProtoReflect.Descriptor instead.
 func (*Snapshot) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{14}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *Snapshot) GetId() string {
@@ -1739,14 +1629,13 @@ type SnapshotStatistics struct {
 	Facts         uint32                 `protobuf:"varint,1,opt,name=facts,proto3" json:"facts,omitempty"`
 	Edges         uint32                 `protobuf:"varint,2,opt,name=edges,proto3" json:"edges,omitempty"`
 	Sources       uint32                 `protobuf:"varint,3,opt,name=sources,proto3" json:"sources,omitempty"`
-	Chunks        uint32                 `protobuf:"varint,4,opt,name=chunks,proto3" json:"chunks,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *SnapshotStatistics) Reset() {
 	*x = SnapshotStatistics{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[15]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1758,7 +1647,7 @@ func (x *SnapshotStatistics) String() string {
 func (*SnapshotStatistics) ProtoMessage() {}
 
 func (x *SnapshotStatistics) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[15]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1771,7 +1660,7 @@ func (x *SnapshotStatistics) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SnapshotStatistics.ProtoReflect.Descriptor instead.
 func (*SnapshotStatistics) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{15}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *SnapshotStatistics) GetFacts() uint32 {
@@ -1795,13 +1684,6 @@ func (x *SnapshotStatistics) GetSources() uint32 {
 	return 0
 }
 
-func (x *SnapshotStatistics) GetChunks() uint32 {
-	if x != nil {
-		return x.Chunks
-	}
-	return 0
-}
-
 type IndexRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Directory     string                 `protobuf:"bytes,1,opt,name=directory,proto3" json:"directory,omitempty"`
@@ -1809,10 +1691,10 @@ type IndexRequest struct {
 	Exclude       []string               `protobuf:"bytes,3,rep,name=exclude,proto3" json:"exclude,omitempty"`
 	ScipArtifacts map[string]string      `protobuf:"bytes,4,rep,name=scip_artifacts,json=scipArtifacts,proto3" json:"scip_artifacts,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	Detached      bool                   `protobuf:"varint,5,opt,name=detached,proto3" json:"detached,omitempty"`
-	// When true and the repository has a published snapshot, facts, chunks, and
-	// edges for sources whose content is unchanged are carried forward. An
-	// indexer re-runs only for projects with changed sources, and its unchanged
-	// documents are skipped. A snapshot with no changes is reused verbatim.
+	// When true and the repository has a published snapshot, facts and edges for
+	// sources whose content is unchanged are carried forward. An indexer re-runs
+	// only for projects with changed sources, and its unchanged documents are
+	// skipped. A snapshot with no changes is reused verbatim.
 	Incremental   bool `protobuf:"varint,6,opt,name=incremental,proto3" json:"incremental,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1820,7 +1702,7 @@ type IndexRequest struct {
 
 func (x *IndexRequest) Reset() {
 	*x = IndexRequest{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[16]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1832,7 +1714,7 @@ func (x *IndexRequest) String() string {
 func (*IndexRequest) ProtoMessage() {}
 
 func (x *IndexRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[16]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1845,7 +1727,7 @@ func (x *IndexRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IndexRequest.ProtoReflect.Descriptor instead.
 func (*IndexRequest) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{16}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *IndexRequest) GetDirectory() string {
@@ -1904,7 +1786,7 @@ type SourceChange struct {
 
 func (x *SourceChange) Reset() {
 	*x = SourceChange{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[17]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1916,7 +1798,7 @@ func (x *SourceChange) String() string {
 func (*SourceChange) ProtoMessage() {}
 
 func (x *SourceChange) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[17]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1929,7 +1811,7 @@ func (x *SourceChange) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SourceChange.ProtoReflect.Descriptor instead.
 func (*SourceChange) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{17}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *SourceChange) GetPath() string {
@@ -1987,7 +1869,7 @@ type CodeFactDelta struct {
 
 func (x *CodeFactDelta) Reset() {
 	*x = CodeFactDelta{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[18]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1999,7 +1881,7 @@ func (x *CodeFactDelta) String() string {
 func (*CodeFactDelta) ProtoMessage() {}
 
 func (x *CodeFactDelta) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[18]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2012,7 +1894,7 @@ func (x *CodeFactDelta) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CodeFactDelta.ProtoReflect.Descriptor instead.
 func (*CodeFactDelta) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{18}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *CodeFactDelta) GetAdded() []*CodeFact {
@@ -2049,7 +1931,7 @@ type EdgeFactDelta struct {
 
 func (x *EdgeFactDelta) Reset() {
 	*x = EdgeFactDelta{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[19]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2061,7 +1943,7 @@ func (x *EdgeFactDelta) String() string {
 func (*EdgeFactDelta) ProtoMessage() {}
 
 func (x *EdgeFactDelta) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[19]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2074,7 +1956,7 @@ func (x *EdgeFactDelta) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EdgeFactDelta.ProtoReflect.Descriptor instead.
 func (*EdgeFactDelta) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{19}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *EdgeFactDelta) GetAdded() []*EdgeFact {
@@ -2111,7 +1993,7 @@ type SnapshotDiffRequest struct {
 
 func (x *SnapshotDiffRequest) Reset() {
 	*x = SnapshotDiffRequest{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[20]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2123,7 +2005,7 @@ func (x *SnapshotDiffRequest) String() string {
 func (*SnapshotDiffRequest) ProtoMessage() {}
 
 func (x *SnapshotDiffRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[20]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2136,7 +2018,7 @@ func (x *SnapshotDiffRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SnapshotDiffRequest.ProtoReflect.Descriptor instead.
 func (*SnapshotDiffRequest) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{20}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *SnapshotDiffRequest) GetRepositoryId() string {
@@ -2183,7 +2065,7 @@ type SnapshotDiff struct {
 
 func (x *SnapshotDiff) Reset() {
 	*x = SnapshotDiff{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[21]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2195,7 +2077,7 @@ func (x *SnapshotDiff) String() string {
 func (*SnapshotDiff) ProtoMessage() {}
 
 func (x *SnapshotDiff) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[21]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2208,7 +2090,7 @@ func (x *SnapshotDiff) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SnapshotDiff.ProtoReflect.Descriptor instead.
 func (*SnapshotDiff) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{21}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *SnapshotDiff) GetRepositoryId() string {
@@ -2302,7 +2184,7 @@ type WatchStatus struct {
 
 func (x *WatchStatus) Reset() {
 	*x = WatchStatus{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[22]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2314,7 +2196,7 @@ func (x *WatchStatus) String() string {
 func (*WatchStatus) ProtoMessage() {}
 
 func (x *WatchStatus) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[22]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2327,7 +2209,7 @@ func (x *WatchStatus) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WatchStatus.ProtoReflect.Descriptor instead.
 func (*WatchStatus) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{22}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *WatchStatus) GetRepositoryId() string {
@@ -2515,7 +2397,7 @@ type GitCommit struct {
 
 func (x *GitCommit) Reset() {
 	*x = GitCommit{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[23]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2527,7 +2409,7 @@ func (x *GitCommit) String() string {
 func (*GitCommit) ProtoMessage() {}
 
 func (x *GitCommit) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[23]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2540,7 +2422,7 @@ func (x *GitCommit) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GitCommit.ProtoReflect.Descriptor instead.
 func (*GitCommit) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{23}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *GitCommit) GetSha() string {
@@ -2609,7 +2491,7 @@ type GitBranch struct {
 
 func (x *GitBranch) Reset() {
 	*x = GitBranch{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[24]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2621,7 +2503,7 @@ func (x *GitBranch) String() string {
 func (*GitBranch) ProtoMessage() {}
 
 func (x *GitBranch) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[24]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2634,7 +2516,7 @@ func (x *GitBranch) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GitBranch.ProtoReflect.Descriptor instead.
 func (*GitBranch) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{24}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *GitBranch) GetName() string {
@@ -2663,7 +2545,7 @@ type CommitFileChange struct {
 
 func (x *CommitFileChange) Reset() {
 	*x = CommitFileChange{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[25]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2675,7 +2557,7 @@ func (x *CommitFileChange) String() string {
 func (*CommitFileChange) ProtoMessage() {}
 
 func (x *CommitFileChange) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[25]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2688,7 +2570,7 @@ func (x *CommitFileChange) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CommitFileChange.ProtoReflect.Descriptor instead.
 func (*CommitFileChange) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{25}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *CommitFileChange) GetPath() string {
@@ -2732,7 +2614,7 @@ type OpenPullRequest struct {
 
 func (x *OpenPullRequest) Reset() {
 	*x = OpenPullRequest{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[26]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2744,7 +2626,7 @@ func (x *OpenPullRequest) String() string {
 func (*OpenPullRequest) ProtoMessage() {}
 
 func (x *OpenPullRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[26]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2757,7 +2639,7 @@ func (x *OpenPullRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OpenPullRequest.ProtoReflect.Descriptor instead.
 func (*OpenPullRequest) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{26}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *OpenPullRequest) GetNumber() uint32 {
@@ -2815,7 +2697,7 @@ type IndexerRequirement struct {
 
 func (x *IndexerRequirement) Reset() {
 	*x = IndexerRequirement{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[27]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2827,7 +2709,7 @@ func (x *IndexerRequirement) String() string {
 func (*IndexerRequirement) ProtoMessage() {}
 
 func (x *IndexerRequirement) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[27]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2840,7 +2722,7 @@ func (x *IndexerRequirement) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IndexerRequirement.ProtoReflect.Descriptor instead.
 func (*IndexerRequirement) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{27}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *IndexerRequirement) GetFamily() string {
@@ -2897,7 +2779,7 @@ type ImpactNode struct {
 
 func (x *ImpactNode) Reset() {
 	*x = ImpactNode{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[28]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2909,7 +2791,7 @@ func (x *ImpactNode) String() string {
 func (*ImpactNode) ProtoMessage() {}
 
 func (x *ImpactNode) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[28]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2922,7 +2804,7 @@ func (x *ImpactNode) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ImpactNode.ProtoReflect.Descriptor instead.
 func (*ImpactNode) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{28}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *ImpactNode) GetKey() string {
@@ -3000,7 +2882,7 @@ type ImpactEdge struct {
 
 func (x *ImpactEdge) Reset() {
 	*x = ImpactEdge{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[29]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3012,7 +2894,7 @@ func (x *ImpactEdge) String() string {
 func (*ImpactEdge) ProtoMessage() {}
 
 func (x *ImpactEdge) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[29]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3025,7 +2907,7 @@ func (x *ImpactEdge) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ImpactEdge.ProtoReflect.Descriptor instead.
 func (*ImpactEdge) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{29}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *ImpactEdge) GetFromKey() string {
@@ -3077,7 +2959,7 @@ type ImpactGroup struct {
 
 func (x *ImpactGroup) Reset() {
 	*x = ImpactGroup{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[30]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3089,7 +2971,7 @@ func (x *ImpactGroup) String() string {
 func (*ImpactGroup) ProtoMessage() {}
 
 func (x *ImpactGroup) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[30]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3102,7 +2984,7 @@ func (x *ImpactGroup) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ImpactGroup.ProtoReflect.Descriptor instead.
 func (*ImpactGroup) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{30}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *ImpactGroup) GetKey() string {
@@ -3167,7 +3049,7 @@ type ImpactDiagram struct {
 
 func (x *ImpactDiagram) Reset() {
 	*x = ImpactDiagram{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[31]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3179,7 +3061,7 @@ func (x *ImpactDiagram) String() string {
 func (*ImpactDiagram) ProtoMessage() {}
 
 func (x *ImpactDiagram) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[31]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3192,7 +3074,7 @@ func (x *ImpactDiagram) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ImpactDiagram.ProtoReflect.Descriptor instead.
 func (*ImpactDiagram) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{31}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *ImpactDiagram) GetRepositoryId() string {
@@ -3271,7 +3153,7 @@ type LiveImpact struct {
 
 func (x *LiveImpact) Reset() {
 	*x = LiveImpact{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[32]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3283,7 +3165,7 @@ func (x *LiveImpact) String() string {
 func (*LiveImpact) ProtoMessage() {}
 
 func (x *LiveImpact) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[32]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3296,7 +3178,7 @@ func (x *LiveImpact) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LiveImpact.ProtoReflect.Descriptor instead.
 func (*LiveImpact) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{32}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *LiveImpact) GetDiagram() *ImpactDiagram {
@@ -3351,7 +3233,7 @@ type ImpactSceneOverlay struct {
 
 func (x *ImpactSceneOverlay) Reset() {
 	*x = ImpactSceneOverlay{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[33]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3363,7 +3245,7 @@ func (x *ImpactSceneOverlay) String() string {
 func (*ImpactSceneOverlay) ProtoMessage() {}
 
 func (x *ImpactSceneOverlay) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[33]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3376,7 +3258,7 @@ func (x *ImpactSceneOverlay) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ImpactSceneOverlay.ProtoReflect.Descriptor instead.
 func (*ImpactSceneOverlay) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{33}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *ImpactSceneOverlay) GetChange() ChangeKind {
@@ -3433,7 +3315,7 @@ type ScenePlacement struct {
 
 func (x *ScenePlacement) Reset() {
 	*x = ScenePlacement{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[34]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3445,7 +3327,7 @@ func (x *ScenePlacement) String() string {
 func (*ScenePlacement) ProtoMessage() {}
 
 func (x *ScenePlacement) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[34]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3458,7 +3340,7 @@ func (x *ScenePlacement) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ScenePlacement.ProtoReflect.Descriptor instead.
 func (*ScenePlacement) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{34}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *ScenePlacement) GetElement() *v1.PlacedElement {
@@ -3485,7 +3367,7 @@ type SceneViewContent struct {
 
 func (x *SceneViewContent) Reset() {
 	*x = SceneViewContent{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[35]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3497,7 +3379,7 @@ func (x *SceneViewContent) String() string {
 func (*SceneViewContent) ProtoMessage() {}
 
 func (x *SceneViewContent) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[35]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3510,7 +3392,7 @@ func (x *SceneViewContent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SceneViewContent.ProtoReflect.Descriptor instead.
 func (*SceneViewContent) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{35}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *SceneViewContent) GetPlacements() []*ScenePlacement {
@@ -3546,7 +3428,7 @@ type ImpactScene struct {
 
 func (x *ImpactScene) Reset() {
 	*x = ImpactScene{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[36]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3558,7 +3440,7 @@ func (x *ImpactScene) String() string {
 func (*ImpactScene) ProtoMessage() {}
 
 func (x *ImpactScene) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[36]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3571,7 +3453,7 @@ func (x *ImpactScene) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ImpactScene.ProtoReflect.Descriptor instead.
 func (*ImpactScene) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{36}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *ImpactScene) GetTree() []*v1.View {
@@ -3618,7 +3500,7 @@ type MapResult struct {
 
 func (x *MapResult) Reset() {
 	*x = MapResult{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[37]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3630,7 +3512,7 @@ func (x *MapResult) String() string {
 func (*MapResult) ProtoMessage() {}
 
 func (x *MapResult) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[37]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3643,7 +3525,7 @@ func (x *MapResult) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MapResult.ProtoReflect.Descriptor instead.
 func (*MapResult) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{37}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *MapResult) GetRunId() string {
@@ -3716,7 +3598,7 @@ type CompletedMap struct {
 
 func (x *CompletedMap) Reset() {
 	*x = CompletedMap{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[38]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3728,7 +3610,7 @@ func (x *CompletedMap) String() string {
 func (*CompletedMap) ProtoMessage() {}
 
 func (x *CompletedMap) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[38]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3741,7 +3623,7 @@ func (x *CompletedMap) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CompletedMap.ProtoReflect.Descriptor instead.
 func (*CompletedMap) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{38}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *CompletedMap) GetResult() *MapResult {
@@ -3781,7 +3663,7 @@ type ListRepositoriesResponse struct {
 
 func (x *ListRepositoriesResponse) Reset() {
 	*x = ListRepositoriesResponse{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[39]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3793,7 +3675,7 @@ func (x *ListRepositoriesResponse) String() string {
 func (*ListRepositoriesResponse) ProtoMessage() {}
 
 func (x *ListRepositoriesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[39]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3806,7 +3688,7 @@ func (x *ListRepositoriesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRepositoriesResponse.ProtoReflect.Descriptor instead.
 func (*ListRepositoriesResponse) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{39}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *ListRepositoriesResponse) GetRepositories() []*Repository {
@@ -3830,7 +3712,7 @@ type GetWorktreeSourceRequest struct {
 
 func (x *GetWorktreeSourceRequest) Reset() {
 	*x = GetWorktreeSourceRequest{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[40]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3842,7 +3724,7 @@ func (x *GetWorktreeSourceRequest) String() string {
 func (*GetWorktreeSourceRequest) ProtoMessage() {}
 
 func (x *GetWorktreeSourceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[40]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3855,7 +3737,7 @@ func (x *GetWorktreeSourceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetWorktreeSourceRequest.ProtoReflect.Descriptor instead.
 func (*GetWorktreeSourceRequest) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{40}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *GetWorktreeSourceRequest) GetRepositoryId() string {
@@ -3889,7 +3771,7 @@ type GetWorktreeSourceResponse struct {
 
 func (x *GetWorktreeSourceResponse) Reset() {
 	*x = GetWorktreeSourceResponse{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[41]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3901,7 +3783,7 @@ func (x *GetWorktreeSourceResponse) String() string {
 func (*GetWorktreeSourceResponse) ProtoMessage() {}
 
 func (x *GetWorktreeSourceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[41]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3914,7 +3796,7 @@ func (x *GetWorktreeSourceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetWorktreeSourceResponse.ProtoReflect.Descriptor instead.
 func (*GetWorktreeSourceResponse) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{41}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *GetWorktreeSourceResponse) GetContent() string {
@@ -3941,7 +3823,7 @@ type UpdateRepositoryMapConfigurationRequest struct {
 
 func (x *UpdateRepositoryMapConfigurationRequest) Reset() {
 	*x = UpdateRepositoryMapConfigurationRequest{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[42]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3953,7 +3835,7 @@ func (x *UpdateRepositoryMapConfigurationRequest) String() string {
 func (*UpdateRepositoryMapConfigurationRequest) ProtoMessage() {}
 
 func (x *UpdateRepositoryMapConfigurationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[42]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3966,7 +3848,7 @@ func (x *UpdateRepositoryMapConfigurationRequest) ProtoReflect() protoreflect.Me
 
 // Deprecated: Use UpdateRepositoryMapConfigurationRequest.ProtoReflect.Descriptor instead.
 func (*UpdateRepositoryMapConfigurationRequest) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{42}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *UpdateRepositoryMapConfigurationRequest) GetRepositoryId() string {
@@ -3996,7 +3878,7 @@ type UpdateRepositoryRemoteRequest struct {
 
 func (x *UpdateRepositoryRemoteRequest) Reset() {
 	*x = UpdateRepositoryRemoteRequest{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[43]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4008,7 +3890,7 @@ func (x *UpdateRepositoryRemoteRequest) String() string {
 func (*UpdateRepositoryRemoteRequest) ProtoMessage() {}
 
 func (x *UpdateRepositoryRemoteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[43]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4021,7 +3903,7 @@ func (x *UpdateRepositoryRemoteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateRepositoryRemoteRequest.ProtoReflect.Descriptor instead.
 func (*UpdateRepositoryRemoteRequest) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{43}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *UpdateRepositoryRemoteRequest) GetRepositoryId() string {
@@ -4062,7 +3944,7 @@ type DeleteRepositoryRequest struct {
 
 func (x *DeleteRepositoryRequest) Reset() {
 	*x = DeleteRepositoryRequest{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[44]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4074,7 +3956,7 @@ func (x *DeleteRepositoryRequest) String() string {
 func (*DeleteRepositoryRequest) ProtoMessage() {}
 
 func (x *DeleteRepositoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[44]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4087,7 +3969,7 @@ func (x *DeleteRepositoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteRepositoryRequest.ProtoReflect.Descriptor instead.
 func (*DeleteRepositoryRequest) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{44}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *DeleteRepositoryRequest) GetId() string {
@@ -4119,7 +4001,7 @@ type DeleteRepositoryResponse struct {
 
 func (x *DeleteRepositoryResponse) Reset() {
 	*x = DeleteRepositoryResponse{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[45]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4131,7 +4013,7 @@ func (x *DeleteRepositoryResponse) String() string {
 func (*DeleteRepositoryResponse) ProtoMessage() {}
 
 func (x *DeleteRepositoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[45]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4144,7 +4026,7 @@ func (x *DeleteRepositoryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteRepositoryResponse.ProtoReflect.Descriptor instead.
 func (*DeleteRepositoryResponse) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{45}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{44}
 }
 
 type AddRepositoryRequest struct {
@@ -4164,7 +4046,7 @@ type AddRepositoryRequest struct {
 
 func (x *AddRepositoryRequest) Reset() {
 	*x = AddRepositoryRequest{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[46]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4176,7 +4058,7 @@ func (x *AddRepositoryRequest) String() string {
 func (*AddRepositoryRequest) ProtoMessage() {}
 
 func (x *AddRepositoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[46]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4189,7 +4071,7 @@ func (x *AddRepositoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddRepositoryRequest.ProtoReflect.Descriptor instead.
 func (*AddRepositoryRequest) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{46}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *AddRepositoryRequest) GetPath() string {
@@ -4226,7 +4108,7 @@ type AddRepositoryEvent struct {
 
 func (x *AddRepositoryEvent) Reset() {
 	*x = AddRepositoryEvent{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[47]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4238,7 +4120,7 @@ func (x *AddRepositoryEvent) String() string {
 func (*AddRepositoryEvent) ProtoMessage() {}
 
 func (x *AddRepositoryEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[47]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4251,7 +4133,7 @@ func (x *AddRepositoryEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddRepositoryEvent.ProtoReflect.Descriptor instead.
 func (*AddRepositoryEvent) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{47}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *AddRepositoryEvent) GetEvent() isAddRepositoryEvent_Event {
@@ -4307,7 +4189,7 @@ type CheckRepositoryIndexersRequest struct {
 
 func (x *CheckRepositoryIndexersRequest) Reset() {
 	*x = CheckRepositoryIndexersRequest{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[48]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4319,7 +4201,7 @@ func (x *CheckRepositoryIndexersRequest) String() string {
 func (*CheckRepositoryIndexersRequest) ProtoMessage() {}
 
 func (x *CheckRepositoryIndexersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[48]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4332,7 +4214,7 @@ func (x *CheckRepositoryIndexersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckRepositoryIndexersRequest.ProtoReflect.Descriptor instead.
 func (*CheckRepositoryIndexersRequest) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{48}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *CheckRepositoryIndexersRequest) GetPath() string {
@@ -4360,7 +4242,7 @@ type CheckRepositoryIndexersResponse struct {
 
 func (x *CheckRepositoryIndexersResponse) Reset() {
 	*x = CheckRepositoryIndexersResponse{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[49]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4372,7 +4254,7 @@ func (x *CheckRepositoryIndexersResponse) String() string {
 func (*CheckRepositoryIndexersResponse) ProtoMessage() {}
 
 func (x *CheckRepositoryIndexersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[49]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4385,7 +4267,7 @@ func (x *CheckRepositoryIndexersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckRepositoryIndexersResponse.ProtoReflect.Descriptor instead.
 func (*CheckRepositoryIndexersResponse) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{49}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *CheckRepositoryIndexersResponse) GetIndexers() []*IndexerRequirement {
@@ -4413,7 +4295,7 @@ type StartWatchRequest struct {
 
 func (x *StartWatchRequest) Reset() {
 	*x = StartWatchRequest{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[50]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4425,7 +4307,7 @@ func (x *StartWatchRequest) String() string {
 func (*StartWatchRequest) ProtoMessage() {}
 
 func (x *StartWatchRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[50]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4438,7 +4320,7 @@ func (x *StartWatchRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartWatchRequest.ProtoReflect.Descriptor instead.
 func (*StartWatchRequest) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{50}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *StartWatchRequest) GetRepositoryId() string {
@@ -4464,7 +4346,7 @@ type ListWatchesResponse struct {
 
 func (x *ListWatchesResponse) Reset() {
 	*x = ListWatchesResponse{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[51]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4476,7 +4358,7 @@ func (x *ListWatchesResponse) String() string {
 func (*ListWatchesResponse) ProtoMessage() {}
 
 func (x *ListWatchesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[51]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4489,7 +4371,7 @@ func (x *ListWatchesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListWatchesResponse.ProtoReflect.Descriptor instead.
 func (*ListWatchesResponse) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{51}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *ListWatchesResponse) GetWatchers() []*WatchStatus {
@@ -4512,7 +4394,7 @@ type GetGitHistoryRequest struct {
 
 func (x *GetGitHistoryRequest) Reset() {
 	*x = GetGitHistoryRequest{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[52]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4524,7 +4406,7 @@ func (x *GetGitHistoryRequest) String() string {
 func (*GetGitHistoryRequest) ProtoMessage() {}
 
 func (x *GetGitHistoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[52]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4537,7 +4419,7 @@ func (x *GetGitHistoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetGitHistoryRequest.ProtoReflect.Descriptor instead.
 func (*GetGitHistoryRequest) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{52}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *GetGitHistoryRequest) GetRepositoryId() string {
@@ -4577,7 +4459,7 @@ type GetGitHistoryResponse struct {
 
 func (x *GetGitHistoryResponse) Reset() {
 	*x = GetGitHistoryResponse{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[53]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4589,7 +4471,7 @@ func (x *GetGitHistoryResponse) String() string {
 func (*GetGitHistoryResponse) ProtoMessage() {}
 
 func (x *GetGitHistoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[53]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4602,7 +4484,7 @@ func (x *GetGitHistoryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetGitHistoryResponse.ProtoReflect.Descriptor instead.
 func (*GetGitHistoryResponse) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{53}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *GetGitHistoryResponse) GetCommits() []*GitCommit {
@@ -4666,7 +4548,7 @@ type GetPullRequestRequest struct {
 
 func (x *GetPullRequestRequest) Reset() {
 	*x = GetPullRequestRequest{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[54]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4678,7 +4560,7 @@ func (x *GetPullRequestRequest) String() string {
 func (*GetPullRequestRequest) ProtoMessage() {}
 
 func (x *GetPullRequestRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[54]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4691,7 +4573,7 @@ func (x *GetPullRequestRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPullRequestRequest.ProtoReflect.Descriptor instead.
 func (*GetPullRequestRequest) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{54}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *GetPullRequestRequest) GetRepositoryId() string {
@@ -4722,7 +4604,7 @@ type GetPullRequestResponse struct {
 
 func (x *GetPullRequestResponse) Reset() {
 	*x = GetPullRequestResponse{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[55]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4734,7 +4616,7 @@ func (x *GetPullRequestResponse) String() string {
 func (*GetPullRequestResponse) ProtoMessage() {}
 
 func (x *GetPullRequestResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[55]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4747,7 +4629,7 @@ func (x *GetPullRequestResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPullRequestResponse.ProtoReflect.Descriptor instead.
 func (*GetPullRequestResponse) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{55}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *GetPullRequestResponse) GetTitle() string {
@@ -4801,7 +4683,7 @@ type ListPullRequestsResponse struct {
 
 func (x *ListPullRequestsResponse) Reset() {
 	*x = ListPullRequestsResponse{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[56]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4813,7 +4695,7 @@ func (x *ListPullRequestsResponse) String() string {
 func (*ListPullRequestsResponse) ProtoMessage() {}
 
 func (x *ListPullRequestsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[56]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4826,7 +4708,7 @@ func (x *ListPullRequestsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPullRequestsResponse.ProtoReflect.Descriptor instead.
 func (*ListPullRequestsResponse) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{56}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *ListPullRequestsResponse) GetPullRequests() []*OpenPullRequest {
@@ -4846,7 +4728,7 @@ type GetCommitDetailsRequest struct {
 
 func (x *GetCommitDetailsRequest) Reset() {
 	*x = GetCommitDetailsRequest{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[57]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4858,7 +4740,7 @@ func (x *GetCommitDetailsRequest) String() string {
 func (*GetCommitDetailsRequest) ProtoMessage() {}
 
 func (x *GetCommitDetailsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[57]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4871,7 +4753,7 @@ func (x *GetCommitDetailsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCommitDetailsRequest.ProtoReflect.Descriptor instead.
 func (*GetCommitDetailsRequest) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{57}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *GetCommitDetailsRequest) GetRepositoryId() string {
@@ -4898,7 +4780,7 @@ type GetCommitDetailsResponse struct {
 
 func (x *GetCommitDetailsResponse) Reset() {
 	*x = GetCommitDetailsResponse{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[58]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4910,7 +4792,7 @@ func (x *GetCommitDetailsResponse) String() string {
 func (*GetCommitDetailsResponse) ProtoMessage() {}
 
 func (x *GetCommitDetailsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[58]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4923,7 +4805,7 @@ func (x *GetCommitDetailsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCommitDetailsResponse.ProtoReflect.Descriptor instead.
 func (*GetCommitDetailsResponse) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{58}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *GetCommitDetailsResponse) GetCommit() *GitCommit {
@@ -4955,7 +4837,7 @@ type CodeFactFilter struct {
 
 func (x *CodeFactFilter) Reset() {
 	*x = CodeFactFilter{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[59]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4967,7 +4849,7 @@ func (x *CodeFactFilter) String() string {
 func (*CodeFactFilter) ProtoMessage() {}
 
 func (x *CodeFactFilter) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[59]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4980,7 +4862,7 @@ func (x *CodeFactFilter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CodeFactFilter.ProtoReflect.Descriptor instead.
 func (*CodeFactFilter) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{59}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{58}
 }
 
 func (x *CodeFactFilter) GetRepositoryId() string {
@@ -5042,7 +4924,7 @@ type CodeFactPage struct {
 
 func (x *CodeFactPage) Reset() {
 	*x = CodeFactPage{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[60]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5054,7 +4936,7 @@ func (x *CodeFactPage) String() string {
 func (*CodeFactPage) ProtoMessage() {}
 
 func (x *CodeFactPage) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[60]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5067,7 +4949,7 @@ func (x *CodeFactPage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CodeFactPage.ProtoReflect.Descriptor instead.
 func (*CodeFactPage) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{60}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{59}
 }
 
 func (x *CodeFactPage) GetFacts() []*CodeFact {
@@ -5093,7 +4975,7 @@ type ListSnapshotsResponse struct {
 
 func (x *ListSnapshotsResponse) Reset() {
 	*x = ListSnapshotsResponse{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[61]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[60]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5105,7 +4987,7 @@ func (x *ListSnapshotsResponse) String() string {
 func (*ListSnapshotsResponse) ProtoMessage() {}
 
 func (x *ListSnapshotsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[61]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[60]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5118,7 +5000,7 @@ func (x *ListSnapshotsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSnapshotsResponse.ProtoReflect.Descriptor instead.
 func (*ListSnapshotsResponse) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{61}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{60}
 }
 
 func (x *ListSnapshotsResponse) GetSnapshots() []*Snapshot {
@@ -5136,7 +5018,7 @@ type DeleteSnapshotResponse struct {
 
 func (x *DeleteSnapshotResponse) Reset() {
 	*x = DeleteSnapshotResponse{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[62]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[61]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5148,7 +5030,7 @@ func (x *DeleteSnapshotResponse) String() string {
 func (*DeleteSnapshotResponse) ProtoMessage() {}
 
 func (x *DeleteSnapshotResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[62]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[61]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5161,7 +5043,7 @@ func (x *DeleteSnapshotResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSnapshotResponse.ProtoReflect.Descriptor instead.
 func (*DeleteSnapshotResponse) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{62}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{61}
 }
 
 type MapRepositoryRequest struct {
@@ -5179,7 +5061,7 @@ type MapRepositoryRequest struct {
 
 func (x *MapRepositoryRequest) Reset() {
 	*x = MapRepositoryRequest{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[63]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[62]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5191,7 +5073,7 @@ func (x *MapRepositoryRequest) String() string {
 func (*MapRepositoryRequest) ProtoMessage() {}
 
 func (x *MapRepositoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[63]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[62]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5204,7 +5086,7 @@ func (x *MapRepositoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MapRepositoryRequest.ProtoReflect.Descriptor instead.
 func (*MapRepositoryRequest) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{63}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{62}
 }
 
 func (x *MapRepositoryRequest) GetRepositoryId() string {
@@ -5241,7 +5123,7 @@ type MapRepositoryEvent struct {
 
 func (x *MapRepositoryEvent) Reset() {
 	*x = MapRepositoryEvent{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[64]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[63]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5253,7 +5135,7 @@ func (x *MapRepositoryEvent) String() string {
 func (*MapRepositoryEvent) ProtoMessage() {}
 
 func (x *MapRepositoryEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[64]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[63]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5266,7 +5148,7 @@ func (x *MapRepositoryEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MapRepositoryEvent.ProtoReflect.Descriptor instead.
 func (*MapRepositoryEvent) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{64}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{63}
 }
 
 func (x *MapRepositoryEvent) GetEvent() isMapRepositoryEvent_Event {
@@ -5319,7 +5201,7 @@ type ListMapsResponse struct {
 
 func (x *ListMapsResponse) Reset() {
 	*x = ListMapsResponse{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[65]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[64]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5331,7 +5213,7 @@ func (x *ListMapsResponse) String() string {
 func (*ListMapsResponse) ProtoMessage() {}
 
 func (x *ListMapsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[65]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[64]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5344,7 +5226,7 @@ func (x *ListMapsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListMapsResponse.ProtoReflect.Descriptor instead.
 func (*ListMapsResponse) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{65}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{64}
 }
 
 func (x *ListMapsResponse) GetMaps() []*CompletedMap {
@@ -5369,7 +5251,7 @@ type CompareRepositoryRequest struct {
 
 func (x *CompareRepositoryRequest) Reset() {
 	*x = CompareRepositoryRequest{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[66]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[65]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5381,7 +5263,7 @@ func (x *CompareRepositoryRequest) String() string {
 func (*CompareRepositoryRequest) ProtoMessage() {}
 
 func (x *CompareRepositoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[66]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[65]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5394,7 +5276,7 @@ func (x *CompareRepositoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CompareRepositoryRequest.ProtoReflect.Descriptor instead.
 func (*CompareRepositoryRequest) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{66}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{65}
 }
 
 func (x *CompareRepositoryRequest) GetRepositoryId() string {
@@ -5438,7 +5320,7 @@ type CompareRepositoryEvent struct {
 
 func (x *CompareRepositoryEvent) Reset() {
 	*x = CompareRepositoryEvent{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[67]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[66]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5450,7 +5332,7 @@ func (x *CompareRepositoryEvent) String() string {
 func (*CompareRepositoryEvent) ProtoMessage() {}
 
 func (x *CompareRepositoryEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[67]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[66]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5463,7 +5345,7 @@ func (x *CompareRepositoryEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CompareRepositoryEvent.ProtoReflect.Descriptor instead.
 func (*CompareRepositoryEvent) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{67}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{66}
 }
 
 func (x *CompareRepositoryEvent) GetEvent() isCompareRepositoryEvent_Event {
@@ -5521,7 +5403,7 @@ type ExportImpactMermaidRequest struct {
 
 func (x *ExportImpactMermaidRequest) Reset() {
 	*x = ExportImpactMermaidRequest{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[68]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[67]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5533,7 +5415,7 @@ func (x *ExportImpactMermaidRequest) String() string {
 func (*ExportImpactMermaidRequest) ProtoMessage() {}
 
 func (x *ExportImpactMermaidRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[68]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[67]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5546,7 +5428,7 @@ func (x *ExportImpactMermaidRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExportImpactMermaidRequest.ProtoReflect.Descriptor instead.
 func (*ExportImpactMermaidRequest) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{68}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{67}
 }
 
 func (x *ExportImpactMermaidRequest) GetRepositoryId() string {
@@ -5588,7 +5470,7 @@ type ExportImpactMermaidResponse struct {
 
 func (x *ExportImpactMermaidResponse) Reset() {
 	*x = ExportImpactMermaidResponse{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[69]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[68]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5600,7 +5482,7 @@ func (x *ExportImpactMermaidResponse) String() string {
 func (*ExportImpactMermaidResponse) ProtoMessage() {}
 
 func (x *ExportImpactMermaidResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[69]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[68]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5613,7 +5495,7 @@ func (x *ExportImpactMermaidResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExportImpactMermaidResponse.ProtoReflect.Descriptor instead.
 func (*ExportImpactMermaidResponse) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{69}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{68}
 }
 
 func (x *ExportImpactMermaidResponse) GetCode() string {
@@ -5647,7 +5529,7 @@ type GetImpactSceneRequest struct {
 
 func (x *GetImpactSceneRequest) Reset() {
 	*x = GetImpactSceneRequest{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[70]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[69]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5659,7 +5541,7 @@ func (x *GetImpactSceneRequest) String() string {
 func (*GetImpactSceneRequest) ProtoMessage() {}
 
 func (x *GetImpactSceneRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[70]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[69]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5672,7 +5554,7 @@ func (x *GetImpactSceneRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetImpactSceneRequest.ProtoReflect.Descriptor instead.
 func (*GetImpactSceneRequest) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{70}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{69}
 }
 
 func (x *GetImpactSceneRequest) GetRepositoryId() string {
@@ -5698,7 +5580,7 @@ type GetImpactSceneResponse struct {
 
 func (x *GetImpactSceneResponse) Reset() {
 	*x = GetImpactSceneResponse{}
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[71]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[70]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5710,7 +5592,7 @@ func (x *GetImpactSceneResponse) String() string {
 func (*GetImpactSceneResponse) ProtoMessage() {}
 
 func (x *GetImpactSceneResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_codeindex_v1_codeindex_proto_msgTypes[71]
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[70]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5723,7 +5605,7 @@ func (x *GetImpactSceneResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetImpactSceneResponse.ProtoReflect.Descriptor instead.
 func (*GetImpactSceneResponse) Descriptor() ([]byte, []int) {
-	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{71}
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{70}
 }
 
 func (x *GetImpactSceneResponse) GetScene() *ImpactScene {
@@ -5774,7 +5656,7 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"\x06anchor\x18\x05 \x01(\v2\x1a.codeindex.v1.SourceAnchorR\x06anchor\x12\x1e\n" +
 	"\n" +
 	"derivation\x18\x06 \x01(\tR\n" +
-	"derivation\"\xa3\x04\n" +
+	"derivation\"\xac\x04\n" +
 	"\bCodeFact\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12#\n" +
 	"\rrepository_id\x18\x02 \x01(\tR\frepositoryId\x12\x1f\n" +
@@ -5789,23 +5671,13 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"symbol_key\x18\t \x01(\tR\tsymbolKey\x12\x1c\n" +
 	"\tsignature\x18\n" +
 	" \x01(\tR\tsignature\x12$\n" +
-	"\rdocumentation\x18\v \x01(\tR\rdocumentation\x12\x12\n" +
-	"\x04code\x18\f \x01(\tR\x04code\x12$\n" +
+	"\rdocumentation\x18\v \x01(\tR\rdocumentation\x12\x1b\n" +
+	"\tbody_hash\x18\f \x01(\tR\bbodyHash\x12$\n" +
 	"\x0eparent_fact_id\x18\r \x01(\tR\fparentFactId\x122\n" +
 	"\bevidence\x18\x0e \x03(\v2\x16.codeindex.v1.EvidenceR\bevidence\x12\x18\n" +
 	"\aimports\x18\x0f \x03(\tR\aimports\x12\x1f\n" +
 	"\vlogical_key\x18\x10 \x01(\tR\n" +
-	"logicalKey\"\xdf\x01\n" +
-	"\x05Chunk\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
-	"\afact_id\x18\x02 \x01(\tR\x06factId\x12\x1f\n" +
-	"\vsnapshot_id\x18\x03 \x01(\tR\n" +
-	"snapshotId\x122\n" +
-	"\x06anchor\x18\x04 \x01(\v2\x1a.codeindex.v1.SourceAnchorR\x06anchor\x12\x12\n" +
-	"\x04text\x18\x05 \x01(\tR\x04text\x12\x18\n" +
-	"\acontext\x18\x06 \x01(\tR\acontext\x12\x14\n" +
-	"\x05index\x18\a \x01(\rR\x05index\x12\x14\n" +
-	"\x05total\x18\b \x01(\rR\x05total\"\x99\x03\n" +
+	"logicalKey\"\x99\x03\n" +
 	"\bEdgeFact\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12#\n" +
 	"\rrepository_id\x18\x02 \x01(\tR\frepositoryId\x12\x1f\n" +
@@ -5832,7 +5704,7 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"SourceFile\x12\x12\n" +
 	"\x04path\x18\x01 \x01(\tR\x04path\x12\x12\n" +
 	"\x04hash\x18\x02 \x01(\tR\x04hash\x12\x12\n" +
-	"\x04size\x18\x03 \x01(\x04R\x04size\"\xfb\x02\n" +
+	"\x04size\x18\x03 \x01(\x04R\x04size\"\xe3\x02\n" +
 	"\n" +
 	"Repository\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
@@ -5842,8 +5714,7 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"\fgit_revision\x18\x05 \x01(\tR\vgitRevision\x12\x1d\n" +
 	"\n" +
 	"git_branch\x18\x06 \x01(\tR\tgitBranch\x12\x14\n" +
-	"\x05facts\x18\a \x01(\rR\x05facts\x12\x16\n" +
-	"\x06chunks\x18\b \x01(\rR\x06chunks\x12\x14\n" +
+	"\x05facts\x18\a \x01(\rR\x05facts\x12\x14\n" +
 	"\x05edges\x18\t \x01(\rR\x05edges\x12\x18\n" +
 	"\asources\x18\n" +
 	" \x01(\rR\asources\x12\x1d\n" +
@@ -5915,12 +5786,11 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"\x0ecommit_message\x18\x10 \x01(\tR\rcommitMessage\x1a?\n" +
 	"\x11ToolVersionsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"r\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"Z\n" +
 	"\x12SnapshotStatistics\x12\x14\n" +
 	"\x05facts\x18\x01 \x01(\rR\x05facts\x12\x14\n" +
 	"\x05edges\x18\x02 \x01(\rR\x05edges\x12\x18\n" +
-	"\asources\x18\x03 \x01(\rR\asources\x12\x16\n" +
-	"\x06chunks\x18\x04 \x01(\rR\x06chunks\"\xc1\x02\n" +
+	"\asources\x18\x03 \x01(\rR\asources\"\xc1\x02\n" +
 	"\fIndexRequest\x12\x1c\n" +
 	"\tdirectory\x18\x01 \x01(\tR\tdirectory\x12#\n" +
 	"\rproject_roots\x18\x02 \x03(\tR\fprojectRoots\x12\x18\n" +
@@ -6328,7 +6198,7 @@ func file_codeindex_v1_codeindex_proto_rawDescGZIP() []byte {
 }
 
 var file_codeindex_v1_codeindex_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_codeindex_v1_codeindex_proto_msgTypes = make([]protoimpl.MessageInfo, 75)
+var file_codeindex_v1_codeindex_proto_msgTypes = make([]protoimpl.MessageInfo, 74)
 var file_codeindex_v1_codeindex_proto_goTypes = []any{
 	(FactKind)(0),                                   // 0: codeindex.v1.FactKind
 	(EdgeKind)(0),                                   // 1: codeindex.v1.EdgeKind
@@ -6339,209 +6209,207 @@ var file_codeindex_v1_codeindex_proto_goTypes = []any{
 	(*SourceAnchor)(nil),                            // 6: codeindex.v1.SourceAnchor
 	(*Evidence)(nil),                                // 7: codeindex.v1.Evidence
 	(*CodeFact)(nil),                                // 8: codeindex.v1.CodeFact
-	(*Chunk)(nil),                                   // 9: codeindex.v1.Chunk
-	(*EdgeFact)(nil),                                // 10: codeindex.v1.EdgeFact
-	(*Project)(nil),                                 // 11: codeindex.v1.Project
-	(*SourceFile)(nil),                              // 12: codeindex.v1.SourceFile
-	(*Repository)(nil),                              // 13: codeindex.v1.Repository
-	(*RepositoryMapConfiguration)(nil),              // 14: codeindex.v1.RepositoryMapConfiguration
-	(*RepositoryRemote)(nil),                        // 15: codeindex.v1.RepositoryRemote
-	(*RepositorySettings)(nil),                      // 16: codeindex.v1.RepositorySettings
-	(*Snapshot)(nil),                                // 17: codeindex.v1.Snapshot
-	(*SnapshotStatistics)(nil),                      // 18: codeindex.v1.SnapshotStatistics
-	(*IndexRequest)(nil),                            // 19: codeindex.v1.IndexRequest
-	(*SourceChange)(nil),                            // 20: codeindex.v1.SourceChange
-	(*CodeFactDelta)(nil),                           // 21: codeindex.v1.CodeFactDelta
-	(*EdgeFactDelta)(nil),                           // 22: codeindex.v1.EdgeFactDelta
-	(*SnapshotDiffRequest)(nil),                     // 23: codeindex.v1.SnapshotDiffRequest
-	(*SnapshotDiff)(nil),                            // 24: codeindex.v1.SnapshotDiff
-	(*WatchStatus)(nil),                             // 25: codeindex.v1.WatchStatus
-	(*GitCommit)(nil),                               // 26: codeindex.v1.GitCommit
-	(*GitBranch)(nil),                               // 27: codeindex.v1.GitBranch
-	(*CommitFileChange)(nil),                        // 28: codeindex.v1.CommitFileChange
-	(*OpenPullRequest)(nil),                         // 29: codeindex.v1.OpenPullRequest
-	(*IndexerRequirement)(nil),                      // 30: codeindex.v1.IndexerRequirement
-	(*ImpactNode)(nil),                              // 31: codeindex.v1.ImpactNode
-	(*ImpactEdge)(nil),                              // 32: codeindex.v1.ImpactEdge
-	(*ImpactGroup)(nil),                             // 33: codeindex.v1.ImpactGroup
-	(*ImpactDiagram)(nil),                           // 34: codeindex.v1.ImpactDiagram
-	(*LiveImpact)(nil),                              // 35: codeindex.v1.LiveImpact
-	(*ImpactSceneOverlay)(nil),                      // 36: codeindex.v1.ImpactSceneOverlay
-	(*ScenePlacement)(nil),                          // 37: codeindex.v1.ScenePlacement
-	(*SceneViewContent)(nil),                        // 38: codeindex.v1.SceneViewContent
-	(*ImpactScene)(nil),                             // 39: codeindex.v1.ImpactScene
-	(*MapResult)(nil),                               // 40: codeindex.v1.MapResult
-	(*CompletedMap)(nil),                            // 41: codeindex.v1.CompletedMap
-	(*ListRepositoriesResponse)(nil),                // 42: codeindex.v1.ListRepositoriesResponse
-	(*GetWorktreeSourceRequest)(nil),                // 43: codeindex.v1.GetWorktreeSourceRequest
-	(*GetWorktreeSourceResponse)(nil),               // 44: codeindex.v1.GetWorktreeSourceResponse
-	(*UpdateRepositoryMapConfigurationRequest)(nil), // 45: codeindex.v1.UpdateRepositoryMapConfigurationRequest
-	(*UpdateRepositoryRemoteRequest)(nil),           // 46: codeindex.v1.UpdateRepositoryRemoteRequest
-	(*DeleteRepositoryRequest)(nil),                 // 47: codeindex.v1.DeleteRepositoryRequest
-	(*DeleteRepositoryResponse)(nil),                // 48: codeindex.v1.DeleteRepositoryResponse
-	(*AddRepositoryRequest)(nil),                    // 49: codeindex.v1.AddRepositoryRequest
-	(*AddRepositoryEvent)(nil),                      // 50: codeindex.v1.AddRepositoryEvent
-	(*CheckRepositoryIndexersRequest)(nil),          // 51: codeindex.v1.CheckRepositoryIndexersRequest
-	(*CheckRepositoryIndexersResponse)(nil),         // 52: codeindex.v1.CheckRepositoryIndexersResponse
-	(*StartWatchRequest)(nil),                       // 53: codeindex.v1.StartWatchRequest
-	(*ListWatchesResponse)(nil),                     // 54: codeindex.v1.ListWatchesResponse
-	(*GetGitHistoryRequest)(nil),                    // 55: codeindex.v1.GetGitHistoryRequest
-	(*GetGitHistoryResponse)(nil),                   // 56: codeindex.v1.GetGitHistoryResponse
-	(*GetPullRequestRequest)(nil),                   // 57: codeindex.v1.GetPullRequestRequest
-	(*GetPullRequestResponse)(nil),                  // 58: codeindex.v1.GetPullRequestResponse
-	(*ListPullRequestsResponse)(nil),                // 59: codeindex.v1.ListPullRequestsResponse
-	(*GetCommitDetailsRequest)(nil),                 // 60: codeindex.v1.GetCommitDetailsRequest
-	(*GetCommitDetailsResponse)(nil),                // 61: codeindex.v1.GetCommitDetailsResponse
-	(*CodeFactFilter)(nil),                          // 62: codeindex.v1.CodeFactFilter
-	(*CodeFactPage)(nil),                            // 63: codeindex.v1.CodeFactPage
-	(*ListSnapshotsResponse)(nil),                   // 64: codeindex.v1.ListSnapshotsResponse
-	(*DeleteSnapshotResponse)(nil),                  // 65: codeindex.v1.DeleteSnapshotResponse
-	(*MapRepositoryRequest)(nil),                    // 66: codeindex.v1.MapRepositoryRequest
-	(*MapRepositoryEvent)(nil),                      // 67: codeindex.v1.MapRepositoryEvent
-	(*ListMapsResponse)(nil),                        // 68: codeindex.v1.ListMapsResponse
-	(*CompareRepositoryRequest)(nil),                // 69: codeindex.v1.CompareRepositoryRequest
-	(*CompareRepositoryEvent)(nil),                  // 70: codeindex.v1.CompareRepositoryEvent
-	(*ExportImpactMermaidRequest)(nil),              // 71: codeindex.v1.ExportImpactMermaidRequest
-	(*ExportImpactMermaidResponse)(nil),             // 72: codeindex.v1.ExportImpactMermaidResponse
-	(*GetImpactSceneRequest)(nil),                   // 73: codeindex.v1.GetImpactSceneRequest
-	(*GetImpactSceneResponse)(nil),                  // 74: codeindex.v1.GetImpactSceneResponse
-	nil,                                             // 75: codeindex.v1.Snapshot.ToolVersionsEntry
-	nil,                                             // 76: codeindex.v1.IndexRequest.ScipArtifactsEntry
-	nil,                                             // 77: codeindex.v1.ImpactScene.ViewsEntry
-	(*v1.PlacedElement)(nil),                        // 78: diag.v1.PlacedElement
-	(*v1.Connector)(nil),                            // 79: diag.v1.Connector
-	(*v1.View)(nil),                                 // 80: diag.v1.View
-	(*v1.ElementNavigationInfo)(nil),                // 81: diag.v1.ElementNavigationInfo
-	(*emptypb.Empty)(nil),                           // 82: google.protobuf.Empty
+	(*EdgeFact)(nil),                                // 9: codeindex.v1.EdgeFact
+	(*Project)(nil),                                 // 10: codeindex.v1.Project
+	(*SourceFile)(nil),                              // 11: codeindex.v1.SourceFile
+	(*Repository)(nil),                              // 12: codeindex.v1.Repository
+	(*RepositoryMapConfiguration)(nil),              // 13: codeindex.v1.RepositoryMapConfiguration
+	(*RepositoryRemote)(nil),                        // 14: codeindex.v1.RepositoryRemote
+	(*RepositorySettings)(nil),                      // 15: codeindex.v1.RepositorySettings
+	(*Snapshot)(nil),                                // 16: codeindex.v1.Snapshot
+	(*SnapshotStatistics)(nil),                      // 17: codeindex.v1.SnapshotStatistics
+	(*IndexRequest)(nil),                            // 18: codeindex.v1.IndexRequest
+	(*SourceChange)(nil),                            // 19: codeindex.v1.SourceChange
+	(*CodeFactDelta)(nil),                           // 20: codeindex.v1.CodeFactDelta
+	(*EdgeFactDelta)(nil),                           // 21: codeindex.v1.EdgeFactDelta
+	(*SnapshotDiffRequest)(nil),                     // 22: codeindex.v1.SnapshotDiffRequest
+	(*SnapshotDiff)(nil),                            // 23: codeindex.v1.SnapshotDiff
+	(*WatchStatus)(nil),                             // 24: codeindex.v1.WatchStatus
+	(*GitCommit)(nil),                               // 25: codeindex.v1.GitCommit
+	(*GitBranch)(nil),                               // 26: codeindex.v1.GitBranch
+	(*CommitFileChange)(nil),                        // 27: codeindex.v1.CommitFileChange
+	(*OpenPullRequest)(nil),                         // 28: codeindex.v1.OpenPullRequest
+	(*IndexerRequirement)(nil),                      // 29: codeindex.v1.IndexerRequirement
+	(*ImpactNode)(nil),                              // 30: codeindex.v1.ImpactNode
+	(*ImpactEdge)(nil),                              // 31: codeindex.v1.ImpactEdge
+	(*ImpactGroup)(nil),                             // 32: codeindex.v1.ImpactGroup
+	(*ImpactDiagram)(nil),                           // 33: codeindex.v1.ImpactDiagram
+	(*LiveImpact)(nil),                              // 34: codeindex.v1.LiveImpact
+	(*ImpactSceneOverlay)(nil),                      // 35: codeindex.v1.ImpactSceneOverlay
+	(*ScenePlacement)(nil),                          // 36: codeindex.v1.ScenePlacement
+	(*SceneViewContent)(nil),                        // 37: codeindex.v1.SceneViewContent
+	(*ImpactScene)(nil),                             // 38: codeindex.v1.ImpactScene
+	(*MapResult)(nil),                               // 39: codeindex.v1.MapResult
+	(*CompletedMap)(nil),                            // 40: codeindex.v1.CompletedMap
+	(*ListRepositoriesResponse)(nil),                // 41: codeindex.v1.ListRepositoriesResponse
+	(*GetWorktreeSourceRequest)(nil),                // 42: codeindex.v1.GetWorktreeSourceRequest
+	(*GetWorktreeSourceResponse)(nil),               // 43: codeindex.v1.GetWorktreeSourceResponse
+	(*UpdateRepositoryMapConfigurationRequest)(nil), // 44: codeindex.v1.UpdateRepositoryMapConfigurationRequest
+	(*UpdateRepositoryRemoteRequest)(nil),           // 45: codeindex.v1.UpdateRepositoryRemoteRequest
+	(*DeleteRepositoryRequest)(nil),                 // 46: codeindex.v1.DeleteRepositoryRequest
+	(*DeleteRepositoryResponse)(nil),                // 47: codeindex.v1.DeleteRepositoryResponse
+	(*AddRepositoryRequest)(nil),                    // 48: codeindex.v1.AddRepositoryRequest
+	(*AddRepositoryEvent)(nil),                      // 49: codeindex.v1.AddRepositoryEvent
+	(*CheckRepositoryIndexersRequest)(nil),          // 50: codeindex.v1.CheckRepositoryIndexersRequest
+	(*CheckRepositoryIndexersResponse)(nil),         // 51: codeindex.v1.CheckRepositoryIndexersResponse
+	(*StartWatchRequest)(nil),                       // 52: codeindex.v1.StartWatchRequest
+	(*ListWatchesResponse)(nil),                     // 53: codeindex.v1.ListWatchesResponse
+	(*GetGitHistoryRequest)(nil),                    // 54: codeindex.v1.GetGitHistoryRequest
+	(*GetGitHistoryResponse)(nil),                   // 55: codeindex.v1.GetGitHistoryResponse
+	(*GetPullRequestRequest)(nil),                   // 56: codeindex.v1.GetPullRequestRequest
+	(*GetPullRequestResponse)(nil),                  // 57: codeindex.v1.GetPullRequestResponse
+	(*ListPullRequestsResponse)(nil),                // 58: codeindex.v1.ListPullRequestsResponse
+	(*GetCommitDetailsRequest)(nil),                 // 59: codeindex.v1.GetCommitDetailsRequest
+	(*GetCommitDetailsResponse)(nil),                // 60: codeindex.v1.GetCommitDetailsResponse
+	(*CodeFactFilter)(nil),                          // 61: codeindex.v1.CodeFactFilter
+	(*CodeFactPage)(nil),                            // 62: codeindex.v1.CodeFactPage
+	(*ListSnapshotsResponse)(nil),                   // 63: codeindex.v1.ListSnapshotsResponse
+	(*DeleteSnapshotResponse)(nil),                  // 64: codeindex.v1.DeleteSnapshotResponse
+	(*MapRepositoryRequest)(nil),                    // 65: codeindex.v1.MapRepositoryRequest
+	(*MapRepositoryEvent)(nil),                      // 66: codeindex.v1.MapRepositoryEvent
+	(*ListMapsResponse)(nil),                        // 67: codeindex.v1.ListMapsResponse
+	(*CompareRepositoryRequest)(nil),                // 68: codeindex.v1.CompareRepositoryRequest
+	(*CompareRepositoryEvent)(nil),                  // 69: codeindex.v1.CompareRepositoryEvent
+	(*ExportImpactMermaidRequest)(nil),              // 70: codeindex.v1.ExportImpactMermaidRequest
+	(*ExportImpactMermaidResponse)(nil),             // 71: codeindex.v1.ExportImpactMermaidResponse
+	(*GetImpactSceneRequest)(nil),                   // 72: codeindex.v1.GetImpactSceneRequest
+	(*GetImpactSceneResponse)(nil),                  // 73: codeindex.v1.GetImpactSceneResponse
+	nil,                                             // 74: codeindex.v1.Snapshot.ToolVersionsEntry
+	nil,                                             // 75: codeindex.v1.IndexRequest.ScipArtifactsEntry
+	nil,                                             // 76: codeindex.v1.ImpactScene.ViewsEntry
+	(*v1.PlacedElement)(nil),                        // 77: diag.v1.PlacedElement
+	(*v1.Connector)(nil),                            // 78: diag.v1.Connector
+	(*v1.View)(nil),                                 // 79: diag.v1.View
+	(*v1.ElementNavigationInfo)(nil),                // 80: diag.v1.ElementNavigationInfo
+	(*emptypb.Empty)(nil),                           // 81: google.protobuf.Empty
 }
 var file_codeindex_v1_codeindex_proto_depIdxs = []int32{
 	6,  // 0: codeindex.v1.Evidence.anchor:type_name -> codeindex.v1.SourceAnchor
 	6,  // 1: codeindex.v1.CodeFact.anchor:type_name -> codeindex.v1.SourceAnchor
 	0,  // 2: codeindex.v1.CodeFact.kind:type_name -> codeindex.v1.FactKind
 	7,  // 3: codeindex.v1.CodeFact.evidence:type_name -> codeindex.v1.Evidence
-	6,  // 4: codeindex.v1.Chunk.anchor:type_name -> codeindex.v1.SourceAnchor
-	1,  // 5: codeindex.v1.EdgeFact.kind:type_name -> codeindex.v1.EdgeKind
-	6,  // 6: codeindex.v1.EdgeFact.anchor:type_name -> codeindex.v1.SourceAnchor
-	7,  // 7: codeindex.v1.EdgeFact.evidence:type_name -> codeindex.v1.Evidence
-	14, // 8: codeindex.v1.RepositorySettings.map_defaults:type_name -> codeindex.v1.RepositoryMapConfiguration
-	14, // 9: codeindex.v1.RepositorySettings.map_overrides:type_name -> codeindex.v1.RepositoryMapConfiguration
-	14, // 10: codeindex.v1.RepositorySettings.effective_map:type_name -> codeindex.v1.RepositoryMapConfiguration
-	15, // 11: codeindex.v1.RepositorySettings.remotes:type_name -> codeindex.v1.RepositoryRemote
-	11, // 12: codeindex.v1.Snapshot.projects:type_name -> codeindex.v1.Project
-	12, // 13: codeindex.v1.Snapshot.sources:type_name -> codeindex.v1.SourceFile
-	75, // 14: codeindex.v1.Snapshot.tool_versions:type_name -> codeindex.v1.Snapshot.ToolVersionsEntry
-	18, // 15: codeindex.v1.Snapshot.statistics:type_name -> codeindex.v1.SnapshotStatistics
-	76, // 16: codeindex.v1.IndexRequest.scip_artifacts:type_name -> codeindex.v1.IndexRequest.ScipArtifactsEntry
-	2,  // 17: codeindex.v1.SourceChange.change:type_name -> codeindex.v1.ChangeKind
-	8,  // 18: codeindex.v1.CodeFactDelta.added:type_name -> codeindex.v1.CodeFact
-	8,  // 19: codeindex.v1.CodeFactDelta.removed:type_name -> codeindex.v1.CodeFact
-	8,  // 20: codeindex.v1.CodeFactDelta.modified:type_name -> codeindex.v1.CodeFact
-	10, // 21: codeindex.v1.EdgeFactDelta.added:type_name -> codeindex.v1.EdgeFact
-	10, // 22: codeindex.v1.EdgeFactDelta.removed:type_name -> codeindex.v1.EdgeFact
-	10, // 23: codeindex.v1.EdgeFactDelta.modified:type_name -> codeindex.v1.EdgeFact
-	20, // 24: codeindex.v1.SnapshotDiff.sources:type_name -> codeindex.v1.SourceChange
-	21, // 25: codeindex.v1.SnapshotDiff.facts:type_name -> codeindex.v1.CodeFactDelta
-	22, // 26: codeindex.v1.SnapshotDiff.edge_facts:type_name -> codeindex.v1.EdgeFactDelta
-	2,  // 27: codeindex.v1.ImpactNode.change:type_name -> codeindex.v1.ChangeKind
-	21, // 28: codeindex.v1.ImpactNode.symbols:type_name -> codeindex.v1.CodeFactDelta
-	2,  // 29: codeindex.v1.ImpactEdge.change:type_name -> codeindex.v1.ChangeKind
-	33, // 30: codeindex.v1.ImpactGroup.children:type_name -> codeindex.v1.ImpactGroup
-	24, // 31: codeindex.v1.ImpactDiagram.diff:type_name -> codeindex.v1.SnapshotDiff
-	31, // 32: codeindex.v1.ImpactDiagram.nodes:type_name -> codeindex.v1.ImpactNode
-	32, // 33: codeindex.v1.ImpactDiagram.edges:type_name -> codeindex.v1.ImpactEdge
-	33, // 34: codeindex.v1.ImpactDiagram.groups:type_name -> codeindex.v1.ImpactGroup
-	34, // 35: codeindex.v1.LiveImpact.diagram:type_name -> codeindex.v1.ImpactDiagram
-	2,  // 36: codeindex.v1.ImpactSceneOverlay.change:type_name -> codeindex.v1.ChangeKind
-	78, // 37: codeindex.v1.ScenePlacement.element:type_name -> diag.v1.PlacedElement
-	36, // 38: codeindex.v1.ScenePlacement.overlay:type_name -> codeindex.v1.ImpactSceneOverlay
-	37, // 39: codeindex.v1.SceneViewContent.placements:type_name -> codeindex.v1.ScenePlacement
-	79, // 40: codeindex.v1.SceneViewContent.connectors:type_name -> diag.v1.Connector
-	80, // 41: codeindex.v1.ImpactScene.tree:type_name -> diag.v1.View
-	77, // 42: codeindex.v1.ImpactScene.views:type_name -> codeindex.v1.ImpactScene.ViewsEntry
-	81, // 43: codeindex.v1.ImpactScene.navigations:type_name -> diag.v1.ElementNavigationInfo
-	40, // 44: codeindex.v1.CompletedMap.result:type_name -> codeindex.v1.MapResult
-	13, // 45: codeindex.v1.ListRepositoriesResponse.repositories:type_name -> codeindex.v1.Repository
-	14, // 46: codeindex.v1.UpdateRepositoryMapConfigurationRequest.overrides:type_name -> codeindex.v1.RepositoryMapConfiguration
-	15, // 47: codeindex.v1.UpdateRepositoryRemoteRequest.remote:type_name -> codeindex.v1.RepositoryRemote
-	4,  // 48: codeindex.v1.AddRepositoryEvent.progress:type_name -> codeindex.v1.Progress
-	13, // 49: codeindex.v1.AddRepositoryEvent.repository:type_name -> codeindex.v1.Repository
-	30, // 50: codeindex.v1.CheckRepositoryIndexersResponse.indexers:type_name -> codeindex.v1.IndexerRequirement
-	25, // 51: codeindex.v1.ListWatchesResponse.watchers:type_name -> codeindex.v1.WatchStatus
-	26, // 52: codeindex.v1.GetGitHistoryResponse.commits:type_name -> codeindex.v1.GitCommit
-	27, // 53: codeindex.v1.GetGitHistoryResponse.branches:type_name -> codeindex.v1.GitBranch
-	29, // 54: codeindex.v1.ListPullRequestsResponse.pull_requests:type_name -> codeindex.v1.OpenPullRequest
-	26, // 55: codeindex.v1.GetCommitDetailsResponse.commit:type_name -> codeindex.v1.GitCommit
-	28, // 56: codeindex.v1.GetCommitDetailsResponse.files:type_name -> codeindex.v1.CommitFileChange
-	0,  // 57: codeindex.v1.CodeFactFilter.kind:type_name -> codeindex.v1.FactKind
-	8,  // 58: codeindex.v1.CodeFactPage.facts:type_name -> codeindex.v1.CodeFact
-	17, // 59: codeindex.v1.ListSnapshotsResponse.snapshots:type_name -> codeindex.v1.Snapshot
-	5,  // 60: codeindex.v1.MapRepositoryRequest.revision:type_name -> codeindex.v1.Revision
-	4,  // 61: codeindex.v1.MapRepositoryEvent.progress:type_name -> codeindex.v1.Progress
-	40, // 62: codeindex.v1.MapRepositoryEvent.result:type_name -> codeindex.v1.MapResult
-	41, // 63: codeindex.v1.ListMapsResponse.maps:type_name -> codeindex.v1.CompletedMap
-	5,  // 64: codeindex.v1.CompareRepositoryRequest.base:type_name -> codeindex.v1.Revision
-	5,  // 65: codeindex.v1.CompareRepositoryRequest.head:type_name -> codeindex.v1.Revision
-	4,  // 66: codeindex.v1.CompareRepositoryEvent.progress:type_name -> codeindex.v1.Progress
-	34, // 67: codeindex.v1.CompareRepositoryEvent.result:type_name -> codeindex.v1.ImpactDiagram
-	39, // 68: codeindex.v1.GetImpactSceneResponse.scene:type_name -> codeindex.v1.ImpactScene
-	38, // 69: codeindex.v1.ImpactScene.ViewsEntry.value:type_name -> codeindex.v1.SceneViewContent
-	82, // 70: codeindex.v1.RepositoryService.ListRepositories:input_type -> google.protobuf.Empty
-	43, // 71: codeindex.v1.RepositoryService.GetWorktreeSource:input_type -> codeindex.v1.GetWorktreeSourceRequest
-	3,  // 72: codeindex.v1.RepositoryService.GetRepositorySettings:input_type -> codeindex.v1.ID
-	45, // 73: codeindex.v1.RepositoryService.UpdateRepositoryMapConfiguration:input_type -> codeindex.v1.UpdateRepositoryMapConfigurationRequest
-	46, // 74: codeindex.v1.RepositoryService.UpdateRepositoryRemote:input_type -> codeindex.v1.UpdateRepositoryRemoteRequest
-	51, // 75: codeindex.v1.RepositoryService.CheckRepositoryIndexers:input_type -> codeindex.v1.CheckRepositoryIndexersRequest
-	49, // 76: codeindex.v1.RepositoryService.AddRepository:input_type -> codeindex.v1.AddRepositoryRequest
-	47, // 77: codeindex.v1.RepositoryService.DeleteRepository:input_type -> codeindex.v1.DeleteRepositoryRequest
-	55, // 78: codeindex.v1.RepositoryService.GetGitHistory:input_type -> codeindex.v1.GetGitHistoryRequest
-	60, // 79: codeindex.v1.RepositoryService.GetCommitDetails:input_type -> codeindex.v1.GetCommitDetailsRequest
-	57, // 80: codeindex.v1.RepositoryService.GetPullRequest:input_type -> codeindex.v1.GetPullRequestRequest
-	3,  // 81: codeindex.v1.RepositoryService.ListPullRequests:input_type -> codeindex.v1.ID
-	53, // 82: codeindex.v1.RepositoryService.StartWatch:input_type -> codeindex.v1.StartWatchRequest
-	3,  // 83: codeindex.v1.RepositoryService.StopWatch:input_type -> codeindex.v1.ID
-	3,  // 84: codeindex.v1.RepositoryService.GetWatchStatus:input_type -> codeindex.v1.ID
-	82, // 85: codeindex.v1.RepositoryService.ListWatches:input_type -> google.protobuf.Empty
-	62, // 86: codeindex.v1.CodeIndexService.ListFacts:input_type -> codeindex.v1.CodeFactFilter
-	3,  // 87: codeindex.v1.CodeIndexService.ListSnapshots:input_type -> codeindex.v1.ID
-	23, // 88: codeindex.v1.CodeIndexService.DiffSnapshots:input_type -> codeindex.v1.SnapshotDiffRequest
-	3,  // 89: codeindex.v1.CodeIndexService.DeleteSnapshot:input_type -> codeindex.v1.ID
-	66, // 90: codeindex.v1.CodeIndexService.MapRepository:input_type -> codeindex.v1.MapRepositoryRequest
-	3,  // 91: codeindex.v1.CodeIndexService.ListMaps:input_type -> codeindex.v1.ID
-	69, // 92: codeindex.v1.CodeIndexService.CompareRepository:input_type -> codeindex.v1.CompareRepositoryRequest
-	3,  // 93: codeindex.v1.CodeIndexService.GetLiveImpact:input_type -> codeindex.v1.ID
-	71, // 94: codeindex.v1.CodeIndexService.ExportImpactMermaid:input_type -> codeindex.v1.ExportImpactMermaidRequest
-	73, // 95: codeindex.v1.CodeIndexService.GetImpactScene:input_type -> codeindex.v1.GetImpactSceneRequest
-	42, // 96: codeindex.v1.RepositoryService.ListRepositories:output_type -> codeindex.v1.ListRepositoriesResponse
-	44, // 97: codeindex.v1.RepositoryService.GetWorktreeSource:output_type -> codeindex.v1.GetWorktreeSourceResponse
-	16, // 98: codeindex.v1.RepositoryService.GetRepositorySettings:output_type -> codeindex.v1.RepositorySettings
-	16, // 99: codeindex.v1.RepositoryService.UpdateRepositoryMapConfiguration:output_type -> codeindex.v1.RepositorySettings
-	16, // 100: codeindex.v1.RepositoryService.UpdateRepositoryRemote:output_type -> codeindex.v1.RepositorySettings
-	52, // 101: codeindex.v1.RepositoryService.CheckRepositoryIndexers:output_type -> codeindex.v1.CheckRepositoryIndexersResponse
-	50, // 102: codeindex.v1.RepositoryService.AddRepository:output_type -> codeindex.v1.AddRepositoryEvent
-	48, // 103: codeindex.v1.RepositoryService.DeleteRepository:output_type -> codeindex.v1.DeleteRepositoryResponse
-	56, // 104: codeindex.v1.RepositoryService.GetGitHistory:output_type -> codeindex.v1.GetGitHistoryResponse
-	61, // 105: codeindex.v1.RepositoryService.GetCommitDetails:output_type -> codeindex.v1.GetCommitDetailsResponse
-	58, // 106: codeindex.v1.RepositoryService.GetPullRequest:output_type -> codeindex.v1.GetPullRequestResponse
-	59, // 107: codeindex.v1.RepositoryService.ListPullRequests:output_type -> codeindex.v1.ListPullRequestsResponse
-	25, // 108: codeindex.v1.RepositoryService.StartWatch:output_type -> codeindex.v1.WatchStatus
-	25, // 109: codeindex.v1.RepositoryService.StopWatch:output_type -> codeindex.v1.WatchStatus
-	25, // 110: codeindex.v1.RepositoryService.GetWatchStatus:output_type -> codeindex.v1.WatchStatus
-	54, // 111: codeindex.v1.RepositoryService.ListWatches:output_type -> codeindex.v1.ListWatchesResponse
-	63, // 112: codeindex.v1.CodeIndexService.ListFacts:output_type -> codeindex.v1.CodeFactPage
-	64, // 113: codeindex.v1.CodeIndexService.ListSnapshots:output_type -> codeindex.v1.ListSnapshotsResponse
-	24, // 114: codeindex.v1.CodeIndexService.DiffSnapshots:output_type -> codeindex.v1.SnapshotDiff
-	65, // 115: codeindex.v1.CodeIndexService.DeleteSnapshot:output_type -> codeindex.v1.DeleteSnapshotResponse
-	67, // 116: codeindex.v1.CodeIndexService.MapRepository:output_type -> codeindex.v1.MapRepositoryEvent
-	68, // 117: codeindex.v1.CodeIndexService.ListMaps:output_type -> codeindex.v1.ListMapsResponse
-	70, // 118: codeindex.v1.CodeIndexService.CompareRepository:output_type -> codeindex.v1.CompareRepositoryEvent
-	35, // 119: codeindex.v1.CodeIndexService.GetLiveImpact:output_type -> codeindex.v1.LiveImpact
-	72, // 120: codeindex.v1.CodeIndexService.ExportImpactMermaid:output_type -> codeindex.v1.ExportImpactMermaidResponse
-	74, // 121: codeindex.v1.CodeIndexService.GetImpactScene:output_type -> codeindex.v1.GetImpactSceneResponse
-	96, // [96:122] is the sub-list for method output_type
-	70, // [70:96] is the sub-list for method input_type
-	70, // [70:70] is the sub-list for extension type_name
-	70, // [70:70] is the sub-list for extension extendee
-	0,  // [0:70] is the sub-list for field type_name
+	1,  // 4: codeindex.v1.EdgeFact.kind:type_name -> codeindex.v1.EdgeKind
+	6,  // 5: codeindex.v1.EdgeFact.anchor:type_name -> codeindex.v1.SourceAnchor
+	7,  // 6: codeindex.v1.EdgeFact.evidence:type_name -> codeindex.v1.Evidence
+	13, // 7: codeindex.v1.RepositorySettings.map_defaults:type_name -> codeindex.v1.RepositoryMapConfiguration
+	13, // 8: codeindex.v1.RepositorySettings.map_overrides:type_name -> codeindex.v1.RepositoryMapConfiguration
+	13, // 9: codeindex.v1.RepositorySettings.effective_map:type_name -> codeindex.v1.RepositoryMapConfiguration
+	14, // 10: codeindex.v1.RepositorySettings.remotes:type_name -> codeindex.v1.RepositoryRemote
+	10, // 11: codeindex.v1.Snapshot.projects:type_name -> codeindex.v1.Project
+	11, // 12: codeindex.v1.Snapshot.sources:type_name -> codeindex.v1.SourceFile
+	74, // 13: codeindex.v1.Snapshot.tool_versions:type_name -> codeindex.v1.Snapshot.ToolVersionsEntry
+	17, // 14: codeindex.v1.Snapshot.statistics:type_name -> codeindex.v1.SnapshotStatistics
+	75, // 15: codeindex.v1.IndexRequest.scip_artifacts:type_name -> codeindex.v1.IndexRequest.ScipArtifactsEntry
+	2,  // 16: codeindex.v1.SourceChange.change:type_name -> codeindex.v1.ChangeKind
+	8,  // 17: codeindex.v1.CodeFactDelta.added:type_name -> codeindex.v1.CodeFact
+	8,  // 18: codeindex.v1.CodeFactDelta.removed:type_name -> codeindex.v1.CodeFact
+	8,  // 19: codeindex.v1.CodeFactDelta.modified:type_name -> codeindex.v1.CodeFact
+	9,  // 20: codeindex.v1.EdgeFactDelta.added:type_name -> codeindex.v1.EdgeFact
+	9,  // 21: codeindex.v1.EdgeFactDelta.removed:type_name -> codeindex.v1.EdgeFact
+	9,  // 22: codeindex.v1.EdgeFactDelta.modified:type_name -> codeindex.v1.EdgeFact
+	19, // 23: codeindex.v1.SnapshotDiff.sources:type_name -> codeindex.v1.SourceChange
+	20, // 24: codeindex.v1.SnapshotDiff.facts:type_name -> codeindex.v1.CodeFactDelta
+	21, // 25: codeindex.v1.SnapshotDiff.edge_facts:type_name -> codeindex.v1.EdgeFactDelta
+	2,  // 26: codeindex.v1.ImpactNode.change:type_name -> codeindex.v1.ChangeKind
+	20, // 27: codeindex.v1.ImpactNode.symbols:type_name -> codeindex.v1.CodeFactDelta
+	2,  // 28: codeindex.v1.ImpactEdge.change:type_name -> codeindex.v1.ChangeKind
+	32, // 29: codeindex.v1.ImpactGroup.children:type_name -> codeindex.v1.ImpactGroup
+	23, // 30: codeindex.v1.ImpactDiagram.diff:type_name -> codeindex.v1.SnapshotDiff
+	30, // 31: codeindex.v1.ImpactDiagram.nodes:type_name -> codeindex.v1.ImpactNode
+	31, // 32: codeindex.v1.ImpactDiagram.edges:type_name -> codeindex.v1.ImpactEdge
+	32, // 33: codeindex.v1.ImpactDiagram.groups:type_name -> codeindex.v1.ImpactGroup
+	33, // 34: codeindex.v1.LiveImpact.diagram:type_name -> codeindex.v1.ImpactDiagram
+	2,  // 35: codeindex.v1.ImpactSceneOverlay.change:type_name -> codeindex.v1.ChangeKind
+	77, // 36: codeindex.v1.ScenePlacement.element:type_name -> diag.v1.PlacedElement
+	35, // 37: codeindex.v1.ScenePlacement.overlay:type_name -> codeindex.v1.ImpactSceneOverlay
+	36, // 38: codeindex.v1.SceneViewContent.placements:type_name -> codeindex.v1.ScenePlacement
+	78, // 39: codeindex.v1.SceneViewContent.connectors:type_name -> diag.v1.Connector
+	79, // 40: codeindex.v1.ImpactScene.tree:type_name -> diag.v1.View
+	76, // 41: codeindex.v1.ImpactScene.views:type_name -> codeindex.v1.ImpactScene.ViewsEntry
+	80, // 42: codeindex.v1.ImpactScene.navigations:type_name -> diag.v1.ElementNavigationInfo
+	39, // 43: codeindex.v1.CompletedMap.result:type_name -> codeindex.v1.MapResult
+	12, // 44: codeindex.v1.ListRepositoriesResponse.repositories:type_name -> codeindex.v1.Repository
+	13, // 45: codeindex.v1.UpdateRepositoryMapConfigurationRequest.overrides:type_name -> codeindex.v1.RepositoryMapConfiguration
+	14, // 46: codeindex.v1.UpdateRepositoryRemoteRequest.remote:type_name -> codeindex.v1.RepositoryRemote
+	4,  // 47: codeindex.v1.AddRepositoryEvent.progress:type_name -> codeindex.v1.Progress
+	12, // 48: codeindex.v1.AddRepositoryEvent.repository:type_name -> codeindex.v1.Repository
+	29, // 49: codeindex.v1.CheckRepositoryIndexersResponse.indexers:type_name -> codeindex.v1.IndexerRequirement
+	24, // 50: codeindex.v1.ListWatchesResponse.watchers:type_name -> codeindex.v1.WatchStatus
+	25, // 51: codeindex.v1.GetGitHistoryResponse.commits:type_name -> codeindex.v1.GitCommit
+	26, // 52: codeindex.v1.GetGitHistoryResponse.branches:type_name -> codeindex.v1.GitBranch
+	28, // 53: codeindex.v1.ListPullRequestsResponse.pull_requests:type_name -> codeindex.v1.OpenPullRequest
+	25, // 54: codeindex.v1.GetCommitDetailsResponse.commit:type_name -> codeindex.v1.GitCommit
+	27, // 55: codeindex.v1.GetCommitDetailsResponse.files:type_name -> codeindex.v1.CommitFileChange
+	0,  // 56: codeindex.v1.CodeFactFilter.kind:type_name -> codeindex.v1.FactKind
+	8,  // 57: codeindex.v1.CodeFactPage.facts:type_name -> codeindex.v1.CodeFact
+	16, // 58: codeindex.v1.ListSnapshotsResponse.snapshots:type_name -> codeindex.v1.Snapshot
+	5,  // 59: codeindex.v1.MapRepositoryRequest.revision:type_name -> codeindex.v1.Revision
+	4,  // 60: codeindex.v1.MapRepositoryEvent.progress:type_name -> codeindex.v1.Progress
+	39, // 61: codeindex.v1.MapRepositoryEvent.result:type_name -> codeindex.v1.MapResult
+	40, // 62: codeindex.v1.ListMapsResponse.maps:type_name -> codeindex.v1.CompletedMap
+	5,  // 63: codeindex.v1.CompareRepositoryRequest.base:type_name -> codeindex.v1.Revision
+	5,  // 64: codeindex.v1.CompareRepositoryRequest.head:type_name -> codeindex.v1.Revision
+	4,  // 65: codeindex.v1.CompareRepositoryEvent.progress:type_name -> codeindex.v1.Progress
+	33, // 66: codeindex.v1.CompareRepositoryEvent.result:type_name -> codeindex.v1.ImpactDiagram
+	38, // 67: codeindex.v1.GetImpactSceneResponse.scene:type_name -> codeindex.v1.ImpactScene
+	37, // 68: codeindex.v1.ImpactScene.ViewsEntry.value:type_name -> codeindex.v1.SceneViewContent
+	81, // 69: codeindex.v1.RepositoryService.ListRepositories:input_type -> google.protobuf.Empty
+	42, // 70: codeindex.v1.RepositoryService.GetWorktreeSource:input_type -> codeindex.v1.GetWorktreeSourceRequest
+	3,  // 71: codeindex.v1.RepositoryService.GetRepositorySettings:input_type -> codeindex.v1.ID
+	44, // 72: codeindex.v1.RepositoryService.UpdateRepositoryMapConfiguration:input_type -> codeindex.v1.UpdateRepositoryMapConfigurationRequest
+	45, // 73: codeindex.v1.RepositoryService.UpdateRepositoryRemote:input_type -> codeindex.v1.UpdateRepositoryRemoteRequest
+	50, // 74: codeindex.v1.RepositoryService.CheckRepositoryIndexers:input_type -> codeindex.v1.CheckRepositoryIndexersRequest
+	48, // 75: codeindex.v1.RepositoryService.AddRepository:input_type -> codeindex.v1.AddRepositoryRequest
+	46, // 76: codeindex.v1.RepositoryService.DeleteRepository:input_type -> codeindex.v1.DeleteRepositoryRequest
+	54, // 77: codeindex.v1.RepositoryService.GetGitHistory:input_type -> codeindex.v1.GetGitHistoryRequest
+	59, // 78: codeindex.v1.RepositoryService.GetCommitDetails:input_type -> codeindex.v1.GetCommitDetailsRequest
+	56, // 79: codeindex.v1.RepositoryService.GetPullRequest:input_type -> codeindex.v1.GetPullRequestRequest
+	3,  // 80: codeindex.v1.RepositoryService.ListPullRequests:input_type -> codeindex.v1.ID
+	52, // 81: codeindex.v1.RepositoryService.StartWatch:input_type -> codeindex.v1.StartWatchRequest
+	3,  // 82: codeindex.v1.RepositoryService.StopWatch:input_type -> codeindex.v1.ID
+	3,  // 83: codeindex.v1.RepositoryService.GetWatchStatus:input_type -> codeindex.v1.ID
+	81, // 84: codeindex.v1.RepositoryService.ListWatches:input_type -> google.protobuf.Empty
+	61, // 85: codeindex.v1.CodeIndexService.ListFacts:input_type -> codeindex.v1.CodeFactFilter
+	3,  // 86: codeindex.v1.CodeIndexService.ListSnapshots:input_type -> codeindex.v1.ID
+	22, // 87: codeindex.v1.CodeIndexService.DiffSnapshots:input_type -> codeindex.v1.SnapshotDiffRequest
+	3,  // 88: codeindex.v1.CodeIndexService.DeleteSnapshot:input_type -> codeindex.v1.ID
+	65, // 89: codeindex.v1.CodeIndexService.MapRepository:input_type -> codeindex.v1.MapRepositoryRequest
+	3,  // 90: codeindex.v1.CodeIndexService.ListMaps:input_type -> codeindex.v1.ID
+	68, // 91: codeindex.v1.CodeIndexService.CompareRepository:input_type -> codeindex.v1.CompareRepositoryRequest
+	3,  // 92: codeindex.v1.CodeIndexService.GetLiveImpact:input_type -> codeindex.v1.ID
+	70, // 93: codeindex.v1.CodeIndexService.ExportImpactMermaid:input_type -> codeindex.v1.ExportImpactMermaidRequest
+	72, // 94: codeindex.v1.CodeIndexService.GetImpactScene:input_type -> codeindex.v1.GetImpactSceneRequest
+	41, // 95: codeindex.v1.RepositoryService.ListRepositories:output_type -> codeindex.v1.ListRepositoriesResponse
+	43, // 96: codeindex.v1.RepositoryService.GetWorktreeSource:output_type -> codeindex.v1.GetWorktreeSourceResponse
+	15, // 97: codeindex.v1.RepositoryService.GetRepositorySettings:output_type -> codeindex.v1.RepositorySettings
+	15, // 98: codeindex.v1.RepositoryService.UpdateRepositoryMapConfiguration:output_type -> codeindex.v1.RepositorySettings
+	15, // 99: codeindex.v1.RepositoryService.UpdateRepositoryRemote:output_type -> codeindex.v1.RepositorySettings
+	51, // 100: codeindex.v1.RepositoryService.CheckRepositoryIndexers:output_type -> codeindex.v1.CheckRepositoryIndexersResponse
+	49, // 101: codeindex.v1.RepositoryService.AddRepository:output_type -> codeindex.v1.AddRepositoryEvent
+	47, // 102: codeindex.v1.RepositoryService.DeleteRepository:output_type -> codeindex.v1.DeleteRepositoryResponse
+	55, // 103: codeindex.v1.RepositoryService.GetGitHistory:output_type -> codeindex.v1.GetGitHistoryResponse
+	60, // 104: codeindex.v1.RepositoryService.GetCommitDetails:output_type -> codeindex.v1.GetCommitDetailsResponse
+	57, // 105: codeindex.v1.RepositoryService.GetPullRequest:output_type -> codeindex.v1.GetPullRequestResponse
+	58, // 106: codeindex.v1.RepositoryService.ListPullRequests:output_type -> codeindex.v1.ListPullRequestsResponse
+	24, // 107: codeindex.v1.RepositoryService.StartWatch:output_type -> codeindex.v1.WatchStatus
+	24, // 108: codeindex.v1.RepositoryService.StopWatch:output_type -> codeindex.v1.WatchStatus
+	24, // 109: codeindex.v1.RepositoryService.GetWatchStatus:output_type -> codeindex.v1.WatchStatus
+	53, // 110: codeindex.v1.RepositoryService.ListWatches:output_type -> codeindex.v1.ListWatchesResponse
+	62, // 111: codeindex.v1.CodeIndexService.ListFacts:output_type -> codeindex.v1.CodeFactPage
+	63, // 112: codeindex.v1.CodeIndexService.ListSnapshots:output_type -> codeindex.v1.ListSnapshotsResponse
+	23, // 113: codeindex.v1.CodeIndexService.DiffSnapshots:output_type -> codeindex.v1.SnapshotDiff
+	64, // 114: codeindex.v1.CodeIndexService.DeleteSnapshot:output_type -> codeindex.v1.DeleteSnapshotResponse
+	66, // 115: codeindex.v1.CodeIndexService.MapRepository:output_type -> codeindex.v1.MapRepositoryEvent
+	67, // 116: codeindex.v1.CodeIndexService.ListMaps:output_type -> codeindex.v1.ListMapsResponse
+	69, // 117: codeindex.v1.CodeIndexService.CompareRepository:output_type -> codeindex.v1.CompareRepositoryEvent
+	34, // 118: codeindex.v1.CodeIndexService.GetLiveImpact:output_type -> codeindex.v1.LiveImpact
+	71, // 119: codeindex.v1.CodeIndexService.ExportImpactMermaid:output_type -> codeindex.v1.ExportImpactMermaidResponse
+	73, // 120: codeindex.v1.CodeIndexService.GetImpactScene:output_type -> codeindex.v1.GetImpactSceneResponse
+	95, // [95:121] is the sub-list for method output_type
+	69, // [69:95] is the sub-list for method input_type
+	69, // [69:69] is the sub-list for extension type_name
+	69, // [69:69] is the sub-list for extension extendee
+	0,  // [0:69] is the sub-list for field type_name
 }
 
 func init() { file_codeindex_v1_codeindex_proto_init() }
@@ -6549,19 +6417,19 @@ func file_codeindex_v1_codeindex_proto_init() {
 	if File_codeindex_v1_codeindex_proto != nil {
 		return
 	}
-	file_codeindex_v1_codeindex_proto_msgTypes[11].OneofWrappers = []any{}
-	file_codeindex_v1_codeindex_proto_msgTypes[17].OneofWrappers = []any{}
+	file_codeindex_v1_codeindex_proto_msgTypes[10].OneofWrappers = []any{}
+	file_codeindex_v1_codeindex_proto_msgTypes[16].OneofWrappers = []any{}
+	file_codeindex_v1_codeindex_proto_msgTypes[32].OneofWrappers = []any{}
 	file_codeindex_v1_codeindex_proto_msgTypes[33].OneofWrappers = []any{}
-	file_codeindex_v1_codeindex_proto_msgTypes[34].OneofWrappers = []any{}
-	file_codeindex_v1_codeindex_proto_msgTypes[47].OneofWrappers = []any{
+	file_codeindex_v1_codeindex_proto_msgTypes[46].OneofWrappers = []any{
 		(*AddRepositoryEvent_Progress)(nil),
 		(*AddRepositoryEvent_Repository)(nil),
 	}
-	file_codeindex_v1_codeindex_proto_msgTypes[64].OneofWrappers = []any{
+	file_codeindex_v1_codeindex_proto_msgTypes[63].OneofWrappers = []any{
 		(*MapRepositoryEvent_Progress)(nil),
 		(*MapRepositoryEvent_Result)(nil),
 	}
-	file_codeindex_v1_codeindex_proto_msgTypes[67].OneofWrappers = []any{
+	file_codeindex_v1_codeindex_proto_msgTypes[66].OneofWrappers = []any{
 		(*CompareRepositoryEvent_Progress)(nil),
 		(*CompareRepositoryEvent_Result)(nil),
 	}
@@ -6571,7 +6439,7 @@ func file_codeindex_v1_codeindex_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_codeindex_v1_codeindex_proto_rawDesc), len(file_codeindex_v1_codeindex_proto_rawDesc)),
 			NumEnums:      3,
-			NumMessages:   75,
+			NumMessages:   74,
 			NumExtensions: 0,
 			NumServices:   2,
 		},
