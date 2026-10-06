@@ -468,16 +468,40 @@ message LiveImpact {
   string git_revision = 5;
 }
 
+// ImpactSymbolAnchor locates a changed symbol inside its file. It is a subset
+// of SourceAnchor: a viewer needs the line to show and to link to, not byte
+// offsets or the source hash the index carries.
+message ImpactSymbolAnchor {
+  string path = 1;
+  uint32 start_line = 2;
+  uint32 end_line = 3;
+}
+
+// ImpactSymbolChange is one changed symbol of a scene overlay. It carries the
+// subset of CodeFact a viewer needs to describe the change: name, kind, anchor,
+// and body fingerprint. Snapshot provenance, evidence, and imports are
+// deliberately omitted so a scene stays portable.
+message ImpactSymbolChange {
+  ChangeKind change = 1;
+  string name = 2;
+  FactKind kind = 3;
+  ImpactSymbolAnchor anchor = 4;
+  // Content fingerprint of the changed body, stable across snapshots.
+  string body_hash = 5;
+}
+
 // ImpactSceneOverlay is the transient change annotation on one scene placement.
 message ImpactSceneOverlay {
   ChangeKind change = 1;
   string path = 2;
   optional uint32 lines_added = 3;
   optional uint32 lines_removed = 4;
-  // Pre-shaped symbol labels: "+ name", "− name", or "~ name".
-  repeated string symbols = 5;
+  // 5 held pre-shaped "+ name" labels. Symbol changes are structured now, so
+  // readers label them from symbols below.
+  reserved 5;
   // Dependency hops from the nearest direct change (0 for direct changes).
   uint32 distance = 6;
+  repeated ImpactSymbolChange symbols = 7;
 }
 
 // ScenePlacement is a workspace placement plus its optional change overlay.
@@ -492,11 +516,14 @@ message SceneViewContent {
   repeated diag.v1.Connector connectors = 2;
 }
 
-// ImpactScene is an ephemeral, repository-scoped workspace scene assembled for
-// a comparison. It contains the compared repository's elements, the existing
-// blast-radius neighbours, transient placements for files that have no
-// workspace element, and per-placement change overlays. Nothing here is
-// persisted; clients filter by radius and standard/plain view locally.
+// ImpactScene is a self-contained change scene for one comparison. It holds the
+// compared repository's workspace subset, its blast-radius neighbours,
+// transient placements for files that have no workspace element, and
+// per-placement change overlays with symbol detail. A scene is a portable
+// artifact: the identity fields below name what was compared, and nothing in
+// the message requires the repository, its index, or its snapshots to render it.
+// Clients filter by radius and standard/plain view locally; nothing is
+// persisted in the workspace.
 message ImpactScene {
   // View hierarchy, reusing the workspace View shape.
   repeated diag.v1.View tree = 1;
@@ -504,6 +531,19 @@ message ImpactScene {
   repeated diag.v1.ElementNavigationInfo navigations = 3;
   // Synthetic view id used when changed files have no suitable base view.
   int64 fallback_view_id = 4;
+  // Shape of this payload, bumped when the scene contract changes so a stored
+  // artifact stays readable by later readers.
+  string schema_version = 5;
+  string repository_id = 6;
+  // Identifies the comparison a server can still serve this scene from.
+  string comparison_key = 7;
+  // Changes whenever the scene content changes, so readers can cache on it.
+  string version = 8;
+  // Highest hop distance present in this scene; the display radius a reader
+  // may still select.
+  uint32 max_radius = 9;
+  string from_git_revision = 10;
+  string to_git_revision = 11;
 }
 
 message MapResult {
