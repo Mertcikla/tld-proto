@@ -2,6 +2,9 @@ syntax = "proto3";
 
 package codeindex.v1;
 
+import "diag/v1/workspace_service.proto";
+import "google/protobuf/empty.proto";
+
 option go_package = "buf.build/gen/go/tldiagramcom/diagram/protocolbuffers/go/codeindex/v1;codeindexv1";
 
 // Codeindex exposes an immutable, snapshot-scoped code graph. A CodeFact is a
@@ -11,9 +14,44 @@ option go_package = "buf.build/gen/go/tldiagramcom/diagram/protocolbuffers/go/co
 // results forward. The indexer produces this data in-process; it does not infer
 // architecture, and diagram conversion is deterministic and lives downstream.
 //
-// These messages were folded into tld from the standalone codeindex project.
-// The gRPC IndexService is intentionally omitted: indexing is invoked through
-// in-process Go interfaces, not over the wire.
+// Two services front this graph:
+//   - RepositoryService owns repository lifecycle: registration, settings, Git,
+//     pull requests, and the per-repository watcher.
+//   - CodeIndexService reads the graph, diffs snapshots, and runs the mapper
+//     and impact pipelines.
+//
+// Shared primitives (ID, Progress, Revision) replace the per-RPC wrappers that
+// previously duplicated them. Impact scene messages reuse the workspace types
+// from diag.v1 so the transient scene speaks the same shape as the workspace.
+
+// ─── Shared primitives ───────────────────────────────────────────────────────
+
+// ID addresses one entity by its opaque server-generated identifier. It is the
+// canonical request for lookups that need nothing else.
+message ID {
+  string id = 1;
+}
+
+// Progress reports coarse indexing or mapping progress.
+message Progress {
+  string stage = 1;
+  uint32 current = 2;
+  uint32 total = 3;
+  string detail = 4;
+}
+
+// Revision selects one indexed revision: a published snapshot, a Git commit, or
+// the working tree. Exactly one selector is meaningful; snapshot_id wins when
+// both it and a Git selector are set.
+message Revision {
+  string snapshot_id = 1;
+  string git_revision = 2;
+  bool working_tree = 3;
+  // Branch context captured for a commit selected through the history browser.
+  string git_branch = 4;
+}
+
+// ─── Graph domain ────────────────────────────────────────────────────────────
 
 // Zero-based UTF-8 byte offsets; end positions are exclusive.
 message SourceAnchor {
@@ -26,6 +64,7 @@ message SourceAnchor {
   uint32 end_column = 7;
   string source_hash = 8;
 }
+
 message Evidence {
   string producer = 1;
   string version = 2;
@@ -34,6 +73,7 @@ message Evidence {
   SourceAnchor anchor = 5;
   string derivation = 6;
 }
+
 enum FactKind {
   FACT_KIND_UNSPECIFIED = 0;
   FACT_KIND_FUNCTION = 1;
@@ -64,12 +104,12 @@ enum FactKind {
   FACT_KIND_RPC = 32;
   FACT_KIND_PERSON = 33;
   FACT_KIND_BRIDGE_HTTP = 34;
-  // Retained for wire compatibility. Import facts are no longer produced.
   FACT_KIND_IMPORT = 39;
   FACT_KIND_CONFIG_REF = 43;
   FACT_KIND_DB_CLIENT = 47;
   FACT_KIND_SCHEMA = 48;
 }
+
 // Only captured code-bearing declarations are published as CodeFacts.
 message CodeFact {
   string id = 1;
@@ -91,6 +131,7 @@ message CodeFact {
   // Stable identity that survives across snapshots, enabling cross-snapshot joins.
   string logical_key = 16;
 }
+
 message Chunk {
   string id = 1;
   string fact_id = 2;
@@ -101,6 +142,7 @@ message Chunk {
   uint32 index = 7;
   uint32 total = 8;
 }
+
 enum EdgeKind {
   EDGE_KIND_UNSPECIFIED = 0;
   EDGE_KIND_REFERENCES = 1;
@@ -108,6 +150,7 @@ enum EdgeKind {
   EDGE_KIND_IMPLEMENTS = 3;
   EDGE_KIND_TYPE_DEFINITION = 4;
 }
+
 // One observed relationship, including its site and unresolved target key.
 message EdgeFact {
   string id = 1;
@@ -124,24 +167,23 @@ message EdgeFact {
   // Observation count for this logical edge (separate observations remain separate records).
   double weight = 11;
 }
+
 message Project {
   string root = 1;
   string language = 2;
   string config_path = 3;
 }
+
 message SourceFile {
   string path = 1;
   string hash = 2;
   uint64 size = 3;
 }
+
+// ─── Repository ──────────────────────────────────────────────────────────────
+
+// Repository is a registered repository plus a summary of its latest snapshot.
 message Repository {
-  string id = 1;
-  string root = 2;
-  string latest_snapshot_id = 3;
-}
-// RepositorySummary is a repository plus a summary of its latest snapshot, for
-// listing indexed repositories in a UI.
-message RepositorySummary {
   string id = 1;
   string root = 2;
   string latest_snapshot_id = 3;
@@ -160,22 +202,7 @@ message RepositorySummary {
   // True when tld cloned and owns the checkout (see AddRepositoryRequest.remote_url).
   bool managed = 13;
 }
-message ListRepositoriesRequest {}
-message ListRepositoriesResponse {
-  repeated RepositorySummary repositories = 1;
-}
-// Reads current worktree content for source previews, confined to a registered
-// repository. This does not read immutable snapshot content (see GetSource).
-message GetWorktreeSourceRequest {
-  string repository_id = 1;
-  // Local path or remote URL used by legacy workspace source links.
-  string repo = 2;
-  string file_path = 3;
-}
-message GetWorktreeSourceResponse {
-  string content = 1;
-  string path = 2;
-}
+
 // Unset fields inherit global map defaults. Update replaces all overrides.
 message RepositoryMapConfiguration {
   optional double resolution = 1;
@@ -189,12 +216,13 @@ message RepositoryMapConfiguration {
   optional uint32 max_leaf_connectors_per_view = 9;
   optional bool include_external_imports = 10;
 }
+
 message RepositoryRemote {
   string name = 1;
   repeated string fetch_urls = 2;
   repeated string push_urls = 3;
 }
-message GetRepositorySettingsRequest { string repository_id = 1; }
+
 message RepositorySettings {
   RepositoryMapConfiguration map_defaults = 1;
   RepositoryMapConfiguration map_overrides = 2;
@@ -207,122 +235,111 @@ message RepositorySettings {
   // Settings remain readable so the user can repair or clear the overrides.
   string map_validation_error = 8;
 }
-message UpdateRepositoryMapConfigurationRequest {
-  string repository_id = 1;
-  RepositoryMapConfiguration overrides = 2;
-}
-// Changes the local Git checkout's remote configuration, without network I/O.
-// Replaces the remote's URL lists; remove deletes the named remote instead.
-message UpdateRepositoryRemoteRequest {
-  string repository_id = 1;
-  RepositoryRemote remote = 2;
-  bool remove = 3;
-}
-message DeleteRepositoryRequest {
+
+// ─── Snapshots ───────────────────────────────────────────────────────────────
+
+// Snapshot is an immutable indexed revision of a repository. It is published
+// only after ingestion completes, and the repository's latest pointer advances
+// to it.
+message Snapshot {
   string id = 1;
-  // When set, also deletes the workspace views, elements, and connectors that
-  // were materialized from this repository. When unset, only the repository and
-  // its snapshots are deleted and materialized resources remain in the
-  // workspace.
-  bool delete_materialized = 2;
-  // When set and the repository is a tld-managed clone, also deletes the local
-  // checkout. Ignored for repositories registered from user-provided paths.
-  bool delete_clone = 3;
+  string repository_id = 2;
+  int64 created_unix = 3;
+  string git_revision = 4;
+  repeated Project projects = 5;
+  repeated SourceFile sources = 6;
+  string ingestion_status = 7;
+  repeated string warnings = 9;
+  map<string, string> tool_versions = 10;
+  string config_hash = 11;
+  // Git branch the working tree was on when the snapshot was captured.
+  string git_branch = 12;
+  // commit, working_tree, or empty for snapshots with unknown legacy provenance.
+  string provenance = 13;
+  // Hash of the source manifest, HEAD, and indexing configuration.
+  string content_fingerprint = 14;
+  // Counts of records belonging to this snapshot, populated when reading it.
+  SnapshotStatistics statistics = 15;
+  // Subject line of the Git commit at git_revision when the snapshot was
+  // captured. Empty for non-Git repositories.
+  string commit_message = 16;
 }
-message DeleteRepositoryResponse {}
-message AddRepositoryRequest {
-  // Absolute local filesystem path to the repository directory to index.
+
+message SnapshotStatistics {
+  uint32 facts = 1;
+  uint32 edges = 2;
+  uint32 sources = 3;
+  uint32 chunks = 4;
+}
+
+message IndexRequest {
+  string directory = 1;
+  repeated string project_roots = 2;
+  repeated string exclude = 3;
+  map<string, string> scip_artifacts = 4;
+  bool detached = 5;
+  // When true and the repository has a published snapshot, facts, chunks, and
+  // edges for sources whose content is unchanged are carried forward. An
+  // indexer re-runs only for projects with changed sources, and its unchanged
+  // documents are skipped. A snapshot with no changes is reused verbatim.
+  bool incremental = 6;
+}
+
+// ─── Diffs ───────────────────────────────────────────────────────────────────
+
+enum ChangeKind {
+  CHANGE_KIND_UNSPECIFIED = 0;
+  CHANGE_KIND_ADDED = 1;
+  CHANGE_KIND_REMOVED = 2;
+  CHANGE_KIND_MODIFIED = 3;
+}
+
+message SourceChange {
   string path = 1;
-  // Remote Git URL (or GitHub owner/repo shorthand) to clone into tld-managed
-  // storage and index. Mutually exclusive with path. Credentials embedded in
-  // the URL are rejected.
-  string remote_url = 2;
-  // When set, projects the published snapshot into the workspace after
-  // indexing: candidate elements and connectors become workspace resources,
-  // the same projection as `tld index --materialize`.
-  bool materialize = 3;
+  ChangeKind change = 2;
+  string from_hash = 3;
+  string to_hash = 4;
+  optional uint32 lines_added = 5;
+  optional uint32 lines_removed = 6;
 }
-message AddRepositoryEvent {
-  oneof event {
-    IndexProgress progress = 1;
-    Repository repository = 2;
-  }
+
+// Deltas are keyed by stable logical identity, so a rename is an add plus a
+// remove and a changed body is a modification.
+message CodeFactDelta {
+  repeated CodeFact added = 1;
+  repeated CodeFact removed = 2;
+  repeated CodeFact modified = 3;
 }
-// CheckRepositoryIndexersRequest identifies a repository to inspect. Exactly
-// one of path or remote_url must be set.
-message CheckRepositoryIndexersRequest {
-  // Absolute local filesystem path to inspect. Mutually exclusive with
-  // remote_url.
-  string path = 1;
-  // Remote Git URL (or GitHub owner/repo shorthand). When the checkout is not
-  // already present it is cloned into tld-managed storage so required indexers
-  // can be detected from project markers.
-  string remote_url = 2;
+
+// EdgeFactDelta compares relationships at the logical-edge level. A logical
+// edge present in both snapshots is modified when its observation count changes.
+message EdgeFactDelta {
+  repeated EdgeFact added = 1;
+  repeated EdgeFact removed = 2;
+  repeated EdgeFact modified = 3;
 }
-// IndexerRequirement reports one external SCIP indexer a repository needs,
-// derived from the project families discovered in it.
-message IndexerRequirement {
-  // Indexer family: go, web, python, dotnet, clang, jvm, dart, php, ruby, rust.
-  string family = 1;
-  // Executable the pipeline resolves on PATH (for example scip-go).
-  string tool = 2;
-  // Detected project languages that mapped to this family.
-  repeated string languages = 3;
-  // Whether the executable resolves with the current tool configuration.
-  bool installed = 4;
-  // Copy-pasteable install command for the tool.
-  string install_hint = 5;
-}
-message CheckRepositoryIndexersResponse {
-  repeated IndexerRequirement indexers = 1;
-  // True when every required indexer is installed.
-  bool ready = 2;
-}
-// IndexProgress reports coarse indexing progress.
-message IndexProgress {
-  string stage = 1;
-  uint32 current = 2;
-  uint32 total = 3;
-  string detail = 4;
-}
-// RepositoryService lists, adds, and deletes the repositories indexed by the
-// in-process codeindex engine. Indexing runs in-process; the CLI remains
-// available for scripted and watch workflows.
-service RepositoryService {
-  rpc GetWorktreeSource(GetWorktreeSourceRequest) returns (GetWorktreeSourceResponse);
-  rpc GetRepositorySettings(GetRepositorySettingsRequest) returns (RepositorySettings);
-  rpc UpdateRepositoryMapConfiguration(UpdateRepositoryMapConfigurationRequest) returns (RepositorySettings);
-  rpc UpdateRepositoryRemote(UpdateRepositoryRemoteRequest) returns (RepositorySettings);
-  rpc ListRepositories(ListRepositoriesRequest) returns (ListRepositoriesResponse);
-  // CheckRepositoryIndexers inspects a repository's project markers and reports
-  // the SCIP indexers indexing will require, so callers can install missing
-  // tools before AddRepository runs.
-  rpc CheckRepositoryIndexers(CheckRepositoryIndexersRequest) returns (CheckRepositoryIndexersResponse);
-  rpc AddRepository(AddRepositoryRequest) returns (stream AddRepositoryEvent);
-  rpc DeleteRepository(DeleteRepositoryRequest) returns (DeleteRepositoryResponse);
-  rpc GetGitHistory(GetGitHistoryRequest) returns (GetGitHistoryResponse);
-  rpc GetCommitDetails(GetCommitDetailsRequest) returns (GetCommitDetailsResponse);
-  rpc GetPullRequest(GetPullRequestRequest) returns (GetPullRequestResponse);
-  rpc ListPullRequests(ListPullRequestsRequest) returns (ListPullRequestsResponse);
-}
-// WatchService starts, stops, and reports the per-repository codeindex watcher.
-// The server supervises a CLI child process and shares the watcher's control
-// record so the UI and the CLI operate the same watcher interchangeably.
-service WatchService {
-  rpc StartWatch(StartWatchRequest) returns (WatchStatus);
-  rpc StopWatch(StopWatchRequest) returns (WatchStatus);
-  rpc GetWatchStatus(GetWatchStatusRequest) returns (WatchStatus);
-  rpc ListWatches(ListWatchesRequest) returns (ListWatchesResponse);
-}
-message StartWatchRequest {
+
+message SnapshotDiffRequest {
   string repository_id = 1;
-  // Passed through to the spawned watcher. Zero uses the CLI defaults.
-  bool materialize = 3;
+  string from_snapshot_id = 2;
+  string to_snapshot_id = 3;
+  // When true, source changes are returned and CodeFact/EdgeFact deltas are omitted.
+  bool sources_only = 4;
 }
-message StopWatchRequest { string repository_id = 1; }
-message GetWatchStatusRequest { string repository_id = 1; }
-message ListWatchesRequest {}
-message ListWatchesResponse { repeated WatchStatus watchers = 1; }
+
+message SnapshotDiff {
+  string repository_id = 1;
+  string from_snapshot_id = 2;
+  string to_snapshot_id = 3;
+  string from_git_revision = 4;
+  string to_git_revision = 5;
+  repeated SourceChange sources = 6;
+  CodeFactDelta facts = 7;
+  EdgeFactDelta edge_facts = 8;
+}
+
+// ─── Watcher ─────────────────────────────────────────────────────────────────
+
 // WatchStatus is the exact, shared state of a repository's watcher.
 message WatchStatus {
   string repository_id = 1;
@@ -352,6 +369,9 @@ message WatchStatus {
   bool cli_available = 23;
   string install_hint = 24;
 }
+
+// ─── Git ─────────────────────────────────────────────────────────────────────
+
 // Git references describe current local refs, not a snapshot's captured branch.
 message GitCommit {
   string sha = 1;
@@ -363,40 +383,19 @@ message GitCommit {
   repeated string refs = 7;
   string body = 8;
 }
+
 message GitBranch {
   string name = 1;
   string sha = 2;
 }
-message GetGitHistoryRequest {
-  string repository_id = 1;
-  string branch = 2;
-  uint32 limit = 3;
+
+message CommitFileChange {
+  string path = 1;
+  uint32 added = 2;
+  uint32 removed = 3;
+  bool binary = 4;
 }
-message GetGitHistoryResponse {
-  repeated GitCommit commits = 1;
-  repeated GitBranch branches = 2;
-  string head_sha = 3;
-  string current_branch = 4;
-  bool has_more = 5;
-  bool is_git = 6;
-  // Browser URL derived from the checkout origin, without embedded credentials.
-  string repository_url = 7;
-}
-// Resolves a GitHub PR through the local gh CLI and fetches its commits for review.
-message GetPullRequestRequest {
-  string repository_id = 1;
-  // PR number or URL, scoped to this repository's origin.
-  string pull_request = 2;
-}
-message GetPullRequestResponse {
-  string title = 1;
-  string url = 2;
-  string base_sha = 3;
-  string head_sha = 4;
-  string base_branch = 5;
-  string head_branch = 6;
-}
-message ListPullRequestsRequest { string repository_id = 1; }
+
 message OpenPullRequest {
   uint32 number = 1;
   string title = 2;
@@ -404,382 +403,47 @@ message OpenPullRequest {
   string base_branch = 4;
   string head_branch = 5;
 }
-message ListPullRequestsResponse { repeated OpenPullRequest pull_requests = 1; }
-message GetCommitDetailsRequest {
-  string repository_id = 1;
-  string revision = 2;
+
+// ─── Indexers ────────────────────────────────────────────────────────────────
+
+// IndexerRequirement reports one external SCIP indexer a repository needs,
+// derived from the project families discovered in it.
+message IndexerRequirement {
+  // Indexer family: go, web, python, dotnet, clang, jvm, dart, php, ruby, rust.
+  string family = 1;
+  // Executable the pipeline resolves on PATH (for example scip-go).
+  string tool = 2;
+  // Detected project languages that mapped to this family.
+  repeated string languages = 3;
+  // Whether the executable resolves with the current tool configuration.
+  bool installed = 4;
+  // Copy-pasteable install command for the tool.
+  string install_hint = 5;
 }
-message CommitFileChange {
-  string path = 1;
-  uint32 added = 2;
-  uint32 removed = 3;
-  bool binary = 4;
-}
-message GetCommitDetailsResponse {
-  GitCommit commit = 1;
-  repeated CommitFileChange files = 2;
-}
-// Snapshot is an immutable indexed revision of a repository. It is published
-// only after ingestion completes, and the repository's latest pointer advances
-// to it.
-message Snapshot {
-  string id = 1;
-  string repository_id = 2;
-  int64 created_unix = 3;
-  string git_revision = 4;
-  repeated Project projects = 5;
-  repeated SourceFile sources = 6;
-  string ingestion_status = 7;
-  repeated string warnings = 9;
-  map<string, string> tool_versions = 10;
-  string config_hash = 11;
-  // Git branch the working tree was on when the snapshot was captured.
-  string git_branch = 12;
-  // commit, working_tree, or empty for snapshots with unknown legacy provenance.
-  string provenance = 13;
-  // Hash of the source manifest, HEAD, and indexing configuration.
-  string content_fingerprint = 14;
-  // Counts of records belonging to this snapshot, populated when reading it.
-  SnapshotStatistics statistics = 15;
-  // Subject line of the Git commit at git_revision when the snapshot was
-  // captured. Empty for non-Git repositories.
-  string commit_message = 16;
-}
-message SnapshotStatistics {
-  uint32 facts = 1;
-  uint32 edges = 2;
-  uint32 sources = 3;
-  uint32 chunks = 4;
-}
-message IndexRequest {
-  string directory = 1;
-  repeated string project_roots = 2;
-  repeated string exclude = 3;
-  map<string, string> scip_artifacts = 4;
-  bool detached = 5;
-  // When true and the repository has a published snapshot, facts, chunks, and
-  // edges for sources whose content is unchanged are carried forward. An
-  // indexer re-runs only for projects with changed sources, and its unchanged
-  // documents are skipped. A snapshot with no changes is reused verbatim.
-  bool incremental = 6;
-}
-message Job {
-  string id = 1;
-  string repository_id = 2;
-  string snapshot_id = 3;
-  string state = 4;
-  string stage = 5;
-  string error = 6;
-  repeated string warnings = 7;
-  int64 started_unix = 8;
-  int64 finished_unix = 9;
-}
-message JobID { string id = 1; }
-message SnapshotID { string id = 1; }
-message RepositoryID { string id = 1; }
-message ListSnapshotsResponse { repeated Snapshot snapshots = 1; }
-message DeleteSnapshotRequest { string snapshot_id = 1; }
-message DeleteSnapshotResponse {}
-message CodeFactID { string id = 1; }
-message CodeFactFilter {
-  string repository_id = 1;
-  string snapshot_id = 2;
-  string language = 3;
-  FactKind kind = 4;
-  string path_prefix = 5;
-  uint32 page_size = 6;
-  string page_token = 7;
-  // When set, returns every snapshot's version of this logical CodeFact.
-  string logical_key = 8;
-}
-message CodeFactPage {
-  repeated CodeFact facts = 1;
-  string next_page_token = 2;
-}
-message EdgeFactID { string id = 1; }
-message EdgeFactFilter {
-  string repository_id = 1;
-  string snapshot_id = 2;
-  string from_fact_id = 3;
-  string to_fact_id = 4;
-  EdgeKind kind = 5;
-  string path_prefix = 6;
-  uint32 page_size = 7;
-  string page_token = 8;
-  // When set, returns every snapshot's observation of this logical EdgeFact,
-  // ordered by snapshot. Repeated observations remain separate records.
-  string logical_key = 9;
-}
-message EdgeFactPage {
-  repeated EdgeFact edge_facts = 1;
-  string next_page_token = 2;
-}
-message SourceRequest {
-  string repository_id = 1;
-  string snapshot_id = 2;
-  SourceAnchor anchor = 3;
-}
-message SourceResponse {
-  bytes content = 1;
-  SourceAnchor anchor = 2;
-}
-message SymbolQuery {
-  string repository_id = 1;
-  string snapshot_id = 2;
-  string symbol_key = 3;
-  string fact_id = 4;
-  uint32 page_size = 5;
-  string page_token = 6;
-}
-message GraphRequest {
-  string repository_id = 1;
-  string snapshot_id = 2;
-  string fact_id = 3;
-  uint32 depth = 4;
-  uint32 limit = 5;
-  // Additional traversal seeds. fact_id, when set, is included.
-  repeated string fact_ids = 6;
-  // Edge kinds to follow. Empty follows every kind.
-  repeated EdgeKind kinds = 7;
-  Direction direction = 8;
-}
-enum Direction {
-  DIRECTION_UNSPECIFIED = 0;
-  // Follow edges from source to target (dependency / forward reachability).
-  DIRECTION_OUTBOUND = 1;
-  // Follow edges from target to source (impact / reverse reachability).
-  DIRECTION_INBOUND = 2;
-}
-message Graph {
-  repeated CodeFact facts = 1;
-  repeated EdgeFact edge_facts = 2;
-  bool truncated = 5;
-}
-enum ChangeKind {
-  CHANGE_KIND_UNSPECIFIED = 0;
-  CHANGE_KIND_ADDED = 1;
-  CHANGE_KIND_REMOVED = 2;
-  CHANGE_KIND_MODIFIED = 3;
-}
-message SourceChange {
-  string path = 1;
-  ChangeKind change = 2;
-  string from_hash = 3;
-  string to_hash = 4;
-  optional uint32 lines_added = 5;
-  optional uint32 lines_removed = 6;
-}
-// Deltas are keyed by stable logical identity, so a rename is an add plus a
-// remove and a changed body is a modification.
-message CodeFactDelta {
-  repeated CodeFact added = 1;
-  repeated CodeFact removed = 2;
-  repeated CodeFact modified = 3;
-}
-// EdgeFactDelta compares relationships at the logical-edge level. A logical
-// edge present in both snapshots is modified when its observation count changes.
-message EdgeFactDelta {
-  repeated EdgeFact added = 1;
-  repeated EdgeFact removed = 2;
-  repeated EdgeFact modified = 3;
-}
-message SnapshotDiffRequest {
-  string repository_id = 1;
-  string from_snapshot_id = 2;
-  string to_snapshot_id = 3;
-  // When true, source changes are returned and CodeFact/EdgeFact deltas are omitted.
-  bool sources_only = 4;
-}
-message SnapshotDiff {
-  string repository_id = 1;
-  string from_snapshot_id = 2;
-  string to_snapshot_id = 3;
-  string from_git_revision = 4;
-  string to_git_revision = 5;
-  repeated SourceChange sources = 6;
-  CodeFactDelta facts = 7;
-  EdgeFactDelta edge_facts = 8;
-}
-// EdgeAggregate collapses one snapshot's observations of a relationship into a
-// single edge. It is the unit a consumer promotes into a diagram edge: one
-// relationship with a weight and every observation retained for tracing.
-message EdgeAggregate {
-  string logical_key = 1;
-  EdgeKind kind = 2;
-  string from_fact_id = 3;
-  string to_fact_id = 4;
-  string target_symbol_key = 5;
-  // Aggregated observation count for this logical edge.
-  double weight = 6;
-  uint32 observation_count = 7;
-  // Every retained observation with its anchor and evidence, for tracing.
-  repeated EdgeFact observations = 8;
-  bool observations_truncated = 9;
-}
-message EdgeAggregatePage {
-  repeated EdgeAggregate edges = 1;
-  string next_page_token = 2;
-}
-enum GroupKind {
-  GROUP_KIND_UNSPECIFIED = 0;
-  GROUP_KIND_COMMUNITY = 1;
-  GROUP_KIND_CLUSTER = 2;
-}
-// AnalysisRun records the provenance of a model- or algorithm-produced grouping
-// so multiple algorithms and parameterisations can coexist and be compared.
-message AnalysisRun {
-  string id = 1;
-  string repository_id = 2;
-  string snapshot_id = 3;
-  string algorithm = 4;
-  // Stringified parameters; numeric and boolean values are preserved as text.
-  map<string, string> params = 5;
-  int64 created_unix = 6;
-}
-message AnalysisRunFilter {
-  string repository_id = 1;
-  string snapshot_id = 2;
-  string algorithm = 3;
-  uint32 page_size = 4;
-  string page_token = 5;
-}
-message AnalysisRunPage {
-  repeated AnalysisRun runs = 1;
-  string next_page_token = 2;
-}
-// Group is one community or semantic cluster produced by an analysis run.
-message Group {
-  string id = 1;
-  string run_id = 2;
-  string snapshot_id = 3;
-  string label = 4;
-  GroupKind kind = 5;
-  uint32 size = 7;
-  // Member CodeFact ids. Present on Save; omitted by ListGroups.
-  repeated string fact_ids = 8;
-}
-message GroupFilter {
-  string repository_id = 1;
-  string snapshot_id = 2;
-  string run_id = 3;
-  GroupKind kind = 4;
-  uint32 page_size = 5;
-  string page_token = 6;
-}
-message GroupPage {
-  repeated Group groups = 1;
-  string next_page_token = 2;
-}
-message GroupFactsRequest {
-  string run_id = 1;
-  string group_id = 2;
-  uint32 page_size = 3;
-  string page_token = 4;
-}
-message AnalysisRequest {
-  string repository_id = 1;
-  string snapshot_id = 2;
-  string algorithm = 3;
-  map<string, string> params = 4;
-  repeated Group groups = 5;
-}
-message AnalysisResult {
-  AnalysisRun run = 1;
-  uint32 communities = 2;
-  uint32 clusters = 3;
-}
-// CodeFactService serves the immutable code graph produced by the in-process
-// indexer. Indexing itself is invoked through Go interfaces, not this service.
-service CodeFactService {
-  rpc GetFact(CodeFactID) returns (CodeFact);
-  rpc ListFacts(CodeFactFilter) returns (CodeFactPage);
-  rpc GetEdgeFact(EdgeFactID) returns (EdgeFact);
-  rpc ListEdgeFacts(EdgeFactFilter) returns (EdgeFactPage);
-  rpc GetSource(SourceRequest) returns (SourceResponse);
-  rpc ResolveSymbol(SymbolQuery) returns (CodeFactPage);
-  rpc FindDefinitions(SymbolQuery) returns (CodeFactPage);
-  rpc FindReferences(SymbolQuery) returns (EdgeFactPage);
-  rpc Traverse(GraphRequest) returns (Graph);
-  // Groups a snapshot's EdgeFacts by logical identity into one edge per
-  // relationship, retaining every observation for tracing.
-  rpc AggregateEdges(EdgeFactFilter) returns (EdgeAggregatePage);
-  rpc ListSnapshots(RepositoryID) returns (ListSnapshotsResponse);
-  rpc GetRepository(RepositoryID) returns (Repository);
-  rpc DiffSnapshots(SnapshotDiffRequest) returns (SnapshotDiff);
-  rpc DeleteSnapshot(DeleteSnapshotRequest) returns (DeleteSnapshotResponse);
-}
-message SearchRequest {
-  CodeFactFilter filter = 1;
-  string query = 2;
-  uint32 limit = 3;
-}
-message SearchHit {
-  CodeFact fact = 1;
-  float score = 2;
-}
-message SearchResponse {
-  repeated SearchHit hits = 1;
-}
-service SearchService {
-  rpc FullText(SearchRequest) returns (SearchResponse);
-}
-// AnalysisService persists and serves grouping decisions produced downstream.
-// The indexer never infers a grouping; it records the decision, its provenance,
-// and the member Facts so results survive reindexing and can be compared.
-service AnalysisService {
-  rpc SaveAnalysis(AnalysisRequest) returns (AnalysisResult);
-  rpc ListRuns(AnalysisRunFilter) returns (AnalysisRunPage);
-  rpc ListGroups(GroupFilter) returns (GroupPage);
-  rpc ListGroupFacts(GroupFactsRequest) returns (CodeFactPage);
-}
-// MapperService runs the deterministic dependency-graph community grouping
-// pipeline over a repository snapshot and materializes the result into the
-// workspace. It streams progress while the pipeline runs and terminates with one
-// MapResult.
-service MapperService {
-  rpc MapRepository(MapRepositoryRequest) returns (stream MapRepositoryEvent);
-  rpc ListMaps(ListMapsRequest) returns (ListMapsResponse);
-  rpc CompareRepository(CompareRepositoryRequest) returns (stream CompareRepositoryEvent);
-  rpc GetLiveImpact(GetLiveImpactRequest) returns (LiveImpact);
-  rpc SetImpactRadius(SetImpactRadiusRequest) returns (ImpactDiagram);
-}
-// A comparison target uses the same selection semantics as MapRepository.
-message ComparisonTarget {
-  string snapshot_id = 1;
-  string git_revision = 2;
-  bool working_tree = 3;
-  string git_branch = 4;
-}
-message CompareRepositoryRequest {
-  string repository_id = 1;
-  ComparisonTarget base = 2;
-  ComparisonTarget head = 3;
-  uint32 radius = 4;
-}
-message CompareRepositoryEvent {
-  oneof event {
-    MapProgress progress = 1;
-    ImpactDiagram result = 2;
-  }
-}
+
+// ─── Impact ──────────────────────────────────────────────────────────────────
+
 message ImpactNode {
   string key = 1;
   string path = 2;
   string name = 3;
   ChangeKind change = 4;
-  // Unchanged context is distinguished from directly changed code.
-  bool context = 5;
+  // Dependency hops from the nearest directly changed file. Direct changes are
+  // 0; unchanged blast-radius context is greater than 0.
+  uint32 distance = 5;
   int64 element_id = 6;
   CodeFactDelta symbols = 7;
   double x = 8;
   double y = 9;
 }
+
 message ImpactEdge {
   string from_key = 1;
   string to_key = 2;
   ChangeKind change = 3;
   double weight = 4;
 }
+
 // ImpactGroup is one node of the impact diagram's nested hierarchy. It mirrors
 // the workspace's nested views when the displayed files are materialized, and
 // the dependency-graph community hierarchy otherwise.
@@ -795,6 +459,7 @@ message ImpactGroup {
   repeated string node_keys = 5;
   repeated ImpactGroup children = 6;
 }
+
 message ImpactDiagram {
   string repository_id = 1;
   string comparison_key = 2;
@@ -802,13 +467,14 @@ message ImpactDiagram {
   SnapshotDiff diff = 4;
   repeated ImpactNode nodes = 5;
   repeated ImpactEdge edges = 6;
-  uint32 radius = 7;
+  // Highest hop distance across all reachable mapped elements. The display
+  // radius is client-owned; this is the maximum a client may select.
   uint32 max_radius = 8;
   string version = 9;
   // Root groups of the nested hierarchy, outermost first.
   repeated ImpactGroup groups = 10;
 }
-message GetLiveImpactRequest { string repository_id = 1; }
+
 message LiveImpact {
   ImpactDiagram diagram = 1;
   bool watching = 2;
@@ -816,39 +482,45 @@ message LiveImpact {
   string git_branch = 4;
   string git_revision = 5;
 }
-message SetImpactRadiusRequest {
-  string repository_id = 1;
-  string comparison_key = 2;
-  uint32 radius = 3;
+
+// ImpactSceneOverlay is the transient change annotation on one scene placement.
+message ImpactSceneOverlay {
+  ChangeKind change = 1;
+  string path = 2;
+  optional uint32 lines_added = 3;
+  optional uint32 lines_removed = 4;
+  // Pre-shaped symbol labels: "+ name", "− name", or "~ name".
+  repeated string symbols = 5;
+  // Dependency hops from the nearest direct change (0 for direct changes).
+  uint32 distance = 6;
 }
-message MapRepositoryRequest {
-  string repository_id = 1;
-  // Optional snapshot; the repository's latest published snapshot when empty.
-  string snapshot_id = 2;
-  // When set, external imports declared by the indexed files are materialized
-  // under an External element and connected to the files that import them. Off
-  // by default: external imports can dominate the map's connector budget.
-  bool include_imports = 4;
-  // Mutually exclusive with snapshot_id and working_tree. Resolved to a commit.
-  string git_revision = 5;
-  bool working_tree = 6;
-  // Branch context captured for a commit selected through the history browser.
-  string git_branch = 7;
+
+// ScenePlacement is a workspace placement plus its optional change overlay.
+message ScenePlacement {
+  diag.v1.PlacedElement element = 1;
+  // Unset for unchanged repository context.
+  optional ImpactSceneOverlay overlay = 2;
 }
-message MapRepositoryEvent {
-  oneof event {
-    MapProgress progress = 1;
-    MapResult result = 2;
-  }
+
+message SceneViewContent {
+  repeated ScenePlacement placements = 1;
+  repeated diag.v1.Connector connectors = 2;
 }
-message MapProgress {
-  // One of: preparing, indexing, loading, grouping, materializing.
-  string stage = 1;
-  uint32 current = 2;
-  uint32 total = 3;
-  string detail = 4;
+
+// ImpactScene is an ephemeral, repository-scoped workspace scene assembled for
+// a comparison. It contains the compared repository's elements, the existing
+// blast-radius neighbours, transient placements for files that have no
+// workspace element, and per-placement change overlays. Nothing here is
+// persisted; clients filter by radius and standard/plain view locally.
+message ImpactScene {
+  // View hierarchy, reusing the workspace View shape.
+  repeated diag.v1.View tree = 1;
+  map<string, SceneViewContent> views = 2;
+  repeated diag.v1.ElementNavigationInfo navigations = 3;
+  // Synthetic view id used when changed files have no suitable base view.
+  int64 fallback_view_id = 4;
 }
-// MapResult summarizes a completed mapper run.
+
 message MapResult {
   string run_id = 1;
   int64 view_id = 2;
@@ -864,10 +536,270 @@ message MapResult {
 message CompletedMap {
   MapResult result = 1;
   int64 completed_unix = 2;
-  // Whether the completed run materialized external imports. Defaults to
-  // false; see MapRepositoryRequest.include_imports.
+  // Whether the completed run materialized external imports.
   bool include_imports = 4;
   string config_hash = 5;
 }
-message ListMapsRequest { string repository_id = 1; }
-message ListMapsResponse { repeated CompletedMap maps = 1; }
+
+// ─── RepositoryService messages ──────────────────────────────────────────────
+
+message ListRepositoriesResponse {
+  repeated Repository repositories = 1;
+}
+
+// Reads current worktree content for source previews, confined to a registered
+// repository. This does not read immutable snapshot content.
+message GetWorktreeSourceRequest {
+  string repository_id = 1;
+  // Local path or remote URL used by legacy workspace source links.
+  string repo = 2;
+  string file_path = 3;
+}
+
+message GetWorktreeSourceResponse {
+  string content = 1;
+  string path = 2;
+}
+
+message UpdateRepositoryMapConfigurationRequest {
+  string repository_id = 1;
+  RepositoryMapConfiguration overrides = 2;
+}
+
+// Changes the local Git checkout's remote configuration, without network I/O.
+// Replaces the remote's URL lists; remove deletes the named remote instead.
+message UpdateRepositoryRemoteRequest {
+  string repository_id = 1;
+  RepositoryRemote remote = 2;
+  bool remove = 3;
+}
+
+message DeleteRepositoryRequest {
+  string id = 1;
+  // When set, also deletes the workspace views, elements, and connectors that
+  // were materialized from this repository. When unset, only the repository and
+  // its snapshots are deleted and materialized resources remain in the
+  // workspace.
+  bool delete_materialized = 2;
+  // When set and the repository is a tld-managed clone, also deletes the local
+  // checkout. Ignored for repositories registered from user-provided paths.
+  bool delete_clone = 3;
+}
+
+message DeleteRepositoryResponse {}
+
+message AddRepositoryRequest {
+  // Absolute local filesystem path to the repository directory to index.
+  string path = 1;
+  // Remote Git URL (or GitHub owner/repo shorthand) to clone into tld-managed
+  // storage and index. Mutually exclusive with path. Credentials embedded in
+  // the URL are rejected.
+  string remote_url = 2;
+  // When set, projects the published snapshot into the workspace after
+  // indexing.
+  bool materialize = 3;
+}
+
+message AddRepositoryEvent {
+  oneof event {
+    Progress progress = 1;
+    Repository repository = 2;
+  }
+}
+
+// CheckRepositoryIndexersRequest identifies a repository to inspect. Exactly
+// one of path or remote_url must be set.
+message CheckRepositoryIndexersRequest {
+  string path = 1;
+  string remote_url = 2;
+}
+
+message CheckRepositoryIndexersResponse {
+  repeated IndexerRequirement indexers = 1;
+  // True when every required indexer is installed.
+  bool ready = 2;
+}
+
+message StartWatchRequest {
+  string repository_id = 1;
+  // Passed through to the spawned watcher. Zero uses the CLI defaults.
+  bool materialize = 2;
+}
+
+message ListWatchesResponse {
+  repeated WatchStatus watchers = 1;
+}
+
+// GitHistoryRequest scopes the history to a repository. An empty branch uses the
+// current branch; zero limit uses the server default.
+message GetGitHistoryRequest {
+  string repository_id = 1;
+  string branch = 2;
+  uint32 limit = 3;
+}
+
+message GetGitHistoryResponse {
+  repeated GitCommit commits = 1;
+  repeated GitBranch branches = 2;
+  string head_sha = 3;
+  string current_branch = 4;
+  bool has_more = 5;
+  bool is_git = 6;
+  // Browser URL derived from the checkout origin, without embedded credentials.
+  string repository_url = 7;
+}
+
+// Resolves a GitHub PR through the local gh CLI and fetches its commits for review.
+message GetPullRequestRequest {
+  string repository_id = 1;
+  // PR number or URL, scoped to this repository's origin.
+  string pull_request = 2;
+}
+
+message GetPullRequestResponse {
+  string title = 1;
+  string url = 2;
+  string base_sha = 3;
+  string head_sha = 4;
+  string base_branch = 5;
+  string head_branch = 6;
+}
+
+message ListPullRequestsResponse {
+  repeated OpenPullRequest pull_requests = 1;
+}
+
+message GetCommitDetailsRequest {
+  string repository_id = 1;
+  string revision = 2;
+}
+
+message GetCommitDetailsResponse {
+  GitCommit commit = 1;
+  repeated CommitFileChange files = 2;
+}
+
+// ─── CodeIndexService messages ───────────────────────────────────────────────
+
+message CodeFactFilter {
+  string repository_id = 1;
+  string snapshot_id = 2;
+  string language = 3;
+  FactKind kind = 4;
+  string path_prefix = 5;
+  uint32 page_size = 6;
+  string page_token = 7;
+}
+
+message CodeFactPage {
+  repeated CodeFact facts = 1;
+  string next_page_token = 2;
+}
+
+message ListSnapshotsResponse {
+  repeated Snapshot snapshots = 1;
+}
+
+message DeleteSnapshotResponse {}
+
+message MapRepositoryRequest {
+  string repository_id = 1;
+  // Optional revision; the repository's latest published snapshot when unset.
+  Revision revision = 2;
+  // When set, external imports declared by the indexed files are materialized
+  // under an External element and connected to the files that import them. Off
+  // by default: external imports can dominate the map's connector budget.
+  bool include_imports = 3;
+}
+
+message MapRepositoryEvent {
+  oneof event {
+    Progress progress = 1;
+    MapResult result = 2;
+  }
+}
+
+message ListMapsResponse {
+  repeated CompletedMap maps = 1;
+}
+
+// A comparison target uses the same selection semantics as MapRepository.
+message CompareRepositoryRequest {
+  string repository_id = 1;
+  Revision base = 2;
+  Revision head = 3;
+  // Dependency hops of unchanged context to include. 0 means direct changes
+  // only; clients filter the returned nodes by their own display radius.
+  uint32 context_depth = 4;
+}
+
+message CompareRepositoryEvent {
+  oneof event {
+    Progress progress = 1;
+    ImpactDiagram result = 2;
+  }
+}
+
+message ExportImpactMermaidRequest {
+  string repository_id = 1;
+  string comparison_key = 2;
+  // Display scope: only nodes within this dependency radius are exported.
+  // 0 exports direct changes only.
+  uint32 radius = 3;
+  bool markdown = 4;
+}
+
+message ExportImpactMermaidResponse {
+  string code = 1;
+  string markdown = 2;
+  repeated string warnings = 3;
+}
+
+message GetImpactSceneRequest {
+  string repository_id = 1;
+  string comparison_key = 2;
+}
+
+message GetImpactSceneResponse {
+  ImpactScene scene = 1;
+}
+
+// ─── Services ────────────────────────────────────────────────────────────────
+
+// RepositoryService lists, adds, and deletes the repositories indexed by the
+// in-process codeindex engine, and manages their settings, Git history, pull
+// requests, and watchers.
+service RepositoryService {
+  rpc ListRepositories(google.protobuf.Empty) returns (ListRepositoriesResponse);
+  rpc GetWorktreeSource(GetWorktreeSourceRequest) returns (GetWorktreeSourceResponse);
+  rpc GetRepositorySettings(ID) returns (RepositorySettings);
+  rpc UpdateRepositoryMapConfiguration(UpdateRepositoryMapConfigurationRequest) returns (RepositorySettings);
+  rpc UpdateRepositoryRemote(UpdateRepositoryRemoteRequest) returns (RepositorySettings);
+  rpc CheckRepositoryIndexers(CheckRepositoryIndexersRequest) returns (CheckRepositoryIndexersResponse);
+  rpc AddRepository(AddRepositoryRequest) returns (stream AddRepositoryEvent);
+  rpc DeleteRepository(DeleteRepositoryRequest) returns (DeleteRepositoryResponse);
+  rpc GetGitHistory(GetGitHistoryRequest) returns (GetGitHistoryResponse);
+  rpc GetCommitDetails(GetCommitDetailsRequest) returns (GetCommitDetailsResponse);
+  rpc GetPullRequest(GetPullRequestRequest) returns (GetPullRequestResponse);
+  rpc ListPullRequests(ID) returns (ListPullRequestsResponse);
+  rpc StartWatch(StartWatchRequest) returns (WatchStatus);
+  rpc StopWatch(ID) returns (WatchStatus);
+  rpc GetWatchStatus(ID) returns (WatchStatus);
+  rpc ListWatches(google.protobuf.Empty) returns (ListWatchesResponse);
+}
+
+// CodeIndexService reads the immutable code graph, diffs snapshots, and runs the
+// deterministic mapper and impact pipelines. Indexing itself is invoked through
+// Go interfaces, not this service.
+service CodeIndexService {
+  rpc ListFacts(CodeFactFilter) returns (CodeFactPage);
+  rpc ListSnapshots(ID) returns (ListSnapshotsResponse);
+  rpc DiffSnapshots(SnapshotDiffRequest) returns (SnapshotDiff);
+  rpc DeleteSnapshot(ID) returns (DeleteSnapshotResponse);
+  rpc MapRepository(MapRepositoryRequest) returns (stream MapRepositoryEvent);
+  rpc ListMaps(ID) returns (ListMapsResponse);
+  rpc CompareRepository(CompareRepositoryRequest) returns (stream CompareRepositoryEvent);
+  rpc GetLiveImpact(ID) returns (LiveImpact);
+  rpc ExportImpactMermaid(ExportImpactMermaidRequest) returns (ExportImpactMermaidResponse);
+  rpc GetImpactScene(GetImpactSceneRequest) returns (GetImpactSceneResponse);
+}
