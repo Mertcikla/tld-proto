@@ -66,6 +66,9 @@ const (
 	// RepositoryServiceGetCommitDetailsProcedure is the fully-qualified name of the RepositoryService's
 	// GetCommitDetails RPC.
 	RepositoryServiceGetCommitDetailsProcedure = "/codeindex.v1.RepositoryService/GetCommitDetails"
+	// RepositoryServiceGetRevisionRangeSummaryProcedure is the fully-qualified name of the
+	// RepositoryService's GetRevisionRangeSummary RPC.
+	RepositoryServiceGetRevisionRangeSummaryProcedure = "/codeindex.v1.RepositoryService/GetRevisionRangeSummary"
 	// RepositoryServiceGetPullRequestProcedure is the fully-qualified name of the RepositoryService's
 	// GetPullRequest RPC.
 	RepositoryServiceGetPullRequestProcedure = "/codeindex.v1.RepositoryService/GetPullRequest"
@@ -131,6 +134,7 @@ type RepositoryServiceClient interface {
 	DeleteRepository(context.Context, *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[v1.DeleteRepositoryResponse], error)
 	GetGitHistory(context.Context, *connect.Request[v1.GetGitHistoryRequest]) (*connect.Response[v1.GetGitHistoryResponse], error)
 	GetCommitDetails(context.Context, *connect.Request[v1.GetCommitDetailsRequest]) (*connect.Response[v1.GetCommitDetailsResponse], error)
+	GetRevisionRangeSummary(context.Context, *connect.Request[v1.GetRevisionRangeSummaryRequest]) (*connect.Response[v1.RevisionRangeSummary], error)
 	GetPullRequest(context.Context, *connect.Request[v1.GetPullRequestRequest]) (*connect.Response[v1.GetPullRequestResponse], error)
 	ListPullRequests(context.Context, *connect.Request[v1.ID]) (*connect.Response[v1.ListPullRequestsResponse], error)
 	StartWatch(context.Context, *connect.Request[v1.StartWatchRequest]) (*connect.Response[v1.WatchStatus], error)
@@ -210,6 +214,12 @@ func NewRepositoryServiceClient(httpClient connect.HTTPClient, baseURL string, o
 			connect.WithSchema(repositoryServiceMethods.ByName("GetCommitDetails")),
 			connect.WithClientOptions(opts...),
 		),
+		getRevisionRangeSummary: connect.NewClient[v1.GetRevisionRangeSummaryRequest, v1.RevisionRangeSummary](
+			httpClient,
+			baseURL+RepositoryServiceGetRevisionRangeSummaryProcedure,
+			connect.WithSchema(repositoryServiceMethods.ByName("GetRevisionRangeSummary")),
+			connect.WithClientOptions(opts...),
+		),
 		getPullRequest: connect.NewClient[v1.GetPullRequestRequest, v1.GetPullRequestResponse](
 			httpClient,
 			baseURL+RepositoryServiceGetPullRequestProcedure,
@@ -261,6 +271,7 @@ type repositoryServiceClient struct {
 	deleteRepository                 *connect.Client[v1.DeleteRepositoryRequest, v1.DeleteRepositoryResponse]
 	getGitHistory                    *connect.Client[v1.GetGitHistoryRequest, v1.GetGitHistoryResponse]
 	getCommitDetails                 *connect.Client[v1.GetCommitDetailsRequest, v1.GetCommitDetailsResponse]
+	getRevisionRangeSummary          *connect.Client[v1.GetRevisionRangeSummaryRequest, v1.RevisionRangeSummary]
 	getPullRequest                   *connect.Client[v1.GetPullRequestRequest, v1.GetPullRequestResponse]
 	listPullRequests                 *connect.Client[v1.ID, v1.ListPullRequestsResponse]
 	startWatch                       *connect.Client[v1.StartWatchRequest, v1.WatchStatus]
@@ -320,6 +331,11 @@ func (c *repositoryServiceClient) GetCommitDetails(ctx context.Context, req *con
 	return c.getCommitDetails.CallUnary(ctx, req)
 }
 
+// GetRevisionRangeSummary calls codeindex.v1.RepositoryService.GetRevisionRangeSummary.
+func (c *repositoryServiceClient) GetRevisionRangeSummary(ctx context.Context, req *connect.Request[v1.GetRevisionRangeSummaryRequest]) (*connect.Response[v1.RevisionRangeSummary], error) {
+	return c.getRevisionRangeSummary.CallUnary(ctx, req)
+}
+
 // GetPullRequest calls codeindex.v1.RepositoryService.GetPullRequest.
 func (c *repositoryServiceClient) GetPullRequest(ctx context.Context, req *connect.Request[v1.GetPullRequestRequest]) (*connect.Response[v1.GetPullRequestResponse], error) {
 	return c.getPullRequest.CallUnary(ctx, req)
@@ -362,6 +378,7 @@ type RepositoryServiceHandler interface {
 	DeleteRepository(context.Context, *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[v1.DeleteRepositoryResponse], error)
 	GetGitHistory(context.Context, *connect.Request[v1.GetGitHistoryRequest]) (*connect.Response[v1.GetGitHistoryResponse], error)
 	GetCommitDetails(context.Context, *connect.Request[v1.GetCommitDetailsRequest]) (*connect.Response[v1.GetCommitDetailsResponse], error)
+	GetRevisionRangeSummary(context.Context, *connect.Request[v1.GetRevisionRangeSummaryRequest]) (*connect.Response[v1.RevisionRangeSummary], error)
 	GetPullRequest(context.Context, *connect.Request[v1.GetPullRequestRequest]) (*connect.Response[v1.GetPullRequestResponse], error)
 	ListPullRequests(context.Context, *connect.Request[v1.ID]) (*connect.Response[v1.ListPullRequestsResponse], error)
 	StartWatch(context.Context, *connect.Request[v1.StartWatchRequest]) (*connect.Response[v1.WatchStatus], error)
@@ -437,6 +454,12 @@ func NewRepositoryServiceHandler(svc RepositoryServiceHandler, opts ...connect.H
 		connect.WithSchema(repositoryServiceMethods.ByName("GetCommitDetails")),
 		connect.WithHandlerOptions(opts...),
 	)
+	repositoryServiceGetRevisionRangeSummaryHandler := connect.NewUnaryHandler(
+		RepositoryServiceGetRevisionRangeSummaryProcedure,
+		svc.GetRevisionRangeSummary,
+		connect.WithSchema(repositoryServiceMethods.ByName("GetRevisionRangeSummary")),
+		connect.WithHandlerOptions(opts...),
+	)
 	repositoryServiceGetPullRequestHandler := connect.NewUnaryHandler(
 		RepositoryServiceGetPullRequestProcedure,
 		svc.GetPullRequest,
@@ -495,6 +518,8 @@ func NewRepositoryServiceHandler(svc RepositoryServiceHandler, opts ...connect.H
 			repositoryServiceGetGitHistoryHandler.ServeHTTP(w, r)
 		case RepositoryServiceGetCommitDetailsProcedure:
 			repositoryServiceGetCommitDetailsHandler.ServeHTTP(w, r)
+		case RepositoryServiceGetRevisionRangeSummaryProcedure:
+			repositoryServiceGetRevisionRangeSummaryHandler.ServeHTTP(w, r)
 		case RepositoryServiceGetPullRequestProcedure:
 			repositoryServiceGetPullRequestHandler.ServeHTTP(w, r)
 		case RepositoryServiceListPullRequestsProcedure:
@@ -554,6 +579,10 @@ func (UnimplementedRepositoryServiceHandler) GetGitHistory(context.Context, *con
 
 func (UnimplementedRepositoryServiceHandler) GetCommitDetails(context.Context, *connect.Request[v1.GetCommitDetailsRequest]) (*connect.Response[v1.GetCommitDetailsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.GetCommitDetails is not implemented"))
+}
+
+func (UnimplementedRepositoryServiceHandler) GetRevisionRangeSummary(context.Context, *connect.Request[v1.GetRevisionRangeSummaryRequest]) (*connect.Response[v1.RevisionRangeSummary], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.GetRevisionRangeSummary is not implemented"))
 }
 
 func (UnimplementedRepositoryServiceHandler) GetPullRequest(context.Context, *connect.Request[v1.GetPullRequestRequest]) (*connect.Response[v1.GetPullRequestResponse], error) {

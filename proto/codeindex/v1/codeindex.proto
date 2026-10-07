@@ -716,6 +716,30 @@ message GetCommitDetailsResponse {
   repeated CommitFileChange files = 2;
 }
 
+// GetRevisionRangeSummaryRequest asks for a lightweight diff summary between two
+// targets. It neither indexes nor builds a map. A side is a commit-ish revision
+// unless its working_tree flag is set, in which case it compares the checkout's
+// working tree.
+message GetRevisionRangeSummaryRequest {
+  string repository_id = 1;
+  string base = 2;
+  string head = 3;
+  bool base_working_tree = 4;
+  bool head_working_tree = 5;
+}
+
+// RevisionRangeSummary is the commit count and line-level diffstat for a
+// revision range, surfaced in the commit history footer before a full compare.
+message RevisionRangeSummary {
+  uint32 commits = 1;
+  uint32 additions = 2;
+  uint32 deletions = 3;
+  // Lines added or removed in files modified between the two revisions.
+  uint32 changed = 4;
+  // Number of files changed.
+  uint32 files = 5;
+}
+
 // ─── CodeIndexService messages ───────────────────────────────────────────────
 
 message CodeFactFilter {
@@ -834,6 +858,7 @@ service RepositoryService {
   rpc DeleteRepository(DeleteRepositoryRequest) returns (DeleteRepositoryResponse);
   rpc GetGitHistory(GetGitHistoryRequest) returns (GetGitHistoryResponse);
   rpc GetCommitDetails(GetCommitDetailsRequest) returns (GetCommitDetailsResponse);
+  rpc GetRevisionRangeSummary(GetRevisionRangeSummaryRequest) returns (RevisionRangeSummary);
   rpc GetPullRequest(GetPullRequestRequest) returns (GetPullRequestResponse);
   rpc ListPullRequests(ID) returns (ListPullRequestsResponse);
   rpc StartWatch(StartWatchRequest) returns (WatchStatus);
