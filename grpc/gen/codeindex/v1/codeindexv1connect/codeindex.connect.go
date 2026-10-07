@@ -90,6 +90,9 @@ const (
 	// CodeIndexServiceListSnapshotsProcedure is the fully-qualified name of the CodeIndexService's
 	// ListSnapshots RPC.
 	CodeIndexServiceListSnapshotsProcedure = "/codeindex.v1.CodeIndexService/ListSnapshots"
+	// CodeIndexServiceCaptureSnapshotProcedure is the fully-qualified name of the CodeIndexService's
+	// CaptureSnapshot RPC.
+	CodeIndexServiceCaptureSnapshotProcedure = "/codeindex.v1.CodeIndexService/CaptureSnapshot"
 	// CodeIndexServiceDiffSnapshotsProcedure is the fully-qualified name of the CodeIndexService's
 	// DiffSnapshots RPC.
 	CodeIndexServiceDiffSnapshotsProcedure = "/codeindex.v1.CodeIndexService/DiffSnapshots"
@@ -581,6 +584,7 @@ func (UnimplementedRepositoryServiceHandler) ListWatches(context.Context, *conne
 type CodeIndexServiceClient interface {
 	ListFacts(context.Context, *connect.Request[v1.CodeFactFilter]) (*connect.Response[v1.CodeFactPage], error)
 	ListSnapshots(context.Context, *connect.Request[v1.ID]) (*connect.Response[v1.ListSnapshotsResponse], error)
+	CaptureSnapshot(context.Context, *connect.Request[v1.CaptureSnapshotRequest]) (*connect.ServerStreamForClient[v1.CaptureSnapshotEvent], error)
 	DiffSnapshots(context.Context, *connect.Request[v1.SnapshotDiffRequest]) (*connect.Response[v1.SnapshotDiff], error)
 	DeleteSnapshot(context.Context, *connect.Request[v1.ID]) (*connect.Response[v1.DeleteSnapshotResponse], error)
 	MapRepository(context.Context, *connect.Request[v1.MapRepositoryRequest]) (*connect.ServerStreamForClient[v1.MapRepositoryEvent], error)
@@ -612,6 +616,12 @@ func NewCodeIndexServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			httpClient,
 			baseURL+CodeIndexServiceListSnapshotsProcedure,
 			connect.WithSchema(codeIndexServiceMethods.ByName("ListSnapshots")),
+			connect.WithClientOptions(opts...),
+		),
+		captureSnapshot: connect.NewClient[v1.CaptureSnapshotRequest, v1.CaptureSnapshotEvent](
+			httpClient,
+			baseURL+CodeIndexServiceCaptureSnapshotProcedure,
+			connect.WithSchema(codeIndexServiceMethods.ByName("CaptureSnapshot")),
 			connect.WithClientOptions(opts...),
 		),
 		diffSnapshots: connect.NewClient[v1.SnapshotDiffRequest, v1.SnapshotDiff](
@@ -669,6 +679,7 @@ func NewCodeIndexServiceClient(httpClient connect.HTTPClient, baseURL string, op
 type codeIndexServiceClient struct {
 	listFacts           *connect.Client[v1.CodeFactFilter, v1.CodeFactPage]
 	listSnapshots       *connect.Client[v1.ID, v1.ListSnapshotsResponse]
+	captureSnapshot     *connect.Client[v1.CaptureSnapshotRequest, v1.CaptureSnapshotEvent]
 	diffSnapshots       *connect.Client[v1.SnapshotDiffRequest, v1.SnapshotDiff]
 	deleteSnapshot      *connect.Client[v1.ID, v1.DeleteSnapshotResponse]
 	mapRepository       *connect.Client[v1.MapRepositoryRequest, v1.MapRepositoryEvent]
@@ -687,6 +698,11 @@ func (c *codeIndexServiceClient) ListFacts(ctx context.Context, req *connect.Req
 // ListSnapshots calls codeindex.v1.CodeIndexService.ListSnapshots.
 func (c *codeIndexServiceClient) ListSnapshots(ctx context.Context, req *connect.Request[v1.ID]) (*connect.Response[v1.ListSnapshotsResponse], error) {
 	return c.listSnapshots.CallUnary(ctx, req)
+}
+
+// CaptureSnapshot calls codeindex.v1.CodeIndexService.CaptureSnapshot.
+func (c *codeIndexServiceClient) CaptureSnapshot(ctx context.Context, req *connect.Request[v1.CaptureSnapshotRequest]) (*connect.ServerStreamForClient[v1.CaptureSnapshotEvent], error) {
+	return c.captureSnapshot.CallServerStream(ctx, req)
 }
 
 // DiffSnapshots calls codeindex.v1.CodeIndexService.DiffSnapshots.
@@ -733,6 +749,7 @@ func (c *codeIndexServiceClient) GetImpactScene(ctx context.Context, req *connec
 type CodeIndexServiceHandler interface {
 	ListFacts(context.Context, *connect.Request[v1.CodeFactFilter]) (*connect.Response[v1.CodeFactPage], error)
 	ListSnapshots(context.Context, *connect.Request[v1.ID]) (*connect.Response[v1.ListSnapshotsResponse], error)
+	CaptureSnapshot(context.Context, *connect.Request[v1.CaptureSnapshotRequest], *connect.ServerStream[v1.CaptureSnapshotEvent]) error
 	DiffSnapshots(context.Context, *connect.Request[v1.SnapshotDiffRequest]) (*connect.Response[v1.SnapshotDiff], error)
 	DeleteSnapshot(context.Context, *connect.Request[v1.ID]) (*connect.Response[v1.DeleteSnapshotResponse], error)
 	MapRepository(context.Context, *connect.Request[v1.MapRepositoryRequest], *connect.ServerStream[v1.MapRepositoryEvent]) error
@@ -760,6 +777,12 @@ func NewCodeIndexServiceHandler(svc CodeIndexServiceHandler, opts ...connect.Han
 		CodeIndexServiceListSnapshotsProcedure,
 		svc.ListSnapshots,
 		connect.WithSchema(codeIndexServiceMethods.ByName("ListSnapshots")),
+		connect.WithHandlerOptions(opts...),
+	)
+	codeIndexServiceCaptureSnapshotHandler := connect.NewServerStreamHandler(
+		CodeIndexServiceCaptureSnapshotProcedure,
+		svc.CaptureSnapshot,
+		connect.WithSchema(codeIndexServiceMethods.ByName("CaptureSnapshot")),
 		connect.WithHandlerOptions(opts...),
 	)
 	codeIndexServiceDiffSnapshotsHandler := connect.NewUnaryHandler(
@@ -816,6 +839,8 @@ func NewCodeIndexServiceHandler(svc CodeIndexServiceHandler, opts ...connect.Han
 			codeIndexServiceListFactsHandler.ServeHTTP(w, r)
 		case CodeIndexServiceListSnapshotsProcedure:
 			codeIndexServiceListSnapshotsHandler.ServeHTTP(w, r)
+		case CodeIndexServiceCaptureSnapshotProcedure:
+			codeIndexServiceCaptureSnapshotHandler.ServeHTTP(w, r)
 		case CodeIndexServiceDiffSnapshotsProcedure:
 			codeIndexServiceDiffSnapshotsHandler.ServeHTTP(w, r)
 		case CodeIndexServiceDeleteSnapshotProcedure:
@@ -847,6 +872,10 @@ func (UnimplementedCodeIndexServiceHandler) ListFacts(context.Context, *connect.
 
 func (UnimplementedCodeIndexServiceHandler) ListSnapshots(context.Context, *connect.Request[v1.ID]) (*connect.Response[v1.ListSnapshotsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.CodeIndexService.ListSnapshots is not implemented"))
+}
+
+func (UnimplementedCodeIndexServiceHandler) CaptureSnapshot(context.Context, *connect.Request[v1.CaptureSnapshotRequest], *connect.ServerStream[v1.CaptureSnapshotEvent]) error {
+	return connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.CodeIndexService.CaptureSnapshot is not implemented"))
 }
 
 func (UnimplementedCodeIndexServiceHandler) DiffSnapshots(context.Context, *connect.Request[v1.SnapshotDiffRequest]) (*connect.Response[v1.SnapshotDiff], error) {

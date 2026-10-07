@@ -404,6 +404,18 @@ message IndexerRequirement {
   bool installed = 4;
   // Copy-pasteable install command for the tool.
   string install_hint = 5;
+  // Version reported by the installed executable; empty when unresolved or
+  // when the tool does not report one.
+  string version = 6;
+  // Lowest version the pipeline is tested against. Empty when no minimum is
+  // declared. Older tools still run, but may emit less symbol metadata.
+  string min_version = 7;
+  // The detected version is older than min_version. Advisory.
+  bool below_minimum = 8;
+  // Release or package page a user can download the tool from.
+  string download_url = 9;
+  // Resolved executable path when found.
+  string path = 10;
 }
 
 // ─── Impact ──────────────────────────────────────────────────────────────────
@@ -727,6 +739,23 @@ message ListSnapshotsResponse {
 
 message DeleteSnapshotResponse {}
 
+// CaptureSnapshotRequest indexes a repository and publishes a new snapshot.
+message CaptureSnapshotRequest {
+  string repository_id = 1;
+  // When set, the checkout's working tree is indexed, including uncommitted
+  // changes, and published as a manual snapshot. When unset, the current Git
+  // commit is indexed; the repository must be a Git checkout with at least one
+  // commit.
+  bool working_tree = 2;
+}
+
+message CaptureSnapshotEvent {
+  oneof event {
+    Progress progress = 1;
+    Snapshot snapshot = 2;
+  }
+}
+
 message MapRepositoryRequest {
   string repository_id = 1;
   // Optional revision; the repository's latest published snapshot when unset.
@@ -813,12 +842,12 @@ service RepositoryService {
   rpc ListWatches(google.protobuf.Empty) returns (ListWatchesResponse);
 }
 
-// CodeIndexService reads the immutable code graph, diffs snapshots, and runs the
-// deterministic mapper and impact pipelines. Indexing itself is invoked through
-// Go interfaces, not this service.
+// CodeIndexService captures, reads, and deletes snapshots of the immutable
+// code graph, and runs the deterministic mapper and impact pipelines.
 service CodeIndexService {
   rpc ListFacts(CodeFactFilter) returns (CodeFactPage);
   rpc ListSnapshots(ID) returns (ListSnapshotsResponse);
+  rpc CaptureSnapshot(CaptureSnapshotRequest) returns (stream CaptureSnapshotEvent);
   rpc DiffSnapshots(SnapshotDiffRequest) returns (SnapshotDiff);
   rpc DeleteSnapshot(ID) returns (DeleteSnapshotResponse);
   rpc MapRepository(MapRepositoryRequest) returns (stream MapRepositoryEvent);
