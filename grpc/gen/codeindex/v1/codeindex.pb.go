@@ -1182,19 +1182,24 @@ func (x *Repository) GetManaged() bool {
 
 // Unset fields inherit global map defaults. Update replaces all overrides.
 type RepositoryMapConfiguration struct {
-	state                    protoimpl.MessageState `protogen:"open.v1"`
-	Resolution               *float64               `protobuf:"fixed64,1,opt,name=resolution,proto3,oneof" json:"resolution,omitempty"`
-	MinGroupSize             *uint32                `protobuf:"varint,2,opt,name=min_group_size,json=minGroupSize,proto3,oneof" json:"min_group_size,omitempty"`
-	MinRootGroups            *uint32                `protobuf:"varint,3,opt,name=min_root_groups,json=minRootGroups,proto3,oneof" json:"min_root_groups,omitempty"`
-	MaxRootGroups            *uint32                `protobuf:"varint,4,opt,name=max_root_groups,json=maxRootGroups,proto3,oneof" json:"max_root_groups,omitempty"`
-	MaxChildren              *uint32                `protobuf:"varint,5,opt,name=max_children,json=maxChildren,proto3,oneof" json:"max_children,omitempty"`
-	MaxDepth                 *uint32                `protobuf:"varint,6,opt,name=max_depth,json=maxDepth,proto3,oneof" json:"max_depth,omitempty"`
-	MaxLeafFiles             *uint32                `protobuf:"varint,7,opt,name=max_leaf_files,json=maxLeafFiles,proto3,oneof" json:"max_leaf_files,omitempty"`
-	MaxConnectorsPerView     *uint32                `protobuf:"varint,8,opt,name=max_connectors_per_view,json=maxConnectorsPerView,proto3,oneof" json:"max_connectors_per_view,omitempty"`
-	MaxLeafConnectorsPerView *uint32                `protobuf:"varint,9,opt,name=max_leaf_connectors_per_view,json=maxLeafConnectorsPerView,proto3,oneof" json:"max_leaf_connectors_per_view,omitempty"`
-	IncludeExternalImports   *bool                  `protobuf:"varint,10,opt,name=include_external_imports,json=includeExternalImports,proto3,oneof" json:"include_external_imports,omitempty"`
-	unknownFields            protoimpl.UnknownFields
-	sizeCache                protoimpl.SizeCache
+	state                            protoimpl.MessageState `protogen:"open.v1"`
+	Resolution                       *float64               `protobuf:"fixed64,1,opt,name=resolution,proto3,oneof" json:"resolution,omitempty"`
+	MinGroupSize                     *uint32                `protobuf:"varint,2,opt,name=min_group_size,json=minGroupSize,proto3,oneof" json:"min_group_size,omitempty"`
+	MinRootGroups                    *uint32                `protobuf:"varint,3,opt,name=min_root_groups,json=minRootGroups,proto3,oneof" json:"min_root_groups,omitempty"`
+	MaxRootGroups                    *uint32                `protobuf:"varint,4,opt,name=max_root_groups,json=maxRootGroups,proto3,oneof" json:"max_root_groups,omitempty"`
+	MaxChildren                      *uint32                `protobuf:"varint,5,opt,name=max_children,json=maxChildren,proto3,oneof" json:"max_children,omitempty"`
+	MaxDepth                         *uint32                `protobuf:"varint,6,opt,name=max_depth,json=maxDepth,proto3,oneof" json:"max_depth,omitempty"`
+	MaxLeafFiles                     *uint32                `protobuf:"varint,7,opt,name=max_leaf_files,json=maxLeafFiles,proto3,oneof" json:"max_leaf_files,omitempty"`
+	MaxConnectorsPerView             *uint32                `protobuf:"varint,8,opt,name=max_connectors_per_view,json=maxConnectorsPerView,proto3,oneof" json:"max_connectors_per_view,omitempty"`
+	MaxLeafConnectorsPerView         *uint32                `protobuf:"varint,9,opt,name=max_leaf_connectors_per_view,json=maxLeafConnectorsPerView,proto3,oneof" json:"max_leaf_connectors_per_view,omitempty"`
+	IncludeExternalImports           *bool                  `protobuf:"varint,10,opt,name=include_external_imports,json=includeExternalImports,proto3,oneof" json:"include_external_imports,omitempty"`
+	CrossViewConnectors              *bool                  `protobuf:"varint,11,opt,name=cross_view_connectors,json=crossViewConnectors,proto3,oneof" json:"cross_view_connectors,omitempty"`
+	CrossViewMaxViews                *uint32                `protobuf:"varint,12,opt,name=cross_view_max_views,json=crossViewMaxViews,proto3,oneof" json:"cross_view_max_views,omitempty"`
+	CrossViewMaxElementsPerView      *uint32                `protobuf:"varint,13,opt,name=cross_view_max_elements_per_view,json=crossViewMaxElementsPerView,proto3,oneof" json:"cross_view_max_elements_per_view,omitempty"`
+	CrossViewMaxConnectorsPerView    *uint32                `protobuf:"varint,14,opt,name=cross_view_max_connectors_per_view,json=crossViewMaxConnectorsPerView,proto3,oneof" json:"cross_view_max_connectors_per_view,omitempty"`
+	CrossViewMaxConnectorsPerElement *uint32                `protobuf:"varint,15,opt,name=cross_view_max_connectors_per_element,json=crossViewMaxConnectorsPerElement,proto3,oneof" json:"cross_view_max_connectors_per_element,omitempty"`
+	unknownFields                    protoimpl.UnknownFields
+	sizeCache                        protoimpl.SizeCache
 }
 
 func (x *RepositoryMapConfiguration) Reset() {
@@ -1295,6 +1300,41 @@ func (x *RepositoryMapConfiguration) GetIncludeExternalImports() bool {
 		return *x.IncludeExternalImports
 	}
 	return false
+}
+
+func (x *RepositoryMapConfiguration) GetCrossViewConnectors() bool {
+	if x != nil && x.CrossViewConnectors != nil {
+		return *x.CrossViewConnectors
+	}
+	return false
+}
+
+func (x *RepositoryMapConfiguration) GetCrossViewMaxViews() uint32 {
+	if x != nil && x.CrossViewMaxViews != nil {
+		return *x.CrossViewMaxViews
+	}
+	return 0
+}
+
+func (x *RepositoryMapConfiguration) GetCrossViewMaxElementsPerView() uint32 {
+	if x != nil && x.CrossViewMaxElementsPerView != nil {
+		return *x.CrossViewMaxElementsPerView
+	}
+	return 0
+}
+
+func (x *RepositoryMapConfiguration) GetCrossViewMaxConnectorsPerView() uint32 {
+	if x != nil && x.CrossViewMaxConnectorsPerView != nil {
+		return *x.CrossViewMaxConnectorsPerView
+	}
+	return 0
+}
+
+func (x *RepositoryMapConfiguration) GetCrossViewMaxConnectorsPerElement() uint32 {
+	if x != nil && x.CrossViewMaxConnectorsPerElement != nil {
+		return *x.CrossViewMaxConnectorsPerElement
+	}
+	return 0
 }
 
 type RepositoryRemote struct {
@@ -6275,7 +6315,7 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"\n" +
 	"remote_url\x18\v \x01(\tR\tremoteUrl\x12\x12\n" +
 	"\x04name\x18\f \x01(\tR\x04name\x12\x18\n" +
-	"\amanaged\x18\r \x01(\bR\amanaged\"\xd1\x05\n" +
+	"\amanaged\x18\r \x01(\bR\amanaged\"\xdb\t\n" +
 	"\x1aRepositoryMapConfiguration\x12#\n" +
 	"\n" +
 	"resolution\x18\x01 \x01(\x01H\x00R\n" +
@@ -6289,7 +6329,13 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"\x17max_connectors_per_view\x18\b \x01(\rH\aR\x14maxConnectorsPerView\x88\x01\x01\x12C\n" +
 	"\x1cmax_leaf_connectors_per_view\x18\t \x01(\rH\bR\x18maxLeafConnectorsPerView\x88\x01\x01\x12=\n" +
 	"\x18include_external_imports\x18\n" +
-	" \x01(\bH\tR\x16includeExternalImports\x88\x01\x01B\r\n" +
+	" \x01(\bH\tR\x16includeExternalImports\x88\x01\x01\x127\n" +
+	"\x15cross_view_connectors\x18\v \x01(\bH\n" +
+	"R\x13crossViewConnectors\x88\x01\x01\x124\n" +
+	"\x14cross_view_max_views\x18\f \x01(\rH\vR\x11crossViewMaxViews\x88\x01\x01\x12J\n" +
+	" cross_view_max_elements_per_view\x18\r \x01(\rH\fR\x1bcrossViewMaxElementsPerView\x88\x01\x01\x12N\n" +
+	"\"cross_view_max_connectors_per_view\x18\x0e \x01(\rH\rR\x1dcrossViewMaxConnectorsPerView\x88\x01\x01\x12T\n" +
+	"%cross_view_max_connectors_per_element\x18\x0f \x01(\rH\x0eR crossViewMaxConnectorsPerElement\x88\x01\x01B\r\n" +
 	"\v_resolutionB\x11\n" +
 	"\x0f_min_group_sizeB\x12\n" +
 	"\x10_min_root_groupsB\x12\n" +
@@ -6300,7 +6346,12 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"\x0f_max_leaf_filesB\x1a\n" +
 	"\x18_max_connectors_per_viewB\x1f\n" +
 	"\x1d_max_leaf_connectors_per_viewB\x1b\n" +
-	"\x19_include_external_imports\"b\n" +
+	"\x19_include_external_importsB\x18\n" +
+	"\x16_cross_view_connectorsB\x17\n" +
+	"\x15_cross_view_max_viewsB#\n" +
+	"!_cross_view_max_elements_per_viewB%\n" +
+	"#_cross_view_max_connectors_per_viewB(\n" +
+	"&_cross_view_max_connectors_per_element\"b\n" +
 	"\x10RepositoryRemote\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1d\n" +
 	"\n" +

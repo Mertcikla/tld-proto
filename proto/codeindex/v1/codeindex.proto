@@ -201,6 +201,11 @@ message RepositoryMapConfiguration {
   optional uint32 max_connectors_per_view = 8;
   optional uint32 max_leaf_connectors_per_view = 9;
   optional bool include_external_imports = 10;
+  optional bool cross_view_connectors = 11;
+  optional uint32 cross_view_max_views = 12;
+  optional uint32 cross_view_max_elements_per_view = 13;
+  optional uint32 cross_view_max_connectors_per_view = 14;
+  optional uint32 cross_view_max_connectors_per_element = 15;
 }
 
 message RepositoryRemote {
