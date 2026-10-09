@@ -507,6 +507,15 @@ message ImpactSymbolChange {
   string body_hash = 5;
 }
 
+// OverlayReason tells a reader why the element carries an overlay: it
+// changed itself, or it only contains changed files. Readers treat
+// UNSPECIFIED like DIRECT. New reasons extend this enum.
+enum OverlayReason {
+  OVERLAY_REASON_UNSPECIFIED = 0;
+  OVERLAY_REASON_DIRECT = 1;
+  OVERLAY_REASON_CONTAINED = 2;
+}
+
 // ImpactSceneOverlay is the transient change annotation on one scene placement.
 message ImpactSceneOverlay {
   ChangeKind change = 1;
@@ -519,6 +528,10 @@ message ImpactSceneOverlay {
   // Dependency hops from the nearest direct change (0 for direct changes).
   uint32 distance = 6;
   repeated ImpactSymbolChange symbols = 7;
+  // Why the element carries an overlay. Folder and service roll-ups are
+  // CONTAINED: they did not change themselves, so readers style them softer
+  // than a direct hit.
+  OverlayReason reason = 8;
 }
 
 // ScenePlacement is a workspace placement plus its optional change overlay.
@@ -539,8 +552,8 @@ message SceneViewContent {
 // per-placement change overlays with symbol detail. A scene is a portable
 // artifact: the identity fields below name what was compared, and nothing in
 // the message requires the repository, its index, or its snapshots to render it.
-// Clients filter by radius and standard/plain view locally; nothing is
-// persisted in the workspace.
+// Clients filter by radius, standard/plain view, and mapped/authored scope
+// locally; nothing is persisted in the workspace.
 message ImpactScene {
   // View hierarchy, reusing the workspace View shape.
   repeated diag.v1.View tree = 1;
@@ -561,6 +574,10 @@ message ImpactScene {
   uint32 max_radius = 9;
   string from_git_revision = 10;
   string to_git_revision = 11;
+  // Views whose placements the comparison matched on user-authored elements
+  // rather than codeindex-materialized ones. Readers use this for the
+  // mapped/authored scope toggle.
+  repeated int64 authored_view_ids = 12;
 }
 
 message MapResult {

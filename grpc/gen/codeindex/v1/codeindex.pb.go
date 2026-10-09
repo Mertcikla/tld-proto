@@ -3455,8 +3455,12 @@ type ImpactSceneOverlay struct {
 	LinesAdded   *uint32                `protobuf:"varint,3,opt,name=lines_added,json=linesAdded,proto3,oneof" json:"lines_added,omitempty"`
 	LinesRemoved *uint32                `protobuf:"varint,4,opt,name=lines_removed,json=linesRemoved,proto3,oneof" json:"lines_removed,omitempty"`
 	// Dependency hops from the nearest direct change (0 for direct changes).
-	Distance      uint32                `protobuf:"varint,6,opt,name=distance,proto3" json:"distance,omitempty"`
-	Symbols       []*ImpactSymbolChange `protobuf:"bytes,7,rep,name=symbols,proto3" json:"symbols,omitempty"`
+	Distance uint32                `protobuf:"varint,6,opt,name=distance,proto3" json:"distance,omitempty"`
+	Symbols  []*ImpactSymbolChange `protobuf:"bytes,7,rep,name=symbols,proto3" json:"symbols,omitempty"`
+	// True when the element did not change itself: it only contains changed
+	// files (a folder or service roll-up). Readers style it softer than a
+	// direct hit.
+	Contained     *bool `protobuf:"varint,8,opt,name=contained,proto3,oneof" json:"contained,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3531,6 +3535,13 @@ func (x *ImpactSceneOverlay) GetSymbols() []*ImpactSymbolChange {
 		return x.Symbols
 	}
 	return nil
+}
+
+func (x *ImpactSceneOverlay) GetContained() bool {
+	if x != nil && x.Contained != nil {
+		return *x.Contained
+	}
+	return false
 }
 
 // ScenePlacement is a workspace placement plus its optional change overlay.
@@ -3645,8 +3656,8 @@ func (x *SceneViewContent) GetConnectors() []*v1.Connector {
 // per-placement change overlays with symbol detail. A scene is a portable
 // artifact: the identity fields below name what was compared, and nothing in
 // the message requires the repository, its index, or its snapshots to render it.
-// Clients filter by radius and standard/plain view locally; nothing is
-// persisted in the workspace.
+// Clients filter by radius, standard/plain view, and mapped/authored scope
+// locally; nothing is persisted in the workspace.
 type ImpactScene struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// View hierarchy, reusing the workspace View shape.
@@ -3668,6 +3679,10 @@ type ImpactScene struct {
 	MaxRadius       uint32 `protobuf:"varint,9,opt,name=max_radius,json=maxRadius,proto3" json:"max_radius,omitempty"`
 	FromGitRevision string `protobuf:"bytes,10,opt,name=from_git_revision,json=fromGitRevision,proto3" json:"from_git_revision,omitempty"`
 	ToGitRevision   string `protobuf:"bytes,11,opt,name=to_git_revision,json=toGitRevision,proto3" json:"to_git_revision,omitempty"`
+	// Views whose placements the comparison matched on user-authored elements
+	// rather than codeindex-materialized ones. Readers use this for the
+	// mapped/authored scope toggle.
+	AuthoredViewIds []int64 `protobuf:"varint,12,rep,packed,name=authored_view_ids,json=authoredViewIds,proto3" json:"authored_view_ids,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -3777,6 +3792,13 @@ func (x *ImpactScene) GetToGitRevision() string {
 		return x.ToGitRevision
 	}
 	return ""
+}
+
+func (x *ImpactScene) GetAuthoredViewIds() []int64 {
+	if x != nil {
+		return x.AuthoredViewIds
+	}
+	return nil
 }
 
 type MapResult struct {
@@ -6563,7 +6585,7 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12*\n" +
 	"\x04kind\x18\x03 \x01(\x0e2\x16.codeindex.v1.FactKindR\x04kind\x128\n" +
 	"\x06anchor\x18\x04 \x01(\v2 .codeindex.v1.ImpactSymbolAnchorR\x06anchor\x12\x1b\n" +
-	"\tbody_hash\x18\x05 \x01(\tR\bbodyHash\"\xaa\x02\n" +
+	"\tbody_hash\x18\x05 \x01(\tR\bbodyHash\"\xdb\x02\n" +
 	"\x12ImpactSceneOverlay\x120\n" +
 	"\x06change\x18\x01 \x01(\x0e2\x18.codeindex.v1.ChangeKindR\x06change\x12\x12\n" +
 	"\x04path\x18\x02 \x01(\tR\x04path\x12$\n" +
@@ -6571,9 +6593,12 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"linesAdded\x88\x01\x01\x12(\n" +
 	"\rlines_removed\x18\x04 \x01(\rH\x01R\flinesRemoved\x88\x01\x01\x12\x1a\n" +
 	"\bdistance\x18\x06 \x01(\rR\bdistance\x12:\n" +
-	"\asymbols\x18\a \x03(\v2 .codeindex.v1.ImpactSymbolChangeR\asymbolsB\x0e\n" +
+	"\asymbols\x18\a \x03(\v2 .codeindex.v1.ImpactSymbolChangeR\asymbols\x12!\n" +
+	"\tcontained\x18\b \x01(\bH\x02R\tcontained\x88\x01\x01B\x0e\n" +
 	"\f_lines_addedB\x10\n" +
-	"\x0e_lines_removedJ\x04\b\x05\x10\x06\"\x8f\x01\n" +
+	"\x0e_lines_removedB\f\n" +
+	"\n" +
+	"_containedJ\x04\b\x05\x10\x06\"\x8f\x01\n" +
 	"\x0eScenePlacement\x120\n" +
 	"\aelement\x18\x01 \x01(\v2\x16.diag.v1.PlacedElementR\aelement\x12?\n" +
 	"\aoverlay\x18\x02 \x01(\v2 .codeindex.v1.ImpactSceneOverlayH\x00R\aoverlay\x88\x01\x01B\n" +
@@ -6585,7 +6610,7 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"placements\x122\n" +
 	"\n" +
 	"connectors\x18\x02 \x03(\v2\x12.diag.v1.ConnectorR\n" +
-	"connectors\"\xb2\x04\n" +
+	"connectors\"\xde\x04\n" +
 	"\vImpactScene\x12!\n" +
 	"\x04tree\x18\x01 \x03(\v2\r.diag.v1.ViewR\x04tree\x12:\n" +
 	"\x05views\x18\x02 \x03(\v2$.codeindex.v1.ImpactScene.ViewsEntryR\x05views\x12@\n" +
@@ -6599,7 +6624,8 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"max_radius\x18\t \x01(\rR\tmaxRadius\x12*\n" +
 	"\x11from_git_revision\x18\n" +
 	" \x01(\tR\x0ffromGitRevision\x12&\n" +
-	"\x0fto_git_revision\x18\v \x01(\tR\rtoGitRevision\x1aX\n" +
+	"\x0fto_git_revision\x18\v \x01(\tR\rtoGitRevision\x12*\n" +
+	"\x11authored_view_ids\x18\f \x03(\x03R\x0fauthoredViewIds\x1aX\n" +
 	"\n" +
 	"ViewsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x124\n" +
