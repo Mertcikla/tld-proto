@@ -469,13 +469,10 @@ message ImpactDiagram {
   SnapshotDiff diff = 4;
   repeated ImpactNode nodes = 5;
   repeated ImpactEdge edges = 6;
-  // Highest hop distance across all reachable mapped elements. The display
-  // radius is client-owned; this is the maximum a client may select.
-  uint32 max_radius = 8;
+
   string version = 9;
   // Root groups of the nested hierarchy, outermost first.
-  repeated ImpactGroup groups = 10;
-}
+  repeated ImpactGroup groups = 10;}
 
 message LiveImpact {
   ImpactDiagram diagram = 1;
@@ -552,8 +549,8 @@ message SceneViewContent {
 // per-placement change overlays with symbol detail. A scene is a portable
 // artifact: the identity fields below name what was compared, and nothing in
 // the message requires the repository, its index, or its snapshots to render it.
-// Clients filter by radius, standard/plain view, and mapped/authored scope
-// locally; nothing is persisted in the workspace.
+// Clients filter by radius and standard/plain view locally; nothing is
+// persisted in the workspace.
 message ImpactScene {
   // View hierarchy, reusing the workspace View shape.
   repeated diag.v1.View tree = 1;
@@ -569,14 +566,11 @@ message ImpactScene {
   string comparison_key = 7;
   // Changes whenever the scene content changes, so readers can cache on it.
   string version = 8;
-  // Highest hop distance present in this scene; the display radius a reader
-  // may still select.
-  uint32 max_radius = 9;
+
   string from_git_revision = 10;
   string to_git_revision = 11;
   // Views whose placements the comparison matched on user-authored elements
-  // rather than codeindex-materialized ones. Readers use this for the
-  // mapped/authored scope toggle.
+
   repeated int64 authored_view_ids = 12;
 }
 
@@ -843,10 +837,10 @@ message CompareRepositoryEvent {
 message ExportImpactMermaidRequest {
   string repository_id = 1;
   string comparison_key = 2;
-  // Display scope: only nodes within this dependency radius are exported.
-  // 0 exports direct changes only.
-  uint32 radius = 3;
+
   bool markdown = 4;
+  // Plain view: hide elements that were not changed.
+  bool plain = 5;
 }
 
 message ExportImpactMermaidResponse {

@@ -257,6 +257,58 @@ func (ChangeKind) EnumDescriptor() ([]byte, []int) {
 	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{2}
 }
 
+// OverlayReason tells a reader why the element carries an overlay: it
+// changed itself, or it only contains changed files. Readers treat
+// UNSPECIFIED like DIRECT. New reasons extend this enum.
+type OverlayReason int32
+
+const (
+	OverlayReason_OVERLAY_REASON_UNSPECIFIED OverlayReason = 0
+	OverlayReason_OVERLAY_REASON_DIRECT      OverlayReason = 1
+	OverlayReason_OVERLAY_REASON_CONTAINED   OverlayReason = 2
+)
+
+// Enum value maps for OverlayReason.
+var (
+	OverlayReason_name = map[int32]string{
+		0: "OVERLAY_REASON_UNSPECIFIED",
+		1: "OVERLAY_REASON_DIRECT",
+		2: "OVERLAY_REASON_CONTAINED",
+	}
+	OverlayReason_value = map[string]int32{
+		"OVERLAY_REASON_UNSPECIFIED": 0,
+		"OVERLAY_REASON_DIRECT":      1,
+		"OVERLAY_REASON_CONTAINED":   2,
+	}
+)
+
+func (x OverlayReason) Enum() *OverlayReason {
+	p := new(OverlayReason)
+	*p = x
+	return p
+}
+
+func (x OverlayReason) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (OverlayReason) Descriptor() protoreflect.EnumDescriptor {
+	return file_codeindex_v1_codeindex_proto_enumTypes[3].Descriptor()
+}
+
+func (OverlayReason) Type() protoreflect.EnumType {
+	return &file_codeindex_v1_codeindex_proto_enumTypes[3]
+}
+
+func (x OverlayReason) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use OverlayReason.Descriptor instead.
+func (OverlayReason) EnumDescriptor() ([]byte, []int) {
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{3}
+}
+
 // ID addresses one entity by its opaque server-generated identifier. It is the
 // canonical request for lookups that need nothing else.
 type ID struct {
@@ -3124,10 +3176,7 @@ type ImpactDiagram struct {
 	Diff          *SnapshotDiff          `protobuf:"bytes,4,opt,name=diff,proto3" json:"diff,omitempty"`
 	Nodes         []*ImpactNode          `protobuf:"bytes,5,rep,name=nodes,proto3" json:"nodes,omitempty"`
 	Edges         []*ImpactEdge          `protobuf:"bytes,6,rep,name=edges,proto3" json:"edges,omitempty"`
-	// Highest hop distance across all reachable mapped elements. The display
-	// radius is client-owned; this is the maximum a client may select.
-	MaxRadius uint32 `protobuf:"varint,8,opt,name=max_radius,json=maxRadius,proto3" json:"max_radius,omitempty"`
-	Version   string `protobuf:"bytes,9,opt,name=version,proto3" json:"version,omitempty"`
+	Version       string                 `protobuf:"bytes,9,opt,name=version,proto3" json:"version,omitempty"`
 	// Root groups of the nested hierarchy, outermost first.
 	Groups        []*ImpactGroup `protobuf:"bytes,10,rep,name=groups,proto3" json:"groups,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -3204,13 +3253,6 @@ func (x *ImpactDiagram) GetEdges() []*ImpactEdge {
 		return x.Edges
 	}
 	return nil
-}
-
-func (x *ImpactDiagram) GetMaxRadius() uint32 {
-	if x != nil {
-		return x.MaxRadius
-	}
-	return 0
 }
 
 func (x *ImpactDiagram) GetVersion() string {
@@ -3457,10 +3499,10 @@ type ImpactSceneOverlay struct {
 	// Dependency hops from the nearest direct change (0 for direct changes).
 	Distance uint32                `protobuf:"varint,6,opt,name=distance,proto3" json:"distance,omitempty"`
 	Symbols  []*ImpactSymbolChange `protobuf:"bytes,7,rep,name=symbols,proto3" json:"symbols,omitempty"`
-	// True when the element did not change itself: it only contains changed
-	// files (a folder or service roll-up). Readers style it softer than a
-	// direct hit.
-	Contained     *bool `protobuf:"varint,8,opt,name=contained,proto3,oneof" json:"contained,omitempty"`
+	// Why the element carries an overlay. Folder and service roll-ups are
+	// CONTAINED: they did not change themselves, so readers style them softer
+	// than a direct hit.
+	Reason        OverlayReason `protobuf:"varint,8,opt,name=reason,proto3,enum=codeindex.v1.OverlayReason" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3537,11 +3579,11 @@ func (x *ImpactSceneOverlay) GetSymbols() []*ImpactSymbolChange {
 	return nil
 }
 
-func (x *ImpactSceneOverlay) GetContained() bool {
-	if x != nil && x.Contained != nil {
-		return *x.Contained
+func (x *ImpactSceneOverlay) GetReason() OverlayReason {
+	if x != nil {
+		return x.Reason
 	}
-	return false
+	return OverlayReason_OVERLAY_REASON_UNSPECIFIED
 }
 
 // ScenePlacement is a workspace placement plus its optional change overlay.
@@ -3656,8 +3698,8 @@ func (x *SceneViewContent) GetConnectors() []*v1.Connector {
 // per-placement change overlays with symbol detail. A scene is a portable
 // artifact: the identity fields below name what was compared, and nothing in
 // the message requires the repository, its index, or its snapshots to render it.
-// Clients filter by radius, standard/plain view, and mapped/authored scope
-// locally; nothing is persisted in the workspace.
+// Clients filter by radius and standard/plain view locally; nothing is
+// persisted in the workspace.
 type ImpactScene struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// View hierarchy, reusing the workspace View shape.
@@ -3673,15 +3715,9 @@ type ImpactScene struct {
 	// Identifies the comparison a server can still serve this scene from.
 	ComparisonKey string `protobuf:"bytes,7,opt,name=comparison_key,json=comparisonKey,proto3" json:"comparison_key,omitempty"`
 	// Changes whenever the scene content changes, so readers can cache on it.
-	Version string `protobuf:"bytes,8,opt,name=version,proto3" json:"version,omitempty"`
-	// Highest hop distance present in this scene; the display radius a reader
-	// may still select.
-	MaxRadius       uint32 `protobuf:"varint,9,opt,name=max_radius,json=maxRadius,proto3" json:"max_radius,omitempty"`
-	FromGitRevision string `protobuf:"bytes,10,opt,name=from_git_revision,json=fromGitRevision,proto3" json:"from_git_revision,omitempty"`
-	ToGitRevision   string `protobuf:"bytes,11,opt,name=to_git_revision,json=toGitRevision,proto3" json:"to_git_revision,omitempty"`
-	// Views whose placements the comparison matched on user-authored elements
-	// rather than codeindex-materialized ones. Readers use this for the
-	// mapped/authored scope toggle.
+	Version         string  `protobuf:"bytes,8,opt,name=version,proto3" json:"version,omitempty"`
+	FromGitRevision string  `protobuf:"bytes,10,opt,name=from_git_revision,json=fromGitRevision,proto3" json:"from_git_revision,omitempty"`
+	ToGitRevision   string  `protobuf:"bytes,11,opt,name=to_git_revision,json=toGitRevision,proto3" json:"to_git_revision,omitempty"` // Views whose placements the comparison matched on user-authored elements
 	AuthoredViewIds []int64 `protobuf:"varint,12,rep,packed,name=authored_view_ids,json=authoredViewIds,proto3" json:"authored_view_ids,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
@@ -3771,13 +3807,6 @@ func (x *ImpactScene) GetVersion() string {
 		return x.Version
 	}
 	return ""
-}
-
-func (x *ImpactScene) GetMaxRadius() uint32 {
-	if x != nil {
-		return x.MaxRadius
-	}
-	return 0
 }
 
 func (x *ImpactScene) GetFromGitRevision() string {
@@ -6009,10 +6038,9 @@ type ExportImpactMermaidRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	RepositoryId  string                 `protobuf:"bytes,1,opt,name=repository_id,json=repositoryId,proto3" json:"repository_id,omitempty"`
 	ComparisonKey string                 `protobuf:"bytes,2,opt,name=comparison_key,json=comparisonKey,proto3" json:"comparison_key,omitempty"`
-	// Display scope: only nodes within this dependency radius are exported.
-	// 0 exports direct changes only.
-	Radius        uint32 `protobuf:"varint,3,opt,name=radius,proto3" json:"radius,omitempty"`
-	Markdown      bool   `protobuf:"varint,4,opt,name=markdown,proto3" json:"markdown,omitempty"`
+	Markdown      bool                   `protobuf:"varint,4,opt,name=markdown,proto3" json:"markdown,omitempty"`
+	// Plain view: hide elements that were not changed.
+	Plain         bool `protobuf:"varint,5,opt,name=plain,proto3" json:"plain,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -6061,16 +6089,16 @@ func (x *ExportImpactMermaidRequest) GetComparisonKey() string {
 	return ""
 }
 
-func (x *ExportImpactMermaidRequest) GetRadius() uint32 {
-	if x != nil {
-		return x.Radius
-	}
-	return 0
-}
-
 func (x *ExportImpactMermaidRequest) GetMarkdown() bool {
 	if x != nil {
 		return x.Markdown
+	}
+	return false
+}
+
+func (x *ExportImpactMermaidRequest) GetPlain() bool {
+	if x != nil {
+		return x.Plain
 	}
 	return false
 }
@@ -6554,16 +6582,14 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"\x06source\x18\x03 \x01(\tR\x06source\x12\x17\n" +
 	"\aview_id\x18\x04 \x01(\x03R\x06viewId\x12\x1b\n" +
 	"\tnode_keys\x18\x05 \x03(\tR\bnodeKeys\x125\n" +
-	"\bchildren\x18\x06 \x03(\v2\x19.codeindex.v1.ImpactGroupR\bchildren\"\xf0\x02\n" +
+	"\bchildren\x18\x06 \x03(\v2\x19.codeindex.v1.ImpactGroupR\bchildren\"\xd1\x02\n" +
 	"\rImpactDiagram\x12#\n" +
 	"\rrepository_id\x18\x01 \x01(\tR\frepositoryId\x12%\n" +
 	"\x0ecomparison_key\x18\x02 \x01(\tR\rcomparisonKey\x12\x17\n" +
 	"\aview_id\x18\x03 \x01(\x03R\x06viewId\x12.\n" +
 	"\x04diff\x18\x04 \x01(\v2\x1a.codeindex.v1.SnapshotDiffR\x04diff\x12.\n" +
 	"\x05nodes\x18\x05 \x03(\v2\x18.codeindex.v1.ImpactNodeR\x05nodes\x12.\n" +
-	"\x05edges\x18\x06 \x03(\v2\x18.codeindex.v1.ImpactEdgeR\x05edges\x12\x1d\n" +
-	"\n" +
-	"max_radius\x18\b \x01(\rR\tmaxRadius\x12\x18\n" +
+	"\x05edges\x18\x06 \x03(\v2\x18.codeindex.v1.ImpactEdgeR\x05edges\x12\x18\n" +
 	"\aversion\x18\t \x01(\tR\aversion\x121\n" +
 	"\x06groups\x18\n" +
 	" \x03(\v2\x19.codeindex.v1.ImpactGroupR\x06groups\"\xb7\x01\n" +
@@ -6585,7 +6611,7 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12*\n" +
 	"\x04kind\x18\x03 \x01(\x0e2\x16.codeindex.v1.FactKindR\x04kind\x128\n" +
 	"\x06anchor\x18\x04 \x01(\v2 .codeindex.v1.ImpactSymbolAnchorR\x06anchor\x12\x1b\n" +
-	"\tbody_hash\x18\x05 \x01(\tR\bbodyHash\"\xdb\x02\n" +
+	"\tbody_hash\x18\x05 \x01(\tR\bbodyHash\"\xdf\x02\n" +
 	"\x12ImpactSceneOverlay\x120\n" +
 	"\x06change\x18\x01 \x01(\x0e2\x18.codeindex.v1.ChangeKindR\x06change\x12\x12\n" +
 	"\x04path\x18\x02 \x01(\tR\x04path\x12$\n" +
@@ -6593,12 +6619,10 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"linesAdded\x88\x01\x01\x12(\n" +
 	"\rlines_removed\x18\x04 \x01(\rH\x01R\flinesRemoved\x88\x01\x01\x12\x1a\n" +
 	"\bdistance\x18\x06 \x01(\rR\bdistance\x12:\n" +
-	"\asymbols\x18\a \x03(\v2 .codeindex.v1.ImpactSymbolChangeR\asymbols\x12!\n" +
-	"\tcontained\x18\b \x01(\bH\x02R\tcontained\x88\x01\x01B\x0e\n" +
+	"\asymbols\x18\a \x03(\v2 .codeindex.v1.ImpactSymbolChangeR\asymbols\x123\n" +
+	"\x06reason\x18\b \x01(\x0e2\x1b.codeindex.v1.OverlayReasonR\x06reasonB\x0e\n" +
 	"\f_lines_addedB\x10\n" +
-	"\x0e_lines_removedB\f\n" +
-	"\n" +
-	"_containedJ\x04\b\x05\x10\x06\"\x8f\x01\n" +
+	"\x0e_lines_removedJ\x04\b\x05\x10\x06\"\x8f\x01\n" +
 	"\x0eScenePlacement\x120\n" +
 	"\aelement\x18\x01 \x01(\v2\x16.diag.v1.PlacedElementR\aelement\x12?\n" +
 	"\aoverlay\x18\x02 \x01(\v2 .codeindex.v1.ImpactSceneOverlayH\x00R\aoverlay\x88\x01\x01B\n" +
@@ -6610,7 +6634,7 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"placements\x122\n" +
 	"\n" +
 	"connectors\x18\x02 \x03(\v2\x12.diag.v1.ConnectorR\n" +
-	"connectors\"\xde\x04\n" +
+	"connectors\"\xbf\x04\n" +
 	"\vImpactScene\x12!\n" +
 	"\x04tree\x18\x01 \x03(\v2\r.diag.v1.ViewR\x04tree\x12:\n" +
 	"\x05views\x18\x02 \x03(\v2$.codeindex.v1.ImpactScene.ViewsEntryR\x05views\x12@\n" +
@@ -6619,9 +6643,7 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"\x0eschema_version\x18\x05 \x01(\tR\rschemaVersion\x12#\n" +
 	"\rrepository_id\x18\x06 \x01(\tR\frepositoryId\x12%\n" +
 	"\x0ecomparison_key\x18\a \x01(\tR\rcomparisonKey\x12\x18\n" +
-	"\aversion\x18\b \x01(\tR\aversion\x12\x1d\n" +
-	"\n" +
-	"max_radius\x18\t \x01(\rR\tmaxRadius\x12*\n" +
+	"\aversion\x18\b \x01(\tR\aversion\x12*\n" +
 	"\x11from_git_revision\x18\n" +
 	" \x01(\tR\x0ffromGitRevision\x12&\n" +
 	"\x0fto_git_revision\x18\v \x01(\tR\rtoGitRevision\x12*\n" +
@@ -6776,12 +6798,12 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"\x16CompareRepositoryEvent\x124\n" +
 	"\bprogress\x18\x01 \x01(\v2\x16.codeindex.v1.ProgressH\x00R\bprogress\x125\n" +
 	"\x06result\x18\x02 \x01(\v2\x1b.codeindex.v1.ImpactDiagramH\x00R\x06resultB\a\n" +
-	"\x05event\"\x9c\x01\n" +
+	"\x05event\"\x9a\x01\n" +
 	"\x1aExportImpactMermaidRequest\x12#\n" +
 	"\rrepository_id\x18\x01 \x01(\tR\frepositoryId\x12%\n" +
-	"\x0ecomparison_key\x18\x02 \x01(\tR\rcomparisonKey\x12\x16\n" +
-	"\x06radius\x18\x03 \x01(\rR\x06radius\x12\x1a\n" +
-	"\bmarkdown\x18\x04 \x01(\bR\bmarkdown\"i\n" +
+	"\x0ecomparison_key\x18\x02 \x01(\tR\rcomparisonKey\x12\x1a\n" +
+	"\bmarkdown\x18\x04 \x01(\bR\bmarkdown\x12\x14\n" +
+	"\x05plain\x18\x05 \x01(\bR\x05plain\"i\n" +
 	"\x1bExportImpactMermaidResponse\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\tR\x04code\x12\x1a\n" +
 	"\bmarkdown\x18\x02 \x01(\tR\bmarkdown\x12\x1a\n" +
@@ -6831,7 +6853,11 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"\x17CHANGE_KIND_UNSPECIFIED\x10\x00\x12\x15\n" +
 	"\x11CHANGE_KIND_ADDED\x10\x01\x12\x17\n" +
 	"\x13CHANGE_KIND_REMOVED\x10\x02\x12\x18\n" +
-	"\x14CHANGE_KIND_MODIFIED\x10\x032\x96\f\n" +
+	"\x14CHANGE_KIND_MODIFIED\x10\x03*h\n" +
+	"\rOverlayReason\x12\x1e\n" +
+	"\x1aOVERLAY_REASON_UNSPECIFIED\x10\x00\x12\x19\n" +
+	"\x15OVERLAY_REASON_DIRECT\x10\x01\x12\x1c\n" +
+	"\x18OVERLAY_REASON_CONTAINED\x10\x022\x96\f\n" +
 	"\x11RepositoryService\x12R\n" +
 	"\x10ListRepositories\x12\x16.google.protobuf.Empty\x1a&.codeindex.v1.ListRepositoriesResponse\x12d\n" +
 	"\x11GetWorktreeSource\x12&.codeindex.v1.GetWorktreeSourceRequest\x1a'.codeindex.v1.GetWorktreeSourceResponse\x12K\n" +
@@ -6876,235 +6902,237 @@ func file_codeindex_v1_codeindex_proto_rawDescGZIP() []byte {
 	return file_codeindex_v1_codeindex_proto_rawDescData
 }
 
-var file_codeindex_v1_codeindex_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
+var file_codeindex_v1_codeindex_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
 var file_codeindex_v1_codeindex_proto_msgTypes = make([]protoimpl.MessageInfo, 80)
 var file_codeindex_v1_codeindex_proto_goTypes = []any{
 	(FactKind)(0),                                   // 0: codeindex.v1.FactKind
 	(EdgeKind)(0),                                   // 1: codeindex.v1.EdgeKind
 	(ChangeKind)(0),                                 // 2: codeindex.v1.ChangeKind
-	(*ID)(nil),                                      // 3: codeindex.v1.ID
-	(*Progress)(nil),                                // 4: codeindex.v1.Progress
-	(*Revision)(nil),                                // 5: codeindex.v1.Revision
-	(*SourceAnchor)(nil),                            // 6: codeindex.v1.SourceAnchor
-	(*Evidence)(nil),                                // 7: codeindex.v1.Evidence
-	(*CodeFact)(nil),                                // 8: codeindex.v1.CodeFact
-	(*EdgeFact)(nil),                                // 9: codeindex.v1.EdgeFact
-	(*Project)(nil),                                 // 10: codeindex.v1.Project
-	(*SourceFile)(nil),                              // 11: codeindex.v1.SourceFile
-	(*Repository)(nil),                              // 12: codeindex.v1.Repository
-	(*RepositoryMapConfiguration)(nil),              // 13: codeindex.v1.RepositoryMapConfiguration
-	(*RepositoryRemote)(nil),                        // 14: codeindex.v1.RepositoryRemote
-	(*RepositorySettings)(nil),                      // 15: codeindex.v1.RepositorySettings
-	(*Snapshot)(nil),                                // 16: codeindex.v1.Snapshot
-	(*SnapshotStatistics)(nil),                      // 17: codeindex.v1.SnapshotStatistics
-	(*IndexRequest)(nil),                            // 18: codeindex.v1.IndexRequest
-	(*SourceChange)(nil),                            // 19: codeindex.v1.SourceChange
-	(*CodeFactDelta)(nil),                           // 20: codeindex.v1.CodeFactDelta
-	(*EdgeFactDelta)(nil),                           // 21: codeindex.v1.EdgeFactDelta
-	(*SnapshotDiffRequest)(nil),                     // 22: codeindex.v1.SnapshotDiffRequest
-	(*SnapshotDiff)(nil),                            // 23: codeindex.v1.SnapshotDiff
-	(*WatchStatus)(nil),                             // 24: codeindex.v1.WatchStatus
-	(*GitCommit)(nil),                               // 25: codeindex.v1.GitCommit
-	(*GitBranch)(nil),                               // 26: codeindex.v1.GitBranch
-	(*CommitFileChange)(nil),                        // 27: codeindex.v1.CommitFileChange
-	(*OpenPullRequest)(nil),                         // 28: codeindex.v1.OpenPullRequest
-	(*IndexerRequirement)(nil),                      // 29: codeindex.v1.IndexerRequirement
-	(*ImpactNode)(nil),                              // 30: codeindex.v1.ImpactNode
-	(*ImpactEdge)(nil),                              // 31: codeindex.v1.ImpactEdge
-	(*ImpactGroup)(nil),                             // 32: codeindex.v1.ImpactGroup
-	(*ImpactDiagram)(nil),                           // 33: codeindex.v1.ImpactDiagram
-	(*LiveImpact)(nil),                              // 34: codeindex.v1.LiveImpact
-	(*ImpactSymbolAnchor)(nil),                      // 35: codeindex.v1.ImpactSymbolAnchor
-	(*ImpactSymbolChange)(nil),                      // 36: codeindex.v1.ImpactSymbolChange
-	(*ImpactSceneOverlay)(nil),                      // 37: codeindex.v1.ImpactSceneOverlay
-	(*ScenePlacement)(nil),                          // 38: codeindex.v1.ScenePlacement
-	(*SceneViewContent)(nil),                        // 39: codeindex.v1.SceneViewContent
-	(*ImpactScene)(nil),                             // 40: codeindex.v1.ImpactScene
-	(*MapResult)(nil),                               // 41: codeindex.v1.MapResult
-	(*CompletedMap)(nil),                            // 42: codeindex.v1.CompletedMap
-	(*ListRepositoriesResponse)(nil),                // 43: codeindex.v1.ListRepositoriesResponse
-	(*GetWorktreeSourceRequest)(nil),                // 44: codeindex.v1.GetWorktreeSourceRequest
-	(*GetWorktreeSourceResponse)(nil),               // 45: codeindex.v1.GetWorktreeSourceResponse
-	(*UpdateRepositoryMapConfigurationRequest)(nil), // 46: codeindex.v1.UpdateRepositoryMapConfigurationRequest
-	(*UpdateRepositoryRemoteRequest)(nil),           // 47: codeindex.v1.UpdateRepositoryRemoteRequest
-	(*DeleteRepositoryRequest)(nil),                 // 48: codeindex.v1.DeleteRepositoryRequest
-	(*DeleteRepositoryResponse)(nil),                // 49: codeindex.v1.DeleteRepositoryResponse
-	(*AddRepositoryRequest)(nil),                    // 50: codeindex.v1.AddRepositoryRequest
-	(*AddRepositoryEvent)(nil),                      // 51: codeindex.v1.AddRepositoryEvent
-	(*CheckRepositoryIndexersRequest)(nil),          // 52: codeindex.v1.CheckRepositoryIndexersRequest
-	(*CheckRepositoryIndexersResponse)(nil),         // 53: codeindex.v1.CheckRepositoryIndexersResponse
-	(*StartWatchRequest)(nil),                       // 54: codeindex.v1.StartWatchRequest
-	(*ListWatchesResponse)(nil),                     // 55: codeindex.v1.ListWatchesResponse
-	(*GetGitHistoryRequest)(nil),                    // 56: codeindex.v1.GetGitHistoryRequest
-	(*GetGitHistoryResponse)(nil),                   // 57: codeindex.v1.GetGitHistoryResponse
-	(*GetPullRequestRequest)(nil),                   // 58: codeindex.v1.GetPullRequestRequest
-	(*GetPullRequestResponse)(nil),                  // 59: codeindex.v1.GetPullRequestResponse
-	(*ListPullRequestsResponse)(nil),                // 60: codeindex.v1.ListPullRequestsResponse
-	(*GetCommitDetailsRequest)(nil),                 // 61: codeindex.v1.GetCommitDetailsRequest
-	(*GetCommitDetailsResponse)(nil),                // 62: codeindex.v1.GetCommitDetailsResponse
-	(*GetRevisionRangeSummaryRequest)(nil),          // 63: codeindex.v1.GetRevisionRangeSummaryRequest
-	(*RevisionRangeSummary)(nil),                    // 64: codeindex.v1.RevisionRangeSummary
-	(*CodeFactFilter)(nil),                          // 65: codeindex.v1.CodeFactFilter
-	(*CodeFactPage)(nil),                            // 66: codeindex.v1.CodeFactPage
-	(*ListSnapshotsResponse)(nil),                   // 67: codeindex.v1.ListSnapshotsResponse
-	(*DeleteSnapshotResponse)(nil),                  // 68: codeindex.v1.DeleteSnapshotResponse
-	(*CaptureSnapshotRequest)(nil),                  // 69: codeindex.v1.CaptureSnapshotRequest
-	(*CaptureSnapshotEvent)(nil),                    // 70: codeindex.v1.CaptureSnapshotEvent
-	(*MapRepositoryRequest)(nil),                    // 71: codeindex.v1.MapRepositoryRequest
-	(*MapRepositoryEvent)(nil),                      // 72: codeindex.v1.MapRepositoryEvent
-	(*ListMapsResponse)(nil),                        // 73: codeindex.v1.ListMapsResponse
-	(*CompareRepositoryRequest)(nil),                // 74: codeindex.v1.CompareRepositoryRequest
-	(*CompareRepositoryEvent)(nil),                  // 75: codeindex.v1.CompareRepositoryEvent
-	(*ExportImpactMermaidRequest)(nil),              // 76: codeindex.v1.ExportImpactMermaidRequest
-	(*ExportImpactMermaidResponse)(nil),             // 77: codeindex.v1.ExportImpactMermaidResponse
-	(*GetImpactSceneRequest)(nil),                   // 78: codeindex.v1.GetImpactSceneRequest
-	(*GetImpactSceneResponse)(nil),                  // 79: codeindex.v1.GetImpactSceneResponse
-	nil,                                             // 80: codeindex.v1.Snapshot.ToolVersionsEntry
-	nil,                                             // 81: codeindex.v1.IndexRequest.ScipArtifactsEntry
-	nil,                                             // 82: codeindex.v1.ImpactScene.ViewsEntry
-	(*v1.PlacedElement)(nil),                        // 83: diag.v1.PlacedElement
-	(*v1.Connector)(nil),                            // 84: diag.v1.Connector
-	(*v1.View)(nil),                                 // 85: diag.v1.View
-	(*v1.ElementNavigationInfo)(nil),                // 86: diag.v1.ElementNavigationInfo
-	(*emptypb.Empty)(nil),                           // 87: google.protobuf.Empty
+	(OverlayReason)(0),                              // 3: codeindex.v1.OverlayReason
+	(*ID)(nil),                                      // 4: codeindex.v1.ID
+	(*Progress)(nil),                                // 5: codeindex.v1.Progress
+	(*Revision)(nil),                                // 6: codeindex.v1.Revision
+	(*SourceAnchor)(nil),                            // 7: codeindex.v1.SourceAnchor
+	(*Evidence)(nil),                                // 8: codeindex.v1.Evidence
+	(*CodeFact)(nil),                                // 9: codeindex.v1.CodeFact
+	(*EdgeFact)(nil),                                // 10: codeindex.v1.EdgeFact
+	(*Project)(nil),                                 // 11: codeindex.v1.Project
+	(*SourceFile)(nil),                              // 12: codeindex.v1.SourceFile
+	(*Repository)(nil),                              // 13: codeindex.v1.Repository
+	(*RepositoryMapConfiguration)(nil),              // 14: codeindex.v1.RepositoryMapConfiguration
+	(*RepositoryRemote)(nil),                        // 15: codeindex.v1.RepositoryRemote
+	(*RepositorySettings)(nil),                      // 16: codeindex.v1.RepositorySettings
+	(*Snapshot)(nil),                                // 17: codeindex.v1.Snapshot
+	(*SnapshotStatistics)(nil),                      // 18: codeindex.v1.SnapshotStatistics
+	(*IndexRequest)(nil),                            // 19: codeindex.v1.IndexRequest
+	(*SourceChange)(nil),                            // 20: codeindex.v1.SourceChange
+	(*CodeFactDelta)(nil),                           // 21: codeindex.v1.CodeFactDelta
+	(*EdgeFactDelta)(nil),                           // 22: codeindex.v1.EdgeFactDelta
+	(*SnapshotDiffRequest)(nil),                     // 23: codeindex.v1.SnapshotDiffRequest
+	(*SnapshotDiff)(nil),                            // 24: codeindex.v1.SnapshotDiff
+	(*WatchStatus)(nil),                             // 25: codeindex.v1.WatchStatus
+	(*GitCommit)(nil),                               // 26: codeindex.v1.GitCommit
+	(*GitBranch)(nil),                               // 27: codeindex.v1.GitBranch
+	(*CommitFileChange)(nil),                        // 28: codeindex.v1.CommitFileChange
+	(*OpenPullRequest)(nil),                         // 29: codeindex.v1.OpenPullRequest
+	(*IndexerRequirement)(nil),                      // 30: codeindex.v1.IndexerRequirement
+	(*ImpactNode)(nil),                              // 31: codeindex.v1.ImpactNode
+	(*ImpactEdge)(nil),                              // 32: codeindex.v1.ImpactEdge
+	(*ImpactGroup)(nil),                             // 33: codeindex.v1.ImpactGroup
+	(*ImpactDiagram)(nil),                           // 34: codeindex.v1.ImpactDiagram
+	(*LiveImpact)(nil),                              // 35: codeindex.v1.LiveImpact
+	(*ImpactSymbolAnchor)(nil),                      // 36: codeindex.v1.ImpactSymbolAnchor
+	(*ImpactSymbolChange)(nil),                      // 37: codeindex.v1.ImpactSymbolChange
+	(*ImpactSceneOverlay)(nil),                      // 38: codeindex.v1.ImpactSceneOverlay
+	(*ScenePlacement)(nil),                          // 39: codeindex.v1.ScenePlacement
+	(*SceneViewContent)(nil),                        // 40: codeindex.v1.SceneViewContent
+	(*ImpactScene)(nil),                             // 41: codeindex.v1.ImpactScene
+	(*MapResult)(nil),                               // 42: codeindex.v1.MapResult
+	(*CompletedMap)(nil),                            // 43: codeindex.v1.CompletedMap
+	(*ListRepositoriesResponse)(nil),                // 44: codeindex.v1.ListRepositoriesResponse
+	(*GetWorktreeSourceRequest)(nil),                // 45: codeindex.v1.GetWorktreeSourceRequest
+	(*GetWorktreeSourceResponse)(nil),               // 46: codeindex.v1.GetWorktreeSourceResponse
+	(*UpdateRepositoryMapConfigurationRequest)(nil), // 47: codeindex.v1.UpdateRepositoryMapConfigurationRequest
+	(*UpdateRepositoryRemoteRequest)(nil),           // 48: codeindex.v1.UpdateRepositoryRemoteRequest
+	(*DeleteRepositoryRequest)(nil),                 // 49: codeindex.v1.DeleteRepositoryRequest
+	(*DeleteRepositoryResponse)(nil),                // 50: codeindex.v1.DeleteRepositoryResponse
+	(*AddRepositoryRequest)(nil),                    // 51: codeindex.v1.AddRepositoryRequest
+	(*AddRepositoryEvent)(nil),                      // 52: codeindex.v1.AddRepositoryEvent
+	(*CheckRepositoryIndexersRequest)(nil),          // 53: codeindex.v1.CheckRepositoryIndexersRequest
+	(*CheckRepositoryIndexersResponse)(nil),         // 54: codeindex.v1.CheckRepositoryIndexersResponse
+	(*StartWatchRequest)(nil),                       // 55: codeindex.v1.StartWatchRequest
+	(*ListWatchesResponse)(nil),                     // 56: codeindex.v1.ListWatchesResponse
+	(*GetGitHistoryRequest)(nil),                    // 57: codeindex.v1.GetGitHistoryRequest
+	(*GetGitHistoryResponse)(nil),                   // 58: codeindex.v1.GetGitHistoryResponse
+	(*GetPullRequestRequest)(nil),                   // 59: codeindex.v1.GetPullRequestRequest
+	(*GetPullRequestResponse)(nil),                  // 60: codeindex.v1.GetPullRequestResponse
+	(*ListPullRequestsResponse)(nil),                // 61: codeindex.v1.ListPullRequestsResponse
+	(*GetCommitDetailsRequest)(nil),                 // 62: codeindex.v1.GetCommitDetailsRequest
+	(*GetCommitDetailsResponse)(nil),                // 63: codeindex.v1.GetCommitDetailsResponse
+	(*GetRevisionRangeSummaryRequest)(nil),          // 64: codeindex.v1.GetRevisionRangeSummaryRequest
+	(*RevisionRangeSummary)(nil),                    // 65: codeindex.v1.RevisionRangeSummary
+	(*CodeFactFilter)(nil),                          // 66: codeindex.v1.CodeFactFilter
+	(*CodeFactPage)(nil),                            // 67: codeindex.v1.CodeFactPage
+	(*ListSnapshotsResponse)(nil),                   // 68: codeindex.v1.ListSnapshotsResponse
+	(*DeleteSnapshotResponse)(nil),                  // 69: codeindex.v1.DeleteSnapshotResponse
+	(*CaptureSnapshotRequest)(nil),                  // 70: codeindex.v1.CaptureSnapshotRequest
+	(*CaptureSnapshotEvent)(nil),                    // 71: codeindex.v1.CaptureSnapshotEvent
+	(*MapRepositoryRequest)(nil),                    // 72: codeindex.v1.MapRepositoryRequest
+	(*MapRepositoryEvent)(nil),                      // 73: codeindex.v1.MapRepositoryEvent
+	(*ListMapsResponse)(nil),                        // 74: codeindex.v1.ListMapsResponse
+	(*CompareRepositoryRequest)(nil),                // 75: codeindex.v1.CompareRepositoryRequest
+	(*CompareRepositoryEvent)(nil),                  // 76: codeindex.v1.CompareRepositoryEvent
+	(*ExportImpactMermaidRequest)(nil),              // 77: codeindex.v1.ExportImpactMermaidRequest
+	(*ExportImpactMermaidResponse)(nil),             // 78: codeindex.v1.ExportImpactMermaidResponse
+	(*GetImpactSceneRequest)(nil),                   // 79: codeindex.v1.GetImpactSceneRequest
+	(*GetImpactSceneResponse)(nil),                  // 80: codeindex.v1.GetImpactSceneResponse
+	nil,                                             // 81: codeindex.v1.Snapshot.ToolVersionsEntry
+	nil,                                             // 82: codeindex.v1.IndexRequest.ScipArtifactsEntry
+	nil,                                             // 83: codeindex.v1.ImpactScene.ViewsEntry
+	(*v1.PlacedElement)(nil),                        // 84: diag.v1.PlacedElement
+	(*v1.Connector)(nil),                            // 85: diag.v1.Connector
+	(*v1.View)(nil),                                 // 86: diag.v1.View
+	(*v1.ElementNavigationInfo)(nil),                // 87: diag.v1.ElementNavigationInfo
+	(*emptypb.Empty)(nil),                           // 88: google.protobuf.Empty
 }
 var file_codeindex_v1_codeindex_proto_depIdxs = []int32{
-	6,   // 0: codeindex.v1.Evidence.anchor:type_name -> codeindex.v1.SourceAnchor
-	6,   // 1: codeindex.v1.CodeFact.anchor:type_name -> codeindex.v1.SourceAnchor
+	7,   // 0: codeindex.v1.Evidence.anchor:type_name -> codeindex.v1.SourceAnchor
+	7,   // 1: codeindex.v1.CodeFact.anchor:type_name -> codeindex.v1.SourceAnchor
 	0,   // 2: codeindex.v1.CodeFact.kind:type_name -> codeindex.v1.FactKind
-	7,   // 3: codeindex.v1.CodeFact.evidence:type_name -> codeindex.v1.Evidence
+	8,   // 3: codeindex.v1.CodeFact.evidence:type_name -> codeindex.v1.Evidence
 	1,   // 4: codeindex.v1.EdgeFact.kind:type_name -> codeindex.v1.EdgeKind
-	6,   // 5: codeindex.v1.EdgeFact.anchor:type_name -> codeindex.v1.SourceAnchor
-	7,   // 6: codeindex.v1.EdgeFact.evidence:type_name -> codeindex.v1.Evidence
-	13,  // 7: codeindex.v1.RepositorySettings.map_defaults:type_name -> codeindex.v1.RepositoryMapConfiguration
-	13,  // 8: codeindex.v1.RepositorySettings.map_overrides:type_name -> codeindex.v1.RepositoryMapConfiguration
-	13,  // 9: codeindex.v1.RepositorySettings.effective_map:type_name -> codeindex.v1.RepositoryMapConfiguration
-	14,  // 10: codeindex.v1.RepositorySettings.remotes:type_name -> codeindex.v1.RepositoryRemote
-	10,  // 11: codeindex.v1.Snapshot.projects:type_name -> codeindex.v1.Project
-	11,  // 12: codeindex.v1.Snapshot.sources:type_name -> codeindex.v1.SourceFile
-	80,  // 13: codeindex.v1.Snapshot.tool_versions:type_name -> codeindex.v1.Snapshot.ToolVersionsEntry
-	17,  // 14: codeindex.v1.Snapshot.statistics:type_name -> codeindex.v1.SnapshotStatistics
-	81,  // 15: codeindex.v1.IndexRequest.scip_artifacts:type_name -> codeindex.v1.IndexRequest.ScipArtifactsEntry
+	7,   // 5: codeindex.v1.EdgeFact.anchor:type_name -> codeindex.v1.SourceAnchor
+	8,   // 6: codeindex.v1.EdgeFact.evidence:type_name -> codeindex.v1.Evidence
+	14,  // 7: codeindex.v1.RepositorySettings.map_defaults:type_name -> codeindex.v1.RepositoryMapConfiguration
+	14,  // 8: codeindex.v1.RepositorySettings.map_overrides:type_name -> codeindex.v1.RepositoryMapConfiguration
+	14,  // 9: codeindex.v1.RepositorySettings.effective_map:type_name -> codeindex.v1.RepositoryMapConfiguration
+	15,  // 10: codeindex.v1.RepositorySettings.remotes:type_name -> codeindex.v1.RepositoryRemote
+	11,  // 11: codeindex.v1.Snapshot.projects:type_name -> codeindex.v1.Project
+	12,  // 12: codeindex.v1.Snapshot.sources:type_name -> codeindex.v1.SourceFile
+	81,  // 13: codeindex.v1.Snapshot.tool_versions:type_name -> codeindex.v1.Snapshot.ToolVersionsEntry
+	18,  // 14: codeindex.v1.Snapshot.statistics:type_name -> codeindex.v1.SnapshotStatistics
+	82,  // 15: codeindex.v1.IndexRequest.scip_artifacts:type_name -> codeindex.v1.IndexRequest.ScipArtifactsEntry
 	2,   // 16: codeindex.v1.SourceChange.change:type_name -> codeindex.v1.ChangeKind
-	8,   // 17: codeindex.v1.CodeFactDelta.added:type_name -> codeindex.v1.CodeFact
-	8,   // 18: codeindex.v1.CodeFactDelta.removed:type_name -> codeindex.v1.CodeFact
-	8,   // 19: codeindex.v1.CodeFactDelta.modified:type_name -> codeindex.v1.CodeFact
-	9,   // 20: codeindex.v1.EdgeFactDelta.added:type_name -> codeindex.v1.EdgeFact
-	9,   // 21: codeindex.v1.EdgeFactDelta.removed:type_name -> codeindex.v1.EdgeFact
-	9,   // 22: codeindex.v1.EdgeFactDelta.modified:type_name -> codeindex.v1.EdgeFact
-	19,  // 23: codeindex.v1.SnapshotDiff.sources:type_name -> codeindex.v1.SourceChange
-	20,  // 24: codeindex.v1.SnapshotDiff.facts:type_name -> codeindex.v1.CodeFactDelta
-	21,  // 25: codeindex.v1.SnapshotDiff.edge_facts:type_name -> codeindex.v1.EdgeFactDelta
+	9,   // 17: codeindex.v1.CodeFactDelta.added:type_name -> codeindex.v1.CodeFact
+	9,   // 18: codeindex.v1.CodeFactDelta.removed:type_name -> codeindex.v1.CodeFact
+	9,   // 19: codeindex.v1.CodeFactDelta.modified:type_name -> codeindex.v1.CodeFact
+	10,  // 20: codeindex.v1.EdgeFactDelta.added:type_name -> codeindex.v1.EdgeFact
+	10,  // 21: codeindex.v1.EdgeFactDelta.removed:type_name -> codeindex.v1.EdgeFact
+	10,  // 22: codeindex.v1.EdgeFactDelta.modified:type_name -> codeindex.v1.EdgeFact
+	20,  // 23: codeindex.v1.SnapshotDiff.sources:type_name -> codeindex.v1.SourceChange
+	21,  // 24: codeindex.v1.SnapshotDiff.facts:type_name -> codeindex.v1.CodeFactDelta
+	22,  // 25: codeindex.v1.SnapshotDiff.edge_facts:type_name -> codeindex.v1.EdgeFactDelta
 	2,   // 26: codeindex.v1.ImpactNode.change:type_name -> codeindex.v1.ChangeKind
-	20,  // 27: codeindex.v1.ImpactNode.symbols:type_name -> codeindex.v1.CodeFactDelta
+	21,  // 27: codeindex.v1.ImpactNode.symbols:type_name -> codeindex.v1.CodeFactDelta
 	2,   // 28: codeindex.v1.ImpactEdge.change:type_name -> codeindex.v1.ChangeKind
-	32,  // 29: codeindex.v1.ImpactGroup.children:type_name -> codeindex.v1.ImpactGroup
-	23,  // 30: codeindex.v1.ImpactDiagram.diff:type_name -> codeindex.v1.SnapshotDiff
-	30,  // 31: codeindex.v1.ImpactDiagram.nodes:type_name -> codeindex.v1.ImpactNode
-	31,  // 32: codeindex.v1.ImpactDiagram.edges:type_name -> codeindex.v1.ImpactEdge
-	32,  // 33: codeindex.v1.ImpactDiagram.groups:type_name -> codeindex.v1.ImpactGroup
-	33,  // 34: codeindex.v1.LiveImpact.diagram:type_name -> codeindex.v1.ImpactDiagram
+	33,  // 29: codeindex.v1.ImpactGroup.children:type_name -> codeindex.v1.ImpactGroup
+	24,  // 30: codeindex.v1.ImpactDiagram.diff:type_name -> codeindex.v1.SnapshotDiff
+	31,  // 31: codeindex.v1.ImpactDiagram.nodes:type_name -> codeindex.v1.ImpactNode
+	32,  // 32: codeindex.v1.ImpactDiagram.edges:type_name -> codeindex.v1.ImpactEdge
+	33,  // 33: codeindex.v1.ImpactDiagram.groups:type_name -> codeindex.v1.ImpactGroup
+	34,  // 34: codeindex.v1.LiveImpact.diagram:type_name -> codeindex.v1.ImpactDiagram
 	2,   // 35: codeindex.v1.ImpactSymbolChange.change:type_name -> codeindex.v1.ChangeKind
 	0,   // 36: codeindex.v1.ImpactSymbolChange.kind:type_name -> codeindex.v1.FactKind
-	35,  // 37: codeindex.v1.ImpactSymbolChange.anchor:type_name -> codeindex.v1.ImpactSymbolAnchor
+	36,  // 37: codeindex.v1.ImpactSymbolChange.anchor:type_name -> codeindex.v1.ImpactSymbolAnchor
 	2,   // 38: codeindex.v1.ImpactSceneOverlay.change:type_name -> codeindex.v1.ChangeKind
-	36,  // 39: codeindex.v1.ImpactSceneOverlay.symbols:type_name -> codeindex.v1.ImpactSymbolChange
-	83,  // 40: codeindex.v1.ScenePlacement.element:type_name -> diag.v1.PlacedElement
-	37,  // 41: codeindex.v1.ScenePlacement.overlay:type_name -> codeindex.v1.ImpactSceneOverlay
-	38,  // 42: codeindex.v1.SceneViewContent.placements:type_name -> codeindex.v1.ScenePlacement
-	84,  // 43: codeindex.v1.SceneViewContent.connectors:type_name -> diag.v1.Connector
-	85,  // 44: codeindex.v1.ImpactScene.tree:type_name -> diag.v1.View
-	82,  // 45: codeindex.v1.ImpactScene.views:type_name -> codeindex.v1.ImpactScene.ViewsEntry
-	86,  // 46: codeindex.v1.ImpactScene.navigations:type_name -> diag.v1.ElementNavigationInfo
-	41,  // 47: codeindex.v1.CompletedMap.result:type_name -> codeindex.v1.MapResult
-	12,  // 48: codeindex.v1.ListRepositoriesResponse.repositories:type_name -> codeindex.v1.Repository
-	13,  // 49: codeindex.v1.UpdateRepositoryMapConfigurationRequest.overrides:type_name -> codeindex.v1.RepositoryMapConfiguration
-	14,  // 50: codeindex.v1.UpdateRepositoryRemoteRequest.remote:type_name -> codeindex.v1.RepositoryRemote
-	4,   // 51: codeindex.v1.AddRepositoryEvent.progress:type_name -> codeindex.v1.Progress
-	12,  // 52: codeindex.v1.AddRepositoryEvent.repository:type_name -> codeindex.v1.Repository
-	29,  // 53: codeindex.v1.CheckRepositoryIndexersResponse.indexers:type_name -> codeindex.v1.IndexerRequirement
-	24,  // 54: codeindex.v1.ListWatchesResponse.watchers:type_name -> codeindex.v1.WatchStatus
-	25,  // 55: codeindex.v1.GetGitHistoryResponse.commits:type_name -> codeindex.v1.GitCommit
-	26,  // 56: codeindex.v1.GetGitHistoryResponse.branches:type_name -> codeindex.v1.GitBranch
-	28,  // 57: codeindex.v1.ListPullRequestsResponse.pull_requests:type_name -> codeindex.v1.OpenPullRequest
-	25,  // 58: codeindex.v1.GetCommitDetailsResponse.commit:type_name -> codeindex.v1.GitCommit
-	27,  // 59: codeindex.v1.GetCommitDetailsResponse.files:type_name -> codeindex.v1.CommitFileChange
-	0,   // 60: codeindex.v1.CodeFactFilter.kind:type_name -> codeindex.v1.FactKind
-	8,   // 61: codeindex.v1.CodeFactPage.facts:type_name -> codeindex.v1.CodeFact
-	16,  // 62: codeindex.v1.ListSnapshotsResponse.snapshots:type_name -> codeindex.v1.Snapshot
-	4,   // 63: codeindex.v1.CaptureSnapshotEvent.progress:type_name -> codeindex.v1.Progress
-	16,  // 64: codeindex.v1.CaptureSnapshotEvent.snapshot:type_name -> codeindex.v1.Snapshot
-	5,   // 65: codeindex.v1.MapRepositoryRequest.revision:type_name -> codeindex.v1.Revision
-	4,   // 66: codeindex.v1.MapRepositoryEvent.progress:type_name -> codeindex.v1.Progress
-	41,  // 67: codeindex.v1.MapRepositoryEvent.result:type_name -> codeindex.v1.MapResult
-	42,  // 68: codeindex.v1.ListMapsResponse.maps:type_name -> codeindex.v1.CompletedMap
-	5,   // 69: codeindex.v1.CompareRepositoryRequest.base:type_name -> codeindex.v1.Revision
-	5,   // 70: codeindex.v1.CompareRepositoryRequest.head:type_name -> codeindex.v1.Revision
-	4,   // 71: codeindex.v1.CompareRepositoryEvent.progress:type_name -> codeindex.v1.Progress
-	33,  // 72: codeindex.v1.CompareRepositoryEvent.result:type_name -> codeindex.v1.ImpactDiagram
-	40,  // 73: codeindex.v1.GetImpactSceneResponse.scene:type_name -> codeindex.v1.ImpactScene
-	39,  // 74: codeindex.v1.ImpactScene.ViewsEntry.value:type_name -> codeindex.v1.SceneViewContent
-	87,  // 75: codeindex.v1.RepositoryService.ListRepositories:input_type -> google.protobuf.Empty
-	44,  // 76: codeindex.v1.RepositoryService.GetWorktreeSource:input_type -> codeindex.v1.GetWorktreeSourceRequest
-	3,   // 77: codeindex.v1.RepositoryService.GetRepositorySettings:input_type -> codeindex.v1.ID
-	46,  // 78: codeindex.v1.RepositoryService.UpdateRepositoryMapConfiguration:input_type -> codeindex.v1.UpdateRepositoryMapConfigurationRequest
-	47,  // 79: codeindex.v1.RepositoryService.UpdateRepositoryRemote:input_type -> codeindex.v1.UpdateRepositoryRemoteRequest
-	52,  // 80: codeindex.v1.RepositoryService.CheckRepositoryIndexers:input_type -> codeindex.v1.CheckRepositoryIndexersRequest
-	50,  // 81: codeindex.v1.RepositoryService.AddRepository:input_type -> codeindex.v1.AddRepositoryRequest
-	48,  // 82: codeindex.v1.RepositoryService.DeleteRepository:input_type -> codeindex.v1.DeleteRepositoryRequest
-	56,  // 83: codeindex.v1.RepositoryService.GetGitHistory:input_type -> codeindex.v1.GetGitHistoryRequest
-	61,  // 84: codeindex.v1.RepositoryService.GetCommitDetails:input_type -> codeindex.v1.GetCommitDetailsRequest
-	63,  // 85: codeindex.v1.RepositoryService.GetRevisionRangeSummary:input_type -> codeindex.v1.GetRevisionRangeSummaryRequest
-	58,  // 86: codeindex.v1.RepositoryService.GetPullRequest:input_type -> codeindex.v1.GetPullRequestRequest
-	3,   // 87: codeindex.v1.RepositoryService.ListPullRequests:input_type -> codeindex.v1.ID
-	54,  // 88: codeindex.v1.RepositoryService.StartWatch:input_type -> codeindex.v1.StartWatchRequest
-	3,   // 89: codeindex.v1.RepositoryService.StopWatch:input_type -> codeindex.v1.ID
-	3,   // 90: codeindex.v1.RepositoryService.GetWatchStatus:input_type -> codeindex.v1.ID
-	87,  // 91: codeindex.v1.RepositoryService.ListWatches:input_type -> google.protobuf.Empty
-	65,  // 92: codeindex.v1.CodeIndexService.ListFacts:input_type -> codeindex.v1.CodeFactFilter
-	3,   // 93: codeindex.v1.CodeIndexService.ListSnapshots:input_type -> codeindex.v1.ID
-	69,  // 94: codeindex.v1.CodeIndexService.CaptureSnapshot:input_type -> codeindex.v1.CaptureSnapshotRequest
-	22,  // 95: codeindex.v1.CodeIndexService.DiffSnapshots:input_type -> codeindex.v1.SnapshotDiffRequest
-	3,   // 96: codeindex.v1.CodeIndexService.DeleteSnapshot:input_type -> codeindex.v1.ID
-	71,  // 97: codeindex.v1.CodeIndexService.MapRepository:input_type -> codeindex.v1.MapRepositoryRequest
-	3,   // 98: codeindex.v1.CodeIndexService.ListMaps:input_type -> codeindex.v1.ID
-	74,  // 99: codeindex.v1.CodeIndexService.CompareRepository:input_type -> codeindex.v1.CompareRepositoryRequest
-	3,   // 100: codeindex.v1.CodeIndexService.GetLiveImpact:input_type -> codeindex.v1.ID
-	76,  // 101: codeindex.v1.CodeIndexService.ExportImpactMermaid:input_type -> codeindex.v1.ExportImpactMermaidRequest
-	78,  // 102: codeindex.v1.CodeIndexService.GetImpactScene:input_type -> codeindex.v1.GetImpactSceneRequest
-	43,  // 103: codeindex.v1.RepositoryService.ListRepositories:output_type -> codeindex.v1.ListRepositoriesResponse
-	45,  // 104: codeindex.v1.RepositoryService.GetWorktreeSource:output_type -> codeindex.v1.GetWorktreeSourceResponse
-	15,  // 105: codeindex.v1.RepositoryService.GetRepositorySettings:output_type -> codeindex.v1.RepositorySettings
-	15,  // 106: codeindex.v1.RepositoryService.UpdateRepositoryMapConfiguration:output_type -> codeindex.v1.RepositorySettings
-	15,  // 107: codeindex.v1.RepositoryService.UpdateRepositoryRemote:output_type -> codeindex.v1.RepositorySettings
-	53,  // 108: codeindex.v1.RepositoryService.CheckRepositoryIndexers:output_type -> codeindex.v1.CheckRepositoryIndexersResponse
-	51,  // 109: codeindex.v1.RepositoryService.AddRepository:output_type -> codeindex.v1.AddRepositoryEvent
-	49,  // 110: codeindex.v1.RepositoryService.DeleteRepository:output_type -> codeindex.v1.DeleteRepositoryResponse
-	57,  // 111: codeindex.v1.RepositoryService.GetGitHistory:output_type -> codeindex.v1.GetGitHistoryResponse
-	62,  // 112: codeindex.v1.RepositoryService.GetCommitDetails:output_type -> codeindex.v1.GetCommitDetailsResponse
-	64,  // 113: codeindex.v1.RepositoryService.GetRevisionRangeSummary:output_type -> codeindex.v1.RevisionRangeSummary
-	59,  // 114: codeindex.v1.RepositoryService.GetPullRequest:output_type -> codeindex.v1.GetPullRequestResponse
-	60,  // 115: codeindex.v1.RepositoryService.ListPullRequests:output_type -> codeindex.v1.ListPullRequestsResponse
-	24,  // 116: codeindex.v1.RepositoryService.StartWatch:output_type -> codeindex.v1.WatchStatus
-	24,  // 117: codeindex.v1.RepositoryService.StopWatch:output_type -> codeindex.v1.WatchStatus
-	24,  // 118: codeindex.v1.RepositoryService.GetWatchStatus:output_type -> codeindex.v1.WatchStatus
-	55,  // 119: codeindex.v1.RepositoryService.ListWatches:output_type -> codeindex.v1.ListWatchesResponse
-	66,  // 120: codeindex.v1.CodeIndexService.ListFacts:output_type -> codeindex.v1.CodeFactPage
-	67,  // 121: codeindex.v1.CodeIndexService.ListSnapshots:output_type -> codeindex.v1.ListSnapshotsResponse
-	70,  // 122: codeindex.v1.CodeIndexService.CaptureSnapshot:output_type -> codeindex.v1.CaptureSnapshotEvent
-	23,  // 123: codeindex.v1.CodeIndexService.DiffSnapshots:output_type -> codeindex.v1.SnapshotDiff
-	68,  // 124: codeindex.v1.CodeIndexService.DeleteSnapshot:output_type -> codeindex.v1.DeleteSnapshotResponse
-	72,  // 125: codeindex.v1.CodeIndexService.MapRepository:output_type -> codeindex.v1.MapRepositoryEvent
-	73,  // 126: codeindex.v1.CodeIndexService.ListMaps:output_type -> codeindex.v1.ListMapsResponse
-	75,  // 127: codeindex.v1.CodeIndexService.CompareRepository:output_type -> codeindex.v1.CompareRepositoryEvent
-	34,  // 128: codeindex.v1.CodeIndexService.GetLiveImpact:output_type -> codeindex.v1.LiveImpact
-	77,  // 129: codeindex.v1.CodeIndexService.ExportImpactMermaid:output_type -> codeindex.v1.ExportImpactMermaidResponse
-	79,  // 130: codeindex.v1.CodeIndexService.GetImpactScene:output_type -> codeindex.v1.GetImpactSceneResponse
-	103, // [103:131] is the sub-list for method output_type
-	75,  // [75:103] is the sub-list for method input_type
-	75,  // [75:75] is the sub-list for extension type_name
-	75,  // [75:75] is the sub-list for extension extendee
-	0,   // [0:75] is the sub-list for field type_name
+	37,  // 39: codeindex.v1.ImpactSceneOverlay.symbols:type_name -> codeindex.v1.ImpactSymbolChange
+	3,   // 40: codeindex.v1.ImpactSceneOverlay.reason:type_name -> codeindex.v1.OverlayReason
+	84,  // 41: codeindex.v1.ScenePlacement.element:type_name -> diag.v1.PlacedElement
+	38,  // 42: codeindex.v1.ScenePlacement.overlay:type_name -> codeindex.v1.ImpactSceneOverlay
+	39,  // 43: codeindex.v1.SceneViewContent.placements:type_name -> codeindex.v1.ScenePlacement
+	85,  // 44: codeindex.v1.SceneViewContent.connectors:type_name -> diag.v1.Connector
+	86,  // 45: codeindex.v1.ImpactScene.tree:type_name -> diag.v1.View
+	83,  // 46: codeindex.v1.ImpactScene.views:type_name -> codeindex.v1.ImpactScene.ViewsEntry
+	87,  // 47: codeindex.v1.ImpactScene.navigations:type_name -> diag.v1.ElementNavigationInfo
+	42,  // 48: codeindex.v1.CompletedMap.result:type_name -> codeindex.v1.MapResult
+	13,  // 49: codeindex.v1.ListRepositoriesResponse.repositories:type_name -> codeindex.v1.Repository
+	14,  // 50: codeindex.v1.UpdateRepositoryMapConfigurationRequest.overrides:type_name -> codeindex.v1.RepositoryMapConfiguration
+	15,  // 51: codeindex.v1.UpdateRepositoryRemoteRequest.remote:type_name -> codeindex.v1.RepositoryRemote
+	5,   // 52: codeindex.v1.AddRepositoryEvent.progress:type_name -> codeindex.v1.Progress
+	13,  // 53: codeindex.v1.AddRepositoryEvent.repository:type_name -> codeindex.v1.Repository
+	30,  // 54: codeindex.v1.CheckRepositoryIndexersResponse.indexers:type_name -> codeindex.v1.IndexerRequirement
+	25,  // 55: codeindex.v1.ListWatchesResponse.watchers:type_name -> codeindex.v1.WatchStatus
+	26,  // 56: codeindex.v1.GetGitHistoryResponse.commits:type_name -> codeindex.v1.GitCommit
+	27,  // 57: codeindex.v1.GetGitHistoryResponse.branches:type_name -> codeindex.v1.GitBranch
+	29,  // 58: codeindex.v1.ListPullRequestsResponse.pull_requests:type_name -> codeindex.v1.OpenPullRequest
+	26,  // 59: codeindex.v1.GetCommitDetailsResponse.commit:type_name -> codeindex.v1.GitCommit
+	28,  // 60: codeindex.v1.GetCommitDetailsResponse.files:type_name -> codeindex.v1.CommitFileChange
+	0,   // 61: codeindex.v1.CodeFactFilter.kind:type_name -> codeindex.v1.FactKind
+	9,   // 62: codeindex.v1.CodeFactPage.facts:type_name -> codeindex.v1.CodeFact
+	17,  // 63: codeindex.v1.ListSnapshotsResponse.snapshots:type_name -> codeindex.v1.Snapshot
+	5,   // 64: codeindex.v1.CaptureSnapshotEvent.progress:type_name -> codeindex.v1.Progress
+	17,  // 65: codeindex.v1.CaptureSnapshotEvent.snapshot:type_name -> codeindex.v1.Snapshot
+	6,   // 66: codeindex.v1.MapRepositoryRequest.revision:type_name -> codeindex.v1.Revision
+	5,   // 67: codeindex.v1.MapRepositoryEvent.progress:type_name -> codeindex.v1.Progress
+	42,  // 68: codeindex.v1.MapRepositoryEvent.result:type_name -> codeindex.v1.MapResult
+	43,  // 69: codeindex.v1.ListMapsResponse.maps:type_name -> codeindex.v1.CompletedMap
+	6,   // 70: codeindex.v1.CompareRepositoryRequest.base:type_name -> codeindex.v1.Revision
+	6,   // 71: codeindex.v1.CompareRepositoryRequest.head:type_name -> codeindex.v1.Revision
+	5,   // 72: codeindex.v1.CompareRepositoryEvent.progress:type_name -> codeindex.v1.Progress
+	34,  // 73: codeindex.v1.CompareRepositoryEvent.result:type_name -> codeindex.v1.ImpactDiagram
+	41,  // 74: codeindex.v1.GetImpactSceneResponse.scene:type_name -> codeindex.v1.ImpactScene
+	40,  // 75: codeindex.v1.ImpactScene.ViewsEntry.value:type_name -> codeindex.v1.SceneViewContent
+	88,  // 76: codeindex.v1.RepositoryService.ListRepositories:input_type -> google.protobuf.Empty
+	45,  // 77: codeindex.v1.RepositoryService.GetWorktreeSource:input_type -> codeindex.v1.GetWorktreeSourceRequest
+	4,   // 78: codeindex.v1.RepositoryService.GetRepositorySettings:input_type -> codeindex.v1.ID
+	47,  // 79: codeindex.v1.RepositoryService.UpdateRepositoryMapConfiguration:input_type -> codeindex.v1.UpdateRepositoryMapConfigurationRequest
+	48,  // 80: codeindex.v1.RepositoryService.UpdateRepositoryRemote:input_type -> codeindex.v1.UpdateRepositoryRemoteRequest
+	53,  // 81: codeindex.v1.RepositoryService.CheckRepositoryIndexers:input_type -> codeindex.v1.CheckRepositoryIndexersRequest
+	51,  // 82: codeindex.v1.RepositoryService.AddRepository:input_type -> codeindex.v1.AddRepositoryRequest
+	49,  // 83: codeindex.v1.RepositoryService.DeleteRepository:input_type -> codeindex.v1.DeleteRepositoryRequest
+	57,  // 84: codeindex.v1.RepositoryService.GetGitHistory:input_type -> codeindex.v1.GetGitHistoryRequest
+	62,  // 85: codeindex.v1.RepositoryService.GetCommitDetails:input_type -> codeindex.v1.GetCommitDetailsRequest
+	64,  // 86: codeindex.v1.RepositoryService.GetRevisionRangeSummary:input_type -> codeindex.v1.GetRevisionRangeSummaryRequest
+	59,  // 87: codeindex.v1.RepositoryService.GetPullRequest:input_type -> codeindex.v1.GetPullRequestRequest
+	4,   // 88: codeindex.v1.RepositoryService.ListPullRequests:input_type -> codeindex.v1.ID
+	55,  // 89: codeindex.v1.RepositoryService.StartWatch:input_type -> codeindex.v1.StartWatchRequest
+	4,   // 90: codeindex.v1.RepositoryService.StopWatch:input_type -> codeindex.v1.ID
+	4,   // 91: codeindex.v1.RepositoryService.GetWatchStatus:input_type -> codeindex.v1.ID
+	88,  // 92: codeindex.v1.RepositoryService.ListWatches:input_type -> google.protobuf.Empty
+	66,  // 93: codeindex.v1.CodeIndexService.ListFacts:input_type -> codeindex.v1.CodeFactFilter
+	4,   // 94: codeindex.v1.CodeIndexService.ListSnapshots:input_type -> codeindex.v1.ID
+	70,  // 95: codeindex.v1.CodeIndexService.CaptureSnapshot:input_type -> codeindex.v1.CaptureSnapshotRequest
+	23,  // 96: codeindex.v1.CodeIndexService.DiffSnapshots:input_type -> codeindex.v1.SnapshotDiffRequest
+	4,   // 97: codeindex.v1.CodeIndexService.DeleteSnapshot:input_type -> codeindex.v1.ID
+	72,  // 98: codeindex.v1.CodeIndexService.MapRepository:input_type -> codeindex.v1.MapRepositoryRequest
+	4,   // 99: codeindex.v1.CodeIndexService.ListMaps:input_type -> codeindex.v1.ID
+	75,  // 100: codeindex.v1.CodeIndexService.CompareRepository:input_type -> codeindex.v1.CompareRepositoryRequest
+	4,   // 101: codeindex.v1.CodeIndexService.GetLiveImpact:input_type -> codeindex.v1.ID
+	77,  // 102: codeindex.v1.CodeIndexService.ExportImpactMermaid:input_type -> codeindex.v1.ExportImpactMermaidRequest
+	79,  // 103: codeindex.v1.CodeIndexService.GetImpactScene:input_type -> codeindex.v1.GetImpactSceneRequest
+	44,  // 104: codeindex.v1.RepositoryService.ListRepositories:output_type -> codeindex.v1.ListRepositoriesResponse
+	46,  // 105: codeindex.v1.RepositoryService.GetWorktreeSource:output_type -> codeindex.v1.GetWorktreeSourceResponse
+	16,  // 106: codeindex.v1.RepositoryService.GetRepositorySettings:output_type -> codeindex.v1.RepositorySettings
+	16,  // 107: codeindex.v1.RepositoryService.UpdateRepositoryMapConfiguration:output_type -> codeindex.v1.RepositorySettings
+	16,  // 108: codeindex.v1.RepositoryService.UpdateRepositoryRemote:output_type -> codeindex.v1.RepositorySettings
+	54,  // 109: codeindex.v1.RepositoryService.CheckRepositoryIndexers:output_type -> codeindex.v1.CheckRepositoryIndexersResponse
+	52,  // 110: codeindex.v1.RepositoryService.AddRepository:output_type -> codeindex.v1.AddRepositoryEvent
+	50,  // 111: codeindex.v1.RepositoryService.DeleteRepository:output_type -> codeindex.v1.DeleteRepositoryResponse
+	58,  // 112: codeindex.v1.RepositoryService.GetGitHistory:output_type -> codeindex.v1.GetGitHistoryResponse
+	63,  // 113: codeindex.v1.RepositoryService.GetCommitDetails:output_type -> codeindex.v1.GetCommitDetailsResponse
+	65,  // 114: codeindex.v1.RepositoryService.GetRevisionRangeSummary:output_type -> codeindex.v1.RevisionRangeSummary
+	60,  // 115: codeindex.v1.RepositoryService.GetPullRequest:output_type -> codeindex.v1.GetPullRequestResponse
+	61,  // 116: codeindex.v1.RepositoryService.ListPullRequests:output_type -> codeindex.v1.ListPullRequestsResponse
+	25,  // 117: codeindex.v1.RepositoryService.StartWatch:output_type -> codeindex.v1.WatchStatus
+	25,  // 118: codeindex.v1.RepositoryService.StopWatch:output_type -> codeindex.v1.WatchStatus
+	25,  // 119: codeindex.v1.RepositoryService.GetWatchStatus:output_type -> codeindex.v1.WatchStatus
+	56,  // 120: codeindex.v1.RepositoryService.ListWatches:output_type -> codeindex.v1.ListWatchesResponse
+	67,  // 121: codeindex.v1.CodeIndexService.ListFacts:output_type -> codeindex.v1.CodeFactPage
+	68,  // 122: codeindex.v1.CodeIndexService.ListSnapshots:output_type -> codeindex.v1.ListSnapshotsResponse
+	71,  // 123: codeindex.v1.CodeIndexService.CaptureSnapshot:output_type -> codeindex.v1.CaptureSnapshotEvent
+	24,  // 124: codeindex.v1.CodeIndexService.DiffSnapshots:output_type -> codeindex.v1.SnapshotDiff
+	69,  // 125: codeindex.v1.CodeIndexService.DeleteSnapshot:output_type -> codeindex.v1.DeleteSnapshotResponse
+	73,  // 126: codeindex.v1.CodeIndexService.MapRepository:output_type -> codeindex.v1.MapRepositoryEvent
+	74,  // 127: codeindex.v1.CodeIndexService.ListMaps:output_type -> codeindex.v1.ListMapsResponse
+	76,  // 128: codeindex.v1.CodeIndexService.CompareRepository:output_type -> codeindex.v1.CompareRepositoryEvent
+	35,  // 129: codeindex.v1.CodeIndexService.GetLiveImpact:output_type -> codeindex.v1.LiveImpact
+	78,  // 130: codeindex.v1.CodeIndexService.ExportImpactMermaid:output_type -> codeindex.v1.ExportImpactMermaidResponse
+	80,  // 131: codeindex.v1.CodeIndexService.GetImpactScene:output_type -> codeindex.v1.GetImpactSceneResponse
+	104, // [104:132] is the sub-list for method output_type
+	76,  // [76:104] is the sub-list for method input_type
+	76,  // [76:76] is the sub-list for extension type_name
+	76,  // [76:76] is the sub-list for extension extendee
+	0,   // [0:76] is the sub-list for field type_name
 }
 
 func init() { file_codeindex_v1_codeindex_proto_init() }
@@ -7137,7 +7165,7 @@ func file_codeindex_v1_codeindex_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_codeindex_v1_codeindex_proto_rawDesc), len(file_codeindex_v1_codeindex_proto_rawDesc)),
-			NumEnums:      3,
+			NumEnums:      4,
 			NumMessages:   80,
 			NumExtensions: 0,
 			NumServices:   2,
