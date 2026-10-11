@@ -165,6 +165,15 @@ message SourceFile {
   string path = 1;
   string hash = 2;
   uint64 size = 3;
+  // Git mode when used in a snapshot manifest; empty on captured sources.
+  string mode = 4;
+}
+
+// Complete file inventory, independent of indexer language/size exclusions.
+message SnapshotManifest {
+  repeated SourceFile files = 1;
+  bool complete = 2;
+  string reason = 3;
 }
 
 // ─── Repository ──────────────────────────────────────────────────────────────
@@ -254,6 +263,7 @@ message Snapshot {
   // Subject line of the Git commit at git_revision when the snapshot was
   // captured. Empty for non-Git repositories.
   string commit_message = 16;
+  SnapshotManifest manifest = 17;
 }
 
 message SnapshotStatistics {
@@ -291,6 +301,11 @@ message SourceChange {
   string to_hash = 4;
   optional uint32 lines_added = 5;
   optional uint32 lines_removed = 6;
+  // The file is covered by the manifest but lacks captured source contents.
+  bool facts_unavailable = 7;
+  bool metadata_only = 8;
+  // Chosen scene representatives; empty on snapshot diffs.
+  repeated string placement_keys = 9;
 }
 
 // Deltas are keyed by stable logical identity, so a rename is an add plus a
@@ -437,6 +452,7 @@ message ImpactNode {
   CodeFactDelta symbols = 7;
   double x = 8;
   double y = 9;
+  repeated ImpactWitness witnesses = 10;
 }
 
 message ImpactEdge {
@@ -472,7 +488,90 @@ message ImpactDiagram {
 
   string version = 9;
   // Root groups of the nested hierarchy, outermost first.
-  repeated ImpactGroup groups = 10;}
+  repeated ImpactGroup groups = 10;
+  // Authoritative frozen scene; nodes/edges remain compatibility projections.
+  ImpactScene scene = 11;
+  optional uint32 requested_radius = 12;
+  string workspace_fingerprint = 13;
+  string view_filter = 14;
+  repeated string warnings = 15;
+  bool manifest_complete = 16;
+}
+
+enum ImpactOrigin {
+  IMPACT_ORIGIN_UNSPECIFIED = 0;
+  IMPACT_ORIGIN_AUTHORED = 1;
+  IMPACT_ORIGIN_MAPPED = 2;
+  IMPACT_ORIGIN_RAW = 3;
+}
+
+enum ImpactGrounding {
+  IMPACT_GROUNDING_UNSPECIFIED = 0;
+  IMPACT_GROUNDING_RESOLVED = 1;
+  IMPACT_GROUNDING_UNLINKED = 2;
+  IMPACT_GROUNDING_UNRESOLVED = 3;
+  IMPACT_GROUNDING_OUTSIDE_REPOSITORY = 4;
+  IMPACT_GROUNDING_AMBIGUOUS = 5;
+  IMPACT_GROUNDING_MANIFEST_ONLY = 6;
+}
+
+enum ImpactRole {
+  IMPACT_ROLE_UNSPECIFIED = 0;
+  IMPACT_ROLE_DIRECT = 1;
+  IMPACT_ROLE_CONTAINED = 2;
+  IMPACT_ROLE_DEPENDENCY_CONTEXT = 3;
+  IMPACT_ROLE_AUTHORED_CONTEXT = 4;
+  IMPACT_ROLE_CONTAINER = 5;
+}
+
+// A shortest dependency path in one snapshot, never a hybrid BASE/HEAD path.
+message ImpactWitness {
+  string snapshot_id = 1;
+  reserved 2;
+  reserved "seed_path";
+  // Ordered from the directly changed file to the dependency neighbour.
+  repeated string paths = 3;
+}
+
+message ImpactProvenance {
+  string key = 1;
+  string object_kind = 2;
+  int64 view_id = 3;
+  int64 resource_id = 4;
+  string name = 5;
+  ImpactOrigin origin = 6;
+  ImpactGrounding grounding = 7;
+  ImpactRole role = 8;
+  string stage = 9;
+  string reason = 10;
+  repeated string paths = 11;
+  uint32 distance = 12;
+  repeated ImpactWitness witnesses = 13;
+  string logical_key = 14;
+  string map_snapshot_id = 15;
+  repeated string evidence = 16;
+  // Symbol/line anchors only cover part of a changed file.
+  bool partial = 17;
+  repeated string endpoint_keys = 18;
+}
+
+message ImpactDecision {
+  string stage = 1;
+  string action = 2;
+  string key = 3;
+  string reason = 4;
+  repeated string paths = 5;
+  repeated string representative_keys = 6;
+}
+
+message ImpactStage {
+  string id = 1;
+  string name = 2;
+  uint32 added = 3;
+  uint32 annotated = 4;
+  uint32 reused = 5;
+  uint32 suppressed = 6;
+}
 
 message LiveImpact {
   ImpactDiagram diagram = 1;
@@ -572,6 +671,18 @@ message ImpactScene {
   // Views whose placements the comparison matched on user-authored elements
 
   repeated int64 authored_view_ids = 12;
+  map<string, ImpactProvenance> provenance = 13;
+  // SourceChanges annotated with their chosen scene representatives.
+  repeated SourceChange coverage = 14;
+  // Developer-only stage counts and decision ledger.
+  repeated ImpactStage stages = 15;
+  uint32 requested_radius = 16;
+  uint32 effective_radius = 17;
+  repeated string warnings = 18;
+  bool manifest_complete = 19;
+  repeated string omitted_context = 20;
+  string workspace_fingerprint = 21;
+  repeated ImpactDecision decisions = 22;
 }
 
 message MapResult {
@@ -822,9 +933,11 @@ message CompareRepositoryRequest {
   string repository_id = 1;
   Revision base = 2;
   Revision head = 3;
-  // Dependency hops of unchanged context to include. 0 means direct changes
-  // only; clients filter the returned nodes by their own display radius.
+  // Dependency hops of unchanged context to include (blast radius).
+  // Zero means direct changes only; scene selection is performed by the server.
   uint32 context_depth = 4;
+  bool debug_provenance = 5;
+  string view_filter = 6;
 }
 
 message CompareRepositoryEvent {
@@ -852,6 +965,8 @@ message ExportImpactMermaidResponse {
 message GetImpactSceneRequest {
   string repository_id = 1;
   string comparison_key = 2;
+  bool debug_provenance = 3;
+  bool plain = 4;
 }
 
 message GetImpactSceneResponse {
