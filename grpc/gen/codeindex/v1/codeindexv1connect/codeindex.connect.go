@@ -84,9 +84,6 @@ const (
 	// RepositoryServiceGetWatchStatusProcedure is the fully-qualified name of the RepositoryService's
 	// GetWatchStatus RPC.
 	RepositoryServiceGetWatchStatusProcedure = "/codeindex.v1.RepositoryService/GetWatchStatus"
-	// RepositoryServiceListWatchesProcedure is the fully-qualified name of the RepositoryService's
-	// ListWatches RPC.
-	RepositoryServiceListWatchesProcedure = "/codeindex.v1.RepositoryService/ListWatches"
 	// CodeIndexServiceListFactsProcedure is the fully-qualified name of the CodeIndexService's
 	// ListFacts RPC.
 	CodeIndexServiceListFactsProcedure = "/codeindex.v1.CodeIndexService/ListFacts"
@@ -131,7 +128,7 @@ type RepositoryServiceClient interface {
 	UpdateRepositoryRemote(context.Context, *connect.Request[v1.UpdateRepositoryRemoteRequest]) (*connect.Response[v1.RepositorySettings], error)
 	CheckRepositoryIndexers(context.Context, *connect.Request[v1.CheckRepositoryIndexersRequest]) (*connect.Response[v1.CheckRepositoryIndexersResponse], error)
 	AddRepository(context.Context, *connect.Request[v1.AddRepositoryRequest]) (*connect.ServerStreamForClient[v1.AddRepositoryEvent], error)
-	DeleteRepository(context.Context, *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[v1.DeleteRepositoryResponse], error)
+	DeleteRepository(context.Context, *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[emptypb.Empty], error)
 	GetGitHistory(context.Context, *connect.Request[v1.GetGitHistoryRequest]) (*connect.Response[v1.GetGitHistoryResponse], error)
 	GetCommitDetails(context.Context, *connect.Request[v1.GetCommitDetailsRequest]) (*connect.Response[v1.GetCommitDetailsResponse], error)
 	GetRevisionRangeSummary(context.Context, *connect.Request[v1.GetRevisionRangeSummaryRequest]) (*connect.Response[v1.RevisionRangeSummary], error)
@@ -140,7 +137,6 @@ type RepositoryServiceClient interface {
 	StartWatch(context.Context, *connect.Request[v1.StartWatchRequest]) (*connect.Response[v1.WatchStatus], error)
 	StopWatch(context.Context, *connect.Request[v1.ID]) (*connect.Response[v1.WatchStatus], error)
 	GetWatchStatus(context.Context, *connect.Request[v1.ID]) (*connect.Response[v1.WatchStatus], error)
-	ListWatches(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.ListWatchesResponse], error)
 }
 
 // NewRepositoryServiceClient constructs a client for the codeindex.v1.RepositoryService service. By
@@ -196,7 +192,7 @@ func NewRepositoryServiceClient(httpClient connect.HTTPClient, baseURL string, o
 			connect.WithSchema(repositoryServiceMethods.ByName("AddRepository")),
 			connect.WithClientOptions(opts...),
 		),
-		deleteRepository: connect.NewClient[v1.DeleteRepositoryRequest, v1.DeleteRepositoryResponse](
+		deleteRepository: connect.NewClient[v1.DeleteRepositoryRequest, emptypb.Empty](
 			httpClient,
 			baseURL+RepositoryServiceDeleteRepositoryProcedure,
 			connect.WithSchema(repositoryServiceMethods.ByName("DeleteRepository")),
@@ -250,12 +246,6 @@ func NewRepositoryServiceClient(httpClient connect.HTTPClient, baseURL string, o
 			connect.WithSchema(repositoryServiceMethods.ByName("GetWatchStatus")),
 			connect.WithClientOptions(opts...),
 		),
-		listWatches: connect.NewClient[emptypb.Empty, v1.ListWatchesResponse](
-			httpClient,
-			baseURL+RepositoryServiceListWatchesProcedure,
-			connect.WithSchema(repositoryServiceMethods.ByName("ListWatches")),
-			connect.WithClientOptions(opts...),
-		),
 	}
 }
 
@@ -268,7 +258,7 @@ type repositoryServiceClient struct {
 	updateRepositoryRemote           *connect.Client[v1.UpdateRepositoryRemoteRequest, v1.RepositorySettings]
 	checkRepositoryIndexers          *connect.Client[v1.CheckRepositoryIndexersRequest, v1.CheckRepositoryIndexersResponse]
 	addRepository                    *connect.Client[v1.AddRepositoryRequest, v1.AddRepositoryEvent]
-	deleteRepository                 *connect.Client[v1.DeleteRepositoryRequest, v1.DeleteRepositoryResponse]
+	deleteRepository                 *connect.Client[v1.DeleteRepositoryRequest, emptypb.Empty]
 	getGitHistory                    *connect.Client[v1.GetGitHistoryRequest, v1.GetGitHistoryResponse]
 	getCommitDetails                 *connect.Client[v1.GetCommitDetailsRequest, v1.GetCommitDetailsResponse]
 	getRevisionRangeSummary          *connect.Client[v1.GetRevisionRangeSummaryRequest, v1.RevisionRangeSummary]
@@ -277,7 +267,6 @@ type repositoryServiceClient struct {
 	startWatch                       *connect.Client[v1.StartWatchRequest, v1.WatchStatus]
 	stopWatch                        *connect.Client[v1.ID, v1.WatchStatus]
 	getWatchStatus                   *connect.Client[v1.ID, v1.WatchStatus]
-	listWatches                      *connect.Client[emptypb.Empty, v1.ListWatchesResponse]
 }
 
 // ListRepositories calls codeindex.v1.RepositoryService.ListRepositories.
@@ -317,7 +306,7 @@ func (c *repositoryServiceClient) AddRepository(ctx context.Context, req *connec
 }
 
 // DeleteRepository calls codeindex.v1.RepositoryService.DeleteRepository.
-func (c *repositoryServiceClient) DeleteRepository(ctx context.Context, req *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[v1.DeleteRepositoryResponse], error) {
+func (c *repositoryServiceClient) DeleteRepository(ctx context.Context, req *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[emptypb.Empty], error) {
 	return c.deleteRepository.CallUnary(ctx, req)
 }
 
@@ -361,11 +350,6 @@ func (c *repositoryServiceClient) GetWatchStatus(ctx context.Context, req *conne
 	return c.getWatchStatus.CallUnary(ctx, req)
 }
 
-// ListWatches calls codeindex.v1.RepositoryService.ListWatches.
-func (c *repositoryServiceClient) ListWatches(ctx context.Context, req *connect.Request[emptypb.Empty]) (*connect.Response[v1.ListWatchesResponse], error) {
-	return c.listWatches.CallUnary(ctx, req)
-}
-
 // RepositoryServiceHandler is an implementation of the codeindex.v1.RepositoryService service.
 type RepositoryServiceHandler interface {
 	ListRepositories(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.ListRepositoriesResponse], error)
@@ -375,7 +359,7 @@ type RepositoryServiceHandler interface {
 	UpdateRepositoryRemote(context.Context, *connect.Request[v1.UpdateRepositoryRemoteRequest]) (*connect.Response[v1.RepositorySettings], error)
 	CheckRepositoryIndexers(context.Context, *connect.Request[v1.CheckRepositoryIndexersRequest]) (*connect.Response[v1.CheckRepositoryIndexersResponse], error)
 	AddRepository(context.Context, *connect.Request[v1.AddRepositoryRequest], *connect.ServerStream[v1.AddRepositoryEvent]) error
-	DeleteRepository(context.Context, *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[v1.DeleteRepositoryResponse], error)
+	DeleteRepository(context.Context, *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[emptypb.Empty], error)
 	GetGitHistory(context.Context, *connect.Request[v1.GetGitHistoryRequest]) (*connect.Response[v1.GetGitHistoryResponse], error)
 	GetCommitDetails(context.Context, *connect.Request[v1.GetCommitDetailsRequest]) (*connect.Response[v1.GetCommitDetailsResponse], error)
 	GetRevisionRangeSummary(context.Context, *connect.Request[v1.GetRevisionRangeSummaryRequest]) (*connect.Response[v1.RevisionRangeSummary], error)
@@ -384,7 +368,6 @@ type RepositoryServiceHandler interface {
 	StartWatch(context.Context, *connect.Request[v1.StartWatchRequest]) (*connect.Response[v1.WatchStatus], error)
 	StopWatch(context.Context, *connect.Request[v1.ID]) (*connect.Response[v1.WatchStatus], error)
 	GetWatchStatus(context.Context, *connect.Request[v1.ID]) (*connect.Response[v1.WatchStatus], error)
-	ListWatches(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.ListWatchesResponse], error)
 }
 
 // NewRepositoryServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -490,12 +473,6 @@ func NewRepositoryServiceHandler(svc RepositoryServiceHandler, opts ...connect.H
 		connect.WithSchema(repositoryServiceMethods.ByName("GetWatchStatus")),
 		connect.WithHandlerOptions(opts...),
 	)
-	repositoryServiceListWatchesHandler := connect.NewUnaryHandler(
-		RepositoryServiceListWatchesProcedure,
-		svc.ListWatches,
-		connect.WithSchema(repositoryServiceMethods.ByName("ListWatches")),
-		connect.WithHandlerOptions(opts...),
-	)
 	return "/codeindex.v1.RepositoryService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case RepositoryServiceListRepositoriesProcedure:
@@ -530,8 +507,6 @@ func NewRepositoryServiceHandler(svc RepositoryServiceHandler, opts ...connect.H
 			repositoryServiceStopWatchHandler.ServeHTTP(w, r)
 		case RepositoryServiceGetWatchStatusProcedure:
 			repositoryServiceGetWatchStatusHandler.ServeHTTP(w, r)
-		case RepositoryServiceListWatchesProcedure:
-			repositoryServiceListWatchesHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -569,7 +544,7 @@ func (UnimplementedRepositoryServiceHandler) AddRepository(context.Context, *con
 	return connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.AddRepository is not implemented"))
 }
 
-func (UnimplementedRepositoryServiceHandler) DeleteRepository(context.Context, *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[v1.DeleteRepositoryResponse], error) {
+func (UnimplementedRepositoryServiceHandler) DeleteRepository(context.Context, *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[emptypb.Empty], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.DeleteRepository is not implemented"))
 }
 
@@ -605,23 +580,19 @@ func (UnimplementedRepositoryServiceHandler) GetWatchStatus(context.Context, *co
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.GetWatchStatus is not implemented"))
 }
 
-func (UnimplementedRepositoryServiceHandler) ListWatches(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.ListWatchesResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.ListWatches is not implemented"))
-}
-
 // CodeIndexServiceClient is a client for the codeindex.v1.CodeIndexService service.
 type CodeIndexServiceClient interface {
 	ListFacts(context.Context, *connect.Request[v1.CodeFactFilter]) (*connect.Response[v1.CodeFactPage], error)
 	ListSnapshots(context.Context, *connect.Request[v1.ID]) (*connect.Response[v1.ListSnapshotsResponse], error)
 	CaptureSnapshot(context.Context, *connect.Request[v1.CaptureSnapshotRequest]) (*connect.ServerStreamForClient[v1.CaptureSnapshotEvent], error)
 	DiffSnapshots(context.Context, *connect.Request[v1.SnapshotDiffRequest]) (*connect.Response[v1.SnapshotDiff], error)
-	DeleteSnapshot(context.Context, *connect.Request[v1.ID]) (*connect.Response[v1.DeleteSnapshotResponse], error)
+	DeleteSnapshot(context.Context, *connect.Request[v1.ID]) (*connect.Response[emptypb.Empty], error)
 	MapRepository(context.Context, *connect.Request[v1.MapRepositoryRequest]) (*connect.ServerStreamForClient[v1.MapRepositoryEvent], error)
 	ListMaps(context.Context, *connect.Request[v1.ID]) (*connect.Response[v1.ListMapsResponse], error)
 	CompareRepository(context.Context, *connect.Request[v1.CompareRepositoryRequest]) (*connect.ServerStreamForClient[v1.CompareRepositoryEvent], error)
 	GetLiveImpact(context.Context, *connect.Request[v1.ID]) (*connect.Response[v1.LiveImpact], error)
 	ExportImpactMermaid(context.Context, *connect.Request[v1.ExportImpactMermaidRequest]) (*connect.Response[v1.ExportImpactMermaidResponse], error)
-	GetImpactScene(context.Context, *connect.Request[v1.GetImpactSceneRequest]) (*connect.Response[v1.GetImpactSceneResponse], error)
+	GetImpactScene(context.Context, *connect.Request[v1.GetImpactSceneRequest]) (*connect.Response[v1.ImpactScene], error)
 }
 
 // NewCodeIndexServiceClient constructs a client for the codeindex.v1.CodeIndexService service. By
@@ -659,7 +630,7 @@ func NewCodeIndexServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			connect.WithSchema(codeIndexServiceMethods.ByName("DiffSnapshots")),
 			connect.WithClientOptions(opts...),
 		),
-		deleteSnapshot: connect.NewClient[v1.ID, v1.DeleteSnapshotResponse](
+		deleteSnapshot: connect.NewClient[v1.ID, emptypb.Empty](
 			httpClient,
 			baseURL+CodeIndexServiceDeleteSnapshotProcedure,
 			connect.WithSchema(codeIndexServiceMethods.ByName("DeleteSnapshot")),
@@ -695,7 +666,7 @@ func NewCodeIndexServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			connect.WithSchema(codeIndexServiceMethods.ByName("ExportImpactMermaid")),
 			connect.WithClientOptions(opts...),
 		),
-		getImpactScene: connect.NewClient[v1.GetImpactSceneRequest, v1.GetImpactSceneResponse](
+		getImpactScene: connect.NewClient[v1.GetImpactSceneRequest, v1.ImpactScene](
 			httpClient,
 			baseURL+CodeIndexServiceGetImpactSceneProcedure,
 			connect.WithSchema(codeIndexServiceMethods.ByName("GetImpactScene")),
@@ -710,13 +681,13 @@ type codeIndexServiceClient struct {
 	listSnapshots       *connect.Client[v1.ID, v1.ListSnapshotsResponse]
 	captureSnapshot     *connect.Client[v1.CaptureSnapshotRequest, v1.CaptureSnapshotEvent]
 	diffSnapshots       *connect.Client[v1.SnapshotDiffRequest, v1.SnapshotDiff]
-	deleteSnapshot      *connect.Client[v1.ID, v1.DeleteSnapshotResponse]
+	deleteSnapshot      *connect.Client[v1.ID, emptypb.Empty]
 	mapRepository       *connect.Client[v1.MapRepositoryRequest, v1.MapRepositoryEvent]
 	listMaps            *connect.Client[v1.ID, v1.ListMapsResponse]
 	compareRepository   *connect.Client[v1.CompareRepositoryRequest, v1.CompareRepositoryEvent]
 	getLiveImpact       *connect.Client[v1.ID, v1.LiveImpact]
 	exportImpactMermaid *connect.Client[v1.ExportImpactMermaidRequest, v1.ExportImpactMermaidResponse]
-	getImpactScene      *connect.Client[v1.GetImpactSceneRequest, v1.GetImpactSceneResponse]
+	getImpactScene      *connect.Client[v1.GetImpactSceneRequest, v1.ImpactScene]
 }
 
 // ListFacts calls codeindex.v1.CodeIndexService.ListFacts.
@@ -740,7 +711,7 @@ func (c *codeIndexServiceClient) DiffSnapshots(ctx context.Context, req *connect
 }
 
 // DeleteSnapshot calls codeindex.v1.CodeIndexService.DeleteSnapshot.
-func (c *codeIndexServiceClient) DeleteSnapshot(ctx context.Context, req *connect.Request[v1.ID]) (*connect.Response[v1.DeleteSnapshotResponse], error) {
+func (c *codeIndexServiceClient) DeleteSnapshot(ctx context.Context, req *connect.Request[v1.ID]) (*connect.Response[emptypb.Empty], error) {
 	return c.deleteSnapshot.CallUnary(ctx, req)
 }
 
@@ -770,7 +741,7 @@ func (c *codeIndexServiceClient) ExportImpactMermaid(ctx context.Context, req *c
 }
 
 // GetImpactScene calls codeindex.v1.CodeIndexService.GetImpactScene.
-func (c *codeIndexServiceClient) GetImpactScene(ctx context.Context, req *connect.Request[v1.GetImpactSceneRequest]) (*connect.Response[v1.GetImpactSceneResponse], error) {
+func (c *codeIndexServiceClient) GetImpactScene(ctx context.Context, req *connect.Request[v1.GetImpactSceneRequest]) (*connect.Response[v1.ImpactScene], error) {
 	return c.getImpactScene.CallUnary(ctx, req)
 }
 
@@ -780,13 +751,13 @@ type CodeIndexServiceHandler interface {
 	ListSnapshots(context.Context, *connect.Request[v1.ID]) (*connect.Response[v1.ListSnapshotsResponse], error)
 	CaptureSnapshot(context.Context, *connect.Request[v1.CaptureSnapshotRequest], *connect.ServerStream[v1.CaptureSnapshotEvent]) error
 	DiffSnapshots(context.Context, *connect.Request[v1.SnapshotDiffRequest]) (*connect.Response[v1.SnapshotDiff], error)
-	DeleteSnapshot(context.Context, *connect.Request[v1.ID]) (*connect.Response[v1.DeleteSnapshotResponse], error)
+	DeleteSnapshot(context.Context, *connect.Request[v1.ID]) (*connect.Response[emptypb.Empty], error)
 	MapRepository(context.Context, *connect.Request[v1.MapRepositoryRequest], *connect.ServerStream[v1.MapRepositoryEvent]) error
 	ListMaps(context.Context, *connect.Request[v1.ID]) (*connect.Response[v1.ListMapsResponse], error)
 	CompareRepository(context.Context, *connect.Request[v1.CompareRepositoryRequest], *connect.ServerStream[v1.CompareRepositoryEvent]) error
 	GetLiveImpact(context.Context, *connect.Request[v1.ID]) (*connect.Response[v1.LiveImpact], error)
 	ExportImpactMermaid(context.Context, *connect.Request[v1.ExportImpactMermaidRequest]) (*connect.Response[v1.ExportImpactMermaidResponse], error)
-	GetImpactScene(context.Context, *connect.Request[v1.GetImpactSceneRequest]) (*connect.Response[v1.GetImpactSceneResponse], error)
+	GetImpactScene(context.Context, *connect.Request[v1.GetImpactSceneRequest]) (*connect.Response[v1.ImpactScene], error)
 }
 
 // NewCodeIndexServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -911,7 +882,7 @@ func (UnimplementedCodeIndexServiceHandler) DiffSnapshots(context.Context, *conn
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.CodeIndexService.DiffSnapshots is not implemented"))
 }
 
-func (UnimplementedCodeIndexServiceHandler) DeleteSnapshot(context.Context, *connect.Request[v1.ID]) (*connect.Response[v1.DeleteSnapshotResponse], error) {
+func (UnimplementedCodeIndexServiceHandler) DeleteSnapshot(context.Context, *connect.Request[v1.ID]) (*connect.Response[emptypb.Empty], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.CodeIndexService.DeleteSnapshot is not implemented"))
 }
 
@@ -935,6 +906,6 @@ func (UnimplementedCodeIndexServiceHandler) ExportImpactMermaid(context.Context,
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.CodeIndexService.ExportImpactMermaid is not implemented"))
 }
 
-func (UnimplementedCodeIndexServiceHandler) GetImpactScene(context.Context, *connect.Request[v1.GetImpactSceneRequest]) (*connect.Response[v1.GetImpactSceneResponse], error) {
+func (UnimplementedCodeIndexServiceHandler) GetImpactScene(context.Context, *connect.Request[v1.GetImpactSceneRequest]) (*connect.Response[v1.ImpactScene], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.CodeIndexService.GetImpactScene is not implemented"))
 }

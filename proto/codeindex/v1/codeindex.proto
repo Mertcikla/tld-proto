@@ -304,8 +304,6 @@ message SourceChange {
   // The file is covered by the manifest but lacks captured source contents.
   bool facts_unavailable = 7;
   bool metadata_only = 8;
-  // Chosen scene representatives; empty on snapshot diffs.
-  repeated string placement_keys = 9;
 }
 
 // Deltas are keyed by stable logical identity, so a rename is an add plus a
@@ -440,64 +438,6 @@ message IndexerRequirement {
 
 // ─── Impact ──────────────────────────────────────────────────────────────────
 
-message ImpactNode {
-  string key = 1;
-  string path = 2;
-  string name = 3;
-  ChangeKind change = 4;
-  // Dependency hops from the nearest directly changed file. Direct changes are
-  // 0; unchanged blast-radius context is greater than 0.
-  uint32 distance = 5;
-  int64 element_id = 6;
-  CodeFactDelta symbols = 7;
-  double x = 8;
-  double y = 9;
-  repeated ImpactWitness witnesses = 10;
-}
-
-message ImpactEdge {
-  string from_key = 1;
-  string to_key = 2;
-  ChangeKind change = 3;
-  double weight = 4;
-}
-
-// ImpactGroup is one node of the impact diagram's nested hierarchy. It mirrors
-// the workspace's nested views when the displayed files are materialized, and
-// the dependency-graph community hierarchy otherwise.
-message ImpactGroup {
-  // Stable identity: the view logical key or the community group key.
-  string key = 1;
-  string name = 2;
-  // Provenance: "view", "community", or "folder".
-  string source = 3;
-  // Owning workspace view when source is "view".
-  int64 view_id = 4;
-  // ImpactNode.key values placed directly in this group.
-  repeated string node_keys = 5;
-  repeated ImpactGroup children = 6;
-}
-
-message ImpactDiagram {
-  string repository_id = 1;
-  string comparison_key = 2;
-  int64 view_id = 3;
-  SnapshotDiff diff = 4;
-  repeated ImpactNode nodes = 5;
-  repeated ImpactEdge edges = 6;
-
-  string version = 9;
-  // Root groups of the nested hierarchy, outermost first.
-  repeated ImpactGroup groups = 10;
-  // Authoritative frozen scene; nodes/edges remain compatibility projections.
-  ImpactScene scene = 11;
-  optional uint32 requested_radius = 12;
-  string workspace_fingerprint = 13;
-  string view_filter = 14;
-  repeated string warnings = 15;
-  bool manifest_complete = 16;
-}
-
 enum ImpactOrigin {
   IMPACT_ORIGIN_UNSPECIFIED = 0;
   IMPACT_ORIGIN_AUTHORED = 1;
@@ -524,165 +464,179 @@ enum ImpactRole {
   IMPACT_ROLE_CONTAINER = 5;
 }
 
-// A shortest dependency path in one snapshot, never a hybrid BASE/HEAD path.
-message ImpactWitness {
-  string snapshot_id = 1;
-  reserved 2;
-  reserved "seed_path";
-  // Ordered from the directly changed file to the dependency neighbour.
-  repeated string paths = 3;
+// Canonical portable comparison, shared by CLI, RPC, canvas and Mermaid.
+// Debug evidence is optional; rendering never depends on it.
+message ImpactScene {
+  repeated diag.v1.View tree = 1;
+  map<string, SceneViewContent> views = 2;
+  repeated diag.v1.ElementNavigationInfo navigations = 3;
+  ImpactComparison comparison = 4;
+  repeated ImpactFile files = 5;
+  map<string, ImpactSymbolChange> symbols = 6;
+  ImpactSummary summary = 7;
+  optional ImpactAudit provenance = 8;
 }
 
-message ImpactProvenance {
-  string key = 1;
-  string object_kind = 2;
-  int64 view_id = 3;
-  int64 resource_id = 4;
-  string name = 5;
-  ImpactOrigin origin = 6;
-  ImpactGrounding grounding = 7;
-  ImpactRole role = 8;
-  string stage = 9;
-  string reason = 10;
-  repeated string paths = 11;
-  uint32 distance = 12;
-  repeated ImpactWitness witnesses = 13;
-  string logical_key = 14;
-  string map_snapshot_id = 15;
-  repeated string evidence = 16;
-  // Symbol/line anchors only cover part of a changed file.
-  bool partial = 17;
-  repeated string endpoint_keys = 18;
+message ImpactComparison {
+  string repository_id = 1;
+  string key = 2;
+  string version = 3;
+  string schema_version = 4;
+  string base = 5;
+  string head = 6;
+  repeated ImpactCommit commits = 7;
+  // available, partial, unavailable, or not_applicable. Stats are net tree churn.
+  string git_status = 8;
+  string git_unavailable_reason = 9;
+  uint32 requested_radius = 10;
+  uint32 effective_radius = 11;
+  bool plain = 12;
+  bool manifest_complete = 13;
+  repeated string warnings = 14;
+  // Short workspace references omitted by the selected radius or Plain mode.
+  repeated string omitted_context = 15;
+  string repository_name = 16;
+  string view_filter = 17;
+  uint32 node_budget = 18;
+  uint32 byte_budget = 19;
 }
 
-message ImpactDecision {
-  string stage = 1;
-  string action = 2;
-  string key = 3;
-  string reason = 4;
-  repeated string paths = 5;
-  repeated string representative_keys = 6;
+message ImpactCommit {
+  string sha = 1;
+  string subject = 2;
+  string author = 3;
+  int64 created_unix = 4;
 }
 
-message ImpactStage {
-  string id = 1;
-  string name = 2;
-  uint32 added = 3;
-  uint32 annotated = 4;
-  uint32 reused = 5;
-  uint32 suppressed = 6;
+// References use the existing numeric workspace identity, not hash aliases.
+message ImpactPlacementRef {
+  int32 view_id = 1;
+  int32 element_id = 2;
 }
 
-message LiveImpact {
-  ImpactDiagram diagram = 1;
-  bool watching = 2;
-  string error = 3;
-  string git_branch = 4;
-  string git_revision = 5;
-}
-
-// ImpactSymbolAnchor locates a changed symbol inside its file. It is a subset
-// of SourceAnchor: a viewer needs the line to show and to link to, not byte
-// offsets or the source hash the index carries.
-message ImpactSymbolAnchor {
+message ImpactFile {
   string path = 1;
-  uint32 start_line = 2;
-  uint32 end_line = 3;
+  ChangeKind change = 2;
+  optional uint32 lines_added = 3;
+  optional uint32 lines_removed = 4;
+  string line_counts_basis = 5;
+  bool binary = 6;
+  bool metadata_only = 7;
+  // captured, manifest_only, absent, or unknown on each snapshot side.
+  string base_analysis = 8;
+  string head_analysis = 9;
+  string analysis_unavailable_reason = 10;
+  repeated ImpactPlacementRef representatives = 11;
+  repeated string symbols = 12;
 }
 
-// ImpactSymbolChange is one changed symbol of a scene overlay. It carries the
-// subset of CodeFact a viewer needs to describe the change: name, kind, anchor,
-// and body fingerprint. Snapshot provenance, evidence, and imports are
-// deliberately omitted so a scene stays portable.
 message ImpactSymbolChange {
   ChangeKind change = 1;
   string name = 2;
   FactKind kind = 3;
-  ImpactSymbolAnchor anchor = 4;
-  // Content fingerprint of the changed body, stable across snapshots.
-  string body_hash = 5;
+  // Lines are zero-based; absent path means no captured location.
+  string path = 4;
+  uint32 start_line = 5;
+  uint32 end_line = 6;
 }
 
-// OverlayReason tells a reader why the element carries an overlay: it
-// changed itself, or it only contains changed files. Readers treat
-// UNSPECIFIED like DIRECT. New reasons extend this enum.
-enum OverlayReason {
-  OVERLAY_REASON_UNSPECIFIED = 0;
-  OVERLAY_REASON_DIRECT = 1;
-  OVERLAY_REASON_CONTAINED = 2;
-}
-
-// ImpactSceneOverlay is the transient change annotation on one scene placement.
 message ImpactSceneOverlay {
   ChangeKind change = 1;
   string path = 2;
   optional uint32 lines_added = 3;
   optional uint32 lines_removed = 4;
-  // 5 held pre-shaped "+ name" labels. Symbol changes are structured now, so
-  // readers label them from symbols below.
-  reserved 5;
-  // Dependency hops from the nearest direct change (0 for direct changes).
-  uint32 distance = 6;
-  repeated ImpactSymbolChange symbols = 7;
-  // Why the element carries an overlay. Folder and service roll-ups are
-  // CONTAINED: they did not change themselves, so readers style them softer
-  // than a direct hit.
-  OverlayReason reason = 8;
+  bool contained = 5;
+  repeated string symbol_refs = 6;
 }
 
-// ScenePlacement is a workspace placement plus its optional change overlay.
 message ScenePlacement {
   diag.v1.PlacedElement element = 1;
-  // Unset for unchanged repository context.
   optional ImpactSceneOverlay overlay = 2;
+  ImpactOrigin origin = 3;
+  ImpactRole role = 4;
+  ImpactGrounding grounding = 5;
+  uint32 distance = 6;
 }
 
 message SceneViewContent {
   repeated ScenePlacement placements = 1;
   repeated diag.v1.Connector connectors = 2;
+  map<string, ImpactPlacementRef> connector_targets = 3;
 }
 
-// ImpactScene is a self-contained change scene for one comparison. It holds the
-// compared repository's workspace subset, its blast-radius neighbours,
-// transient placements for files that have no workspace element, and
-// per-placement change overlays with symbol detail. A scene is a portable
-// artifact: the identity fields below name what was compared, and nothing in
-// the message requires the repository, its index, or its snapshots to render it.
-// Clients filter by radius and standard/plain view locally; nothing is
-// persisted in the workspace.
-message ImpactScene {
-  // View hierarchy, reusing the workspace View shape.
-  repeated diag.v1.View tree = 1;
-  map<string, SceneViewContent> views = 2;
-  repeated diag.v1.ElementNavigationInfo navigations = 3;
-  // Synthetic view id used when changed files have no suitable base view.
-  int64 fallback_view_id = 4;
-  // Shape of this payload, bumped when the scene contract changes so a stored
-  // artifact stays readable by later readers.
-  string schema_version = 5;
-  string repository_id = 6;
-  // Identifies the comparison a server can still serve this scene from.
-  string comparison_key = 7;
-  // Changes whenever the scene content changes, so readers can cache on it.
-  string version = 8;
+message ImpactSummary {
+  uint32 files = 1;
+  uint32 known_lines_added = 2;
+  uint32 known_lines_removed = 3;
+  bool line_counts_complete = 4;
+  uint32 binary_files = 5;
+  uint32 affected_placements = 6;
+  uint32 dependency_neighbours = 7;
+  uint32 authored_context = 8;
+  uint32 containers = 9;
+  uint32 ungrounded = 10;
+  uint32 indexed_symbol_changes = 11;
+  uint32 displayed_symbol_changes = 12;
+  uint32 excluded_symbol_changes = 13;
+  string line_counts_basis = 14;
+}
 
-  string from_git_revision = 10;
-  string to_git_revision = 11;
-  // Views whose placements the comparison matched on user-authored elements
+// Matching evidence is captured at the decision, not reconstructed by exporters.
+message ImpactMatch {
+  string path = 1;
+  ImpactPlacementRef placement = 2;
+  string source_link = 3;
+  string scope = 4;
+  // file, folder, symbol, line, fallback, unresolved, or ambiguous.
+  string kind = 5;
+  bool partial = 6;
+  string side = 7;
+  string outcome = 8;
+  string reason = 9;
+  repeated ImpactPlacementRef representatives = 10;
+}
 
-  repeated int64 authored_view_ids = 12;
-  map<string, ImpactProvenance> provenance = 13;
-  // SourceChanges annotated with their chosen scene representatives.
-  repeated SourceChange coverage = 14;
-  // Developer-only stage counts and decision ledger.
-  repeated ImpactStage stages = 15;
-  uint32 requested_radius = 16;
-  uint32 effective_radius = 17;
-  repeated string warnings = 18;
-  bool manifest_complete = 19;
-  repeated string omitted_context = 20;
-  string workspace_fingerprint = 21;
-  repeated ImpactDecision decisions = 22;
+message ImpactAuditDecision {
+  string stage = 1;
+  string action = 2;
+  // Short workspace reference: v2/e2, v2/c3, or v2.
+  string target = 3;
+  string reason = 4;
+  repeated ImpactPlacementRef representatives = 5;
+}
+
+message ImpactDependencyWitness {
+  // base or head; paths never combine observations from different sides.
+  string side = 1;
+  repeated string paths = 2;
+}
+
+message ImpactDependency {
+  string from_path = 1;
+  string to_path = 2;
+  string side = 3;
+  repeated EdgeKind kinds = 4;
+  double observations = 5;
+}
+
+message ImpactAudit {
+  repeated ImpactMatch matches = 1;
+  repeated ImpactAuditDecision decisions = 2;
+  repeated ImpactDependencyWitness witnesses = 3;
+  repeated ImpactDependency dependencies = 4;
+  map<string, string> excluded_symbols = 5;
+  map<string, string> references = 6;
+  // Persisted workspace relationships; these may exist without any observed
+  // source dependency. Observations above make a separate evidence claim.
+  repeated string declared_connectors = 7;
+}
+
+message LiveImpact {
+  bool watching = 1;
+  string error = 2;
+  string git_branch = 3;
+  string git_revision = 4;
+  ImpactScene scene = 5;
 }
 
 message MapResult {
@@ -750,8 +704,6 @@ message DeleteRepositoryRequest {
   bool delete_clone = 3;
 }
 
-message DeleteRepositoryResponse {}
-
 message AddRepositoryRequest {
   // Absolute local filesystem path to the repository directory to index.
   string path = 1;
@@ -788,10 +740,6 @@ message StartWatchRequest {
   string repository_id = 1;
   // Passed through to the spawned watcher. Zero uses the CLI defaults.
   bool materialize = 2;
-}
-
-message ListWatchesResponse {
-  repeated WatchStatus watchers = 1;
 }
 
 // GitHistoryRequest scopes the history to a repository. An empty branch uses the
@@ -888,8 +836,6 @@ message ListSnapshotsResponse {
   repeated Snapshot snapshots = 1;
 }
 
-message DeleteSnapshotResponse {}
-
 // CaptureSnapshotRequest indexes a repository and publishes a new snapshot.
 message CaptureSnapshotRequest {
   string repository_id = 1;
@@ -943,7 +889,7 @@ message CompareRepositoryRequest {
 message CompareRepositoryEvent {
   oneof event {
     Progress progress = 1;
-    ImpactDiagram result = 2;
+    ImpactScene result = 2;
   }
 }
 
@@ -969,10 +915,6 @@ message GetImpactSceneRequest {
   bool plain = 4;
 }
 
-message GetImpactSceneResponse {
-  ImpactScene scene = 1;
-}
-
 // ─── Services ────────────────────────────────────────────────────────────────
 
 // RepositoryService lists, adds, and deletes the repositories indexed by the
@@ -986,7 +928,7 @@ service RepositoryService {
   rpc UpdateRepositoryRemote(UpdateRepositoryRemoteRequest) returns (RepositorySettings);
   rpc CheckRepositoryIndexers(CheckRepositoryIndexersRequest) returns (CheckRepositoryIndexersResponse);
   rpc AddRepository(AddRepositoryRequest) returns (stream AddRepositoryEvent);
-  rpc DeleteRepository(DeleteRepositoryRequest) returns (DeleteRepositoryResponse);
+  rpc DeleteRepository(DeleteRepositoryRequest) returns (google.protobuf.Empty);
   rpc GetGitHistory(GetGitHistoryRequest) returns (GetGitHistoryResponse);
   rpc GetCommitDetails(GetCommitDetailsRequest) returns (GetCommitDetailsResponse);
   rpc GetRevisionRangeSummary(GetRevisionRangeSummaryRequest) returns (RevisionRangeSummary);
@@ -995,7 +937,6 @@ service RepositoryService {
   rpc StartWatch(StartWatchRequest) returns (WatchStatus);
   rpc StopWatch(ID) returns (WatchStatus);
   rpc GetWatchStatus(ID) returns (WatchStatus);
-  rpc ListWatches(google.protobuf.Empty) returns (ListWatchesResponse);
 }
 
 // CodeIndexService captures, reads, and deletes snapshots of the immutable
@@ -1005,11 +946,11 @@ service CodeIndexService {
   rpc ListSnapshots(ID) returns (ListSnapshotsResponse);
   rpc CaptureSnapshot(CaptureSnapshotRequest) returns (stream CaptureSnapshotEvent);
   rpc DiffSnapshots(SnapshotDiffRequest) returns (SnapshotDiff);
-  rpc DeleteSnapshot(ID) returns (DeleteSnapshotResponse);
+  rpc DeleteSnapshot(ID) returns (google.protobuf.Empty);
   rpc MapRepository(MapRepositoryRequest) returns (stream MapRepositoryEvent);
   rpc ListMaps(ID) returns (ListMapsResponse);
   rpc CompareRepository(CompareRepositoryRequest) returns (stream CompareRepositoryEvent);
   rpc GetLiveImpact(ID) returns (LiveImpact);
   rpc ExportImpactMermaid(ExportImpactMermaidRequest) returns (ExportImpactMermaidResponse);
-  rpc GetImpactScene(GetImpactSceneRequest) returns (GetImpactSceneResponse);
+  rpc GetImpactScene(GetImpactSceneRequest) returns (ImpactScene);
 }
