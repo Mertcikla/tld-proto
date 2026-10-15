@@ -250,6 +250,8 @@ message Snapshot {
   repeated SourceFile sources = 6;
   string ingestion_status = 7;
   repeated string warnings = 9;
+  // External tool versions and internal relationshipVersion,
+  // syntaxCacheVersion, and scipArtifactVersion stamps.
   map<string, string> tool_versions = 10;
   string config_hash = 11;
   // Git branch the working tree was on when the snapshot was captured.
@@ -264,6 +266,10 @@ message Snapshot {
   // captured. Empty for non-Git repositories.
   string commit_message = 16;
   SnapshotManifest manifest = 17;
+  // Computed by the serving backend against its current extraction versions.
+  // Incompatible snapshots are deletion-only and must be recaptured for use.
+  bool compatible = 18;
+  string incompatibility_reason = 19;
 }
 
 message SnapshotStatistics {
@@ -418,7 +424,8 @@ message IndexerRequirement {
   string tool = 2;
   // Detected project languages that mapped to this family.
   repeated string languages = 3;
-  // Whether the executable resolves with the current tool configuration.
+  // Whether the tool is available with the current configuration. Language
+  // servers must also complete an LSP initialize/shutdown health check.
   bool installed = 4;
   // Copy-pasteable install command for the tool.
   string install_hint = 5;
@@ -434,6 +441,8 @@ message IndexerRequirement {
   string download_url = 9;
   // Resolved executable path when found.
   string path = 10;
+  // Executable resolution or health-check failure; empty when available.
+  string check_error = 11;
 }
 
 // ─── Impact ──────────────────────────────────────────────────────────────────
@@ -528,6 +537,10 @@ message ImpactFile {
   string analysis_unavailable_reason = 10;
   repeated ImpactPlacementRef representatives = 11;
   repeated string symbols = 12;
+  // Content identities let live viewers distinguish successive edits even when
+  // line counts and symbol names stay the same. No source text is included.
+  string base_hash = 13;
+  string head_hash = 14;
 }
 
 message ImpactSymbolChange {
@@ -636,7 +649,24 @@ message LiveImpact {
   string error = 2;
   string git_branch = 3;
   string git_revision = 4;
+  // On WatchLiveImpact, omitted when only watcher status changed.
+  // Subscribers retain the last scene until a new scene is received.
   ImpactScene scene = 5;
+  WatchStatus watch_status = 6;
+}
+
+// A subscription always starts with the latest persisted scene. Scene updates
+// replace it atomically; slow subscribers may skip intermediate revisions.
+message WatchLiveImpactRequest {
+  string repository_id = 1;
+  bool debug_provenance = 2;
+  bool plain = 3;
+}
+
+// Invalidates subscribers after a CLI scan or watcher status write commits.
+// The server reads its own persisted state; publishers cannot inject scenes.
+message PublishLiveImpactRequest {
+  string repository_id = 1;
 }
 
 message MapResult {
@@ -951,6 +981,8 @@ service CodeIndexService {
   rpc ListMaps(ID) returns (ListMapsResponse);
   rpc CompareRepository(CompareRepositoryRequest) returns (stream CompareRepositoryEvent);
   rpc GetLiveImpact(ID) returns (LiveImpact);
+  rpc WatchLiveImpact(WatchLiveImpactRequest) returns (stream LiveImpact);
+  rpc PublishLiveImpact(PublishLiveImpactRequest) returns (google.protobuf.Empty);
   rpc ExportImpactMermaid(ExportImpactMermaidRequest) returns (ExportImpactMermaidResponse);
   rpc GetImpactScene(GetImpactSceneRequest) returns (ImpactScene);
 }

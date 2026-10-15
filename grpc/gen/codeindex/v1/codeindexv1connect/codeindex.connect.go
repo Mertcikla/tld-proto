@@ -111,6 +111,12 @@ const (
 	// CodeIndexServiceGetLiveImpactProcedure is the fully-qualified name of the CodeIndexService's
 	// GetLiveImpact RPC.
 	CodeIndexServiceGetLiveImpactProcedure = "/codeindex.v1.CodeIndexService/GetLiveImpact"
+	// CodeIndexServiceWatchLiveImpactProcedure is the fully-qualified name of the CodeIndexService's
+	// WatchLiveImpact RPC.
+	CodeIndexServiceWatchLiveImpactProcedure = "/codeindex.v1.CodeIndexService/WatchLiveImpact"
+	// CodeIndexServicePublishLiveImpactProcedure is the fully-qualified name of the CodeIndexService's
+	// PublishLiveImpact RPC.
+	CodeIndexServicePublishLiveImpactProcedure = "/codeindex.v1.CodeIndexService/PublishLiveImpact"
 	// CodeIndexServiceExportImpactMermaidProcedure is the fully-qualified name of the
 	// CodeIndexService's ExportImpactMermaid RPC.
 	CodeIndexServiceExportImpactMermaidProcedure = "/codeindex.v1.CodeIndexService/ExportImpactMermaid"
@@ -591,6 +597,8 @@ type CodeIndexServiceClient interface {
 	ListMaps(context.Context, *connect.Request[v1.ID]) (*connect.Response[v1.ListMapsResponse], error)
 	CompareRepository(context.Context, *connect.Request[v1.CompareRepositoryRequest]) (*connect.ServerStreamForClient[v1.CompareRepositoryEvent], error)
 	GetLiveImpact(context.Context, *connect.Request[v1.ID]) (*connect.Response[v1.LiveImpact], error)
+	WatchLiveImpact(context.Context, *connect.Request[v1.WatchLiveImpactRequest]) (*connect.ServerStreamForClient[v1.LiveImpact], error)
+	PublishLiveImpact(context.Context, *connect.Request[v1.PublishLiveImpactRequest]) (*connect.Response[emptypb.Empty], error)
 	ExportImpactMermaid(context.Context, *connect.Request[v1.ExportImpactMermaidRequest]) (*connect.Response[v1.ExportImpactMermaidResponse], error)
 	GetImpactScene(context.Context, *connect.Request[v1.GetImpactSceneRequest]) (*connect.Response[v1.ImpactScene], error)
 }
@@ -660,6 +668,18 @@ func NewCodeIndexServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			connect.WithSchema(codeIndexServiceMethods.ByName("GetLiveImpact")),
 			connect.WithClientOptions(opts...),
 		),
+		watchLiveImpact: connect.NewClient[v1.WatchLiveImpactRequest, v1.LiveImpact](
+			httpClient,
+			baseURL+CodeIndexServiceWatchLiveImpactProcedure,
+			connect.WithSchema(codeIndexServiceMethods.ByName("WatchLiveImpact")),
+			connect.WithClientOptions(opts...),
+		),
+		publishLiveImpact: connect.NewClient[v1.PublishLiveImpactRequest, emptypb.Empty](
+			httpClient,
+			baseURL+CodeIndexServicePublishLiveImpactProcedure,
+			connect.WithSchema(codeIndexServiceMethods.ByName("PublishLiveImpact")),
+			connect.WithClientOptions(opts...),
+		),
 		exportImpactMermaid: connect.NewClient[v1.ExportImpactMermaidRequest, v1.ExportImpactMermaidResponse](
 			httpClient,
 			baseURL+CodeIndexServiceExportImpactMermaidProcedure,
@@ -686,6 +706,8 @@ type codeIndexServiceClient struct {
 	listMaps            *connect.Client[v1.ID, v1.ListMapsResponse]
 	compareRepository   *connect.Client[v1.CompareRepositoryRequest, v1.CompareRepositoryEvent]
 	getLiveImpact       *connect.Client[v1.ID, v1.LiveImpact]
+	watchLiveImpact     *connect.Client[v1.WatchLiveImpactRequest, v1.LiveImpact]
+	publishLiveImpact   *connect.Client[v1.PublishLiveImpactRequest, emptypb.Empty]
 	exportImpactMermaid *connect.Client[v1.ExportImpactMermaidRequest, v1.ExportImpactMermaidResponse]
 	getImpactScene      *connect.Client[v1.GetImpactSceneRequest, v1.ImpactScene]
 }
@@ -735,6 +757,16 @@ func (c *codeIndexServiceClient) GetLiveImpact(ctx context.Context, req *connect
 	return c.getLiveImpact.CallUnary(ctx, req)
 }
 
+// WatchLiveImpact calls codeindex.v1.CodeIndexService.WatchLiveImpact.
+func (c *codeIndexServiceClient) WatchLiveImpact(ctx context.Context, req *connect.Request[v1.WatchLiveImpactRequest]) (*connect.ServerStreamForClient[v1.LiveImpact], error) {
+	return c.watchLiveImpact.CallServerStream(ctx, req)
+}
+
+// PublishLiveImpact calls codeindex.v1.CodeIndexService.PublishLiveImpact.
+func (c *codeIndexServiceClient) PublishLiveImpact(ctx context.Context, req *connect.Request[v1.PublishLiveImpactRequest]) (*connect.Response[emptypb.Empty], error) {
+	return c.publishLiveImpact.CallUnary(ctx, req)
+}
+
 // ExportImpactMermaid calls codeindex.v1.CodeIndexService.ExportImpactMermaid.
 func (c *codeIndexServiceClient) ExportImpactMermaid(ctx context.Context, req *connect.Request[v1.ExportImpactMermaidRequest]) (*connect.Response[v1.ExportImpactMermaidResponse], error) {
 	return c.exportImpactMermaid.CallUnary(ctx, req)
@@ -756,6 +788,8 @@ type CodeIndexServiceHandler interface {
 	ListMaps(context.Context, *connect.Request[v1.ID]) (*connect.Response[v1.ListMapsResponse], error)
 	CompareRepository(context.Context, *connect.Request[v1.CompareRepositoryRequest], *connect.ServerStream[v1.CompareRepositoryEvent]) error
 	GetLiveImpact(context.Context, *connect.Request[v1.ID]) (*connect.Response[v1.LiveImpact], error)
+	WatchLiveImpact(context.Context, *connect.Request[v1.WatchLiveImpactRequest], *connect.ServerStream[v1.LiveImpact]) error
+	PublishLiveImpact(context.Context, *connect.Request[v1.PublishLiveImpactRequest]) (*connect.Response[emptypb.Empty], error)
 	ExportImpactMermaid(context.Context, *connect.Request[v1.ExportImpactMermaidRequest]) (*connect.Response[v1.ExportImpactMermaidResponse], error)
 	GetImpactScene(context.Context, *connect.Request[v1.GetImpactSceneRequest]) (*connect.Response[v1.ImpactScene], error)
 }
@@ -821,6 +855,18 @@ func NewCodeIndexServiceHandler(svc CodeIndexServiceHandler, opts ...connect.Han
 		connect.WithSchema(codeIndexServiceMethods.ByName("GetLiveImpact")),
 		connect.WithHandlerOptions(opts...),
 	)
+	codeIndexServiceWatchLiveImpactHandler := connect.NewServerStreamHandler(
+		CodeIndexServiceWatchLiveImpactProcedure,
+		svc.WatchLiveImpact,
+		connect.WithSchema(codeIndexServiceMethods.ByName("WatchLiveImpact")),
+		connect.WithHandlerOptions(opts...),
+	)
+	codeIndexServicePublishLiveImpactHandler := connect.NewUnaryHandler(
+		CodeIndexServicePublishLiveImpactProcedure,
+		svc.PublishLiveImpact,
+		connect.WithSchema(codeIndexServiceMethods.ByName("PublishLiveImpact")),
+		connect.WithHandlerOptions(opts...),
+	)
 	codeIndexServiceExportImpactMermaidHandler := connect.NewUnaryHandler(
 		CodeIndexServiceExportImpactMermaidProcedure,
 		svc.ExportImpactMermaid,
@@ -853,6 +899,10 @@ func NewCodeIndexServiceHandler(svc CodeIndexServiceHandler, opts ...connect.Han
 			codeIndexServiceCompareRepositoryHandler.ServeHTTP(w, r)
 		case CodeIndexServiceGetLiveImpactProcedure:
 			codeIndexServiceGetLiveImpactHandler.ServeHTTP(w, r)
+		case CodeIndexServiceWatchLiveImpactProcedure:
+			codeIndexServiceWatchLiveImpactHandler.ServeHTTP(w, r)
+		case CodeIndexServicePublishLiveImpactProcedure:
+			codeIndexServicePublishLiveImpactHandler.ServeHTTP(w, r)
 		case CodeIndexServiceExportImpactMermaidProcedure:
 			codeIndexServiceExportImpactMermaidHandler.ServeHTTP(w, r)
 		case CodeIndexServiceGetImpactSceneProcedure:
@@ -900,6 +950,14 @@ func (UnimplementedCodeIndexServiceHandler) CompareRepository(context.Context, *
 
 func (UnimplementedCodeIndexServiceHandler) GetLiveImpact(context.Context, *connect.Request[v1.ID]) (*connect.Response[v1.LiveImpact], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.CodeIndexService.GetLiveImpact is not implemented"))
+}
+
+func (UnimplementedCodeIndexServiceHandler) WatchLiveImpact(context.Context, *connect.Request[v1.WatchLiveImpactRequest], *connect.ServerStream[v1.LiveImpact]) error {
+	return connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.CodeIndexService.WatchLiveImpact is not implemented"))
+}
+
+func (UnimplementedCodeIndexServiceHandler) PublishLiveImpact(context.Context, *connect.Request[v1.PublishLiveImpactRequest]) (*connect.Response[emptypb.Empty], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.CodeIndexService.PublishLiveImpact is not implemented"))
 }
 
 func (UnimplementedCodeIndexServiceHandler) ExportImpactMermaid(context.Context, *connect.Request[v1.ExportImpactMermaidRequest]) (*connect.Response[v1.ExportImpactMermaidResponse], error) {
