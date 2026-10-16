@@ -764,6 +764,21 @@ message CheckRepositoryIndexersResponse {
   repeated IndexerRequirement indexers = 1;
   // True when every required indexer is installed.
   bool ready = 2;
+  // Advisory findings that do not prevent adding the repository.
+  repeated string warnings = 3;
+}
+
+message BrowseRepositoryFoldersRequest {
+  // Directory on the machine running tlDiagram. Empty starts at its home directory.
+  string path = 1;
+}
+
+message BrowseRepositoryFoldersResponse {
+  string path = 1;
+  // Empty at the filesystem root.
+  string parent_path = 2;
+  // Immediate child directory names, sorted alphabetically.
+  repeated string folders = 3;
 }
 
 message StartWatchRequest {
@@ -773,11 +788,30 @@ message StartWatchRequest {
 }
 
 // GitHistoryRequest scopes the history to a repository. An empty branch uses the
-// current branch; zero limit uses the server default.
+// current branch; zero limit uses the server default of 100 (also the maximum).
 message GetGitHistoryRequest {
   string repository_id = 1;
   string branch = 2;
   uint32 limit = 3;
+  // Opaque continuation from the previous response, for the same repository/branch.
+  string page_token = 4;
+  // Case-insensitive literal search across commit SHA, message, author and refs.
+  // Searches all history reachable from branch; pagination applies to matches.
+  string query = 5;
+  // Exact author identity, in "Name <email>" form.
+  string author = 6;
+  // Exact tag name. Matches commits carrying that tag within the selected branch.
+  string tag = 7;
+}
+
+message GetGitHistoryFiltersRequest {
+  string repository_id = 1;
+  string branch = 2;
+}
+
+message GetGitHistoryFiltersResponse {
+  repeated string authors = 1;
+  repeated string tags = 2;
 }
 
 message GetGitHistoryResponse {
@@ -789,6 +823,7 @@ message GetGitHistoryResponse {
   bool is_git = 6;
   // Browser URL derived from the checkout origin, without embedded credentials.
   string repository_url = 7;
+  string next_page_token = 8;
 }
 
 // Resolves a GitHub PR through the local gh CLI and fetches its commits for review.
@@ -957,9 +992,11 @@ service RepositoryService {
   rpc UpdateRepositoryMapConfiguration(UpdateRepositoryMapConfigurationRequest) returns (RepositorySettings);
   rpc UpdateRepositoryRemote(UpdateRepositoryRemoteRequest) returns (RepositorySettings);
   rpc CheckRepositoryIndexers(CheckRepositoryIndexersRequest) returns (CheckRepositoryIndexersResponse);
+  rpc BrowseRepositoryFolders(BrowseRepositoryFoldersRequest) returns (BrowseRepositoryFoldersResponse);
   rpc AddRepository(AddRepositoryRequest) returns (stream AddRepositoryEvent);
   rpc DeleteRepository(DeleteRepositoryRequest) returns (google.protobuf.Empty);
   rpc GetGitHistory(GetGitHistoryRequest) returns (GetGitHistoryResponse);
+  rpc GetGitHistoryFilters(GetGitHistoryFiltersRequest) returns (GetGitHistoryFiltersResponse);
   rpc GetCommitDetails(GetCommitDetailsRequest) returns (GetCommitDetailsResponse);
   rpc GetRevisionRangeSummary(GetRevisionRangeSummaryRequest) returns (RevisionRangeSummary);
   rpc GetPullRequest(GetPullRequestRequest) returns (GetPullRequestResponse);

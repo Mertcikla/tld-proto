@@ -54,6 +54,9 @@ const (
 	// RepositoryServiceCheckRepositoryIndexersProcedure is the fully-qualified name of the
 	// RepositoryService's CheckRepositoryIndexers RPC.
 	RepositoryServiceCheckRepositoryIndexersProcedure = "/codeindex.v1.RepositoryService/CheckRepositoryIndexers"
+	// RepositoryServiceBrowseRepositoryFoldersProcedure is the fully-qualified name of the
+	// RepositoryService's BrowseRepositoryFolders RPC.
+	RepositoryServiceBrowseRepositoryFoldersProcedure = "/codeindex.v1.RepositoryService/BrowseRepositoryFolders"
 	// RepositoryServiceAddRepositoryProcedure is the fully-qualified name of the RepositoryService's
 	// AddRepository RPC.
 	RepositoryServiceAddRepositoryProcedure = "/codeindex.v1.RepositoryService/AddRepository"
@@ -63,6 +66,9 @@ const (
 	// RepositoryServiceGetGitHistoryProcedure is the fully-qualified name of the RepositoryService's
 	// GetGitHistory RPC.
 	RepositoryServiceGetGitHistoryProcedure = "/codeindex.v1.RepositoryService/GetGitHistory"
+	// RepositoryServiceGetGitHistoryFiltersProcedure is the fully-qualified name of the
+	// RepositoryService's GetGitHistoryFilters RPC.
+	RepositoryServiceGetGitHistoryFiltersProcedure = "/codeindex.v1.RepositoryService/GetGitHistoryFilters"
 	// RepositoryServiceGetCommitDetailsProcedure is the fully-qualified name of the RepositoryService's
 	// GetCommitDetails RPC.
 	RepositoryServiceGetCommitDetailsProcedure = "/codeindex.v1.RepositoryService/GetCommitDetails"
@@ -133,9 +139,11 @@ type RepositoryServiceClient interface {
 	UpdateRepositoryMapConfiguration(context.Context, *connect.Request[v1.UpdateRepositoryMapConfigurationRequest]) (*connect.Response[v1.RepositorySettings], error)
 	UpdateRepositoryRemote(context.Context, *connect.Request[v1.UpdateRepositoryRemoteRequest]) (*connect.Response[v1.RepositorySettings], error)
 	CheckRepositoryIndexers(context.Context, *connect.Request[v1.CheckRepositoryIndexersRequest]) (*connect.Response[v1.CheckRepositoryIndexersResponse], error)
+	BrowseRepositoryFolders(context.Context, *connect.Request[v1.BrowseRepositoryFoldersRequest]) (*connect.Response[v1.BrowseRepositoryFoldersResponse], error)
 	AddRepository(context.Context, *connect.Request[v1.AddRepositoryRequest]) (*connect.ServerStreamForClient[v1.AddRepositoryEvent], error)
 	DeleteRepository(context.Context, *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[emptypb.Empty], error)
 	GetGitHistory(context.Context, *connect.Request[v1.GetGitHistoryRequest]) (*connect.Response[v1.GetGitHistoryResponse], error)
+	GetGitHistoryFilters(context.Context, *connect.Request[v1.GetGitHistoryFiltersRequest]) (*connect.Response[v1.GetGitHistoryFiltersResponse], error)
 	GetCommitDetails(context.Context, *connect.Request[v1.GetCommitDetailsRequest]) (*connect.Response[v1.GetCommitDetailsResponse], error)
 	GetRevisionRangeSummary(context.Context, *connect.Request[v1.GetRevisionRangeSummaryRequest]) (*connect.Response[v1.RevisionRangeSummary], error)
 	GetPullRequest(context.Context, *connect.Request[v1.GetPullRequestRequest]) (*connect.Response[v1.GetPullRequestResponse], error)
@@ -192,6 +200,12 @@ func NewRepositoryServiceClient(httpClient connect.HTTPClient, baseURL string, o
 			connect.WithSchema(repositoryServiceMethods.ByName("CheckRepositoryIndexers")),
 			connect.WithClientOptions(opts...),
 		),
+		browseRepositoryFolders: connect.NewClient[v1.BrowseRepositoryFoldersRequest, v1.BrowseRepositoryFoldersResponse](
+			httpClient,
+			baseURL+RepositoryServiceBrowseRepositoryFoldersProcedure,
+			connect.WithSchema(repositoryServiceMethods.ByName("BrowseRepositoryFolders")),
+			connect.WithClientOptions(opts...),
+		),
 		addRepository: connect.NewClient[v1.AddRepositoryRequest, v1.AddRepositoryEvent](
 			httpClient,
 			baseURL+RepositoryServiceAddRepositoryProcedure,
@@ -208,6 +222,12 @@ func NewRepositoryServiceClient(httpClient connect.HTTPClient, baseURL string, o
 			httpClient,
 			baseURL+RepositoryServiceGetGitHistoryProcedure,
 			connect.WithSchema(repositoryServiceMethods.ByName("GetGitHistory")),
+			connect.WithClientOptions(opts...),
+		),
+		getGitHistoryFilters: connect.NewClient[v1.GetGitHistoryFiltersRequest, v1.GetGitHistoryFiltersResponse](
+			httpClient,
+			baseURL+RepositoryServiceGetGitHistoryFiltersProcedure,
+			connect.WithSchema(repositoryServiceMethods.ByName("GetGitHistoryFilters")),
 			connect.WithClientOptions(opts...),
 		),
 		getCommitDetails: connect.NewClient[v1.GetCommitDetailsRequest, v1.GetCommitDetailsResponse](
@@ -263,9 +283,11 @@ type repositoryServiceClient struct {
 	updateRepositoryMapConfiguration *connect.Client[v1.UpdateRepositoryMapConfigurationRequest, v1.RepositorySettings]
 	updateRepositoryRemote           *connect.Client[v1.UpdateRepositoryRemoteRequest, v1.RepositorySettings]
 	checkRepositoryIndexers          *connect.Client[v1.CheckRepositoryIndexersRequest, v1.CheckRepositoryIndexersResponse]
+	browseRepositoryFolders          *connect.Client[v1.BrowseRepositoryFoldersRequest, v1.BrowseRepositoryFoldersResponse]
 	addRepository                    *connect.Client[v1.AddRepositoryRequest, v1.AddRepositoryEvent]
 	deleteRepository                 *connect.Client[v1.DeleteRepositoryRequest, emptypb.Empty]
 	getGitHistory                    *connect.Client[v1.GetGitHistoryRequest, v1.GetGitHistoryResponse]
+	getGitHistoryFilters             *connect.Client[v1.GetGitHistoryFiltersRequest, v1.GetGitHistoryFiltersResponse]
 	getCommitDetails                 *connect.Client[v1.GetCommitDetailsRequest, v1.GetCommitDetailsResponse]
 	getRevisionRangeSummary          *connect.Client[v1.GetRevisionRangeSummaryRequest, v1.RevisionRangeSummary]
 	getPullRequest                   *connect.Client[v1.GetPullRequestRequest, v1.GetPullRequestResponse]
@@ -306,6 +328,11 @@ func (c *repositoryServiceClient) CheckRepositoryIndexers(ctx context.Context, r
 	return c.checkRepositoryIndexers.CallUnary(ctx, req)
 }
 
+// BrowseRepositoryFolders calls codeindex.v1.RepositoryService.BrowseRepositoryFolders.
+func (c *repositoryServiceClient) BrowseRepositoryFolders(ctx context.Context, req *connect.Request[v1.BrowseRepositoryFoldersRequest]) (*connect.Response[v1.BrowseRepositoryFoldersResponse], error) {
+	return c.browseRepositoryFolders.CallUnary(ctx, req)
+}
+
 // AddRepository calls codeindex.v1.RepositoryService.AddRepository.
 func (c *repositoryServiceClient) AddRepository(ctx context.Context, req *connect.Request[v1.AddRepositoryRequest]) (*connect.ServerStreamForClient[v1.AddRepositoryEvent], error) {
 	return c.addRepository.CallServerStream(ctx, req)
@@ -319,6 +346,11 @@ func (c *repositoryServiceClient) DeleteRepository(ctx context.Context, req *con
 // GetGitHistory calls codeindex.v1.RepositoryService.GetGitHistory.
 func (c *repositoryServiceClient) GetGitHistory(ctx context.Context, req *connect.Request[v1.GetGitHistoryRequest]) (*connect.Response[v1.GetGitHistoryResponse], error) {
 	return c.getGitHistory.CallUnary(ctx, req)
+}
+
+// GetGitHistoryFilters calls codeindex.v1.RepositoryService.GetGitHistoryFilters.
+func (c *repositoryServiceClient) GetGitHistoryFilters(ctx context.Context, req *connect.Request[v1.GetGitHistoryFiltersRequest]) (*connect.Response[v1.GetGitHistoryFiltersResponse], error) {
+	return c.getGitHistoryFilters.CallUnary(ctx, req)
 }
 
 // GetCommitDetails calls codeindex.v1.RepositoryService.GetCommitDetails.
@@ -364,9 +396,11 @@ type RepositoryServiceHandler interface {
 	UpdateRepositoryMapConfiguration(context.Context, *connect.Request[v1.UpdateRepositoryMapConfigurationRequest]) (*connect.Response[v1.RepositorySettings], error)
 	UpdateRepositoryRemote(context.Context, *connect.Request[v1.UpdateRepositoryRemoteRequest]) (*connect.Response[v1.RepositorySettings], error)
 	CheckRepositoryIndexers(context.Context, *connect.Request[v1.CheckRepositoryIndexersRequest]) (*connect.Response[v1.CheckRepositoryIndexersResponse], error)
+	BrowseRepositoryFolders(context.Context, *connect.Request[v1.BrowseRepositoryFoldersRequest]) (*connect.Response[v1.BrowseRepositoryFoldersResponse], error)
 	AddRepository(context.Context, *connect.Request[v1.AddRepositoryRequest], *connect.ServerStream[v1.AddRepositoryEvent]) error
 	DeleteRepository(context.Context, *connect.Request[v1.DeleteRepositoryRequest]) (*connect.Response[emptypb.Empty], error)
 	GetGitHistory(context.Context, *connect.Request[v1.GetGitHistoryRequest]) (*connect.Response[v1.GetGitHistoryResponse], error)
+	GetGitHistoryFilters(context.Context, *connect.Request[v1.GetGitHistoryFiltersRequest]) (*connect.Response[v1.GetGitHistoryFiltersResponse], error)
 	GetCommitDetails(context.Context, *connect.Request[v1.GetCommitDetailsRequest]) (*connect.Response[v1.GetCommitDetailsResponse], error)
 	GetRevisionRangeSummary(context.Context, *connect.Request[v1.GetRevisionRangeSummaryRequest]) (*connect.Response[v1.RevisionRangeSummary], error)
 	GetPullRequest(context.Context, *connect.Request[v1.GetPullRequestRequest]) (*connect.Response[v1.GetPullRequestResponse], error)
@@ -419,6 +453,12 @@ func NewRepositoryServiceHandler(svc RepositoryServiceHandler, opts ...connect.H
 		connect.WithSchema(repositoryServiceMethods.ByName("CheckRepositoryIndexers")),
 		connect.WithHandlerOptions(opts...),
 	)
+	repositoryServiceBrowseRepositoryFoldersHandler := connect.NewUnaryHandler(
+		RepositoryServiceBrowseRepositoryFoldersProcedure,
+		svc.BrowseRepositoryFolders,
+		connect.WithSchema(repositoryServiceMethods.ByName("BrowseRepositoryFolders")),
+		connect.WithHandlerOptions(opts...),
+	)
 	repositoryServiceAddRepositoryHandler := connect.NewServerStreamHandler(
 		RepositoryServiceAddRepositoryProcedure,
 		svc.AddRepository,
@@ -435,6 +475,12 @@ func NewRepositoryServiceHandler(svc RepositoryServiceHandler, opts ...connect.H
 		RepositoryServiceGetGitHistoryProcedure,
 		svc.GetGitHistory,
 		connect.WithSchema(repositoryServiceMethods.ByName("GetGitHistory")),
+		connect.WithHandlerOptions(opts...),
+	)
+	repositoryServiceGetGitHistoryFiltersHandler := connect.NewUnaryHandler(
+		RepositoryServiceGetGitHistoryFiltersProcedure,
+		svc.GetGitHistoryFilters,
+		connect.WithSchema(repositoryServiceMethods.ByName("GetGitHistoryFilters")),
 		connect.WithHandlerOptions(opts...),
 	)
 	repositoryServiceGetCommitDetailsHandler := connect.NewUnaryHandler(
@@ -493,12 +539,16 @@ func NewRepositoryServiceHandler(svc RepositoryServiceHandler, opts ...connect.H
 			repositoryServiceUpdateRepositoryRemoteHandler.ServeHTTP(w, r)
 		case RepositoryServiceCheckRepositoryIndexersProcedure:
 			repositoryServiceCheckRepositoryIndexersHandler.ServeHTTP(w, r)
+		case RepositoryServiceBrowseRepositoryFoldersProcedure:
+			repositoryServiceBrowseRepositoryFoldersHandler.ServeHTTP(w, r)
 		case RepositoryServiceAddRepositoryProcedure:
 			repositoryServiceAddRepositoryHandler.ServeHTTP(w, r)
 		case RepositoryServiceDeleteRepositoryProcedure:
 			repositoryServiceDeleteRepositoryHandler.ServeHTTP(w, r)
 		case RepositoryServiceGetGitHistoryProcedure:
 			repositoryServiceGetGitHistoryHandler.ServeHTTP(w, r)
+		case RepositoryServiceGetGitHistoryFiltersProcedure:
+			repositoryServiceGetGitHistoryFiltersHandler.ServeHTTP(w, r)
 		case RepositoryServiceGetCommitDetailsProcedure:
 			repositoryServiceGetCommitDetailsHandler.ServeHTTP(w, r)
 		case RepositoryServiceGetRevisionRangeSummaryProcedure:
@@ -546,6 +596,10 @@ func (UnimplementedRepositoryServiceHandler) CheckRepositoryIndexers(context.Con
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.CheckRepositoryIndexers is not implemented"))
 }
 
+func (UnimplementedRepositoryServiceHandler) BrowseRepositoryFolders(context.Context, *connect.Request[v1.BrowseRepositoryFoldersRequest]) (*connect.Response[v1.BrowseRepositoryFoldersResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.BrowseRepositoryFolders is not implemented"))
+}
+
 func (UnimplementedRepositoryServiceHandler) AddRepository(context.Context, *connect.Request[v1.AddRepositoryRequest], *connect.ServerStream[v1.AddRepositoryEvent]) error {
 	return connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.AddRepository is not implemented"))
 }
@@ -556,6 +610,10 @@ func (UnimplementedRepositoryServiceHandler) DeleteRepository(context.Context, *
 
 func (UnimplementedRepositoryServiceHandler) GetGitHistory(context.Context, *connect.Request[v1.GetGitHistoryRequest]) (*connect.Response[v1.GetGitHistoryResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.GetGitHistory is not implemented"))
+}
+
+func (UnimplementedRepositoryServiceHandler) GetGitHistoryFilters(context.Context, *connect.Request[v1.GetGitHistoryFiltersRequest]) (*connect.Response[v1.GetGitHistoryFiltersResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.RepositoryService.GetGitHistoryFilters is not implemented"))
 }
 
 func (UnimplementedRepositoryServiceHandler) GetCommitDetails(context.Context, *connect.Request[v1.GetCommitDetailsRequest]) (*connect.Response[v1.GetCommitDetailsResponse], error) {
