@@ -32,13 +32,13 @@ service WorkspaceService {
   // Required: org_id, name.
   rpc CreateView(CreateViewRequest) returns (CreateViewResponse);
 
-  // ApplyPlan atomically upserts elements, canonical views, placements, and
+  // ApplyBatch atomically upserts elements, canonical views, placements, and
   // connectors in a single PostgreSQL transaction. If any step fails the
   // entire transaction is rolled back. Refs are local names used to wire up
-  // cross-references within the plan; they are resolved to IDs by the server
+  // cross-references within the batch; they are resolved to IDs by the server
   // and never stored.
   // Required: org_id, at least one resource in elements/connectors.
-  rpc ApplyWorkspacePlan(ApplyPlanRequest) returns (ApplyPlanResponse);
+  rpc ApplyWorkspaceBatch(ApplyWorkspaceBatchRequest) returns (ApplyWorkspaceBatchResponse);
 
   // ExportWorkspace fetches all view, element, connector, and navigation data
   // for an organization to allow CLI-based backups and migrations.
@@ -143,9 +143,9 @@ message ExportChunk {
   double progress = 6;
 }
 
-// ─── ApplyPlan messages ───────────────────────────────────────────────────────
+// ─── ApplyBatch messages ───────────────────────────────────────────────────────
 
-message PlanViewPlacement {
+message BatchViewPlacement {
   // Parent element ref that owns the target canonical diagram.
   // Use "root" for the synthetic workspace root view.
   string parent_ref = 1;
@@ -154,7 +154,7 @@ message PlanViewPlacement {
   optional int32 visibility_delta = 4;
 }
 
-message PlanElement {
+message BatchElement {
   string ref = 1;
   string name = 2;
   optional string kind = 3;
@@ -164,7 +164,7 @@ message PlanElement {
   optional string logo_url = 7;
   repeated TechnologyLink technology_links = 8;
   repeated string tags = 9;
-  repeated PlanViewPlacement placements = 10;
+  repeated BatchViewPlacement placements = 10;
   optional int32 id = 11;
   optional google.protobuf.Timestamp updated_at = 12;
   optional string repo = 13;
@@ -182,7 +182,7 @@ message PlanElement {
   optional string repository_id = 23;
 }
 
-message PlanConnector {
+message BatchConnector {
   string ref = 1;
   // Owning view ref. Use "root" for the synthetic workspace root view.
   string view_ref = 2;
@@ -201,17 +201,17 @@ message PlanConnector {
   optional int32 visibility_delta = 15;
 }
 
-message ApplyPlanRequest {
+message ApplyWorkspaceBatchRequest {
   string org_id = 1;
-  repeated PlanElement elements = 2;
-  repeated PlanConnector connectors = 3;
+  repeated BatchElement elements = 2;
+  repeated BatchConnector connectors = 3;
   // Optional. API key for request-level authentication.
   optional string api_key = 6;
-  // Optional. If true, only return plan and conflicts without applying.
+  // Optional. If true, only return batch and conflicts without applying.
   optional bool dry_run = 7;
 }
 
-message PlanSummary {
+message BatchSummary {
   int32 elements_planned = 1;
   int32 elements_created = 2;
   int32 views_planned = 3;
@@ -220,7 +220,7 @@ message PlanSummary {
   int32 connectors_created = 6;
 }
 
-message PlanDriftItem {
+message BatchDriftItem {
   // "element" | "view" | "connector"
   string resource_type = 1;
   string ref = 2;
@@ -246,7 +246,7 @@ message ResourceMetadata {
   google.protobuf.Timestamp updated_at = 2;
 }
 
-message PlanConflictItem {
+message BatchConflictItem {
   string resource_type = 1; // "element" | "view" | "connector"
   string ref = 2;
   google.protobuf.Timestamp local_updated_at = 3;
@@ -254,34 +254,34 @@ message PlanConflictItem {
   string resolution_hint = 5; // "local_newer" | "remote_newer" | "unknown"
 }
 
-message ApplyPlanElementResult {
+message ApplyBatchElementResult {
   string ref = 1;
   string canonical_ref = 2;
   int32 id = 3;
   google.protobuf.Timestamp updated_at = 4;
 }
 
-message ApplyPlanConnectorResult {
+message ApplyBatchConnectorResult {
   string ref = 1;
   string canonical_ref = 2;
   int32 id = 3;
   google.protobuf.Timestamp updated_at = 4;
 }
 
-message ApplyPlanResponse {
+message ApplyWorkspaceBatchResponse {
   repeated Element created_elements = 1;
   repeated ViewSummary created_views = 2;
   repeated ElementPlacement created_placements = 3;
   repeated Connector created_connectors = 4;
-  PlanSummary summary = 5;
-  repeated PlanDriftItem drift = 6;
+  BatchSummary summary = 5;
+  repeated BatchDriftItem drift = 6;
   optional WorkspaceVersion version = 7;
   map<string, ResourceMetadata> element_metadata = 8;
   map<string, ResourceMetadata> view_metadata = 9;
   map<string, ResourceMetadata> connector_metadata = 10;
-  repeated PlanConflictItem conflicts = 11;
-  repeated ApplyPlanElementResult element_results = 12;
-  repeated ApplyPlanConnectorResult connector_results = 13;
+  repeated BatchConflictItem conflicts = 11;
+  repeated ApplyBatchElementResult element_results = 12;
+  repeated ApplyBatchConnectorResult connector_results = 13;
 }
 
 // ─── Request messages ────────────────────────────────────────────────────────

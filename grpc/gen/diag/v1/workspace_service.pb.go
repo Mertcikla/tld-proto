@@ -247,7 +247,7 @@ func (x *ExportChunk) GetProgress() float64 {
 	return 0
 }
 
-type PlanViewPlacement struct {
+type BatchViewPlacement struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Parent element ref that owns the target canonical diagram.
 	// Use "root" for the synthetic workspace root view.
@@ -259,20 +259,20 @@ type PlanViewPlacement struct {
 	sizeCache       protoimpl.SizeCache
 }
 
-func (x *PlanViewPlacement) Reset() {
-	*x = PlanViewPlacement{}
+func (x *BatchViewPlacement) Reset() {
+	*x = BatchViewPlacement{}
 	mi := &file_diag_v1_workspace_service_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *PlanViewPlacement) String() string {
+func (x *BatchViewPlacement) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PlanViewPlacement) ProtoMessage() {}
+func (*BatchViewPlacement) ProtoMessage() {}
 
-func (x *PlanViewPlacement) ProtoReflect() protoreflect.Message {
+func (x *BatchViewPlacement) ProtoReflect() protoreflect.Message {
 	mi := &file_diag_v1_workspace_service_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -284,40 +284,40 @@ func (x *PlanViewPlacement) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PlanViewPlacement.ProtoReflect.Descriptor instead.
-func (*PlanViewPlacement) Descriptor() ([]byte, []int) {
+// Deprecated: Use BatchViewPlacement.ProtoReflect.Descriptor instead.
+func (*BatchViewPlacement) Descriptor() ([]byte, []int) {
 	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *PlanViewPlacement) GetParentRef() string {
+func (x *BatchViewPlacement) GetParentRef() string {
 	if x != nil {
 		return x.ParentRef
 	}
 	return ""
 }
 
-func (x *PlanViewPlacement) GetPositionX() float64 {
+func (x *BatchViewPlacement) GetPositionX() float64 {
 	if x != nil && x.PositionX != nil {
 		return *x.PositionX
 	}
 	return 0
 }
 
-func (x *PlanViewPlacement) GetPositionY() float64 {
+func (x *BatchViewPlacement) GetPositionY() float64 {
 	if x != nil && x.PositionY != nil {
 		return *x.PositionY
 	}
 	return 0
 }
 
-func (x *PlanViewPlacement) GetVisibilityDelta() int32 {
+func (x *BatchViewPlacement) GetVisibilityDelta() int32 {
 	if x != nil && x.VisibilityDelta != nil {
 		return *x.VisibilityDelta
 	}
 	return 0
 }
 
-type PlanElement struct {
+type BatchElement struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Ref              string                 `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
 	Name             string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
@@ -328,7 +328,7 @@ type PlanElement struct {
 	LogoUrl          *string                `protobuf:"bytes,7,opt,name=logo_url,json=logoUrl,proto3,oneof" json:"logo_url,omitempty"`
 	TechnologyLinks  []*TechnologyLink      `protobuf:"bytes,8,rep,name=technology_links,json=technologyLinks,proto3" json:"technology_links,omitempty"`
 	Tags             []string               `protobuf:"bytes,9,rep,name=tags,proto3" json:"tags,omitempty"`
-	Placements       []*PlanViewPlacement   `protobuf:"bytes,10,rep,name=placements,proto3" json:"placements,omitempty"`
+	Placements       []*BatchViewPlacement  `protobuf:"bytes,10,rep,name=placements,proto3" json:"placements,omitempty"`
 	Id               *int32                 `protobuf:"varint,11,opt,name=id,proto3,oneof" json:"id,omitempty"`
 	UpdatedAt        *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	Repo             *string                `protobuf:"bytes,13,opt,name=repo,proto3,oneof" json:"repo,omitempty"`
@@ -348,20 +348,20 @@ type PlanElement struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *PlanElement) Reset() {
-	*x = PlanElement{}
+func (x *BatchElement) Reset() {
+	*x = BatchElement{}
 	mi := &file_diag_v1_workspace_service_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *PlanElement) String() string {
+func (x *BatchElement) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PlanElement) ProtoMessage() {}
+func (*BatchElement) ProtoMessage() {}
 
-func (x *PlanElement) ProtoReflect() protoreflect.Message {
+func (x *BatchElement) ProtoReflect() protoreflect.Message {
 	mi := &file_diag_v1_workspace_service_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -373,173 +373,173 @@ func (x *PlanElement) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PlanElement.ProtoReflect.Descriptor instead.
-func (*PlanElement) Descriptor() ([]byte, []int) {
+// Deprecated: Use BatchElement.ProtoReflect.Descriptor instead.
+func (*BatchElement) Descriptor() ([]byte, []int) {
 	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *PlanElement) GetRef() string {
+func (x *BatchElement) GetRef() string {
 	if x != nil {
 		return x.Ref
 	}
 	return ""
 }
 
-func (x *PlanElement) GetName() string {
+func (x *BatchElement) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-func (x *PlanElement) GetKind() string {
+func (x *BatchElement) GetKind() string {
 	if x != nil && x.Kind != nil {
 		return *x.Kind
 	}
 	return ""
 }
 
-func (x *PlanElement) GetDescription() string {
+func (x *BatchElement) GetDescription() string {
 	if x != nil && x.Description != nil {
 		return *x.Description
 	}
 	return ""
 }
 
-func (x *PlanElement) GetTechnology() string {
+func (x *BatchElement) GetTechnology() string {
 	if x != nil && x.Technology != nil {
 		return *x.Technology
 	}
 	return ""
 }
 
-func (x *PlanElement) GetUrl() string {
+func (x *BatchElement) GetUrl() string {
 	if x != nil && x.Url != nil {
 		return *x.Url
 	}
 	return ""
 }
 
-func (x *PlanElement) GetLogoUrl() string {
+func (x *BatchElement) GetLogoUrl() string {
 	if x != nil && x.LogoUrl != nil {
 		return *x.LogoUrl
 	}
 	return ""
 }
 
-func (x *PlanElement) GetTechnologyLinks() []*TechnologyLink {
+func (x *BatchElement) GetTechnologyLinks() []*TechnologyLink {
 	if x != nil {
 		return x.TechnologyLinks
 	}
 	return nil
 }
 
-func (x *PlanElement) GetTags() []string {
+func (x *BatchElement) GetTags() []string {
 	if x != nil {
 		return x.Tags
 	}
 	return nil
 }
 
-func (x *PlanElement) GetPlacements() []*PlanViewPlacement {
+func (x *BatchElement) GetPlacements() []*BatchViewPlacement {
 	if x != nil {
 		return x.Placements
 	}
 	return nil
 }
 
-func (x *PlanElement) GetId() int32 {
+func (x *BatchElement) GetId() int32 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
 	return 0
 }
 
-func (x *PlanElement) GetUpdatedAt() *timestamppb.Timestamp {
+func (x *BatchElement) GetUpdatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.UpdatedAt
 	}
 	return nil
 }
 
-func (x *PlanElement) GetRepo() string {
+func (x *BatchElement) GetRepo() string {
 	if x != nil && x.Repo != nil {
 		return *x.Repo
 	}
 	return ""
 }
 
-func (x *PlanElement) GetBranch() string {
+func (x *BatchElement) GetBranch() string {
 	if x != nil && x.Branch != nil {
 		return *x.Branch
 	}
 	return ""
 }
 
-func (x *PlanElement) GetLanguage() string {
+func (x *BatchElement) GetLanguage() string {
 	if x != nil && x.Language != nil {
 		return *x.Language
 	}
 	return ""
 }
 
-func (x *PlanElement) GetFilePath() string {
+func (x *BatchElement) GetFilePath() string {
 	if x != nil && x.FilePath != nil {
 		return *x.FilePath
 	}
 	return ""
 }
 
-func (x *PlanElement) GetHasView() bool {
+func (x *BatchElement) GetHasView() bool {
 	if x != nil {
 		return x.HasView
 	}
 	return false
 }
 
-func (x *PlanElement) GetViewLabel() string {
+func (x *BatchElement) GetViewLabel() string {
 	if x != nil && x.ViewLabel != nil {
 		return *x.ViewLabel
 	}
 	return ""
 }
 
-func (x *PlanElement) GetViewId() int32 {
+func (x *BatchElement) GetViewId() int32 {
 	if x != nil && x.ViewId != nil {
 		return *x.ViewId
 	}
 	return 0
 }
 
-func (x *PlanElement) GetViewUpdatedAt() *timestamppb.Timestamp {
+func (x *BatchElement) GetViewUpdatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.ViewUpdatedAt
 	}
 	return nil
 }
 
-func (x *PlanElement) GetViewDensityLevel() int32 {
+func (x *BatchElement) GetViewDensityLevel() int32 {
 	if x != nil && x.ViewDensityLevel != nil {
 		return *x.ViewDensityLevel
 	}
 	return 0
 }
 
-func (x *PlanElement) GetBypassNoiseGate() bool {
+func (x *BatchElement) GetBypassNoiseGate() bool {
 	if x != nil && x.BypassNoiseGate != nil {
 		return *x.BypassNoiseGate
 	}
 	return false
 }
 
-func (x *PlanElement) GetRepositoryId() string {
+func (x *BatchElement) GetRepositoryId() string {
 	if x != nil && x.RepositoryId != nil {
 		return *x.RepositoryId
 	}
 	return ""
 }
 
-type PlanConnector struct {
+type BatchConnector struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Ref   string                 `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
 	// Owning view ref. Use "root" for the synthetic workspace root view.
@@ -561,20 +561,20 @@ type PlanConnector struct {
 	sizeCache        protoimpl.SizeCache
 }
 
-func (x *PlanConnector) Reset() {
-	*x = PlanConnector{}
+func (x *BatchConnector) Reset() {
+	*x = BatchConnector{}
 	mi := &file_diag_v1_workspace_service_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *PlanConnector) String() string {
+func (x *BatchConnector) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PlanConnector) ProtoMessage() {}
+func (*BatchConnector) ProtoMessage() {}
 
-func (x *PlanConnector) ProtoReflect() protoreflect.Message {
+func (x *BatchConnector) ProtoReflect() protoreflect.Message {
 	mi := &file_diag_v1_workspace_service_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -586,143 +586,143 @@ func (x *PlanConnector) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PlanConnector.ProtoReflect.Descriptor instead.
-func (*PlanConnector) Descriptor() ([]byte, []int) {
+// Deprecated: Use BatchConnector.ProtoReflect.Descriptor instead.
+func (*BatchConnector) Descriptor() ([]byte, []int) {
 	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *PlanConnector) GetRef() string {
+func (x *BatchConnector) GetRef() string {
 	if x != nil {
 		return x.Ref
 	}
 	return ""
 }
 
-func (x *PlanConnector) GetViewRef() string {
+func (x *BatchConnector) GetViewRef() string {
 	if x != nil {
 		return x.ViewRef
 	}
 	return ""
 }
 
-func (x *PlanConnector) GetSourceElementRef() string {
+func (x *BatchConnector) GetSourceElementRef() string {
 	if x != nil {
 		return x.SourceElementRef
 	}
 	return ""
 }
 
-func (x *PlanConnector) GetTargetElementRef() string {
+func (x *BatchConnector) GetTargetElementRef() string {
 	if x != nil {
 		return x.TargetElementRef
 	}
 	return ""
 }
 
-func (x *PlanConnector) GetLabel() string {
+func (x *BatchConnector) GetLabel() string {
 	if x != nil && x.Label != nil {
 		return *x.Label
 	}
 	return ""
 }
 
-func (x *PlanConnector) GetDescription() string {
+func (x *BatchConnector) GetDescription() string {
 	if x != nil && x.Description != nil {
 		return *x.Description
 	}
 	return ""
 }
 
-func (x *PlanConnector) GetRelationship() string {
+func (x *BatchConnector) GetRelationship() string {
 	if x != nil && x.Relationship != nil {
 		return *x.Relationship
 	}
 	return ""
 }
 
-func (x *PlanConnector) GetDirection() string {
+func (x *BatchConnector) GetDirection() string {
 	if x != nil && x.Direction != nil {
 		return *x.Direction
 	}
 	return ""
 }
 
-func (x *PlanConnector) GetStyle() string {
+func (x *BatchConnector) GetStyle() string {
 	if x != nil && x.Style != nil {
 		return *x.Style
 	}
 	return ""
 }
 
-func (x *PlanConnector) GetUrl() string {
+func (x *BatchConnector) GetUrl() string {
 	if x != nil && x.Url != nil {
 		return *x.Url
 	}
 	return ""
 }
 
-func (x *PlanConnector) GetSourceHandle() string {
+func (x *BatchConnector) GetSourceHandle() string {
 	if x != nil && x.SourceHandle != nil {
 		return *x.SourceHandle
 	}
 	return ""
 }
 
-func (x *PlanConnector) GetTargetHandle() string {
+func (x *BatchConnector) GetTargetHandle() string {
 	if x != nil && x.TargetHandle != nil {
 		return *x.TargetHandle
 	}
 	return ""
 }
 
-func (x *PlanConnector) GetId() int32 {
+func (x *BatchConnector) GetId() int32 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
 	return 0
 }
 
-func (x *PlanConnector) GetUpdatedAt() *timestamppb.Timestamp {
+func (x *BatchConnector) GetUpdatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.UpdatedAt
 	}
 	return nil
 }
 
-func (x *PlanConnector) GetVisibilityDelta() int32 {
+func (x *BatchConnector) GetVisibilityDelta() int32 {
 	if x != nil && x.VisibilityDelta != nil {
 		return *x.VisibilityDelta
 	}
 	return 0
 }
 
-type ApplyPlanRequest struct {
+type ApplyWorkspaceBatchRequest struct {
 	state      protoimpl.MessageState `protogen:"open.v1"`
 	OrgId      string                 `protobuf:"bytes,1,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
-	Elements   []*PlanElement         `protobuf:"bytes,2,rep,name=elements,proto3" json:"elements,omitempty"`
-	Connectors []*PlanConnector       `protobuf:"bytes,3,rep,name=connectors,proto3" json:"connectors,omitempty"`
+	Elements   []*BatchElement        `protobuf:"bytes,2,rep,name=elements,proto3" json:"elements,omitempty"`
+	Connectors []*BatchConnector      `protobuf:"bytes,3,rep,name=connectors,proto3" json:"connectors,omitempty"`
 	// Optional. API key for request-level authentication.
 	ApiKey *string `protobuf:"bytes,6,opt,name=api_key,json=apiKey,proto3,oneof" json:"api_key,omitempty"`
-	// Optional. If true, only return plan and conflicts without applying.
+	// Optional. If true, only return batch and conflicts without applying.
 	DryRun        *bool `protobuf:"varint,7,opt,name=dry_run,json=dryRun,proto3,oneof" json:"dry_run,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ApplyPlanRequest) Reset() {
-	*x = ApplyPlanRequest{}
+func (x *ApplyWorkspaceBatchRequest) Reset() {
+	*x = ApplyWorkspaceBatchRequest{}
 	mi := &file_diag_v1_workspace_service_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ApplyPlanRequest) String() string {
+func (x *ApplyWorkspaceBatchRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ApplyPlanRequest) ProtoMessage() {}
+func (*ApplyWorkspaceBatchRequest) ProtoMessage() {}
 
-func (x *ApplyPlanRequest) ProtoReflect() protoreflect.Message {
+func (x *ApplyWorkspaceBatchRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_diag_v1_workspace_service_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -734,47 +734,47 @@ func (x *ApplyPlanRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ApplyPlanRequest.ProtoReflect.Descriptor instead.
-func (*ApplyPlanRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use ApplyWorkspaceBatchRequest.ProtoReflect.Descriptor instead.
+func (*ApplyWorkspaceBatchRequest) Descriptor() ([]byte, []int) {
 	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *ApplyPlanRequest) GetOrgId() string {
+func (x *ApplyWorkspaceBatchRequest) GetOrgId() string {
 	if x != nil {
 		return x.OrgId
 	}
 	return ""
 }
 
-func (x *ApplyPlanRequest) GetElements() []*PlanElement {
+func (x *ApplyWorkspaceBatchRequest) GetElements() []*BatchElement {
 	if x != nil {
 		return x.Elements
 	}
 	return nil
 }
 
-func (x *ApplyPlanRequest) GetConnectors() []*PlanConnector {
+func (x *ApplyWorkspaceBatchRequest) GetConnectors() []*BatchConnector {
 	if x != nil {
 		return x.Connectors
 	}
 	return nil
 }
 
-func (x *ApplyPlanRequest) GetApiKey() string {
+func (x *ApplyWorkspaceBatchRequest) GetApiKey() string {
 	if x != nil && x.ApiKey != nil {
 		return *x.ApiKey
 	}
 	return ""
 }
 
-func (x *ApplyPlanRequest) GetDryRun() bool {
+func (x *ApplyWorkspaceBatchRequest) GetDryRun() bool {
 	if x != nil && x.DryRun != nil {
 		return *x.DryRun
 	}
 	return false
 }
 
-type PlanSummary struct {
+type BatchSummary struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	ElementsPlanned   int32                  `protobuf:"varint,1,opt,name=elements_planned,json=elementsPlanned,proto3" json:"elements_planned,omitempty"`
 	ElementsCreated   int32                  `protobuf:"varint,2,opt,name=elements_created,json=elementsCreated,proto3" json:"elements_created,omitempty"`
@@ -786,20 +786,20 @@ type PlanSummary struct {
 	sizeCache         protoimpl.SizeCache
 }
 
-func (x *PlanSummary) Reset() {
-	*x = PlanSummary{}
+func (x *BatchSummary) Reset() {
+	*x = BatchSummary{}
 	mi := &file_diag_v1_workspace_service_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *PlanSummary) String() string {
+func (x *BatchSummary) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PlanSummary) ProtoMessage() {}
+func (*BatchSummary) ProtoMessage() {}
 
-func (x *PlanSummary) ProtoReflect() protoreflect.Message {
+func (x *BatchSummary) ProtoReflect() protoreflect.Message {
 	mi := &file_diag_v1_workspace_service_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -811,54 +811,54 @@ func (x *PlanSummary) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PlanSummary.ProtoReflect.Descriptor instead.
-func (*PlanSummary) Descriptor() ([]byte, []int) {
+// Deprecated: Use BatchSummary.ProtoReflect.Descriptor instead.
+func (*BatchSummary) Descriptor() ([]byte, []int) {
 	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *PlanSummary) GetElementsPlanned() int32 {
+func (x *BatchSummary) GetElementsPlanned() int32 {
 	if x != nil {
 		return x.ElementsPlanned
 	}
 	return 0
 }
 
-func (x *PlanSummary) GetElementsCreated() int32 {
+func (x *BatchSummary) GetElementsCreated() int32 {
 	if x != nil {
 		return x.ElementsCreated
 	}
 	return 0
 }
 
-func (x *PlanSummary) GetViewsPlanned() int32 {
+func (x *BatchSummary) GetViewsPlanned() int32 {
 	if x != nil {
 		return x.ViewsPlanned
 	}
 	return 0
 }
 
-func (x *PlanSummary) GetViewsCreated() int32 {
+func (x *BatchSummary) GetViewsCreated() int32 {
 	if x != nil {
 		return x.ViewsCreated
 	}
 	return 0
 }
 
-func (x *PlanSummary) GetConnectorsPlanned() int32 {
+func (x *BatchSummary) GetConnectorsPlanned() int32 {
 	if x != nil {
 		return x.ConnectorsPlanned
 	}
 	return 0
 }
 
-func (x *PlanSummary) GetConnectorsCreated() int32 {
+func (x *BatchSummary) GetConnectorsCreated() int32 {
 	if x != nil {
 		return x.ConnectorsCreated
 	}
 	return 0
 }
 
-type PlanDriftItem struct {
+type BatchDriftItem struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// "element" | "view" | "connector"
 	ResourceType  string `protobuf:"bytes,1,opt,name=resource_type,json=resourceType,proto3" json:"resource_type,omitempty"`
@@ -868,20 +868,20 @@ type PlanDriftItem struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *PlanDriftItem) Reset() {
-	*x = PlanDriftItem{}
+func (x *BatchDriftItem) Reset() {
+	*x = BatchDriftItem{}
 	mi := &file_diag_v1_workspace_service_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *PlanDriftItem) String() string {
+func (x *BatchDriftItem) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PlanDriftItem) ProtoMessage() {}
+func (*BatchDriftItem) ProtoMessage() {}
 
-func (x *PlanDriftItem) ProtoReflect() protoreflect.Message {
+func (x *BatchDriftItem) ProtoReflect() protoreflect.Message {
 	mi := &file_diag_v1_workspace_service_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -893,26 +893,26 @@ func (x *PlanDriftItem) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PlanDriftItem.ProtoReflect.Descriptor instead.
-func (*PlanDriftItem) Descriptor() ([]byte, []int) {
+// Deprecated: Use BatchDriftItem.ProtoReflect.Descriptor instead.
+func (*BatchDriftItem) Descriptor() ([]byte, []int) {
 	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *PlanDriftItem) GetResourceType() string {
+func (x *BatchDriftItem) GetResourceType() string {
 	if x != nil {
 		return x.ResourceType
 	}
 	return ""
 }
 
-func (x *PlanDriftItem) GetRef() string {
+func (x *BatchDriftItem) GetRef() string {
 	if x != nil {
 		return x.Ref
 	}
 	return ""
 }
 
-func (x *PlanDriftItem) GetReason() string {
+func (x *BatchDriftItem) GetReason() string {
 	if x != nil {
 		return x.Reason
 	}
@@ -1095,7 +1095,7 @@ func (x *ResourceMetadata) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-type PlanConflictItem struct {
+type BatchConflictItem struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	ResourceType    string                 `protobuf:"bytes,1,opt,name=resource_type,json=resourceType,proto3" json:"resource_type,omitempty"` // "element" | "view" | "connector"
 	Ref             string                 `protobuf:"bytes,2,opt,name=ref,proto3" json:"ref,omitempty"`
@@ -1106,20 +1106,20 @@ type PlanConflictItem struct {
 	sizeCache       protoimpl.SizeCache
 }
 
-func (x *PlanConflictItem) Reset() {
-	*x = PlanConflictItem{}
+func (x *BatchConflictItem) Reset() {
+	*x = BatchConflictItem{}
 	mi := &file_diag_v1_workspace_service_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *PlanConflictItem) String() string {
+func (x *BatchConflictItem) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PlanConflictItem) ProtoMessage() {}
+func (*BatchConflictItem) ProtoMessage() {}
 
-func (x *PlanConflictItem) ProtoReflect() protoreflect.Message {
+func (x *BatchConflictItem) ProtoReflect() protoreflect.Message {
 	mi := &file_diag_v1_workspace_service_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1131,47 +1131,47 @@ func (x *PlanConflictItem) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PlanConflictItem.ProtoReflect.Descriptor instead.
-func (*PlanConflictItem) Descriptor() ([]byte, []int) {
+// Deprecated: Use BatchConflictItem.ProtoReflect.Descriptor instead.
+func (*BatchConflictItem) Descriptor() ([]byte, []int) {
 	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *PlanConflictItem) GetResourceType() string {
+func (x *BatchConflictItem) GetResourceType() string {
 	if x != nil {
 		return x.ResourceType
 	}
 	return ""
 }
 
-func (x *PlanConflictItem) GetRef() string {
+func (x *BatchConflictItem) GetRef() string {
 	if x != nil {
 		return x.Ref
 	}
 	return ""
 }
 
-func (x *PlanConflictItem) GetLocalUpdatedAt() *timestamppb.Timestamp {
+func (x *BatchConflictItem) GetLocalUpdatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.LocalUpdatedAt
 	}
 	return nil
 }
 
-func (x *PlanConflictItem) GetRemoteUpdatedAt() *timestamppb.Timestamp {
+func (x *BatchConflictItem) GetRemoteUpdatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.RemoteUpdatedAt
 	}
 	return nil
 }
 
-func (x *PlanConflictItem) GetResolutionHint() string {
+func (x *BatchConflictItem) GetResolutionHint() string {
 	if x != nil {
 		return x.ResolutionHint
 	}
 	return ""
 }
 
-type ApplyPlanElementResult struct {
+type ApplyBatchElementResult struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Ref           string                 `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
 	CanonicalRef  string                 `protobuf:"bytes,2,opt,name=canonical_ref,json=canonicalRef,proto3" json:"canonical_ref,omitempty"`
@@ -1181,20 +1181,20 @@ type ApplyPlanElementResult struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ApplyPlanElementResult) Reset() {
-	*x = ApplyPlanElementResult{}
+func (x *ApplyBatchElementResult) Reset() {
+	*x = ApplyBatchElementResult{}
 	mi := &file_diag_v1_workspace_service_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ApplyPlanElementResult) String() string {
+func (x *ApplyBatchElementResult) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ApplyPlanElementResult) ProtoMessage() {}
+func (*ApplyBatchElementResult) ProtoMessage() {}
 
-func (x *ApplyPlanElementResult) ProtoReflect() protoreflect.Message {
+func (x *ApplyBatchElementResult) ProtoReflect() protoreflect.Message {
 	mi := &file_diag_v1_workspace_service_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1206,40 +1206,40 @@ func (x *ApplyPlanElementResult) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ApplyPlanElementResult.ProtoReflect.Descriptor instead.
-func (*ApplyPlanElementResult) Descriptor() ([]byte, []int) {
+// Deprecated: Use ApplyBatchElementResult.ProtoReflect.Descriptor instead.
+func (*ApplyBatchElementResult) Descriptor() ([]byte, []int) {
 	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *ApplyPlanElementResult) GetRef() string {
+func (x *ApplyBatchElementResult) GetRef() string {
 	if x != nil {
 		return x.Ref
 	}
 	return ""
 }
 
-func (x *ApplyPlanElementResult) GetCanonicalRef() string {
+func (x *ApplyBatchElementResult) GetCanonicalRef() string {
 	if x != nil {
 		return x.CanonicalRef
 	}
 	return ""
 }
 
-func (x *ApplyPlanElementResult) GetId() int32 {
+func (x *ApplyBatchElementResult) GetId() int32 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *ApplyPlanElementResult) GetUpdatedAt() *timestamppb.Timestamp {
+func (x *ApplyBatchElementResult) GetUpdatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.UpdatedAt
 	}
 	return nil
 }
 
-type ApplyPlanConnectorResult struct {
+type ApplyBatchConnectorResult struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Ref           string                 `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
 	CanonicalRef  string                 `protobuf:"bytes,2,opt,name=canonical_ref,json=canonicalRef,proto3" json:"canonical_ref,omitempty"`
@@ -1249,20 +1249,20 @@ type ApplyPlanConnectorResult struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ApplyPlanConnectorResult) Reset() {
-	*x = ApplyPlanConnectorResult{}
+func (x *ApplyBatchConnectorResult) Reset() {
+	*x = ApplyBatchConnectorResult{}
 	mi := &file_diag_v1_workspace_service_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ApplyPlanConnectorResult) String() string {
+func (x *ApplyBatchConnectorResult) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ApplyPlanConnectorResult) ProtoMessage() {}
+func (*ApplyBatchConnectorResult) ProtoMessage() {}
 
-func (x *ApplyPlanConnectorResult) ProtoReflect() protoreflect.Message {
+func (x *ApplyBatchConnectorResult) ProtoReflect() protoreflect.Message {
 	mi := &file_diag_v1_workspace_service_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1274,72 +1274,72 @@ func (x *ApplyPlanConnectorResult) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ApplyPlanConnectorResult.ProtoReflect.Descriptor instead.
-func (*ApplyPlanConnectorResult) Descriptor() ([]byte, []int) {
+// Deprecated: Use ApplyBatchConnectorResult.ProtoReflect.Descriptor instead.
+func (*ApplyBatchConnectorResult) Descriptor() ([]byte, []int) {
 	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{13}
 }
 
-func (x *ApplyPlanConnectorResult) GetRef() string {
+func (x *ApplyBatchConnectorResult) GetRef() string {
 	if x != nil {
 		return x.Ref
 	}
 	return ""
 }
 
-func (x *ApplyPlanConnectorResult) GetCanonicalRef() string {
+func (x *ApplyBatchConnectorResult) GetCanonicalRef() string {
 	if x != nil {
 		return x.CanonicalRef
 	}
 	return ""
 }
 
-func (x *ApplyPlanConnectorResult) GetId() int32 {
+func (x *ApplyBatchConnectorResult) GetId() int32 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *ApplyPlanConnectorResult) GetUpdatedAt() *timestamppb.Timestamp {
+func (x *ApplyBatchConnectorResult) GetUpdatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.UpdatedAt
 	}
 	return nil
 }
 
-type ApplyPlanResponse struct {
+type ApplyWorkspaceBatchResponse struct {
 	state             protoimpl.MessageState       `protogen:"open.v1"`
 	CreatedElements   []*Element                   `protobuf:"bytes,1,rep,name=created_elements,json=createdElements,proto3" json:"created_elements,omitempty"`
 	CreatedViews      []*ViewSummary               `protobuf:"bytes,2,rep,name=created_views,json=createdViews,proto3" json:"created_views,omitempty"`
 	CreatedPlacements []*ElementPlacement          `protobuf:"bytes,3,rep,name=created_placements,json=createdPlacements,proto3" json:"created_placements,omitempty"`
 	CreatedConnectors []*Connector                 `protobuf:"bytes,4,rep,name=created_connectors,json=createdConnectors,proto3" json:"created_connectors,omitempty"`
-	Summary           *PlanSummary                 `protobuf:"bytes,5,opt,name=summary,proto3" json:"summary,omitempty"`
-	Drift             []*PlanDriftItem             `protobuf:"bytes,6,rep,name=drift,proto3" json:"drift,omitempty"`
+	Summary           *BatchSummary                `protobuf:"bytes,5,opt,name=summary,proto3" json:"summary,omitempty"`
+	Drift             []*BatchDriftItem            `protobuf:"bytes,6,rep,name=drift,proto3" json:"drift,omitempty"`
 	Version           *WorkspaceVersion            `protobuf:"bytes,7,opt,name=version,proto3,oneof" json:"version,omitempty"`
 	ElementMetadata   map[string]*ResourceMetadata `protobuf:"bytes,8,rep,name=element_metadata,json=elementMetadata,proto3" json:"element_metadata,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	ViewMetadata      map[string]*ResourceMetadata `protobuf:"bytes,9,rep,name=view_metadata,json=viewMetadata,proto3" json:"view_metadata,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	ConnectorMetadata map[string]*ResourceMetadata `protobuf:"bytes,10,rep,name=connector_metadata,json=connectorMetadata,proto3" json:"connector_metadata,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	Conflicts         []*PlanConflictItem          `protobuf:"bytes,11,rep,name=conflicts,proto3" json:"conflicts,omitempty"`
-	ElementResults    []*ApplyPlanElementResult    `protobuf:"bytes,12,rep,name=element_results,json=elementResults,proto3" json:"element_results,omitempty"`
-	ConnectorResults  []*ApplyPlanConnectorResult  `protobuf:"bytes,13,rep,name=connector_results,json=connectorResults,proto3" json:"connector_results,omitempty"`
+	Conflicts         []*BatchConflictItem         `protobuf:"bytes,11,rep,name=conflicts,proto3" json:"conflicts,omitempty"`
+	ElementResults    []*ApplyBatchElementResult   `protobuf:"bytes,12,rep,name=element_results,json=elementResults,proto3" json:"element_results,omitempty"`
+	ConnectorResults  []*ApplyBatchConnectorResult `protobuf:"bytes,13,rep,name=connector_results,json=connectorResults,proto3" json:"connector_results,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
 
-func (x *ApplyPlanResponse) Reset() {
-	*x = ApplyPlanResponse{}
+func (x *ApplyWorkspaceBatchResponse) Reset() {
+	*x = ApplyWorkspaceBatchResponse{}
 	mi := &file_diag_v1_workspace_service_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ApplyPlanResponse) String() string {
+func (x *ApplyWorkspaceBatchResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ApplyPlanResponse) ProtoMessage() {}
+func (*ApplyWorkspaceBatchResponse) ProtoMessage() {}
 
-func (x *ApplyPlanResponse) ProtoReflect() protoreflect.Message {
+func (x *ApplyWorkspaceBatchResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_diag_v1_workspace_service_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1351,96 +1351,96 @@ func (x *ApplyPlanResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ApplyPlanResponse.ProtoReflect.Descriptor instead.
-func (*ApplyPlanResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use ApplyWorkspaceBatchResponse.ProtoReflect.Descriptor instead.
+func (*ApplyWorkspaceBatchResponse) Descriptor() ([]byte, []int) {
 	return file_diag_v1_workspace_service_proto_rawDescGZIP(), []int{14}
 }
 
-func (x *ApplyPlanResponse) GetCreatedElements() []*Element {
+func (x *ApplyWorkspaceBatchResponse) GetCreatedElements() []*Element {
 	if x != nil {
 		return x.CreatedElements
 	}
 	return nil
 }
 
-func (x *ApplyPlanResponse) GetCreatedViews() []*ViewSummary {
+func (x *ApplyWorkspaceBatchResponse) GetCreatedViews() []*ViewSummary {
 	if x != nil {
 		return x.CreatedViews
 	}
 	return nil
 }
 
-func (x *ApplyPlanResponse) GetCreatedPlacements() []*ElementPlacement {
+func (x *ApplyWorkspaceBatchResponse) GetCreatedPlacements() []*ElementPlacement {
 	if x != nil {
 		return x.CreatedPlacements
 	}
 	return nil
 }
 
-func (x *ApplyPlanResponse) GetCreatedConnectors() []*Connector {
+func (x *ApplyWorkspaceBatchResponse) GetCreatedConnectors() []*Connector {
 	if x != nil {
 		return x.CreatedConnectors
 	}
 	return nil
 }
 
-func (x *ApplyPlanResponse) GetSummary() *PlanSummary {
+func (x *ApplyWorkspaceBatchResponse) GetSummary() *BatchSummary {
 	if x != nil {
 		return x.Summary
 	}
 	return nil
 }
 
-func (x *ApplyPlanResponse) GetDrift() []*PlanDriftItem {
+func (x *ApplyWorkspaceBatchResponse) GetDrift() []*BatchDriftItem {
 	if x != nil {
 		return x.Drift
 	}
 	return nil
 }
 
-func (x *ApplyPlanResponse) GetVersion() *WorkspaceVersion {
+func (x *ApplyWorkspaceBatchResponse) GetVersion() *WorkspaceVersion {
 	if x != nil {
 		return x.Version
 	}
 	return nil
 }
 
-func (x *ApplyPlanResponse) GetElementMetadata() map[string]*ResourceMetadata {
+func (x *ApplyWorkspaceBatchResponse) GetElementMetadata() map[string]*ResourceMetadata {
 	if x != nil {
 		return x.ElementMetadata
 	}
 	return nil
 }
 
-func (x *ApplyPlanResponse) GetViewMetadata() map[string]*ResourceMetadata {
+func (x *ApplyWorkspaceBatchResponse) GetViewMetadata() map[string]*ResourceMetadata {
 	if x != nil {
 		return x.ViewMetadata
 	}
 	return nil
 }
 
-func (x *ApplyPlanResponse) GetConnectorMetadata() map[string]*ResourceMetadata {
+func (x *ApplyWorkspaceBatchResponse) GetConnectorMetadata() map[string]*ResourceMetadata {
 	if x != nil {
 		return x.ConnectorMetadata
 	}
 	return nil
 }
 
-func (x *ApplyPlanResponse) GetConflicts() []*PlanConflictItem {
+func (x *ApplyWorkspaceBatchResponse) GetConflicts() []*BatchConflictItem {
 	if x != nil {
 		return x.Conflicts
 	}
 	return nil
 }
 
-func (x *ApplyPlanResponse) GetElementResults() []*ApplyPlanElementResult {
+func (x *ApplyWorkspaceBatchResponse) GetElementResults() []*ApplyBatchElementResult {
 	if x != nil {
 		return x.ElementResults
 	}
 	return nil
 }
 
-func (x *ApplyPlanResponse) GetConnectorResults() []*ApplyPlanConnectorResult {
+func (x *ApplyWorkspaceBatchResponse) GetConnectorResults() []*ApplyBatchConnectorResult {
 	if x != nil {
 		return x.ConnectorResults
 	}
@@ -7392,8 +7392,8 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"placements\x18\x04 \x03(\v2\x19.diag.v1.ElementPlacementR\n" +
 	"placements\x12*\n" +
 	"\x06layers\x18\x05 \x03(\v2\x12.diag.v1.ViewLayerR\x06layers\x12\x1a\n" +
-	"\bprogress\x18\x06 \x01(\x01R\bprogress\"\xdd\x01\n" +
-	"\x11PlanViewPlacement\x12\x1d\n" +
+	"\bprogress\x18\x06 \x01(\x01R\bprogress\"\xde\x01\n" +
+	"\x12BatchViewPlacement\x12\x1d\n" +
 	"\n" +
 	"parent_ref\x18\x01 \x01(\tR\tparentRef\x12\"\n" +
 	"\n" +
@@ -7403,8 +7403,8 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\x10visibility_delta\x18\x04 \x01(\x05H\x02R\x0fvisibilityDelta\x88\x01\x01B\r\n" +
 	"\v_position_xB\r\n" +
 	"\v_position_yB\x13\n" +
-	"\x11_visibility_delta\"\xd5\b\n" +
-	"\vPlanElement\x12\x10\n" +
+	"\x11_visibility_delta\"\xd7\b\n" +
+	"\fBatchElement\x12\x10\n" +
 	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x17\n" +
 	"\x04kind\x18\x03 \x01(\tH\x00R\x04kind\x88\x01\x01\x12%\n" +
@@ -7415,10 +7415,10 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\x03url\x18\x06 \x01(\tH\x03R\x03url\x88\x01\x01\x12\x1e\n" +
 	"\blogo_url\x18\a \x01(\tH\x04R\alogoUrl\x88\x01\x01\x12B\n" +
 	"\x10technology_links\x18\b \x03(\v2\x17.diag.v1.TechnologyLinkR\x0ftechnologyLinks\x12\x12\n" +
-	"\x04tags\x18\t \x03(\tR\x04tags\x12:\n" +
+	"\x04tags\x18\t \x03(\tR\x04tags\x12;\n" +
 	"\n" +
 	"placements\x18\n" +
-	" \x03(\v2\x1a.diag.v1.PlanViewPlacementR\n" +
+	" \x03(\v2\x1b.diag.v1.BatchViewPlacementR\n" +
 	"placements\x12\x13\n" +
 	"\x02id\x18\v \x01(\x05H\x05R\x02id\x88\x01\x01\x12>\n" +
 	"\n" +
@@ -7454,8 +7454,8 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\x10_view_updated_atB\x15\n" +
 	"\x13_view_density_levelB\x14\n" +
 	"\x12_bypass_noise_gateB\x10\n" +
-	"\x0e_repository_id\"\xcb\x05\n" +
-	"\rPlanConnector\x12\x10\n" +
+	"\x0e_repository_id\"\xcc\x05\n" +
+	"\x0eBatchConnector\x12\x10\n" +
 	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x19\n" +
 	"\bview_ref\x18\x02 \x01(\tR\aviewRef\x12,\n" +
 	"\x12source_element_ref\x18\x03 \x01(\tR\x10sourceElementRef\x12,\n" +
@@ -7485,27 +7485,27 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\x0e_target_handleB\x05\n" +
 	"\x03_idB\r\n" +
 	"\v_updated_atB\x13\n" +
-	"\x11_visibility_delta\"\xe7\x01\n" +
-	"\x10ApplyPlanRequest\x12\x15\n" +
-	"\x06org_id\x18\x01 \x01(\tR\x05orgId\x120\n" +
-	"\belements\x18\x02 \x03(\v2\x14.diag.v1.PlanElementR\belements\x126\n" +
+	"\x11_visibility_delta\"\xf3\x01\n" +
+	"\x1aApplyWorkspaceBatchRequest\x12\x15\n" +
+	"\x06org_id\x18\x01 \x01(\tR\x05orgId\x121\n" +
+	"\belements\x18\x02 \x03(\v2\x15.diag.v1.BatchElementR\belements\x127\n" +
 	"\n" +
-	"connectors\x18\x03 \x03(\v2\x16.diag.v1.PlanConnectorR\n" +
+	"connectors\x18\x03 \x03(\v2\x17.diag.v1.BatchConnectorR\n" +
 	"connectors\x12\x1c\n" +
 	"\aapi_key\x18\x06 \x01(\tH\x00R\x06apiKey\x88\x01\x01\x12\x1c\n" +
 	"\adry_run\x18\a \x01(\bH\x01R\x06dryRun\x88\x01\x01B\n" +
 	"\n" +
 	"\b_api_keyB\n" +
 	"\n" +
-	"\b_dry_run\"\x8b\x02\n" +
-	"\vPlanSummary\x12)\n" +
+	"\b_dry_run\"\x8c\x02\n" +
+	"\fBatchSummary\x12)\n" +
 	"\x10elements_planned\x18\x01 \x01(\x05R\x0felementsPlanned\x12)\n" +
 	"\x10elements_created\x18\x02 \x01(\x05R\x0felementsCreated\x12#\n" +
 	"\rviews_planned\x18\x03 \x01(\x05R\fviewsPlanned\x12#\n" +
 	"\rviews_created\x18\x04 \x01(\x05R\fviewsCreated\x12-\n" +
 	"\x12connectors_planned\x18\x05 \x01(\x05R\x11connectorsPlanned\x12-\n" +
-	"\x12connectors_created\x18\x06 \x01(\x05R\x11connectorsCreated\"^\n" +
-	"\rPlanDriftItem\x12#\n" +
+	"\x12connectors_created\x18\x06 \x01(\x05R\x11connectorsCreated\"_\n" +
+	"\x0eBatchDriftItem\x12#\n" +
 	"\rresource_type\x18\x01 \x01(\tR\fresourceType\x12\x10\n" +
 	"\x03ref\x18\x02 \x01(\tR\x03ref\x12\x16\n" +
 	"\x06reason\x18\x03 \x01(\tR\x06reason\"\xf0\x03\n" +
@@ -7532,40 +7532,40 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\x10ResourceMetadata\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x129\n" +
 	"\n" +
-	"updated_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x80\x02\n" +
-	"\x10PlanConflictItem\x12#\n" +
+	"updated_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x81\x02\n" +
+	"\x11BatchConflictItem\x12#\n" +
 	"\rresource_type\x18\x01 \x01(\tR\fresourceType\x12\x10\n" +
 	"\x03ref\x18\x02 \x01(\tR\x03ref\x12D\n" +
 	"\x10local_updated_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x0elocalUpdatedAt\x12F\n" +
 	"\x11remote_updated_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x0fremoteUpdatedAt\x12'\n" +
-	"\x0fresolution_hint\x18\x05 \x01(\tR\x0eresolutionHint\"\x9a\x01\n" +
-	"\x16ApplyPlanElementResult\x12\x10\n" +
+	"\x0fresolution_hint\x18\x05 \x01(\tR\x0eresolutionHint\"\x9b\x01\n" +
+	"\x17ApplyBatchElementResult\x12\x10\n" +
 	"\x03ref\x18\x01 \x01(\tR\x03ref\x12#\n" +
 	"\rcanonical_ref\x18\x02 \x01(\tR\fcanonicalRef\x12\x0e\n" +
 	"\x02id\x18\x03 \x01(\x05R\x02id\x129\n" +
 	"\n" +
-	"updated_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x9c\x01\n" +
-	"\x18ApplyPlanConnectorResult\x12\x10\n" +
+	"updated_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x9d\x01\n" +
+	"\x19ApplyBatchConnectorResult\x12\x10\n" +
 	"\x03ref\x18\x01 \x01(\tR\x03ref\x12#\n" +
 	"\rcanonical_ref\x18\x02 \x01(\tR\fcanonicalRef\x12\x0e\n" +
 	"\x02id\x18\x03 \x01(\x05R\x02id\x129\n" +
 	"\n" +
-	"updated_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xbc\t\n" +
-	"\x11ApplyPlanResponse\x12;\n" +
+	"updated_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xe9\t\n" +
+	"\x1bApplyWorkspaceBatchResponse\x12;\n" +
 	"\x10created_elements\x18\x01 \x03(\v2\x10.diag.v1.ElementR\x0fcreatedElements\x129\n" +
 	"\rcreated_views\x18\x02 \x03(\v2\x14.diag.v1.ViewSummaryR\fcreatedViews\x12H\n" +
 	"\x12created_placements\x18\x03 \x03(\v2\x19.diag.v1.ElementPlacementR\x11createdPlacements\x12A\n" +
-	"\x12created_connectors\x18\x04 \x03(\v2\x12.diag.v1.ConnectorR\x11createdConnectors\x12.\n" +
-	"\asummary\x18\x05 \x01(\v2\x14.diag.v1.PlanSummaryR\asummary\x12,\n" +
-	"\x05drift\x18\x06 \x03(\v2\x16.diag.v1.PlanDriftItemR\x05drift\x128\n" +
-	"\aversion\x18\a \x01(\v2\x19.diag.v1.WorkspaceVersionH\x00R\aversion\x88\x01\x01\x12Z\n" +
-	"\x10element_metadata\x18\b \x03(\v2/.diag.v1.ApplyPlanResponse.ElementMetadataEntryR\x0felementMetadata\x12Q\n" +
-	"\rview_metadata\x18\t \x03(\v2,.diag.v1.ApplyPlanResponse.ViewMetadataEntryR\fviewMetadata\x12`\n" +
+	"\x12created_connectors\x18\x04 \x03(\v2\x12.diag.v1.ConnectorR\x11createdConnectors\x12/\n" +
+	"\asummary\x18\x05 \x01(\v2\x15.diag.v1.BatchSummaryR\asummary\x12-\n" +
+	"\x05drift\x18\x06 \x03(\v2\x17.diag.v1.BatchDriftItemR\x05drift\x128\n" +
+	"\aversion\x18\a \x01(\v2\x19.diag.v1.WorkspaceVersionH\x00R\aversion\x88\x01\x01\x12d\n" +
+	"\x10element_metadata\x18\b \x03(\v29.diag.v1.ApplyWorkspaceBatchResponse.ElementMetadataEntryR\x0felementMetadata\x12[\n" +
+	"\rview_metadata\x18\t \x03(\v26.diag.v1.ApplyWorkspaceBatchResponse.ViewMetadataEntryR\fviewMetadata\x12j\n" +
 	"\x12connector_metadata\x18\n" +
-	" \x03(\v21.diag.v1.ApplyPlanResponse.ConnectorMetadataEntryR\x11connectorMetadata\x127\n" +
-	"\tconflicts\x18\v \x03(\v2\x19.diag.v1.PlanConflictItemR\tconflicts\x12H\n" +
-	"\x0felement_results\x18\f \x03(\v2\x1f.diag.v1.ApplyPlanElementResultR\x0eelementResults\x12N\n" +
-	"\x11connector_results\x18\r \x03(\v2!.diag.v1.ApplyPlanConnectorResultR\x10connectorResults\x1a]\n" +
+	" \x03(\v2;.diag.v1.ApplyWorkspaceBatchResponse.ConnectorMetadataEntryR\x11connectorMetadata\x128\n" +
+	"\tconflicts\x18\v \x03(\v2\x1a.diag.v1.BatchConflictItemR\tconflicts\x12I\n" +
+	"\x0felement_results\x18\f \x03(\v2 .diag.v1.ApplyBatchElementResultR\x0eelementResults\x12O\n" +
+	"\x11connector_results\x18\r \x03(\v2\".diag.v1.ApplyBatchConnectorResultR\x10connectorResults\x1a]\n" +
 	"\x14ElementMetadataEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12/\n" +
 	"\x05value\x18\x02 \x01(\v2\x19.diag.v1.ResourceMetadataR\x05value:\x028\x01\x1aZ\n" +
@@ -8213,11 +8213,11 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\x05layer\x18\x01 \x01(\v2\x12.diag.v1.ViewLayerR\x05layer\"3\n" +
 	"\x16DeleteViewLayerRequest\x12\x19\n" +
 	"\blayer_id\x18\x01 \x01(\x05R\alayerId\"\x19\n" +
-	"\x17DeleteViewLayerResponse2\xfa\x1a\n" +
+	"\x17DeleteViewLayerResponse2\x8f\x1b\n" +
 	"\x10WorkspaceService\x12E\n" +
 	"\n" +
-	"CreateView\x12\x1a.diag.v1.CreateViewRequest\x1a\x1b.diag.v1.CreateViewResponse\x12K\n" +
-	"\x12ApplyWorkspacePlan\x12\x19.diag.v1.ApplyPlanRequest\x1a\x1a.diag.v1.ApplyPlanResponse\x12Z\n" +
+	"CreateView\x12\x1a.diag.v1.CreateViewRequest\x1a\x1b.diag.v1.CreateViewResponse\x12`\n" +
+	"\x13ApplyWorkspaceBatch\x12#.diag.v1.ApplyWorkspaceBatchRequest\x1a$.diag.v1.ApplyWorkspaceBatchResponse\x12Z\n" +
 	"\x0fExportWorkspace\x12\".diag.v1.ExportOrganizationRequest\x1a#.diag.v1.ExportOrganizationResponse\x12S\n" +
 	"\x15StreamExportWorkspace\x12\".diag.v1.ExportOrganizationRequest\x1a\x14.diag.v1.ExportChunk0\x01\x12E\n" +
 	"\n" +
@@ -8276,18 +8276,18 @@ var file_diag_v1_workspace_service_proto_goTypes = []any{
 	(*ExportOrganizationRequest)(nil),              // 0: diag.v1.ExportOrganizationRequest
 	(*ExportOrganizationResponse)(nil),             // 1: diag.v1.ExportOrganizationResponse
 	(*ExportChunk)(nil),                            // 2: diag.v1.ExportChunk
-	(*PlanViewPlacement)(nil),                      // 3: diag.v1.PlanViewPlacement
-	(*PlanElement)(nil),                            // 4: diag.v1.PlanElement
-	(*PlanConnector)(nil),                          // 5: diag.v1.PlanConnector
-	(*ApplyPlanRequest)(nil),                       // 6: diag.v1.ApplyPlanRequest
-	(*PlanSummary)(nil),                            // 7: diag.v1.PlanSummary
-	(*PlanDriftItem)(nil),                          // 8: diag.v1.PlanDriftItem
+	(*BatchViewPlacement)(nil),                     // 3: diag.v1.BatchViewPlacement
+	(*BatchElement)(nil),                           // 4: diag.v1.BatchElement
+	(*BatchConnector)(nil),                         // 5: diag.v1.BatchConnector
+	(*ApplyWorkspaceBatchRequest)(nil),             // 6: diag.v1.ApplyWorkspaceBatchRequest
+	(*BatchSummary)(nil),                           // 7: diag.v1.BatchSummary
+	(*BatchDriftItem)(nil),                         // 8: diag.v1.BatchDriftItem
 	(*WorkspaceVersion)(nil),                       // 9: diag.v1.WorkspaceVersion
 	(*ResourceMetadata)(nil),                       // 10: diag.v1.ResourceMetadata
-	(*PlanConflictItem)(nil),                       // 11: diag.v1.PlanConflictItem
-	(*ApplyPlanElementResult)(nil),                 // 12: diag.v1.ApplyPlanElementResult
-	(*ApplyPlanConnectorResult)(nil),               // 13: diag.v1.ApplyPlanConnectorResult
-	(*ApplyPlanResponse)(nil),                      // 14: diag.v1.ApplyPlanResponse
+	(*BatchConflictItem)(nil),                      // 11: diag.v1.BatchConflictItem
+	(*ApplyBatchElementResult)(nil),                // 12: diag.v1.ApplyBatchElementResult
+	(*ApplyBatchConnectorResult)(nil),              // 13: diag.v1.ApplyBatchConnectorResult
+	(*ApplyWorkspaceBatchResponse)(nil),            // 14: diag.v1.ApplyWorkspaceBatchResponse
 	(*CreateViewRequest)(nil),                      // 15: diag.v1.CreateViewRequest
 	(*CreateViewResponse)(nil),                     // 16: diag.v1.CreateViewResponse
 	(*Element)(nil),                                // 17: diag.v1.Element
@@ -8377,9 +8377,9 @@ var file_diag_v1_workspace_service_proto_goTypes = []any{
 	(*UpdateViewLayerResponse)(nil),                // 101: diag.v1.UpdateViewLayerResponse
 	(*DeleteViewLayerRequest)(nil),                 // 102: diag.v1.DeleteViewLayerRequest
 	(*DeleteViewLayerResponse)(nil),                // 103: diag.v1.DeleteViewLayerResponse
-	nil,                                            // 104: diag.v1.ApplyPlanResponse.ElementMetadataEntry
-	nil,                                            // 105: diag.v1.ApplyPlanResponse.ViewMetadataEntry
-	nil,                                            // 106: diag.v1.ApplyPlanResponse.ConnectorMetadataEntry
+	nil,                                            // 104: diag.v1.ApplyWorkspaceBatchResponse.ElementMetadataEntry
+	nil,                                            // 105: diag.v1.ApplyWorkspaceBatchResponse.ViewMetadataEntry
+	nil,                                            // 106: diag.v1.ApplyWorkspaceBatchResponse.ConnectorMetadataEntry
 	nil,                                            // 107: diag.v1.GetWorkspaceResponse.ContentEntry
 	(*timestamppb.Timestamp)(nil),                  // 108: google.protobuf.Timestamp
 }
@@ -8395,32 +8395,32 @@ var file_diag_v1_workspace_service_proto_depIdxs = []int32{
 	21,  // 8: diag.v1.ExportChunk.connectors:type_name -> diag.v1.Connector
 	19,  // 9: diag.v1.ExportChunk.placements:type_name -> diag.v1.ElementPlacement
 	95,  // 10: diag.v1.ExportChunk.layers:type_name -> diag.v1.ViewLayer
-	34,  // 11: diag.v1.PlanElement.technology_links:type_name -> diag.v1.TechnologyLink
-	3,   // 12: diag.v1.PlanElement.placements:type_name -> diag.v1.PlanViewPlacement
-	108, // 13: diag.v1.PlanElement.updated_at:type_name -> google.protobuf.Timestamp
-	108, // 14: diag.v1.PlanElement.view_updated_at:type_name -> google.protobuf.Timestamp
-	108, // 15: diag.v1.PlanConnector.updated_at:type_name -> google.protobuf.Timestamp
-	4,   // 16: diag.v1.ApplyPlanRequest.elements:type_name -> diag.v1.PlanElement
-	5,   // 17: diag.v1.ApplyPlanRequest.connectors:type_name -> diag.v1.PlanConnector
+	34,  // 11: diag.v1.BatchElement.technology_links:type_name -> diag.v1.TechnologyLink
+	3,   // 12: diag.v1.BatchElement.placements:type_name -> diag.v1.BatchViewPlacement
+	108, // 13: diag.v1.BatchElement.updated_at:type_name -> google.protobuf.Timestamp
+	108, // 14: diag.v1.BatchElement.view_updated_at:type_name -> google.protobuf.Timestamp
+	108, // 15: diag.v1.BatchConnector.updated_at:type_name -> google.protobuf.Timestamp
+	4,   // 16: diag.v1.ApplyWorkspaceBatchRequest.elements:type_name -> diag.v1.BatchElement
+	5,   // 17: diag.v1.ApplyWorkspaceBatchRequest.connectors:type_name -> diag.v1.BatchConnector
 	108, // 18: diag.v1.WorkspaceVersion.created_at:type_name -> google.protobuf.Timestamp
 	108, // 19: diag.v1.ResourceMetadata.updated_at:type_name -> google.protobuf.Timestamp
-	108, // 20: diag.v1.PlanConflictItem.local_updated_at:type_name -> google.protobuf.Timestamp
-	108, // 21: diag.v1.PlanConflictItem.remote_updated_at:type_name -> google.protobuf.Timestamp
-	108, // 22: diag.v1.ApplyPlanElementResult.updated_at:type_name -> google.protobuf.Timestamp
-	108, // 23: diag.v1.ApplyPlanConnectorResult.updated_at:type_name -> google.protobuf.Timestamp
-	17,  // 24: diag.v1.ApplyPlanResponse.created_elements:type_name -> diag.v1.Element
-	18,  // 25: diag.v1.ApplyPlanResponse.created_views:type_name -> diag.v1.ViewSummary
-	19,  // 26: diag.v1.ApplyPlanResponse.created_placements:type_name -> diag.v1.ElementPlacement
-	21,  // 27: diag.v1.ApplyPlanResponse.created_connectors:type_name -> diag.v1.Connector
-	7,   // 28: diag.v1.ApplyPlanResponse.summary:type_name -> diag.v1.PlanSummary
-	8,   // 29: diag.v1.ApplyPlanResponse.drift:type_name -> diag.v1.PlanDriftItem
-	9,   // 30: diag.v1.ApplyPlanResponse.version:type_name -> diag.v1.WorkspaceVersion
-	104, // 31: diag.v1.ApplyPlanResponse.element_metadata:type_name -> diag.v1.ApplyPlanResponse.ElementMetadataEntry
-	105, // 32: diag.v1.ApplyPlanResponse.view_metadata:type_name -> diag.v1.ApplyPlanResponse.ViewMetadataEntry
-	106, // 33: diag.v1.ApplyPlanResponse.connector_metadata:type_name -> diag.v1.ApplyPlanResponse.ConnectorMetadataEntry
-	11,  // 34: diag.v1.ApplyPlanResponse.conflicts:type_name -> diag.v1.PlanConflictItem
-	12,  // 35: diag.v1.ApplyPlanResponse.element_results:type_name -> diag.v1.ApplyPlanElementResult
-	13,  // 36: diag.v1.ApplyPlanResponse.connector_results:type_name -> diag.v1.ApplyPlanConnectorResult
+	108, // 20: diag.v1.BatchConflictItem.local_updated_at:type_name -> google.protobuf.Timestamp
+	108, // 21: diag.v1.BatchConflictItem.remote_updated_at:type_name -> google.protobuf.Timestamp
+	108, // 22: diag.v1.ApplyBatchElementResult.updated_at:type_name -> google.protobuf.Timestamp
+	108, // 23: diag.v1.ApplyBatchConnectorResult.updated_at:type_name -> google.protobuf.Timestamp
+	17,  // 24: diag.v1.ApplyWorkspaceBatchResponse.created_elements:type_name -> diag.v1.Element
+	18,  // 25: diag.v1.ApplyWorkspaceBatchResponse.created_views:type_name -> diag.v1.ViewSummary
+	19,  // 26: diag.v1.ApplyWorkspaceBatchResponse.created_placements:type_name -> diag.v1.ElementPlacement
+	21,  // 27: diag.v1.ApplyWorkspaceBatchResponse.created_connectors:type_name -> diag.v1.Connector
+	7,   // 28: diag.v1.ApplyWorkspaceBatchResponse.summary:type_name -> diag.v1.BatchSummary
+	8,   // 29: diag.v1.ApplyWorkspaceBatchResponse.drift:type_name -> diag.v1.BatchDriftItem
+	9,   // 30: diag.v1.ApplyWorkspaceBatchResponse.version:type_name -> diag.v1.WorkspaceVersion
+	104, // 31: diag.v1.ApplyWorkspaceBatchResponse.element_metadata:type_name -> diag.v1.ApplyWorkspaceBatchResponse.ElementMetadataEntry
+	105, // 32: diag.v1.ApplyWorkspaceBatchResponse.view_metadata:type_name -> diag.v1.ApplyWorkspaceBatchResponse.ViewMetadataEntry
+	106, // 33: diag.v1.ApplyWorkspaceBatchResponse.connector_metadata:type_name -> diag.v1.ApplyWorkspaceBatchResponse.ConnectorMetadataEntry
+	11,  // 34: diag.v1.ApplyWorkspaceBatchResponse.conflicts:type_name -> diag.v1.BatchConflictItem
+	12,  // 35: diag.v1.ApplyWorkspaceBatchResponse.element_results:type_name -> diag.v1.ApplyBatchElementResult
+	13,  // 36: diag.v1.ApplyWorkspaceBatchResponse.connector_results:type_name -> diag.v1.ApplyBatchConnectorResult
 	25,  // 37: diag.v1.CreateViewResponse.view:type_name -> diag.v1.View
 	34,  // 38: diag.v1.Element.technology_links:type_name -> diag.v1.TechnologyLink
 	108, // 39: diag.v1.Element.created_at:type_name -> google.protobuf.Timestamp
@@ -8472,12 +8472,12 @@ var file_diag_v1_workspace_service_proto_depIdxs = []int32{
 	95,  // 85: diag.v1.ListViewLayersResponse.layers:type_name -> diag.v1.ViewLayer
 	95,  // 86: diag.v1.CreateViewLayerResponse.layer:type_name -> diag.v1.ViewLayer
 	95,  // 87: diag.v1.UpdateViewLayerResponse.layer:type_name -> diag.v1.ViewLayer
-	10,  // 88: diag.v1.ApplyPlanResponse.ElementMetadataEntry.value:type_name -> diag.v1.ResourceMetadata
-	10,  // 89: diag.v1.ApplyPlanResponse.ViewMetadataEntry.value:type_name -> diag.v1.ResourceMetadata
-	10,  // 90: diag.v1.ApplyPlanResponse.ConnectorMetadataEntry.value:type_name -> diag.v1.ResourceMetadata
+	10,  // 88: diag.v1.ApplyWorkspaceBatchResponse.ElementMetadataEntry.value:type_name -> diag.v1.ResourceMetadata
+	10,  // 89: diag.v1.ApplyWorkspaceBatchResponse.ViewMetadataEntry.value:type_name -> diag.v1.ResourceMetadata
+	10,  // 90: diag.v1.ApplyWorkspaceBatchResponse.ConnectorMetadataEntry.value:type_name -> diag.v1.ResourceMetadata
 	23,  // 91: diag.v1.GetWorkspaceResponse.ContentEntry.value:type_name -> diag.v1.ViewContent
 	15,  // 92: diag.v1.WorkspaceService.CreateView:input_type -> diag.v1.CreateViewRequest
-	6,   // 93: diag.v1.WorkspaceService.ApplyWorkspacePlan:input_type -> diag.v1.ApplyPlanRequest
+	6,   // 93: diag.v1.WorkspaceService.ApplyWorkspaceBatch:input_type -> diag.v1.ApplyWorkspaceBatchRequest
 	0,   // 94: diag.v1.WorkspaceService.ExportWorkspace:input_type -> diag.v1.ExportOrganizationRequest
 	0,   // 95: diag.v1.WorkspaceService.StreamExportWorkspace:input_type -> diag.v1.ExportOrganizationRequest
 	26,  // 96: diag.v1.WorkspaceService.DeleteView:input_type -> diag.v1.DeleteViewRequest
@@ -8516,7 +8516,7 @@ var file_diag_v1_workspace_service_proto_depIdxs = []int32{
 	100, // 129: diag.v1.WorkspaceService.UpdateViewLayer:input_type -> diag.v1.UpdateViewLayerRequest
 	102, // 130: diag.v1.WorkspaceService.DeleteViewLayer:input_type -> diag.v1.DeleteViewLayerRequest
 	16,  // 131: diag.v1.WorkspaceService.CreateView:output_type -> diag.v1.CreateViewResponse
-	14,  // 132: diag.v1.WorkspaceService.ApplyWorkspacePlan:output_type -> diag.v1.ApplyPlanResponse
+	14,  // 132: diag.v1.WorkspaceService.ApplyWorkspaceBatch:output_type -> diag.v1.ApplyWorkspaceBatchResponse
 	1,   // 133: diag.v1.WorkspaceService.ExportWorkspace:output_type -> diag.v1.ExportOrganizationResponse
 	2,   // 134: diag.v1.WorkspaceService.StreamExportWorkspace:output_type -> diag.v1.ExportChunk
 	27,  // 135: diag.v1.WorkspaceService.DeleteView:output_type -> diag.v1.DeleteViewResponse

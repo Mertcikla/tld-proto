@@ -36,9 +36,9 @@ const (
 	// WorkspaceServiceCreateViewProcedure is the fully-qualified name of the WorkspaceService's
 	// CreateView RPC.
 	WorkspaceServiceCreateViewProcedure = "/diag.v1.WorkspaceService/CreateView"
-	// WorkspaceServiceApplyWorkspacePlanProcedure is the fully-qualified name of the WorkspaceService's
-	// ApplyWorkspacePlan RPC.
-	WorkspaceServiceApplyWorkspacePlanProcedure = "/diag.v1.WorkspaceService/ApplyWorkspacePlan"
+	// WorkspaceServiceApplyWorkspaceBatchProcedure is the fully-qualified name of the
+	// WorkspaceService's ApplyWorkspaceBatch RPC.
+	WorkspaceServiceApplyWorkspaceBatchProcedure = "/diag.v1.WorkspaceService/ApplyWorkspaceBatch"
 	// WorkspaceServiceExportWorkspaceProcedure is the fully-qualified name of the WorkspaceService's
 	// ExportWorkspace RPC.
 	WorkspaceServiceExportWorkspaceProcedure = "/diag.v1.WorkspaceService/ExportWorkspace"
@@ -157,13 +157,13 @@ type WorkspaceServiceClient interface {
 	// CreateView creates a new view in the given organisation.
 	// Required: org_id, name.
 	CreateView(context.Context, *connect.Request[v1.CreateViewRequest]) (*connect.Response[v1.CreateViewResponse], error)
-	// ApplyPlan atomically upserts elements, canonical views, placements, and
+	// ApplyBatch atomically upserts elements, canonical views, placements, and
 	// connectors in a single PostgreSQL transaction. If any step fails the
 	// entire transaction is rolled back. Refs are local names used to wire up
-	// cross-references within the plan; they are resolved to IDs by the server
+	// cross-references within the batch; they are resolved to IDs by the server
 	// and never stored.
 	// Required: org_id, at least one resource in elements/connectors.
-	ApplyWorkspacePlan(context.Context, *connect.Request[v1.ApplyPlanRequest]) (*connect.Response[v1.ApplyPlanResponse], error)
+	ApplyWorkspaceBatch(context.Context, *connect.Request[v1.ApplyWorkspaceBatchRequest]) (*connect.Response[v1.ApplyWorkspaceBatchResponse], error)
 	// ExportWorkspace fetches all view, element, connector, and navigation data
 	// for an organization to allow CLI-based backups and migrations.
 	// Required: org_id.
@@ -243,10 +243,10 @@ func NewWorkspaceServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			connect.WithSchema(workspaceServiceMethods.ByName("CreateView")),
 			connect.WithClientOptions(opts...),
 		),
-		applyWorkspacePlan: connect.NewClient[v1.ApplyPlanRequest, v1.ApplyPlanResponse](
+		applyWorkspaceBatch: connect.NewClient[v1.ApplyWorkspaceBatchRequest, v1.ApplyWorkspaceBatchResponse](
 			httpClient,
-			baseURL+WorkspaceServiceApplyWorkspacePlanProcedure,
-			connect.WithSchema(workspaceServiceMethods.ByName("ApplyWorkspacePlan")),
+			baseURL+WorkspaceServiceApplyWorkspaceBatchProcedure,
+			connect.WithSchema(workspaceServiceMethods.ByName("ApplyWorkspaceBatch")),
 			connect.WithClientOptions(opts...),
 		),
 		exportWorkspace: connect.NewClient[v1.ExportOrganizationRequest, v1.ExportOrganizationResponse](
@@ -477,7 +477,7 @@ func NewWorkspaceServiceClient(httpClient connect.HTTPClient, baseURL string, op
 // workspaceServiceClient implements WorkspaceServiceClient.
 type workspaceServiceClient struct {
 	createView                     *connect.Client[v1.CreateViewRequest, v1.CreateViewResponse]
-	applyWorkspacePlan             *connect.Client[v1.ApplyPlanRequest, v1.ApplyPlanResponse]
+	applyWorkspaceBatch            *connect.Client[v1.ApplyWorkspaceBatchRequest, v1.ApplyWorkspaceBatchResponse]
 	exportWorkspace                *connect.Client[v1.ExportOrganizationRequest, v1.ExportOrganizationResponse]
 	streamExportWorkspace          *connect.Client[v1.ExportOrganizationRequest, v1.ExportChunk]
 	deleteView                     *connect.Client[v1.DeleteViewRequest, v1.DeleteViewResponse]
@@ -522,9 +522,9 @@ func (c *workspaceServiceClient) CreateView(ctx context.Context, req *connect.Re
 	return c.createView.CallUnary(ctx, req)
 }
 
-// ApplyWorkspacePlan calls diag.v1.WorkspaceService.ApplyWorkspacePlan.
-func (c *workspaceServiceClient) ApplyWorkspacePlan(ctx context.Context, req *connect.Request[v1.ApplyPlanRequest]) (*connect.Response[v1.ApplyPlanResponse], error) {
-	return c.applyWorkspacePlan.CallUnary(ctx, req)
+// ApplyWorkspaceBatch calls diag.v1.WorkspaceService.ApplyWorkspaceBatch.
+func (c *workspaceServiceClient) ApplyWorkspaceBatch(ctx context.Context, req *connect.Request[v1.ApplyWorkspaceBatchRequest]) (*connect.Response[v1.ApplyWorkspaceBatchResponse], error) {
+	return c.applyWorkspaceBatch.CallUnary(ctx, req)
 }
 
 // ExportWorkspace calls diag.v1.WorkspaceService.ExportWorkspace.
@@ -717,13 +717,13 @@ type WorkspaceServiceHandler interface {
 	// CreateView creates a new view in the given organisation.
 	// Required: org_id, name.
 	CreateView(context.Context, *connect.Request[v1.CreateViewRequest]) (*connect.Response[v1.CreateViewResponse], error)
-	// ApplyPlan atomically upserts elements, canonical views, placements, and
+	// ApplyBatch atomically upserts elements, canonical views, placements, and
 	// connectors in a single PostgreSQL transaction. If any step fails the
 	// entire transaction is rolled back. Refs are local names used to wire up
-	// cross-references within the plan; they are resolved to IDs by the server
+	// cross-references within the batch; they are resolved to IDs by the server
 	// and never stored.
 	// Required: org_id, at least one resource in elements/connectors.
-	ApplyWorkspacePlan(context.Context, *connect.Request[v1.ApplyPlanRequest]) (*connect.Response[v1.ApplyPlanResponse], error)
+	ApplyWorkspaceBatch(context.Context, *connect.Request[v1.ApplyWorkspaceBatchRequest]) (*connect.Response[v1.ApplyWorkspaceBatchResponse], error)
 	// ExportWorkspace fetches all view, element, connector, and navigation data
 	// for an organization to allow CLI-based backups and migrations.
 	// Required: org_id.
@@ -799,10 +799,10 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 		connect.WithSchema(workspaceServiceMethods.ByName("CreateView")),
 		connect.WithHandlerOptions(opts...),
 	)
-	workspaceServiceApplyWorkspacePlanHandler := connect.NewUnaryHandler(
-		WorkspaceServiceApplyWorkspacePlanProcedure,
-		svc.ApplyWorkspacePlan,
-		connect.WithSchema(workspaceServiceMethods.ByName("ApplyWorkspacePlan")),
+	workspaceServiceApplyWorkspaceBatchHandler := connect.NewUnaryHandler(
+		WorkspaceServiceApplyWorkspaceBatchProcedure,
+		svc.ApplyWorkspaceBatch,
+		connect.WithSchema(workspaceServiceMethods.ByName("ApplyWorkspaceBatch")),
 		connect.WithHandlerOptions(opts...),
 	)
 	workspaceServiceExportWorkspaceHandler := connect.NewUnaryHandler(
@@ -1031,8 +1031,8 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 		switch r.URL.Path {
 		case WorkspaceServiceCreateViewProcedure:
 			workspaceServiceCreateViewHandler.ServeHTTP(w, r)
-		case WorkspaceServiceApplyWorkspacePlanProcedure:
-			workspaceServiceApplyWorkspacePlanHandler.ServeHTTP(w, r)
+		case WorkspaceServiceApplyWorkspaceBatchProcedure:
+			workspaceServiceApplyWorkspaceBatchHandler.ServeHTTP(w, r)
 		case WorkspaceServiceExportWorkspaceProcedure:
 			workspaceServiceExportWorkspaceHandler.ServeHTTP(w, r)
 		case WorkspaceServiceStreamExportWorkspaceProcedure:
@@ -1120,8 +1120,8 @@ func (UnimplementedWorkspaceServiceHandler) CreateView(context.Context, *connect
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.WorkspaceService.CreateView is not implemented"))
 }
 
-func (UnimplementedWorkspaceServiceHandler) ApplyWorkspacePlan(context.Context, *connect.Request[v1.ApplyPlanRequest]) (*connect.Response[v1.ApplyPlanResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.WorkspaceService.ApplyWorkspacePlan is not implemented"))
+func (UnimplementedWorkspaceServiceHandler) ApplyWorkspaceBatch(context.Context, *connect.Request[v1.ApplyWorkspaceBatchRequest]) (*connect.Response[v1.ApplyWorkspaceBatchResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("diag.v1.WorkspaceService.ApplyWorkspaceBatch is not implemented"))
 }
 
 func (UnimplementedWorkspaceServiceHandler) ExportWorkspace(context.Context, *connect.Request[v1.ExportOrganizationRequest]) (*connect.Response[v1.ExportOrganizationResponse], error) {

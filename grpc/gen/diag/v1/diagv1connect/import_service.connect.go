@@ -43,9 +43,9 @@ const (
 
 // ImportServiceClient is a client for the diag.v1.ImportService service.
 type ImportServiceClient interface {
-	// ImportResources creates a view and its content from the provided plan.
+	// ImportResources creates a view and its content from the provided batch.
 	ImportResources(context.Context, *connect.Request[v1.ImportResourcesRequest]) (*connect.Response[v1.ImportResourcesResponse], error)
-	// ParseStructurizr parses a Structurizr DSL workspace and returns a plan.
+	// ParseStructurizr parses a Structurizr DSL workspace and returns a batch.
 	ParseStructurizr(context.Context, *connect.Request[v1.ParseStructurizrRequest]) (*connect.Response[v1.ParseStructurizrResponse], error)
 }
 
@@ -93,9 +93,9 @@ func (c *importServiceClient) ParseStructurizr(ctx context.Context, req *connect
 
 // ImportServiceHandler is an implementation of the diag.v1.ImportService service.
 type ImportServiceHandler interface {
-	// ImportResources creates a view and its content from the provided plan.
+	// ImportResources creates a view and its content from the provided batch.
 	ImportResources(context.Context, *connect.Request[v1.ImportResourcesRequest]) (*connect.Response[v1.ImportResourcesResponse], error)
-	// ParseStructurizr parses a Structurizr DSL workspace and returns a plan.
+	// ParseStructurizr parses a Structurizr DSL workspace and returns a batch.
 	ParseStructurizr(context.Context, *connect.Request[v1.ParseStructurizrRequest]) (*connect.Response[v1.ParseStructurizrResponse], error)
 }
 

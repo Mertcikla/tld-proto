@@ -8,16 +8,16 @@ option go_package = "buf.build/gen/go/tldiagramcom/diagram/protocolbuffers/go/di
 
 // ImportService handles importing external architecture descriptions into the unified workspace model.
 service ImportService {
-  // ImportResources creates a view and its content from the provided plan.
+  // ImportResources creates a view and its content from the provided batch.
   rpc ImportResources(ImportResourcesRequest) returns (ImportResourcesResponse);
-  // ParseStructurizr parses a Structurizr DSL workspace and returns a plan.
+  // ParseStructurizr parses a Structurizr DSL workspace and returns a batch.
   rpc ParseStructurizr(ParseStructurizrRequest) returns (ParseStructurizrResponse);
 }
 
 message ImportResourcesRequest {
   string org_id = 1;
-  repeated PlanElement elements = 2;
-  repeated PlanConnector connectors = 3;
+  repeated BatchElement elements = 2;
+  repeated BatchConnector connectors = 3;
 }
 
 message ImportResourcesResponse {
@@ -31,7 +31,7 @@ message ParseStructurizrRequest {
 }
 
 message ParseStructurizrResponse {
-  repeated PlanElement elements = 1;
-  repeated PlanConnector connectors = 2;
+  repeated BatchElement elements = 1;
+  repeated BatchConnector connectors = 2;
   repeated string warnings = 3;
 }

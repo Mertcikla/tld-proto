@@ -39,8 +39,8 @@ message ParseMermaidRequest {
 }
 
 message ParseMermaidResponse {
-  repeated PlanElement elements = 1;
-  repeated PlanConnector connectors = 2;
+  repeated BatchElement elements = 1;
+  repeated BatchConnector connectors = 2;
   repeated string warnings = 3;
   MermaidDirection direction = 4;
   string source = 5;

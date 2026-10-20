@@ -24,8 +24,8 @@ const (
 type ImportResourcesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	OrgId         string                 `protobuf:"bytes,1,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
-	Elements      []*PlanElement         `protobuf:"bytes,2,rep,name=elements,proto3" json:"elements,omitempty"`
-	Connectors    []*PlanConnector       `protobuf:"bytes,3,rep,name=connectors,proto3" json:"connectors,omitempty"`
+	Elements      []*BatchElement        `protobuf:"bytes,2,rep,name=elements,proto3" json:"elements,omitempty"`
+	Connectors    []*BatchConnector      `protobuf:"bytes,3,rep,name=connectors,proto3" json:"connectors,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -67,14 +67,14 @@ func (x *ImportResourcesRequest) GetOrgId() string {
 	return ""
 }
 
-func (x *ImportResourcesRequest) GetElements() []*PlanElement {
+func (x *ImportResourcesRequest) GetElements() []*BatchElement {
 	if x != nil {
 		return x.Elements
 	}
 	return nil
 }
 
-func (x *ImportResourcesRequest) GetConnectors() []*PlanConnector {
+func (x *ImportResourcesRequest) GetConnectors() []*BatchConnector {
 	if x != nil {
 		return x.Connectors
 	}
@@ -187,8 +187,8 @@ func (x *ParseStructurizrRequest) GetCode() string {
 
 type ParseStructurizrResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Elements      []*PlanElement         `protobuf:"bytes,1,rep,name=elements,proto3" json:"elements,omitempty"`
-	Connectors    []*PlanConnector       `protobuf:"bytes,2,rep,name=connectors,proto3" json:"connectors,omitempty"`
+	Elements      []*BatchElement        `protobuf:"bytes,1,rep,name=elements,proto3" json:"elements,omitempty"`
+	Connectors    []*BatchConnector      `protobuf:"bytes,2,rep,name=connectors,proto3" json:"connectors,omitempty"`
 	Warnings      []string               `protobuf:"bytes,3,rep,name=warnings,proto3" json:"warnings,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -224,14 +224,14 @@ func (*ParseStructurizrResponse) Descriptor() ([]byte, []int) {
 	return file_diag_v1_import_service_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *ParseStructurizrResponse) GetElements() []*PlanElement {
+func (x *ParseStructurizrResponse) GetElements() []*BatchElement {
 	if x != nil {
 		return x.Elements
 	}
 	return nil
 }
 
-func (x *ParseStructurizrResponse) GetConnectors() []*PlanConnector {
+func (x *ParseStructurizrResponse) GetConnectors() []*BatchConnector {
 	if x != nil {
 		return x.Connectors
 	}
@@ -249,23 +249,23 @@ var File_diag_v1_import_service_proto protoreflect.FileDescriptor
 
 const file_diag_v1_import_service_proto_rawDesc = "" +
 	"\n" +
-	"\x1cdiag/v1/import_service.proto\x12\adiag.v1\x1a\x1fdiag/v1/workspace_service.proto\"\x99\x01\n" +
+	"\x1cdiag/v1/import_service.proto\x12\adiag.v1\x1a\x1fdiag/v1/workspace_service.proto\"\x9b\x01\n" +
 	"\x16ImportResourcesRequest\x12\x15\n" +
-	"\x06org_id\x18\x01 \x01(\tR\x05orgId\x120\n" +
-	"\belements\x18\x02 \x03(\v2\x14.diag.v1.PlanElementR\belements\x126\n" +
+	"\x06org_id\x18\x01 \x01(\tR\x05orgId\x121\n" +
+	"\belements\x18\x02 \x03(\v2\x15.diag.v1.BatchElementR\belements\x127\n" +
 	"\n" +
-	"connectors\x18\x03 \x03(\v2\x16.diag.v1.PlanConnectorR\n" +
+	"connectors\x18\x03 \x03(\v2\x17.diag.v1.BatchConnectorR\n" +
 	"connectors\"g\n" +
 	"\x17ImportResourcesResponse\x12\x17\n" +
 	"\aview_id\x18\x01 \x01(\x05R\x06viewId\x12\x19\n" +
 	"\bview_url\x18\x02 \x01(\tR\aviewUrl\x12\x18\n" +
 	"\amessage\x18\x03 \x01(\tR\amessage\"-\n" +
 	"\x17ParseStructurizrRequest\x12\x12\n" +
-	"\x04code\x18\x01 \x01(\tR\x04code\"\xa0\x01\n" +
-	"\x18ParseStructurizrResponse\x120\n" +
-	"\belements\x18\x01 \x03(\v2\x14.diag.v1.PlanElementR\belements\x126\n" +
+	"\x04code\x18\x01 \x01(\tR\x04code\"\xa2\x01\n" +
+	"\x18ParseStructurizrResponse\x121\n" +
+	"\belements\x18\x01 \x03(\v2\x15.diag.v1.BatchElementR\belements\x127\n" +
 	"\n" +
-	"connectors\x18\x02 \x03(\v2\x16.diag.v1.PlanConnectorR\n" +
+	"connectors\x18\x02 \x03(\v2\x17.diag.v1.BatchConnectorR\n" +
 	"connectors\x12\x1a\n" +
 	"\bwarnings\x18\x03 \x03(\tR\bwarnings2\xbe\x01\n" +
 	"\rImportService\x12T\n" +
@@ -290,14 +290,14 @@ var file_diag_v1_import_service_proto_goTypes = []any{
 	(*ImportResourcesResponse)(nil),  // 1: diag.v1.ImportResourcesResponse
 	(*ParseStructurizrRequest)(nil),  // 2: diag.v1.ParseStructurizrRequest
 	(*ParseStructurizrResponse)(nil), // 3: diag.v1.ParseStructurizrResponse
-	(*PlanElement)(nil),              // 4: diag.v1.PlanElement
-	(*PlanConnector)(nil),            // 5: diag.v1.PlanConnector
+	(*BatchElement)(nil),             // 4: diag.v1.BatchElement
+	(*BatchConnector)(nil),           // 5: diag.v1.BatchConnector
 }
 var file_diag_v1_import_service_proto_depIdxs = []int32{
-	4, // 0: diag.v1.ImportResourcesRequest.elements:type_name -> diag.v1.PlanElement
-	5, // 1: diag.v1.ImportResourcesRequest.connectors:type_name -> diag.v1.PlanConnector
-	4, // 2: diag.v1.ParseStructurizrResponse.elements:type_name -> diag.v1.PlanElement
-	5, // 3: diag.v1.ParseStructurizrResponse.connectors:type_name -> diag.v1.PlanConnector
+	4, // 0: diag.v1.ImportResourcesRequest.elements:type_name -> diag.v1.BatchElement
+	5, // 1: diag.v1.ImportResourcesRequest.connectors:type_name -> diag.v1.BatchConnector
+	4, // 2: diag.v1.ParseStructurizrResponse.elements:type_name -> diag.v1.BatchElement
+	5, // 3: diag.v1.ParseStructurizrResponse.connectors:type_name -> diag.v1.BatchConnector
 	0, // 4: diag.v1.ImportService.ImportResources:input_type -> diag.v1.ImportResourcesRequest
 	2, // 5: diag.v1.ImportService.ParseStructurizr:input_type -> diag.v1.ParseStructurizrRequest
 	1, // 6: diag.v1.ImportService.ImportResources:output_type -> diag.v1.ImportResourcesResponse

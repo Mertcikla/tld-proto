@@ -183,8 +183,8 @@ func (x *ParseMermaidRequest) GetSource() string {
 
 type ParseMermaidResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Elements      []*PlanElement         `protobuf:"bytes,1,rep,name=elements,proto3" json:"elements,omitempty"`
-	Connectors    []*PlanConnector       `protobuf:"bytes,2,rep,name=connectors,proto3" json:"connectors,omitempty"`
+	Elements      []*BatchElement        `protobuf:"bytes,1,rep,name=elements,proto3" json:"elements,omitempty"`
+	Connectors    []*BatchConnector      `protobuf:"bytes,2,rep,name=connectors,proto3" json:"connectors,omitempty"`
 	Warnings      []string               `protobuf:"bytes,3,rep,name=warnings,proto3" json:"warnings,omitempty"`
 	Direction     MermaidDirection       `protobuf:"varint,4,opt,name=direction,proto3,enum=diag.v1.MermaidDirection" json:"direction,omitempty"`
 	Source        string                 `protobuf:"bytes,5,opt,name=source,proto3" json:"source,omitempty"`
@@ -222,14 +222,14 @@ func (*ParseMermaidResponse) Descriptor() ([]byte, []int) {
 	return file_diag_v1_mermaid_service_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ParseMermaidResponse) GetElements() []*PlanElement {
+func (x *ParseMermaidResponse) GetElements() []*BatchElement {
 	if x != nil {
 		return x.Elements
 	}
 	return nil
 }
 
-func (x *ParseMermaidResponse) GetConnectors() []*PlanConnector {
+func (x *ParseMermaidResponse) GetConnectors() []*BatchConnector {
 	if x != nil {
 		return x.Connectors
 	}
@@ -1039,11 +1039,11 @@ const file_diag_v1_mermaid_service_proto_rawDesc = "" +
 	"\n" +
 	"\x1ddiag/v1/mermaid_service.proto\x12\adiag.v1\x1a\x1fdiag/v1/workspace_service.proto\"-\n" +
 	"\x13ParseMermaidRequest\x12\x16\n" +
-	"\x06source\x18\x01 \x01(\tR\x06source\"\xed\x01\n" +
-	"\x14ParseMermaidResponse\x120\n" +
-	"\belements\x18\x01 \x03(\v2\x14.diag.v1.PlanElementR\belements\x126\n" +
+	"\x06source\x18\x01 \x01(\tR\x06source\"\xef\x01\n" +
+	"\x14ParseMermaidResponse\x121\n" +
+	"\belements\x18\x01 \x03(\v2\x15.diag.v1.BatchElementR\belements\x127\n" +
 	"\n" +
-	"connectors\x18\x02 \x03(\v2\x16.diag.v1.PlanConnectorR\n" +
+	"connectors\x18\x02 \x03(\v2\x17.diag.v1.BatchConnectorR\n" +
 	"connectors\x12\x1a\n" +
 	"\bwarnings\x18\x03 \x03(\tR\bwarnings\x127\n" +
 	"\tdirection\x18\x04 \x01(\x0e2\x19.diag.v1.MermaidDirectionR\tdirection\x12\x16\n" +
@@ -1170,13 +1170,13 @@ var file_diag_v1_mermaid_service_proto_goTypes = []any{
 	(*InspectMermaidMarkdownResponse)(nil),     // 11: diag.v1.InspectMermaidMarkdownResponse
 	(*UpsertMermaidMarkdownBlockRequest)(nil),  // 12: diag.v1.UpsertMermaidMarkdownBlockRequest
 	(*UpsertMermaidMarkdownBlockResponse)(nil), // 13: diag.v1.UpsertMermaidMarkdownBlockResponse
-	(*PlanElement)(nil),                        // 14: diag.v1.PlanElement
-	(*PlanConnector)(nil),                      // 15: diag.v1.PlanConnector
+	(*BatchElement)(nil),                       // 14: diag.v1.BatchElement
+	(*BatchConnector)(nil),                     // 15: diag.v1.BatchConnector
 	(*ViewContent)(nil),                        // 16: diag.v1.ViewContent
 }
 var file_diag_v1_mermaid_service_proto_depIdxs = []int32{
-	14, // 0: diag.v1.ParseMermaidResponse.elements:type_name -> diag.v1.PlanElement
-	15, // 1: diag.v1.ParseMermaidResponse.connectors:type_name -> diag.v1.PlanConnector
+	14, // 0: diag.v1.ParseMermaidResponse.elements:type_name -> diag.v1.BatchElement
+	15, // 1: diag.v1.ParseMermaidResponse.connectors:type_name -> diag.v1.BatchConnector
 	0,  // 2: diag.v1.ParseMermaidResponse.direction:type_name -> diag.v1.MermaidDirection
 	5,  // 3: diag.v1.ImportMermaidIntoViewResponse.summary:type_name -> diag.v1.MermaidImportSummary
 	16, // 4: diag.v1.ImportMermaidIntoViewResponse.content:type_name -> diag.v1.ViewContent

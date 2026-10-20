@@ -13,7 +13,7 @@ lint:
 
 ## Check for breaking changes against the last BSR push.
 breaking:
-	buf breaking --against 'https://buf.build/tldiagramcom/diagram'
+	buf breaking --against 'buf.build/tldiagramcom/diagram'
 
 ## Push to BSR. Always run `generate` first so the committed gen/ matches.
 push: generate
