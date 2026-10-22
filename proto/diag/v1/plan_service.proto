@@ -1,0 +1,117 @@
+syntax = "proto3";
+package diag.v1;
+import "diag/v1/workspace_service.proto";
+import "google/protobuf/field_mask.proto";
+option go_package = "buf.build/gen/go/tldiagramcom/diagram/protocolbuffers/go/diag/v1;diagv1";
+
+// PlanService records plan scope and completed workspace edits. AppendOperations
+// applies workspace edits using the normal mutation semantics and records them.
+service PlanService {
+  rpc LockImplementation(LockImplementationRequest) returns (ImplementationResponse);
+  rpc GetImplementation(GetImplementationRequest) returns (ImplementationResponse);
+  rpc ReviewImplementation(ReviewImplementationRequest) returns (ImplementationResponse);
+  rpc CreatePlan(CreatePlanRequest) returns (PlanResponse);
+  rpc ListPlans(ListPlansRequest) returns (ListPlansResponse);
+  rpc GetPlan(GetPlanRequest) returns (PlanResponse);
+  rpc UpdatePlan(UpdatePlanRequest) returns (PlanResponse);
+  rpc AppendOperations(AppendPlanOperationsRequest) returns (PlanResponse);
+  rpc ListOperations(GetPlanRequest) returns (ListPlanOperationsResponse);
+  rpc GetProjection(PlanProjectionRequest) returns (PlanProjectionResponse);
+  rpc Preview(PlanProjectionRequest) returns (PlanProjectionResponse);
+  rpc GetChecklist(GetPlanRequest) returns (PlanChecklistResponse);
+  rpc GetNote(PlanNoteRequest) returns (PlanNoteResponse);
+  rpc GetPrompt(GetPlanRequest) returns (PlanPromptResponse);
+}
+message Plan {
+  string id = 1;
+  string repository_id = 2;
+  string name = 3;
+  string objective = 4;
+  string status = 5;
+  uint32 revision = 6;
+  uint32 ready_revision = 7;
+  string created_at = 8;
+  string updated_at = 9;
+}
+message CreatePlanRequest { string repository_id = 1; string name = 2; string objective = 3; bool resume = 4; }
+message ListPlansRequest { string repository_id = 1; bool include_archived = 2; }
+message ListPlansResponse { repeated Plan plans = 1; }
+message GetPlanRequest { string plan_id = 1; optional uint32 revision = 2; }
+message UpdatePlanRequest { string plan_id = 1; uint32 expected_revision = 2; optional string name = 3; optional string objective = 4; optional string status = 5; }
+message PlanResponse { Plan plan = 1; bool resumed = 2; }
+// Resources use stable kind:id keys assigned by the live workspace.
+message PlanResource {
+  string key = 1;
+  oneof value {
+    Element element = 2;
+    View view = 3;
+    Connector connector = 4;
+    ElementPlacement placement = 5;
+    ViewLayer layer = 6;
+  }
+}
+message PlanResourceKey { string key = 1; }
+message PlanPatch { PlanResource resource = 1; google.protobuf.FieldMask fields = 2; }
+message PlanMember { string resource_key = 1; string role = 2; bool explicit = 3; }
+message PlanChecklistItem { string id = 1; string text = 2; string verification_kind = 3; repeated string resource_keys = 4; }
+message PlanNote { string view_key = 1; string content = 2; string original_path = 3; string original_version = 4; }
+message PlanOperation {
+  string id = 1;
+  uint32 revision = 2;
+  uint32 index = 3;
+  string gesture_id = 4;
+  string author_kind = 5;
+  uint32 schema_version = 6;
+  oneof action {
+    PlanResource create = 10;
+    PlanPatch update = 11;
+    PlanResourceKey remove = 12;
+    PlanMember include = 13;
+    PlanResourceKey exclude = 14;
+    PlanChecklistItem checklist = 15;
+    PlanResourceKey remove_checklist = 16;
+    PlanNote note = 17;
+  }
+  repeated PlanPrecondition preconditions = 20;
+}
+message PlanPrecondition { string resource_key = 1; bool exists = 2; string hash = 3; PlanResource before = 4; }
+message AppendPlanOperationsRequest { string plan_id = 1; uint32 expected_revision = 2; string request_id = 3; repeated PlanOperation operations = 4; }
+message ListPlanOperationsResponse { repeated PlanOperation operations = 1; uint32 revision = 2; }
+message PlanDecision { string operation_id = 1; string observed_hash = 2; string action = 3; }
+message PlanProjectionRequest { string plan_id = 1; optional uint32 revision = 2; uint32 radius = 3; string cursor = 4; uint32 page_size = 5; repeated PlanDecision decisions = 6; bool full_workspace = 7; }
+message PlanProjectedResource { PlanResource resource = 1; PlanResource before = 2; string change = 3; string role = 4; bool explicit = 5; uint32 distance = 6; string inclusion_reason = 7; repeated string tags = 8; }
+message PlanOperationResult { string operation_id = 1; string status = 2; string reason = 3; string observed_hash = 4; }
+message PlanProjectionResponse { Plan plan = 1; uint32 revision = 2; repeated PlanProjectedResource resources = 3; repeated PlanOperationResult operations = 4; string next_cursor = 5; bool complete = 6; string workspace_hash = 7; }
+message PlanChecklistResponse { repeated PlanChecklistItem items = 1; uint32 revision = 2; }
+message PlanNoteRequest { string plan_id = 1; string view_key = 2; optional uint32 revision = 3; }
+message PlanNoteResponse { PlanNote note = 1; bool staged = 2; string local_path = 3; uint32 revision = 4; }
+message PlanPromptResponse { string text = 1; uint32 revision = 2; }
+
+// One workspace lock protects shared primitives, including unassigned new objects.
+message LockImplementationRequest { string plan_id = 1; uint32 expected_revision = 2; string git_revision = 3; }
+message GetImplementationRequest { string repository_id = 1; string git_revision = 2; }
+message ReviewImplementationRequest {
+  string repository_id = 1;
+  uint32 expected_revision = 2;
+  // commit, ignore (one warned operation), skip (one failed operation), discard, unlock.
+  string action = 3;
+  string operation_id = 4;
+  string observed_hash = 5;
+}
+message AgentWorkspaceEdit {
+  string id = 1;
+  string method = 2;
+  string status = 3;
+  string reason = 4;
+  string observed_hash = 5;
+  repeated PlanOperation operations = 6;
+}
+message ImplementationResponse {
+  string plan_id = 1;
+  string repository_id = 2;
+  uint32 revision = 3;
+  bool locked = 4;
+  string git_revision = 5;
+  string pending_commit = 6;
+  repeated AgentWorkspaceEdit edits = 7;
+}
