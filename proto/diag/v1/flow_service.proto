@@ -30,6 +30,22 @@ message FlowStep {
   repeated int32 element_ids = 9;
   repeated FlowConnectorHighlight connectors = 10;
   map<string, string> metadata = 11;
+  // Optional presentation control. At most one of these three may be set.
+  bool overview = 12;
+  FlowBranches branches = 13;
+  string go_to_flow_id = 14;
+}
+
+message FlowBranches {
+  // alternate (OR) or parallel (AND). Playback follows the selected path.
+  string mode = 1;
+  repeated FlowBranch paths = 2;
+}
+
+message FlowBranch {
+  string id = 1;
+  string name = 2;
+  repeated FlowStep steps = 3;
 }
 
 message FlowConnectorHighlight {
