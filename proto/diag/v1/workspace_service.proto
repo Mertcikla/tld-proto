@@ -199,6 +199,10 @@ message BatchConnector {
   optional int32 id = 13;
   optional google.protobuf.Timestamp updated_at = 14;
   optional int32 visibility_delta = 15;
+  // Replaces connector tags when non-empty. Omitted tags preserve existing tags.
+  repeated string tags = 16;
+  // Apply tags even when empty, allowing callers to explicitly clear them.
+  bool replace_tags = 17;
 }
 
 message ApplyWorkspaceBatchRequest {

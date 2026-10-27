@@ -106,13 +106,17 @@ func (x *Flow) GetRevision() int32 {
 }
 
 type FlowStep struct {
-	state         protoimpl.MessageState    `protogen:"open.v1"`
-	Id            string                    `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Title         string                    `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
-	Description   string                    `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
-	ElementIds    []int32                   `protobuf:"varint,9,rep,packed,name=element_ids,json=elementIds,proto3" json:"element_ids,omitempty"`
-	Connectors    []*FlowConnectorHighlight `protobuf:"bytes,10,rep,name=connectors,proto3" json:"connectors,omitempty"`
-	Metadata      map[string]string         `protobuf:"bytes,11,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	state       protoimpl.MessageState    `protogen:"open.v1"`
+	Id          string                    `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Title       string                    `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
+	Description string                    `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
+	ElementIds  []int32                   `protobuf:"varint,9,rep,packed,name=element_ids,json=elementIds,proto3" json:"element_ids,omitempty"`
+	Connectors  []*FlowConnectorHighlight `protobuf:"bytes,10,rep,name=connectors,proto3" json:"connectors,omitempty"`
+	Metadata    map[string]string         `protobuf:"bytes,11,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	// Optional presentation control. At most one of these three may be set.
+	Overview      bool          `protobuf:"varint,12,opt,name=overview,proto3" json:"overview,omitempty"`
+	Branches      *FlowBranches `protobuf:"bytes,13,opt,name=branches,proto3" json:"branches,omitempty"`
+	GoToFlowId    string        `protobuf:"bytes,14,opt,name=go_to_flow_id,json=goToFlowId,proto3" json:"go_to_flow_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -189,6 +193,140 @@ func (x *FlowStep) GetMetadata() map[string]string {
 	return nil
 }
 
+func (x *FlowStep) GetOverview() bool {
+	if x != nil {
+		return x.Overview
+	}
+	return false
+}
+
+func (x *FlowStep) GetBranches() *FlowBranches {
+	if x != nil {
+		return x.Branches
+	}
+	return nil
+}
+
+func (x *FlowStep) GetGoToFlowId() string {
+	if x != nil {
+		return x.GoToFlowId
+	}
+	return ""
+}
+
+type FlowBranches struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// alternate (OR) or parallel (AND). Playback follows the selected path.
+	Mode          string        `protobuf:"bytes,1,opt,name=mode,proto3" json:"mode,omitempty"`
+	Paths         []*FlowBranch `protobuf:"bytes,2,rep,name=paths,proto3" json:"paths,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FlowBranches) Reset() {
+	*x = FlowBranches{}
+	mi := &file_diag_v1_flow_service_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FlowBranches) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FlowBranches) ProtoMessage() {}
+
+func (x *FlowBranches) ProtoReflect() protoreflect.Message {
+	mi := &file_diag_v1_flow_service_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FlowBranches.ProtoReflect.Descriptor instead.
+func (*FlowBranches) Descriptor() ([]byte, []int) {
+	return file_diag_v1_flow_service_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *FlowBranches) GetMode() string {
+	if x != nil {
+		return x.Mode
+	}
+	return ""
+}
+
+func (x *FlowBranches) GetPaths() []*FlowBranch {
+	if x != nil {
+		return x.Paths
+	}
+	return nil
+}
+
+type FlowBranch struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Steps         []*FlowStep            `protobuf:"bytes,3,rep,name=steps,proto3" json:"steps,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FlowBranch) Reset() {
+	*x = FlowBranch{}
+	mi := &file_diag_v1_flow_service_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FlowBranch) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FlowBranch) ProtoMessage() {}
+
+func (x *FlowBranch) ProtoReflect() protoreflect.Message {
+	mi := &file_diag_v1_flow_service_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FlowBranch.ProtoReflect.Descriptor instead.
+func (*FlowBranch) Descriptor() ([]byte, []int) {
+	return file_diag_v1_flow_service_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *FlowBranch) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *FlowBranch) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *FlowBranch) GetSteps() []*FlowStep {
+	if x != nil {
+		return x.Steps
+	}
+	return nil
+}
+
 type FlowConnectorHighlight struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Id    int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -200,7 +338,7 @@ type FlowConnectorHighlight struct {
 
 func (x *FlowConnectorHighlight) Reset() {
 	*x = FlowConnectorHighlight{}
-	mi := &file_diag_v1_flow_service_proto_msgTypes[2]
+	mi := &file_diag_v1_flow_service_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -212,7 +350,7 @@ func (x *FlowConnectorHighlight) String() string {
 func (*FlowConnectorHighlight) ProtoMessage() {}
 
 func (x *FlowConnectorHighlight) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_flow_service_proto_msgTypes[2]
+	mi := &file_diag_v1_flow_service_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -225,7 +363,7 @@ func (x *FlowConnectorHighlight) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FlowConnectorHighlight.ProtoReflect.Descriptor instead.
 func (*FlowConnectorHighlight) Descriptor() ([]byte, []int) {
-	return file_diag_v1_flow_service_proto_rawDescGZIP(), []int{2}
+	return file_diag_v1_flow_service_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *FlowConnectorHighlight) GetId() int32 {
@@ -253,7 +391,7 @@ type ListFlowsRequest struct {
 
 func (x *ListFlowsRequest) Reset() {
 	*x = ListFlowsRequest{}
-	mi := &file_diag_v1_flow_service_proto_msgTypes[3]
+	mi := &file_diag_v1_flow_service_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -265,7 +403,7 @@ func (x *ListFlowsRequest) String() string {
 func (*ListFlowsRequest) ProtoMessage() {}
 
 func (x *ListFlowsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_flow_service_proto_msgTypes[3]
+	mi := &file_diag_v1_flow_service_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -278,7 +416,7 @@ func (x *ListFlowsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFlowsRequest.ProtoReflect.Descriptor instead.
 func (*ListFlowsRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_flow_service_proto_rawDescGZIP(), []int{3}
+	return file_diag_v1_flow_service_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ListFlowsRequest) GetOrgId() string {
@@ -304,7 +442,7 @@ type ListFlowsResponse struct {
 
 func (x *ListFlowsResponse) Reset() {
 	*x = ListFlowsResponse{}
-	mi := &file_diag_v1_flow_service_proto_msgTypes[4]
+	mi := &file_diag_v1_flow_service_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -316,7 +454,7 @@ func (x *ListFlowsResponse) String() string {
 func (*ListFlowsResponse) ProtoMessage() {}
 
 func (x *ListFlowsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_flow_service_proto_msgTypes[4]
+	mi := &file_diag_v1_flow_service_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -329,7 +467,7 @@ func (x *ListFlowsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFlowsResponse.ProtoReflect.Descriptor instead.
 func (*ListFlowsResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_flow_service_proto_rawDescGZIP(), []int{4}
+	return file_diag_v1_flow_service_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ListFlowsResponse) GetFlows() []*Flow {
@@ -351,7 +489,7 @@ type SaveFlowRequest struct {
 
 func (x *SaveFlowRequest) Reset() {
 	*x = SaveFlowRequest{}
-	mi := &file_diag_v1_flow_service_proto_msgTypes[5]
+	mi := &file_diag_v1_flow_service_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -363,7 +501,7 @@ func (x *SaveFlowRequest) String() string {
 func (*SaveFlowRequest) ProtoMessage() {}
 
 func (x *SaveFlowRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_flow_service_proto_msgTypes[5]
+	mi := &file_diag_v1_flow_service_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -376,7 +514,7 @@ func (x *SaveFlowRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SaveFlowRequest.ProtoReflect.Descriptor instead.
 func (*SaveFlowRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_flow_service_proto_rawDescGZIP(), []int{5}
+	return file_diag_v1_flow_service_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *SaveFlowRequest) GetOrgId() string {
@@ -402,7 +540,7 @@ type SaveFlowResponse struct {
 
 func (x *SaveFlowResponse) Reset() {
 	*x = SaveFlowResponse{}
-	mi := &file_diag_v1_flow_service_proto_msgTypes[6]
+	mi := &file_diag_v1_flow_service_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -414,7 +552,7 @@ func (x *SaveFlowResponse) String() string {
 func (*SaveFlowResponse) ProtoMessage() {}
 
 func (x *SaveFlowResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_flow_service_proto_msgTypes[6]
+	mi := &file_diag_v1_flow_service_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -427,7 +565,7 @@ func (x *SaveFlowResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SaveFlowResponse.ProtoReflect.Descriptor instead.
 func (*SaveFlowResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_flow_service_proto_rawDescGZIP(), []int{6}
+	return file_diag_v1_flow_service_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *SaveFlowResponse) GetFlow() *Flow {
@@ -449,7 +587,7 @@ type DeleteFlowRequest struct {
 
 func (x *DeleteFlowRequest) Reset() {
 	*x = DeleteFlowRequest{}
-	mi := &file_diag_v1_flow_service_proto_msgTypes[7]
+	mi := &file_diag_v1_flow_service_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -461,7 +599,7 @@ func (x *DeleteFlowRequest) String() string {
 func (*DeleteFlowRequest) ProtoMessage() {}
 
 func (x *DeleteFlowRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_flow_service_proto_msgTypes[7]
+	mi := &file_diag_v1_flow_service_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -474,7 +612,7 @@ func (x *DeleteFlowRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteFlowRequest.ProtoReflect.Descriptor instead.
 func (*DeleteFlowRequest) Descriptor() ([]byte, []int) {
-	return file_diag_v1_flow_service_proto_rawDescGZIP(), []int{7}
+	return file_diag_v1_flow_service_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *DeleteFlowRequest) GetOrgId() string {
@@ -513,7 +651,7 @@ type DeleteFlowResponse struct {
 
 func (x *DeleteFlowResponse) Reset() {
 	*x = DeleteFlowResponse{}
-	mi := &file_diag_v1_flow_service_proto_msgTypes[8]
+	mi := &file_diag_v1_flow_service_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -525,7 +663,7 @@ func (x *DeleteFlowResponse) String() string {
 func (*DeleteFlowResponse) ProtoMessage() {}
 
 func (x *DeleteFlowResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diag_v1_flow_service_proto_msgTypes[8]
+	mi := &file_diag_v1_flow_service_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -538,7 +676,7 @@ func (x *DeleteFlowResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteFlowResponse.ProtoReflect.Descriptor instead.
 func (*DeleteFlowResponse) Descriptor() ([]byte, []int) {
-	return file_diag_v1_flow_service_proto_rawDescGZIP(), []int{8}
+	return file_diag_v1_flow_service_proto_rawDescGZIP(), []int{10}
 }
 
 var File_diag_v1_flow_service_proto protoreflect.FileDescriptor
@@ -552,7 +690,7 @@ const file_diag_v1_flow_service_proto_rawDesc = "" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x04 \x01(\tR\vdescription\x12'\n" +
 	"\x05steps\x18\x05 \x03(\v2\x11.diag.v1.FlowStepR\x05steps\x12\x1a\n" +
-	"\brevision\x18\x06 \x01(\x05R\brevision\"\xfc\x02\n" +
+	"\brevision\x18\x06 \x01(\x05R\brevision\"\xee\x03\n" +
 	"\bFlowStep\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05title\x18\x03 \x01(\tR\x05title\x12 \n" +
@@ -563,11 +701,23 @@ const file_diag_v1_flow_service_proto_rawDesc = "" +
 	"connectors\x18\n" +
 	" \x03(\v2\x1f.diag.v1.FlowConnectorHighlightR\n" +
 	"connectors\x12;\n" +
-	"\bmetadata\x18\v \x03(\v2\x1f.diag.v1.FlowStep.MetadataEntryR\bmetadata\x1a;\n" +
+	"\bmetadata\x18\v \x03(\v2\x1f.diag.v1.FlowStep.MetadataEntryR\bmetadata\x12\x1a\n" +
+	"\boverview\x18\f \x01(\bR\boverview\x121\n" +
+	"\bbranches\x18\r \x01(\v2\x15.diag.v1.FlowBranchesR\bbranches\x12!\n" +
+	"\rgo_to_flow_id\x18\x0e \x01(\tR\n" +
+	"goToFlowId\x1a;\n" +
 	"\rMetadataEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01J\x04\b\x02\x10\x03J\x04\b\x05\x10\x06J\x04\b\x06\x10\aJ\x04\b\a\x10\bJ\x04\b\b\x10\tR\x04kindR\fconnector_idR\n" +
-	"element_idR\areverseR\x05paths\"B\n" +
+	"element_idR\areverseR\x05paths\"M\n" +
+	"\fFlowBranches\x12\x12\n" +
+	"\x04mode\x18\x01 \x01(\tR\x04mode\x12)\n" +
+	"\x05paths\x18\x02 \x03(\v2\x13.diag.v1.FlowBranchR\x05paths\"Y\n" +
+	"\n" +
+	"FlowBranch\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12'\n" +
+	"\x05steps\x18\x03 \x03(\v2\x11.diag.v1.FlowStepR\x05steps\"B\n" +
 	"\x16FlowConnectorHighlight\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x18\n" +
 	"\areverse\x18\x02 \x01(\bR\areverse\"B\n" +
@@ -605,37 +755,42 @@ func file_diag_v1_flow_service_proto_rawDescGZIP() []byte {
 	return file_diag_v1_flow_service_proto_rawDescData
 }
 
-var file_diag_v1_flow_service_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_diag_v1_flow_service_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_diag_v1_flow_service_proto_goTypes = []any{
 	(*Flow)(nil),                   // 0: diag.v1.Flow
 	(*FlowStep)(nil),               // 1: diag.v1.FlowStep
-	(*FlowConnectorHighlight)(nil), // 2: diag.v1.FlowConnectorHighlight
-	(*ListFlowsRequest)(nil),       // 3: diag.v1.ListFlowsRequest
-	(*ListFlowsResponse)(nil),      // 4: diag.v1.ListFlowsResponse
-	(*SaveFlowRequest)(nil),        // 5: diag.v1.SaveFlowRequest
-	(*SaveFlowResponse)(nil),       // 6: diag.v1.SaveFlowResponse
-	(*DeleteFlowRequest)(nil),      // 7: diag.v1.DeleteFlowRequest
-	(*DeleteFlowResponse)(nil),     // 8: diag.v1.DeleteFlowResponse
-	nil,                            // 9: diag.v1.FlowStep.MetadataEntry
+	(*FlowBranches)(nil),           // 2: diag.v1.FlowBranches
+	(*FlowBranch)(nil),             // 3: diag.v1.FlowBranch
+	(*FlowConnectorHighlight)(nil), // 4: diag.v1.FlowConnectorHighlight
+	(*ListFlowsRequest)(nil),       // 5: diag.v1.ListFlowsRequest
+	(*ListFlowsResponse)(nil),      // 6: diag.v1.ListFlowsResponse
+	(*SaveFlowRequest)(nil),        // 7: diag.v1.SaveFlowRequest
+	(*SaveFlowResponse)(nil),       // 8: diag.v1.SaveFlowResponse
+	(*DeleteFlowRequest)(nil),      // 9: diag.v1.DeleteFlowRequest
+	(*DeleteFlowResponse)(nil),     // 10: diag.v1.DeleteFlowResponse
+	nil,                            // 11: diag.v1.FlowStep.MetadataEntry
 }
 var file_diag_v1_flow_service_proto_depIdxs = []int32{
-	1, // 0: diag.v1.Flow.steps:type_name -> diag.v1.FlowStep
-	2, // 1: diag.v1.FlowStep.connectors:type_name -> diag.v1.FlowConnectorHighlight
-	9, // 2: diag.v1.FlowStep.metadata:type_name -> diag.v1.FlowStep.MetadataEntry
-	0, // 3: diag.v1.ListFlowsResponse.flows:type_name -> diag.v1.Flow
-	0, // 4: diag.v1.SaveFlowRequest.flow:type_name -> diag.v1.Flow
-	0, // 5: diag.v1.SaveFlowResponse.flow:type_name -> diag.v1.Flow
-	3, // 6: diag.v1.FlowService.ListFlows:input_type -> diag.v1.ListFlowsRequest
-	5, // 7: diag.v1.FlowService.SaveFlow:input_type -> diag.v1.SaveFlowRequest
-	7, // 8: diag.v1.FlowService.DeleteFlow:input_type -> diag.v1.DeleteFlowRequest
-	4, // 9: diag.v1.FlowService.ListFlows:output_type -> diag.v1.ListFlowsResponse
-	6, // 10: diag.v1.FlowService.SaveFlow:output_type -> diag.v1.SaveFlowResponse
-	8, // 11: diag.v1.FlowService.DeleteFlow:output_type -> diag.v1.DeleteFlowResponse
-	9, // [9:12] is the sub-list for method output_type
-	6, // [6:9] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	1,  // 0: diag.v1.Flow.steps:type_name -> diag.v1.FlowStep
+	4,  // 1: diag.v1.FlowStep.connectors:type_name -> diag.v1.FlowConnectorHighlight
+	11, // 2: diag.v1.FlowStep.metadata:type_name -> diag.v1.FlowStep.MetadataEntry
+	2,  // 3: diag.v1.FlowStep.branches:type_name -> diag.v1.FlowBranches
+	3,  // 4: diag.v1.FlowBranches.paths:type_name -> diag.v1.FlowBranch
+	1,  // 5: diag.v1.FlowBranch.steps:type_name -> diag.v1.FlowStep
+	0,  // 6: diag.v1.ListFlowsResponse.flows:type_name -> diag.v1.Flow
+	0,  // 7: diag.v1.SaveFlowRequest.flow:type_name -> diag.v1.Flow
+	0,  // 8: diag.v1.SaveFlowResponse.flow:type_name -> diag.v1.Flow
+	5,  // 9: diag.v1.FlowService.ListFlows:input_type -> diag.v1.ListFlowsRequest
+	7,  // 10: diag.v1.FlowService.SaveFlow:input_type -> diag.v1.SaveFlowRequest
+	9,  // 11: diag.v1.FlowService.DeleteFlow:input_type -> diag.v1.DeleteFlowRequest
+	6,  // 12: diag.v1.FlowService.ListFlows:output_type -> diag.v1.ListFlowsResponse
+	8,  // 13: diag.v1.FlowService.SaveFlow:output_type -> diag.v1.SaveFlowResponse
+	10, // 14: diag.v1.FlowService.DeleteFlow:output_type -> diag.v1.DeleteFlowResponse
+	12, // [12:15] is the sub-list for method output_type
+	9,  // [9:12] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_diag_v1_flow_service_proto_init() }
@@ -649,7 +804,7 @@ func file_diag_v1_flow_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_diag_v1_flow_service_proto_rawDesc), len(file_diag_v1_flow_service_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   10,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

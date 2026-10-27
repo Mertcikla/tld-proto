@@ -557,8 +557,12 @@ type BatchConnector struct {
 	Id               *int32                 `protobuf:"varint,13,opt,name=id,proto3,oneof" json:"id,omitempty"`
 	UpdatedAt        *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	VisibilityDelta  *int32                 `protobuf:"varint,15,opt,name=visibility_delta,json=visibilityDelta,proto3,oneof" json:"visibility_delta,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	// Replaces connector tags when non-empty. Omitted tags preserve existing tags.
+	Tags []string `protobuf:"bytes,16,rep,name=tags,proto3" json:"tags,omitempty"`
+	// Apply tags even when empty, allowing callers to explicitly clear them.
+	ReplaceTags   bool `protobuf:"varint,17,opt,name=replace_tags,json=replaceTags,proto3" json:"replace_tags,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *BatchConnector) Reset() {
@@ -694,6 +698,20 @@ func (x *BatchConnector) GetVisibilityDelta() int32 {
 		return *x.VisibilityDelta
 	}
 	return 0
+}
+
+func (x *BatchConnector) GetTags() []string {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
+}
+
+func (x *BatchConnector) GetReplaceTags() bool {
+	if x != nil {
+		return x.ReplaceTags
+	}
+	return false
 }
 
 type ApplyWorkspaceBatchRequest struct {
@@ -7454,7 +7472,7 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\x10_view_updated_atB\x15\n" +
 	"\x13_view_density_levelB\x14\n" +
 	"\x12_bypass_noise_gateB\x10\n" +
-	"\x0e_repository_id\"\xcc\x05\n" +
+	"\x0e_repository_id\"\x83\x06\n" +
 	"\x0eBatchConnector\x12\x10\n" +
 	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x19\n" +
 	"\bview_ref\x18\x02 \x01(\tR\aviewRef\x12,\n" +
@@ -7473,7 +7491,9 @@ const file_diag_v1_workspace_service_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampH\tR\tupdatedAt\x88\x01\x01\x12.\n" +
 	"\x10visibility_delta\x18\x0f \x01(\x05H\n" +
-	"R\x0fvisibilityDelta\x88\x01\x01B\b\n" +
+	"R\x0fvisibilityDelta\x88\x01\x01\x12\x12\n" +
+	"\x04tags\x18\x10 \x03(\tR\x04tags\x12!\n" +
+	"\freplace_tags\x18\x11 \x01(\bR\vreplaceTagsB\b\n" +
 	"\x06_labelB\x0e\n" +
 	"\f_descriptionB\x0f\n" +
 	"\r_relationshipB\f\n" +
