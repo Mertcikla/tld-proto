@@ -5,40 +5,50 @@ package diag.v1;
 option go_package = "buf.build/gen/go/tldiagramcom/diagram/protocolbuffers/go/diag/v1;diagv1";
 
 // Flows are versioned stories over an existing view. Playback never changes
-// the underlying elements, connections, or connection directions.
+// the underlying elements or connections.
 service FlowService {
   rpc ListFlows(ListFlowsRequest) returns (ListFlowsResponse);
   rpc SaveFlow(SaveFlowRequest) returns (SaveFlowResponse);
   rpc DeleteFlow(DeleteFlowRequest) returns (DeleteFlowResponse);
 }
 
+// Identity and concurrency belong to the envelope, not the stored content.
 message Flow {
   string id = 1;
   int32 view_id = 2;
-  string name = 3;
-  string description = 4;
-  repeated FlowStep steps = 5;
-  int32 revision = 6;
+  int32 revision = 3;
+  FlowContent content = 4;
+}
+
+message FlowContent {
+  string name = 1;
+  string description = 2;
+  repeated FlowStep steps = 3;
 }
 
 message FlowStep {
   string id = 1;
-  reserved 2, 5, 6, 7, 8;
-  reserved "kind", "connector_id", "element_id", "reverse", "paths";
-  string title = 3;
-  string description = 4;
-  repeated int32 element_ids = 9;
-  repeated FlowConnectorHighlight connectors = 10;
-  map<string, string> metadata = 11;
-  // Optional presentation control. At most one of these three may be set.
-  bool overview = 12;
-  FlowBranches branches = 13;
-  string go_to_flow_id = 14;
+  string title = 2;
+  string description = 3;
+  // All references are soft: deleted or inaccessible targets remain unavailable
+  // during playback and do not prevent saving the story.
+  repeated int32 element_ids = 4;
+  repeated int32 connector_ids = 5;
+  oneof control {
+    FlowBranches branches = 6;
+    string go_to_flow_id = 7;
+  }
+}
+
+enum FlowBranchMode {
+  FLOW_BRANCH_MODE_UNSPECIFIED = 0;
+  FLOW_BRANCH_MODE_ALTERNATE = 1;
+  FLOW_BRANCH_MODE_PARALLEL = 2;
 }
 
 message FlowBranches {
-  // alternate (OR) or parallel (AND). Playback follows the selected path.
-  string mode = 1;
+  // Both modes play the selected path; parallel also previews concurrent paths.
+  FlowBranchMode mode = 1;
   repeated FlowBranch paths = 2;
 }
 
@@ -46,12 +56,6 @@ message FlowBranch {
   string id = 1;
   string name = 2;
   repeated FlowStep steps = 3;
-}
-
-message FlowConnectorHighlight {
-  int32 id = 1;
-  // Reverses only this highlight's presentation, never the diagram connection.
-  bool reverse = 2;
 }
 
 message ListFlowsRequest {
@@ -64,9 +68,12 @@ message ListFlowsResponse {
 }
 message SaveFlowRequest {
   string org_id = 1;
-  // Empty id and revision zero creates a new flow. Updates must carry the
-  // current revision; stale writes fail with ABORTED.
-  Flow flow = 2;
+  // Empty id and expected_revision zero creates a new flow. Updates must carry
+  // the current revision; stale writes fail with ABORTED.
+  string id = 2;
+  int32 view_id = 3;
+  int32 expected_revision = 4;
+  FlowContent content = 5;
 }
 message SaveFlowResponse {
   Flow flow = 1;
