@@ -980,6 +980,32 @@ message GetImpactSceneRequest {
   bool plain = 4;
 }
 
+// Reads captured source from one side of an immutable comparison.
+message GetImpactSourceRequest {
+  string repository_id = 1;
+  string comparison_key = 2;
+  string file_path = 3;
+  // "base" or "head". Empty selects head.
+  string side = 4;
+  bool include_diff = 5;
+}
+
+message GetImpactSourceResponse {
+  string content = 1;
+  string path = 2;
+  repeated ImpactDiffLine diff_lines = 3;
+  string base_content = 4;
+  string head_content = 5;
+}
+
+// A full-context Git diff row. Line numbers are one-based; zero means absent.
+message ImpactDiffLine {
+  string change = 1; // added, removed, unchanged, or notice
+  uint32 old_line = 2;
+  uint32 new_line = 3;
+  string text = 4;
+}
+
 // ─── Services ────────────────────────────────────────────────────────────────
 
 // RepositoryService lists, adds, and deletes the repositories indexed by the
@@ -1022,4 +1048,5 @@ service CodeIndexService {
   rpc PublishLiveImpact(PublishLiveImpactRequest) returns (google.protobuf.Empty);
   rpc ExportImpactMermaid(ExportImpactMermaidRequest) returns (ExportImpactMermaidResponse);
   rpc GetImpactScene(GetImpactSceneRequest) returns (ImpactScene);
+  rpc GetImpactSource(GetImpactSourceRequest) returns (GetImpactSourceResponse);
 }

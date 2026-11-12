@@ -7346,6 +7346,229 @@ func (x *GetImpactSceneRequest) GetPlain() bool {
 	return false
 }
 
+// Reads captured source from one side of an immutable comparison.
+type GetImpactSourceRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RepositoryId  string                 `protobuf:"bytes,1,opt,name=repository_id,json=repositoryId,proto3" json:"repository_id,omitempty"`
+	ComparisonKey string                 `protobuf:"bytes,2,opt,name=comparison_key,json=comparisonKey,proto3" json:"comparison_key,omitempty"`
+	FilePath      string                 `protobuf:"bytes,3,opt,name=file_path,json=filePath,proto3" json:"file_path,omitempty"`
+	// "base" or "head". Empty selects head.
+	Side          string `protobuf:"bytes,4,opt,name=side,proto3" json:"side,omitempty"`
+	IncludeDiff   bool   `protobuf:"varint,5,opt,name=include_diff,json=includeDiff,proto3" json:"include_diff,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetImpactSourceRequest) Reset() {
+	*x = GetImpactSourceRequest{}
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[85]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetImpactSourceRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetImpactSourceRequest) ProtoMessage() {}
+
+func (x *GetImpactSourceRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[85]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetImpactSourceRequest.ProtoReflect.Descriptor instead.
+func (*GetImpactSourceRequest) Descriptor() ([]byte, []int) {
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{85}
+}
+
+func (x *GetImpactSourceRequest) GetRepositoryId() string {
+	if x != nil {
+		return x.RepositoryId
+	}
+	return ""
+}
+
+func (x *GetImpactSourceRequest) GetComparisonKey() string {
+	if x != nil {
+		return x.ComparisonKey
+	}
+	return ""
+}
+
+func (x *GetImpactSourceRequest) GetFilePath() string {
+	if x != nil {
+		return x.FilePath
+	}
+	return ""
+}
+
+func (x *GetImpactSourceRequest) GetSide() string {
+	if x != nil {
+		return x.Side
+	}
+	return ""
+}
+
+func (x *GetImpactSourceRequest) GetIncludeDiff() bool {
+	if x != nil {
+		return x.IncludeDiff
+	}
+	return false
+}
+
+type GetImpactSourceResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Content       string                 `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`
+	Path          string                 `protobuf:"bytes,2,opt,name=path,proto3" json:"path,omitempty"`
+	DiffLines     []*ImpactDiffLine      `protobuf:"bytes,3,rep,name=diff_lines,json=diffLines,proto3" json:"diff_lines,omitempty"`
+	BaseContent   string                 `protobuf:"bytes,4,opt,name=base_content,json=baseContent,proto3" json:"base_content,omitempty"`
+	HeadContent   string                 `protobuf:"bytes,5,opt,name=head_content,json=headContent,proto3" json:"head_content,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetImpactSourceResponse) Reset() {
+	*x = GetImpactSourceResponse{}
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[86]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetImpactSourceResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetImpactSourceResponse) ProtoMessage() {}
+
+func (x *GetImpactSourceResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[86]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetImpactSourceResponse.ProtoReflect.Descriptor instead.
+func (*GetImpactSourceResponse) Descriptor() ([]byte, []int) {
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{86}
+}
+
+func (x *GetImpactSourceResponse) GetContent() string {
+	if x != nil {
+		return x.Content
+	}
+	return ""
+}
+
+func (x *GetImpactSourceResponse) GetPath() string {
+	if x != nil {
+		return x.Path
+	}
+	return ""
+}
+
+func (x *GetImpactSourceResponse) GetDiffLines() []*ImpactDiffLine {
+	if x != nil {
+		return x.DiffLines
+	}
+	return nil
+}
+
+func (x *GetImpactSourceResponse) GetBaseContent() string {
+	if x != nil {
+		return x.BaseContent
+	}
+	return ""
+}
+
+func (x *GetImpactSourceResponse) GetHeadContent() string {
+	if x != nil {
+		return x.HeadContent
+	}
+	return ""
+}
+
+// A full-context Git diff row. Line numbers are one-based; zero means absent.
+type ImpactDiffLine struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Change        string                 `protobuf:"bytes,1,opt,name=change,proto3" json:"change,omitempty"` // added, removed, unchanged, or notice
+	OldLine       uint32                 `protobuf:"varint,2,opt,name=old_line,json=oldLine,proto3" json:"old_line,omitempty"`
+	NewLine       uint32                 `protobuf:"varint,3,opt,name=new_line,json=newLine,proto3" json:"new_line,omitempty"`
+	Text          string                 `protobuf:"bytes,4,opt,name=text,proto3" json:"text,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ImpactDiffLine) Reset() {
+	*x = ImpactDiffLine{}
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[87]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ImpactDiffLine) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ImpactDiffLine) ProtoMessage() {}
+
+func (x *ImpactDiffLine) ProtoReflect() protoreflect.Message {
+	mi := &file_codeindex_v1_codeindex_proto_msgTypes[87]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ImpactDiffLine.ProtoReflect.Descriptor instead.
+func (*ImpactDiffLine) Descriptor() ([]byte, []int) {
+	return file_codeindex_v1_codeindex_proto_rawDescGZIP(), []int{87}
+}
+
+func (x *ImpactDiffLine) GetChange() string {
+	if x != nil {
+		return x.Change
+	}
+	return ""
+}
+
+func (x *ImpactDiffLine) GetOldLine() uint32 {
+	if x != nil {
+		return x.OldLine
+	}
+	return 0
+}
+
+func (x *ImpactDiffLine) GetNewLine() uint32 {
+	if x != nil {
+		return x.NewLine
+	}
+	return 0
+}
+
+func (x *ImpactDiffLine) GetText() string {
+	if x != nil {
+		return x.Text
+	}
+	return ""
+}
+
 var File_codeindex_v1_codeindex_proto protoreflect.FileDescriptor
 
 const file_codeindex_v1_codeindex_proto_rawDesc = "" +
@@ -8031,7 +8254,25 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"\rrepository_id\x18\x01 \x01(\tR\frepositoryId\x12%\n" +
 	"\x0ecomparison_key\x18\x02 \x01(\tR\rcomparisonKey\x12)\n" +
 	"\x10debug_provenance\x18\x03 \x01(\bR\x0fdebugProvenance\x12\x14\n" +
-	"\x05plain\x18\x04 \x01(\bR\x05plain*\xa3\x05\n" +
+	"\x05plain\x18\x04 \x01(\bR\x05plain\"\xb8\x01\n" +
+	"\x16GetImpactSourceRequest\x12#\n" +
+	"\rrepository_id\x18\x01 \x01(\tR\frepositoryId\x12%\n" +
+	"\x0ecomparison_key\x18\x02 \x01(\tR\rcomparisonKey\x12\x1b\n" +
+	"\tfile_path\x18\x03 \x01(\tR\bfilePath\x12\x12\n" +
+	"\x04side\x18\x04 \x01(\tR\x04side\x12!\n" +
+	"\finclude_diff\x18\x05 \x01(\bR\vincludeDiff\"\xca\x01\n" +
+	"\x17GetImpactSourceResponse\x12\x18\n" +
+	"\acontent\x18\x01 \x01(\tR\acontent\x12\x12\n" +
+	"\x04path\x18\x02 \x01(\tR\x04path\x12;\n" +
+	"\n" +
+	"diff_lines\x18\x03 \x03(\v2\x1c.codeindex.v1.ImpactDiffLineR\tdiffLines\x12!\n" +
+	"\fbase_content\x18\x04 \x01(\tR\vbaseContent\x12!\n" +
+	"\fhead_content\x18\x05 \x01(\tR\vheadContent\"r\n" +
+	"\x0eImpactDiffLine\x12\x16\n" +
+	"\x06change\x18\x01 \x01(\tR\x06change\x12\x19\n" +
+	"\bold_line\x18\x02 \x01(\rR\aoldLine\x12\x19\n" +
+	"\bnew_line\x18\x03 \x01(\rR\anewLine\x12\x12\n" +
+	"\x04text\x18\x04 \x01(\tR\x04text*\xa3\x05\n" +
 	"\bFactKind\x12\x19\n" +
 	"\x15FACT_KIND_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12FACT_KIND_FUNCTION\x10\x01\x12\x14\n" +
@@ -8113,7 +8354,7 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"\n" +
 	"StartWatch\x12\x1f.codeindex.v1.StartWatchRequest\x1a\x19.codeindex.v1.WatchStatus\x128\n" +
 	"\tStopWatch\x12\x10.codeindex.v1.ID\x1a\x19.codeindex.v1.WatchStatus\x12=\n" +
-	"\x0eGetWatchStatus\x12\x10.codeindex.v1.ID\x1a\x19.codeindex.v1.WatchStatus2\xad\b\n" +
+	"\x0eGetWatchStatus\x12\x10.codeindex.v1.ID\x1a\x19.codeindex.v1.WatchStatus2\x8d\t\n" +
 	"\x10CodeIndexService\x12E\n" +
 	"\tListFacts\x12\x1c.codeindex.v1.CodeFactFilter\x1a\x1a.codeindex.v1.CodeFactPage\x12F\n" +
 	"\rListSnapshots\x12\x10.codeindex.v1.ID\x1a#.codeindex.v1.ListSnapshotsResponse\x12]\n" +
@@ -8127,7 +8368,8 @@ const file_codeindex_v1_codeindex_proto_rawDesc = "" +
 	"\x0fWatchLiveImpact\x12$.codeindex.v1.WatchLiveImpactRequest\x1a\x18.codeindex.v1.LiveImpact0\x01\x12S\n" +
 	"\x11PublishLiveImpact\x12&.codeindex.v1.PublishLiveImpactRequest\x1a\x16.google.protobuf.Empty\x12j\n" +
 	"\x13ExportImpactMermaid\x12(.codeindex.v1.ExportImpactMermaidRequest\x1a).codeindex.v1.ExportImpactMermaidResponse\x12P\n" +
-	"\x0eGetImpactScene\x12#.codeindex.v1.GetImpactSceneRequest\x1a\x19.codeindex.v1.ImpactSceneBSZQbuf.build/gen/go/tldiagramcom/diagram/protocolbuffers/go/codeindex/v1;codeindexv1b\x06proto3"
+	"\x0eGetImpactScene\x12#.codeindex.v1.GetImpactSceneRequest\x1a\x19.codeindex.v1.ImpactScene\x12^\n" +
+	"\x0fGetImpactSource\x12$.codeindex.v1.GetImpactSourceRequest\x1a%.codeindex.v1.GetImpactSourceResponseBSZQbuf.build/gen/go/tldiagramcom/diagram/protocolbuffers/go/codeindex/v1;codeindexv1b\x06proto3"
 
 var (
 	file_codeindex_v1_codeindex_proto_rawDescOnce sync.Once
@@ -8142,7 +8384,7 @@ func file_codeindex_v1_codeindex_proto_rawDescGZIP() []byte {
 }
 
 var file_codeindex_v1_codeindex_proto_enumTypes = make([]protoimpl.EnumInfo, 6)
-var file_codeindex_v1_codeindex_proto_msgTypes = make([]protoimpl.MessageInfo, 92)
+var file_codeindex_v1_codeindex_proto_msgTypes = make([]protoimpl.MessageInfo, 95)
 var file_codeindex_v1_codeindex_proto_goTypes = []any{
 	(FactKind)(0),                                   // 0: codeindex.v1.FactKind
 	(EdgeKind)(0),                                   // 1: codeindex.v1.EdgeKind
@@ -8235,18 +8477,21 @@ var file_codeindex_v1_codeindex_proto_goTypes = []any{
 	(*ExportImpactMermaidRequest)(nil),              // 88: codeindex.v1.ExportImpactMermaidRequest
 	(*ExportImpactMermaidResponse)(nil),             // 89: codeindex.v1.ExportImpactMermaidResponse
 	(*GetImpactSceneRequest)(nil),                   // 90: codeindex.v1.GetImpactSceneRequest
-	nil,                                             // 91: codeindex.v1.Snapshot.ToolVersionsEntry
-	nil,                                             // 92: codeindex.v1.IndexRequest.ScipArtifactsEntry
-	nil,                                             // 93: codeindex.v1.ImpactScene.ViewsEntry
-	nil,                                             // 94: codeindex.v1.ImpactScene.SymbolsEntry
-	nil,                                             // 95: codeindex.v1.SceneViewContent.ConnectorTargetsEntry
-	nil,                                             // 96: codeindex.v1.ImpactAudit.ExcludedSymbolsEntry
-	nil,                                             // 97: codeindex.v1.ImpactAudit.ReferencesEntry
-	(*v1.View)(nil),                                 // 98: diag.v1.View
-	(*v1.ElementNavigationInfo)(nil),                // 99: diag.v1.ElementNavigationInfo
-	(*v1.PlacedElement)(nil),                        // 100: diag.v1.PlacedElement
-	(*v1.Connector)(nil),                            // 101: diag.v1.Connector
-	(*emptypb.Empty)(nil),                           // 102: google.protobuf.Empty
+	(*GetImpactSourceRequest)(nil),                  // 91: codeindex.v1.GetImpactSourceRequest
+	(*GetImpactSourceResponse)(nil),                 // 92: codeindex.v1.GetImpactSourceResponse
+	(*ImpactDiffLine)(nil),                          // 93: codeindex.v1.ImpactDiffLine
+	nil,                                             // 94: codeindex.v1.Snapshot.ToolVersionsEntry
+	nil,                                             // 95: codeindex.v1.IndexRequest.ScipArtifactsEntry
+	nil,                                             // 96: codeindex.v1.ImpactScene.ViewsEntry
+	nil,                                             // 97: codeindex.v1.ImpactScene.SymbolsEntry
+	nil,                                             // 98: codeindex.v1.SceneViewContent.ConnectorTargetsEntry
+	nil,                                             // 99: codeindex.v1.ImpactAudit.ExcludedSymbolsEntry
+	nil,                                             // 100: codeindex.v1.ImpactAudit.ReferencesEntry
+	(*v1.View)(nil),                                 // 101: diag.v1.View
+	(*v1.ElementNavigationInfo)(nil),                // 102: diag.v1.ElementNavigationInfo
+	(*v1.PlacedElement)(nil),                        // 103: diag.v1.PlacedElement
+	(*v1.Connector)(nil),                            // 104: diag.v1.Connector
+	(*emptypb.Empty)(nil),                           // 105: google.protobuf.Empty
 }
 var file_codeindex_v1_codeindex_proto_depIdxs = []int32{
 	9,   // 0: codeindex.v1.Evidence.anchor:type_name -> codeindex.v1.SourceAnchor
@@ -8263,10 +8508,10 @@ var file_codeindex_v1_codeindex_proto_depIdxs = []int32{
 	18,  // 11: codeindex.v1.RepositorySettings.remotes:type_name -> codeindex.v1.RepositoryRemote
 	13,  // 12: codeindex.v1.Snapshot.projects:type_name -> codeindex.v1.Project
 	14,  // 13: codeindex.v1.Snapshot.sources:type_name -> codeindex.v1.SourceFile
-	91,  // 14: codeindex.v1.Snapshot.tool_versions:type_name -> codeindex.v1.Snapshot.ToolVersionsEntry
+	94,  // 14: codeindex.v1.Snapshot.tool_versions:type_name -> codeindex.v1.Snapshot.ToolVersionsEntry
 	21,  // 15: codeindex.v1.Snapshot.statistics:type_name -> codeindex.v1.SnapshotStatistics
 	15,  // 16: codeindex.v1.Snapshot.manifest:type_name -> codeindex.v1.SnapshotManifest
-	92,  // 17: codeindex.v1.IndexRequest.scip_artifacts:type_name -> codeindex.v1.IndexRequest.ScipArtifactsEntry
+	95,  // 17: codeindex.v1.IndexRequest.scip_artifacts:type_name -> codeindex.v1.IndexRequest.ScipArtifactsEntry
 	2,   // 18: codeindex.v1.SourceChange.change:type_name -> codeindex.v1.ChangeKind
 	11,  // 19: codeindex.v1.CodeFactDelta.added:type_name -> codeindex.v1.CodeFact
 	11,  // 20: codeindex.v1.CodeFactDelta.removed:type_name -> codeindex.v1.CodeFact
@@ -8277,12 +8522,12 @@ var file_codeindex_v1_codeindex_proto_depIdxs = []int32{
 	23,  // 25: codeindex.v1.SnapshotDiff.sources:type_name -> codeindex.v1.SourceChange
 	24,  // 26: codeindex.v1.SnapshotDiff.facts:type_name -> codeindex.v1.CodeFactDelta
 	25,  // 27: codeindex.v1.SnapshotDiff.edge_facts:type_name -> codeindex.v1.EdgeFactDelta
-	98,  // 28: codeindex.v1.ImpactScene.tree:type_name -> diag.v1.View
-	93,  // 29: codeindex.v1.ImpactScene.views:type_name -> codeindex.v1.ImpactScene.ViewsEntry
-	99,  // 30: codeindex.v1.ImpactScene.navigations:type_name -> diag.v1.ElementNavigationInfo
+	101, // 28: codeindex.v1.ImpactScene.tree:type_name -> diag.v1.View
+	96,  // 29: codeindex.v1.ImpactScene.views:type_name -> codeindex.v1.ImpactScene.ViewsEntry
+	102, // 30: codeindex.v1.ImpactScene.navigations:type_name -> diag.v1.ElementNavigationInfo
 	35,  // 31: codeindex.v1.ImpactScene.comparison:type_name -> codeindex.v1.ImpactComparison
 	38,  // 32: codeindex.v1.ImpactScene.files:type_name -> codeindex.v1.ImpactFile
-	94,  // 33: codeindex.v1.ImpactScene.symbols:type_name -> codeindex.v1.ImpactScene.SymbolsEntry
+	97,  // 33: codeindex.v1.ImpactScene.symbols:type_name -> codeindex.v1.ImpactScene.SymbolsEntry
 	43,  // 34: codeindex.v1.ImpactScene.summary:type_name -> codeindex.v1.ImpactSummary
 	48,  // 35: codeindex.v1.ImpactScene.provenance:type_name -> codeindex.v1.ImpactAudit
 	36,  // 36: codeindex.v1.ImpactComparison.commits:type_name -> codeindex.v1.ImpactCommit
@@ -8291,14 +8536,14 @@ var file_codeindex_v1_codeindex_proto_depIdxs = []int32{
 	2,   // 39: codeindex.v1.ImpactSymbolChange.change:type_name -> codeindex.v1.ChangeKind
 	0,   // 40: codeindex.v1.ImpactSymbolChange.kind:type_name -> codeindex.v1.FactKind
 	2,   // 41: codeindex.v1.ImpactSceneOverlay.change:type_name -> codeindex.v1.ChangeKind
-	100, // 42: codeindex.v1.ScenePlacement.element:type_name -> diag.v1.PlacedElement
+	103, // 42: codeindex.v1.ScenePlacement.element:type_name -> diag.v1.PlacedElement
 	40,  // 43: codeindex.v1.ScenePlacement.overlay:type_name -> codeindex.v1.ImpactSceneOverlay
 	3,   // 44: codeindex.v1.ScenePlacement.origin:type_name -> codeindex.v1.ImpactOrigin
 	5,   // 45: codeindex.v1.ScenePlacement.role:type_name -> codeindex.v1.ImpactRole
 	4,   // 46: codeindex.v1.ScenePlacement.grounding:type_name -> codeindex.v1.ImpactGrounding
 	41,  // 47: codeindex.v1.SceneViewContent.placements:type_name -> codeindex.v1.ScenePlacement
-	101, // 48: codeindex.v1.SceneViewContent.connectors:type_name -> diag.v1.Connector
-	95,  // 49: codeindex.v1.SceneViewContent.connector_targets:type_name -> codeindex.v1.SceneViewContent.ConnectorTargetsEntry
+	104, // 48: codeindex.v1.SceneViewContent.connectors:type_name -> diag.v1.Connector
+	98,  // 49: codeindex.v1.SceneViewContent.connector_targets:type_name -> codeindex.v1.SceneViewContent.ConnectorTargetsEntry
 	37,  // 50: codeindex.v1.ImpactMatch.placement:type_name -> codeindex.v1.ImpactPlacementRef
 	37,  // 51: codeindex.v1.ImpactMatch.representatives:type_name -> codeindex.v1.ImpactPlacementRef
 	37,  // 52: codeindex.v1.ImpactAuditDecision.representatives:type_name -> codeindex.v1.ImpactPlacementRef
@@ -8307,8 +8552,8 @@ var file_codeindex_v1_codeindex_proto_depIdxs = []int32{
 	45,  // 55: codeindex.v1.ImpactAudit.decisions:type_name -> codeindex.v1.ImpactAuditDecision
 	46,  // 56: codeindex.v1.ImpactAudit.witnesses:type_name -> codeindex.v1.ImpactDependencyWitness
 	47,  // 57: codeindex.v1.ImpactAudit.dependencies:type_name -> codeindex.v1.ImpactDependency
-	96,  // 58: codeindex.v1.ImpactAudit.excluded_symbols:type_name -> codeindex.v1.ImpactAudit.ExcludedSymbolsEntry
-	97,  // 59: codeindex.v1.ImpactAudit.references:type_name -> codeindex.v1.ImpactAudit.ReferencesEntry
+	99,  // 58: codeindex.v1.ImpactAudit.excluded_symbols:type_name -> codeindex.v1.ImpactAudit.ExcludedSymbolsEntry
+	100, // 59: codeindex.v1.ImpactAudit.references:type_name -> codeindex.v1.ImpactAudit.ReferencesEntry
 	34,  // 60: codeindex.v1.LiveImpact.scene:type_name -> codeindex.v1.ImpactScene
 	28,  // 61: codeindex.v1.LiveImpact.watch_status:type_name -> codeindex.v1.WatchStatus
 	52,  // 62: codeindex.v1.CompletedMap.result:type_name -> codeindex.v1.MapResult
@@ -8336,76 +8581,79 @@ var file_codeindex_v1_codeindex_proto_depIdxs = []int32{
 	8,   // 84: codeindex.v1.CompareRepositoryRequest.head:type_name -> codeindex.v1.Revision
 	7,   // 85: codeindex.v1.CompareRepositoryEvent.progress:type_name -> codeindex.v1.Progress
 	34,  // 86: codeindex.v1.CompareRepositoryEvent.result:type_name -> codeindex.v1.ImpactScene
-	42,  // 87: codeindex.v1.ImpactScene.ViewsEntry.value:type_name -> codeindex.v1.SceneViewContent
-	39,  // 88: codeindex.v1.ImpactScene.SymbolsEntry.value:type_name -> codeindex.v1.ImpactSymbolChange
-	37,  // 89: codeindex.v1.SceneViewContent.ConnectorTargetsEntry.value:type_name -> codeindex.v1.ImpactPlacementRef
-	102, // 90: codeindex.v1.RepositoryService.ListRepositories:input_type -> google.protobuf.Empty
-	55,  // 91: codeindex.v1.RepositoryService.GetWorktreeSource:input_type -> codeindex.v1.GetWorktreeSourceRequest
-	6,   // 92: codeindex.v1.RepositoryService.GetRepositorySettings:input_type -> codeindex.v1.ID
-	57,  // 93: codeindex.v1.RepositoryService.UpdateRepositoryMapConfiguration:input_type -> codeindex.v1.UpdateRepositoryMapConfigurationRequest
-	58,  // 94: codeindex.v1.RepositoryService.UpdateRepositoryRemote:input_type -> codeindex.v1.UpdateRepositoryRemoteRequest
-	62,  // 95: codeindex.v1.RepositoryService.CheckRepositoryIndexers:input_type -> codeindex.v1.CheckRepositoryIndexersRequest
-	64,  // 96: codeindex.v1.RepositoryService.BrowseRepositoryFolders:input_type -> codeindex.v1.BrowseRepositoryFoldersRequest
-	60,  // 97: codeindex.v1.RepositoryService.AddRepository:input_type -> codeindex.v1.AddRepositoryRequest
-	59,  // 98: codeindex.v1.RepositoryService.DeleteRepository:input_type -> codeindex.v1.DeleteRepositoryRequest
-	67,  // 99: codeindex.v1.RepositoryService.GetGitHistory:input_type -> codeindex.v1.GetGitHistoryRequest
-	68,  // 100: codeindex.v1.RepositoryService.GetGitHistoryFilters:input_type -> codeindex.v1.GetGitHistoryFiltersRequest
-	74,  // 101: codeindex.v1.RepositoryService.GetCommitDetails:input_type -> codeindex.v1.GetCommitDetailsRequest
-	76,  // 102: codeindex.v1.RepositoryService.GetRevisionRangeSummary:input_type -> codeindex.v1.GetRevisionRangeSummaryRequest
-	71,  // 103: codeindex.v1.RepositoryService.GetPullRequest:input_type -> codeindex.v1.GetPullRequestRequest
-	6,   // 104: codeindex.v1.RepositoryService.ListPullRequests:input_type -> codeindex.v1.ID
-	66,  // 105: codeindex.v1.RepositoryService.StartWatch:input_type -> codeindex.v1.StartWatchRequest
-	6,   // 106: codeindex.v1.RepositoryService.StopWatch:input_type -> codeindex.v1.ID
-	6,   // 107: codeindex.v1.RepositoryService.GetWatchStatus:input_type -> codeindex.v1.ID
-	78,  // 108: codeindex.v1.CodeIndexService.ListFacts:input_type -> codeindex.v1.CodeFactFilter
-	6,   // 109: codeindex.v1.CodeIndexService.ListSnapshots:input_type -> codeindex.v1.ID
-	81,  // 110: codeindex.v1.CodeIndexService.CaptureSnapshot:input_type -> codeindex.v1.CaptureSnapshotRequest
-	26,  // 111: codeindex.v1.CodeIndexService.DiffSnapshots:input_type -> codeindex.v1.SnapshotDiffRequest
-	6,   // 112: codeindex.v1.CodeIndexService.DeleteSnapshot:input_type -> codeindex.v1.ID
-	83,  // 113: codeindex.v1.CodeIndexService.MapRepository:input_type -> codeindex.v1.MapRepositoryRequest
-	6,   // 114: codeindex.v1.CodeIndexService.ListMaps:input_type -> codeindex.v1.ID
-	86,  // 115: codeindex.v1.CodeIndexService.CompareRepository:input_type -> codeindex.v1.CompareRepositoryRequest
-	6,   // 116: codeindex.v1.CodeIndexService.GetLiveImpact:input_type -> codeindex.v1.ID
-	50,  // 117: codeindex.v1.CodeIndexService.WatchLiveImpact:input_type -> codeindex.v1.WatchLiveImpactRequest
-	51,  // 118: codeindex.v1.CodeIndexService.PublishLiveImpact:input_type -> codeindex.v1.PublishLiveImpactRequest
-	88,  // 119: codeindex.v1.CodeIndexService.ExportImpactMermaid:input_type -> codeindex.v1.ExportImpactMermaidRequest
-	90,  // 120: codeindex.v1.CodeIndexService.GetImpactScene:input_type -> codeindex.v1.GetImpactSceneRequest
-	54,  // 121: codeindex.v1.RepositoryService.ListRepositories:output_type -> codeindex.v1.ListRepositoriesResponse
-	56,  // 122: codeindex.v1.RepositoryService.GetWorktreeSource:output_type -> codeindex.v1.GetWorktreeSourceResponse
-	19,  // 123: codeindex.v1.RepositoryService.GetRepositorySettings:output_type -> codeindex.v1.RepositorySettings
-	19,  // 124: codeindex.v1.RepositoryService.UpdateRepositoryMapConfiguration:output_type -> codeindex.v1.RepositorySettings
-	19,  // 125: codeindex.v1.RepositoryService.UpdateRepositoryRemote:output_type -> codeindex.v1.RepositorySettings
-	63,  // 126: codeindex.v1.RepositoryService.CheckRepositoryIndexers:output_type -> codeindex.v1.CheckRepositoryIndexersResponse
-	65,  // 127: codeindex.v1.RepositoryService.BrowseRepositoryFolders:output_type -> codeindex.v1.BrowseRepositoryFoldersResponse
-	61,  // 128: codeindex.v1.RepositoryService.AddRepository:output_type -> codeindex.v1.AddRepositoryEvent
-	102, // 129: codeindex.v1.RepositoryService.DeleteRepository:output_type -> google.protobuf.Empty
-	70,  // 130: codeindex.v1.RepositoryService.GetGitHistory:output_type -> codeindex.v1.GetGitHistoryResponse
-	69,  // 131: codeindex.v1.RepositoryService.GetGitHistoryFilters:output_type -> codeindex.v1.GetGitHistoryFiltersResponse
-	75,  // 132: codeindex.v1.RepositoryService.GetCommitDetails:output_type -> codeindex.v1.GetCommitDetailsResponse
-	77,  // 133: codeindex.v1.RepositoryService.GetRevisionRangeSummary:output_type -> codeindex.v1.RevisionRangeSummary
-	72,  // 134: codeindex.v1.RepositoryService.GetPullRequest:output_type -> codeindex.v1.GetPullRequestResponse
-	73,  // 135: codeindex.v1.RepositoryService.ListPullRequests:output_type -> codeindex.v1.ListPullRequestsResponse
-	28,  // 136: codeindex.v1.RepositoryService.StartWatch:output_type -> codeindex.v1.WatchStatus
-	28,  // 137: codeindex.v1.RepositoryService.StopWatch:output_type -> codeindex.v1.WatchStatus
-	28,  // 138: codeindex.v1.RepositoryService.GetWatchStatus:output_type -> codeindex.v1.WatchStatus
-	79,  // 139: codeindex.v1.CodeIndexService.ListFacts:output_type -> codeindex.v1.CodeFactPage
-	80,  // 140: codeindex.v1.CodeIndexService.ListSnapshots:output_type -> codeindex.v1.ListSnapshotsResponse
-	82,  // 141: codeindex.v1.CodeIndexService.CaptureSnapshot:output_type -> codeindex.v1.CaptureSnapshotEvent
-	27,  // 142: codeindex.v1.CodeIndexService.DiffSnapshots:output_type -> codeindex.v1.SnapshotDiff
-	102, // 143: codeindex.v1.CodeIndexService.DeleteSnapshot:output_type -> google.protobuf.Empty
-	84,  // 144: codeindex.v1.CodeIndexService.MapRepository:output_type -> codeindex.v1.MapRepositoryEvent
-	85,  // 145: codeindex.v1.CodeIndexService.ListMaps:output_type -> codeindex.v1.ListMapsResponse
-	87,  // 146: codeindex.v1.CodeIndexService.CompareRepository:output_type -> codeindex.v1.CompareRepositoryEvent
-	49,  // 147: codeindex.v1.CodeIndexService.GetLiveImpact:output_type -> codeindex.v1.LiveImpact
-	49,  // 148: codeindex.v1.CodeIndexService.WatchLiveImpact:output_type -> codeindex.v1.LiveImpact
-	102, // 149: codeindex.v1.CodeIndexService.PublishLiveImpact:output_type -> google.protobuf.Empty
-	89,  // 150: codeindex.v1.CodeIndexService.ExportImpactMermaid:output_type -> codeindex.v1.ExportImpactMermaidResponse
-	34,  // 151: codeindex.v1.CodeIndexService.GetImpactScene:output_type -> codeindex.v1.ImpactScene
-	121, // [121:152] is the sub-list for method output_type
-	90,  // [90:121] is the sub-list for method input_type
-	90,  // [90:90] is the sub-list for extension type_name
-	90,  // [90:90] is the sub-list for extension extendee
-	0,   // [0:90] is the sub-list for field type_name
+	93,  // 87: codeindex.v1.GetImpactSourceResponse.diff_lines:type_name -> codeindex.v1.ImpactDiffLine
+	42,  // 88: codeindex.v1.ImpactScene.ViewsEntry.value:type_name -> codeindex.v1.SceneViewContent
+	39,  // 89: codeindex.v1.ImpactScene.SymbolsEntry.value:type_name -> codeindex.v1.ImpactSymbolChange
+	37,  // 90: codeindex.v1.SceneViewContent.ConnectorTargetsEntry.value:type_name -> codeindex.v1.ImpactPlacementRef
+	105, // 91: codeindex.v1.RepositoryService.ListRepositories:input_type -> google.protobuf.Empty
+	55,  // 92: codeindex.v1.RepositoryService.GetWorktreeSource:input_type -> codeindex.v1.GetWorktreeSourceRequest
+	6,   // 93: codeindex.v1.RepositoryService.GetRepositorySettings:input_type -> codeindex.v1.ID
+	57,  // 94: codeindex.v1.RepositoryService.UpdateRepositoryMapConfiguration:input_type -> codeindex.v1.UpdateRepositoryMapConfigurationRequest
+	58,  // 95: codeindex.v1.RepositoryService.UpdateRepositoryRemote:input_type -> codeindex.v1.UpdateRepositoryRemoteRequest
+	62,  // 96: codeindex.v1.RepositoryService.CheckRepositoryIndexers:input_type -> codeindex.v1.CheckRepositoryIndexersRequest
+	64,  // 97: codeindex.v1.RepositoryService.BrowseRepositoryFolders:input_type -> codeindex.v1.BrowseRepositoryFoldersRequest
+	60,  // 98: codeindex.v1.RepositoryService.AddRepository:input_type -> codeindex.v1.AddRepositoryRequest
+	59,  // 99: codeindex.v1.RepositoryService.DeleteRepository:input_type -> codeindex.v1.DeleteRepositoryRequest
+	67,  // 100: codeindex.v1.RepositoryService.GetGitHistory:input_type -> codeindex.v1.GetGitHistoryRequest
+	68,  // 101: codeindex.v1.RepositoryService.GetGitHistoryFilters:input_type -> codeindex.v1.GetGitHistoryFiltersRequest
+	74,  // 102: codeindex.v1.RepositoryService.GetCommitDetails:input_type -> codeindex.v1.GetCommitDetailsRequest
+	76,  // 103: codeindex.v1.RepositoryService.GetRevisionRangeSummary:input_type -> codeindex.v1.GetRevisionRangeSummaryRequest
+	71,  // 104: codeindex.v1.RepositoryService.GetPullRequest:input_type -> codeindex.v1.GetPullRequestRequest
+	6,   // 105: codeindex.v1.RepositoryService.ListPullRequests:input_type -> codeindex.v1.ID
+	66,  // 106: codeindex.v1.RepositoryService.StartWatch:input_type -> codeindex.v1.StartWatchRequest
+	6,   // 107: codeindex.v1.RepositoryService.StopWatch:input_type -> codeindex.v1.ID
+	6,   // 108: codeindex.v1.RepositoryService.GetWatchStatus:input_type -> codeindex.v1.ID
+	78,  // 109: codeindex.v1.CodeIndexService.ListFacts:input_type -> codeindex.v1.CodeFactFilter
+	6,   // 110: codeindex.v1.CodeIndexService.ListSnapshots:input_type -> codeindex.v1.ID
+	81,  // 111: codeindex.v1.CodeIndexService.CaptureSnapshot:input_type -> codeindex.v1.CaptureSnapshotRequest
+	26,  // 112: codeindex.v1.CodeIndexService.DiffSnapshots:input_type -> codeindex.v1.SnapshotDiffRequest
+	6,   // 113: codeindex.v1.CodeIndexService.DeleteSnapshot:input_type -> codeindex.v1.ID
+	83,  // 114: codeindex.v1.CodeIndexService.MapRepository:input_type -> codeindex.v1.MapRepositoryRequest
+	6,   // 115: codeindex.v1.CodeIndexService.ListMaps:input_type -> codeindex.v1.ID
+	86,  // 116: codeindex.v1.CodeIndexService.CompareRepository:input_type -> codeindex.v1.CompareRepositoryRequest
+	6,   // 117: codeindex.v1.CodeIndexService.GetLiveImpact:input_type -> codeindex.v1.ID
+	50,  // 118: codeindex.v1.CodeIndexService.WatchLiveImpact:input_type -> codeindex.v1.WatchLiveImpactRequest
+	51,  // 119: codeindex.v1.CodeIndexService.PublishLiveImpact:input_type -> codeindex.v1.PublishLiveImpactRequest
+	88,  // 120: codeindex.v1.CodeIndexService.ExportImpactMermaid:input_type -> codeindex.v1.ExportImpactMermaidRequest
+	90,  // 121: codeindex.v1.CodeIndexService.GetImpactScene:input_type -> codeindex.v1.GetImpactSceneRequest
+	91,  // 122: codeindex.v1.CodeIndexService.GetImpactSource:input_type -> codeindex.v1.GetImpactSourceRequest
+	54,  // 123: codeindex.v1.RepositoryService.ListRepositories:output_type -> codeindex.v1.ListRepositoriesResponse
+	56,  // 124: codeindex.v1.RepositoryService.GetWorktreeSource:output_type -> codeindex.v1.GetWorktreeSourceResponse
+	19,  // 125: codeindex.v1.RepositoryService.GetRepositorySettings:output_type -> codeindex.v1.RepositorySettings
+	19,  // 126: codeindex.v1.RepositoryService.UpdateRepositoryMapConfiguration:output_type -> codeindex.v1.RepositorySettings
+	19,  // 127: codeindex.v1.RepositoryService.UpdateRepositoryRemote:output_type -> codeindex.v1.RepositorySettings
+	63,  // 128: codeindex.v1.RepositoryService.CheckRepositoryIndexers:output_type -> codeindex.v1.CheckRepositoryIndexersResponse
+	65,  // 129: codeindex.v1.RepositoryService.BrowseRepositoryFolders:output_type -> codeindex.v1.BrowseRepositoryFoldersResponse
+	61,  // 130: codeindex.v1.RepositoryService.AddRepository:output_type -> codeindex.v1.AddRepositoryEvent
+	105, // 131: codeindex.v1.RepositoryService.DeleteRepository:output_type -> google.protobuf.Empty
+	70,  // 132: codeindex.v1.RepositoryService.GetGitHistory:output_type -> codeindex.v1.GetGitHistoryResponse
+	69,  // 133: codeindex.v1.RepositoryService.GetGitHistoryFilters:output_type -> codeindex.v1.GetGitHistoryFiltersResponse
+	75,  // 134: codeindex.v1.RepositoryService.GetCommitDetails:output_type -> codeindex.v1.GetCommitDetailsResponse
+	77,  // 135: codeindex.v1.RepositoryService.GetRevisionRangeSummary:output_type -> codeindex.v1.RevisionRangeSummary
+	72,  // 136: codeindex.v1.RepositoryService.GetPullRequest:output_type -> codeindex.v1.GetPullRequestResponse
+	73,  // 137: codeindex.v1.RepositoryService.ListPullRequests:output_type -> codeindex.v1.ListPullRequestsResponse
+	28,  // 138: codeindex.v1.RepositoryService.StartWatch:output_type -> codeindex.v1.WatchStatus
+	28,  // 139: codeindex.v1.RepositoryService.StopWatch:output_type -> codeindex.v1.WatchStatus
+	28,  // 140: codeindex.v1.RepositoryService.GetWatchStatus:output_type -> codeindex.v1.WatchStatus
+	79,  // 141: codeindex.v1.CodeIndexService.ListFacts:output_type -> codeindex.v1.CodeFactPage
+	80,  // 142: codeindex.v1.CodeIndexService.ListSnapshots:output_type -> codeindex.v1.ListSnapshotsResponse
+	82,  // 143: codeindex.v1.CodeIndexService.CaptureSnapshot:output_type -> codeindex.v1.CaptureSnapshotEvent
+	27,  // 144: codeindex.v1.CodeIndexService.DiffSnapshots:output_type -> codeindex.v1.SnapshotDiff
+	105, // 145: codeindex.v1.CodeIndexService.DeleteSnapshot:output_type -> google.protobuf.Empty
+	84,  // 146: codeindex.v1.CodeIndexService.MapRepository:output_type -> codeindex.v1.MapRepositoryEvent
+	85,  // 147: codeindex.v1.CodeIndexService.ListMaps:output_type -> codeindex.v1.ListMapsResponse
+	87,  // 148: codeindex.v1.CodeIndexService.CompareRepository:output_type -> codeindex.v1.CompareRepositoryEvent
+	49,  // 149: codeindex.v1.CodeIndexService.GetLiveImpact:output_type -> codeindex.v1.LiveImpact
+	49,  // 150: codeindex.v1.CodeIndexService.WatchLiveImpact:output_type -> codeindex.v1.LiveImpact
+	105, // 151: codeindex.v1.CodeIndexService.PublishLiveImpact:output_type -> google.protobuf.Empty
+	89,  // 152: codeindex.v1.CodeIndexService.ExportImpactMermaid:output_type -> codeindex.v1.ExportImpactMermaidResponse
+	34,  // 153: codeindex.v1.CodeIndexService.GetImpactScene:output_type -> codeindex.v1.ImpactScene
+	92,  // 154: codeindex.v1.CodeIndexService.GetImpactSource:output_type -> codeindex.v1.GetImpactSourceResponse
+	123, // [123:155] is the sub-list for method output_type
+	91,  // [91:123] is the sub-list for method input_type
+	91,  // [91:91] is the sub-list for extension type_name
+	91,  // [91:91] is the sub-list for extension extendee
+	0,   // [0:91] is the sub-list for field type_name
 }
 
 func init() { file_codeindex_v1_codeindex_proto_init() }
@@ -8441,7 +8689,7 @@ func file_codeindex_v1_codeindex_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_codeindex_v1_codeindex_proto_rawDesc), len(file_codeindex_v1_codeindex_proto_rawDesc)),
 			NumEnums:      6,
-			NumMessages:   92,
+			NumMessages:   95,
 			NumExtensions: 0,
 			NumServices:   2,
 		},

@@ -129,6 +129,9 @@ const (
 	// CodeIndexServiceGetImpactSceneProcedure is the fully-qualified name of the CodeIndexService's
 	// GetImpactScene RPC.
 	CodeIndexServiceGetImpactSceneProcedure = "/codeindex.v1.CodeIndexService/GetImpactScene"
+	// CodeIndexServiceGetImpactSourceProcedure is the fully-qualified name of the CodeIndexService's
+	// GetImpactSource RPC.
+	CodeIndexServiceGetImpactSourceProcedure = "/codeindex.v1.CodeIndexService/GetImpactSource"
 )
 
 // RepositoryServiceClient is a client for the codeindex.v1.RepositoryService service.
@@ -659,6 +662,7 @@ type CodeIndexServiceClient interface {
 	PublishLiveImpact(context.Context, *connect.Request[v1.PublishLiveImpactRequest]) (*connect.Response[emptypb.Empty], error)
 	ExportImpactMermaid(context.Context, *connect.Request[v1.ExportImpactMermaidRequest]) (*connect.Response[v1.ExportImpactMermaidResponse], error)
 	GetImpactScene(context.Context, *connect.Request[v1.GetImpactSceneRequest]) (*connect.Response[v1.ImpactScene], error)
+	GetImpactSource(context.Context, *connect.Request[v1.GetImpactSourceRequest]) (*connect.Response[v1.GetImpactSourceResponse], error)
 }
 
 // NewCodeIndexServiceClient constructs a client for the codeindex.v1.CodeIndexService service. By
@@ -750,6 +754,12 @@ func NewCodeIndexServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			connect.WithSchema(codeIndexServiceMethods.ByName("GetImpactScene")),
 			connect.WithClientOptions(opts...),
 		),
+		getImpactSource: connect.NewClient[v1.GetImpactSourceRequest, v1.GetImpactSourceResponse](
+			httpClient,
+			baseURL+CodeIndexServiceGetImpactSourceProcedure,
+			connect.WithSchema(codeIndexServiceMethods.ByName("GetImpactSource")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -768,6 +778,7 @@ type codeIndexServiceClient struct {
 	publishLiveImpact   *connect.Client[v1.PublishLiveImpactRequest, emptypb.Empty]
 	exportImpactMermaid *connect.Client[v1.ExportImpactMermaidRequest, v1.ExportImpactMermaidResponse]
 	getImpactScene      *connect.Client[v1.GetImpactSceneRequest, v1.ImpactScene]
+	getImpactSource     *connect.Client[v1.GetImpactSourceRequest, v1.GetImpactSourceResponse]
 }
 
 // ListFacts calls codeindex.v1.CodeIndexService.ListFacts.
@@ -835,6 +846,11 @@ func (c *codeIndexServiceClient) GetImpactScene(ctx context.Context, req *connec
 	return c.getImpactScene.CallUnary(ctx, req)
 }
 
+// GetImpactSource calls codeindex.v1.CodeIndexService.GetImpactSource.
+func (c *codeIndexServiceClient) GetImpactSource(ctx context.Context, req *connect.Request[v1.GetImpactSourceRequest]) (*connect.Response[v1.GetImpactSourceResponse], error) {
+	return c.getImpactSource.CallUnary(ctx, req)
+}
+
 // CodeIndexServiceHandler is an implementation of the codeindex.v1.CodeIndexService service.
 type CodeIndexServiceHandler interface {
 	ListFacts(context.Context, *connect.Request[v1.CodeFactFilter]) (*connect.Response[v1.CodeFactPage], error)
@@ -850,6 +866,7 @@ type CodeIndexServiceHandler interface {
 	PublishLiveImpact(context.Context, *connect.Request[v1.PublishLiveImpactRequest]) (*connect.Response[emptypb.Empty], error)
 	ExportImpactMermaid(context.Context, *connect.Request[v1.ExportImpactMermaidRequest]) (*connect.Response[v1.ExportImpactMermaidResponse], error)
 	GetImpactScene(context.Context, *connect.Request[v1.GetImpactSceneRequest]) (*connect.Response[v1.ImpactScene], error)
+	GetImpactSource(context.Context, *connect.Request[v1.GetImpactSourceRequest]) (*connect.Response[v1.GetImpactSourceResponse], error)
 }
 
 // NewCodeIndexServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -937,6 +954,12 @@ func NewCodeIndexServiceHandler(svc CodeIndexServiceHandler, opts ...connect.Han
 		connect.WithSchema(codeIndexServiceMethods.ByName("GetImpactScene")),
 		connect.WithHandlerOptions(opts...),
 	)
+	codeIndexServiceGetImpactSourceHandler := connect.NewUnaryHandler(
+		CodeIndexServiceGetImpactSourceProcedure,
+		svc.GetImpactSource,
+		connect.WithSchema(codeIndexServiceMethods.ByName("GetImpactSource")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/codeindex.v1.CodeIndexService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case CodeIndexServiceListFactsProcedure:
@@ -965,6 +988,8 @@ func NewCodeIndexServiceHandler(svc CodeIndexServiceHandler, opts ...connect.Han
 			codeIndexServiceExportImpactMermaidHandler.ServeHTTP(w, r)
 		case CodeIndexServiceGetImpactSceneProcedure:
 			codeIndexServiceGetImpactSceneHandler.ServeHTTP(w, r)
+		case CodeIndexServiceGetImpactSourceProcedure:
+			codeIndexServiceGetImpactSourceHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -1024,4 +1049,8 @@ func (UnimplementedCodeIndexServiceHandler) ExportImpactMermaid(context.Context,
 
 func (UnimplementedCodeIndexServiceHandler) GetImpactScene(context.Context, *connect.Request[v1.GetImpactSceneRequest]) (*connect.Response[v1.ImpactScene], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.CodeIndexService.GetImpactScene is not implemented"))
+}
+
+func (UnimplementedCodeIndexServiceHandler) GetImpactSource(context.Context, *connect.Request[v1.GetImpactSourceRequest]) (*connect.Response[v1.GetImpactSourceResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("codeindex.v1.CodeIndexService.GetImpactSource is not implemented"))
 }
